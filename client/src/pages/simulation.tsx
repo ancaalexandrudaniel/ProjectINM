@@ -24,8 +24,14 @@ export default function Simulation() {
 
   const handleStartSimulation = () => {
     setIsSimulationStarted(true);
-    // Redirect to quiz with simulation mode
-    window.location.href = '/quiz?mode=simulation';
+    // Redirect to quiz with simulation mode and settings
+    const params = new URLSearchParams({
+      mode: 'simulation',
+      timeLimit: simulationSettings.timeLimit,
+      questionCount: simulationSettings.questionCount,
+      subjects: simulationSettings.subjects
+    });
+    window.location.href = `/quiz?${params.toString()}`;
   };
 
   return (

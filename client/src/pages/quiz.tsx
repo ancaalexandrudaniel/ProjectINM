@@ -4,6 +4,17 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight, Bookmark, X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import QuestionCard from "@/components/quiz/question-card";
 import AnswerFeedback from "@/components/quiz/answer-feedback";
 import type { QuizQuestion, QuizSession, UserAnswer } from "@/types/quiz";
@@ -12,6 +23,14 @@ import { toast } from "@/hooks/use-toast";
 export default function Quiz() {
   const [, params] = useRoute("/quiz/:subject?");
   const subject = params?.subject;
+  
+  // Get query parameters for simulation mode
+  const searchParams = new URLSearchParams(window.location.search);
+  const mode = searchParams.get('mode');
+  const isSimulation = mode === 'simulation';
+  const timeLimit = isSimulation ? parseInt(searchParams.get('timeLimit') || '180') : null;
+  const questionCount = isSimulation ? parseInt(searchParams.get('questionCount') || '100') : 20;
+  const subjects = isSimulation ? searchParams.get('subjects') || 'all' : null;
   
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -25,38 +44,22 @@ export default function Quiz() {
 
   // Fetch random questions for quiz
   const { data: questions = [], isLoading } = useQuery<QuizQuestion[]>({
-    queryKey: ['/api/quiz/random', subject],
+    queryKey: ['/api/quiz/random', subject, isSimulation, questionCount, subjects],
     queryFn: async () => {
-      const url = subject 
-        ? `/api/quiz/random?subject=${subject}&count=20`
-        : '/api/quiz/random?count=20';
+      // Use simulation settings if in simulation mode, otherwise use subject from route
+      const subjectParam = isSimulation 
+        ? (subjects !== 'all' ? subjects : undefined)
+        : subject;
+      
+      const url = subjectParam 
+        ? `/api/quiz/random?subject=${subjectParam}&count=${questionCount}`
+        : `/api/quiz/random?count=${questionCount}`;
       const response = await fetch(url);
       return response.json();
     },
   });
 
-  // Timer effect
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeElapsed(prev => prev + 1);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  // Create quiz session when questions load
-  useEffect(() => {
-    if (questions.length > 0 && !quizSession) {
-      createSession.mutate({
-        subject: subject || undefined,
-        sessionType: 'practice',
-        questions: questions.map(q => q.id),
-        totalQuestions: questions.length,
-        correctAnswers: 0
-      });
-    }
-  }, [questions, quizSession]);
-
+  // Mutations (defined before useEffects that depend on them)
   const createSession = useMutation({
     mutationFn: async (sessionData: any) => {
       const response = await fetch('/api/quiz/session', {
@@ -117,6 +120,43 @@ export default function Quiz() {
       });
     }
   });
+
+  // Timer effect
+  useEffect(() => {
+    if (isQuizComplete) return;
+    
+    const timer = setInterval(() => {
+      setTimeElapsed(prev => {
+        const newTime = prev + 1;
+        
+        // Auto-complete quiz when time limit is reached in simulation mode
+        if (isSimulation && timeLimit && newTime >= timeLimit * 60) {
+          clearInterval(timer);
+          // Only complete if no answer submission is in progress
+          if (quizSession && !isQuizComplete && !submitAnswer.isPending) {
+            completeSession.mutate();
+          }
+        }
+        
+        return newTime;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isQuizComplete, isSimulation, timeLimit, quizSession, submitAnswer.isPending]);
+
+  // Create quiz session when questions load
+  useEffect(() => {
+    if (questions.length > 0 && !quizSession) {
+      createSession.mutate({
+        subject: subject || (isSimulation && subjects !== 'all' ? subjects : undefined),
+        sessionType: isSimulation ? 'simulation' : 'practice',
+        questions: questions.map(q => q.id),
+        totalQuestions: questions.length,
+        correctAnswers: 0
+      });
+    }
+  }, [questions, quizSession]);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -248,6 +288,42 @@ export default function Quiz() {
                   {formatTime(timeElapsed)}
                 </span>
               </div>
+              {isSimulation && currentQuestionIndex < questions.length - 1 && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      data-testid="finish-early"
+                      disabled={submitAnswer.isPending}
+                    >
+                      Finalizează Anticipat
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Finalizare anticipată?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Ai răspuns la {userAnswers.length} din {questions.length} întrebări. 
+                        Întrebările nerăspunse vor fi considerate greșite. 
+                        Ești sigur că vrei să finalizezi testul acum?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Anulează</AlertDialogCancel>
+                      <AlertDialogAction 
+                        onClick={() => {
+                          if (!submitAnswer.isPending) {
+                            completeSession.mutate();
+                          }
+                        }}
+                        disabled={submitAnswer.isPending}
+                      >
+                        Finalizează
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
               <Button variant="ghost" size="icon" onClick={() => window.history.back()} data-testid="close-quiz">
                 <X className="h-5 w-5 text-destructive" />
               </Button>

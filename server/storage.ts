@@ -330,6 +330,348 @@ export class MemStorage implements IStorage {
           "Codul de procedură penală - Art. 97 - Condițiile probei",
           "Codul de procedură penală - Art. 96 - Definiția probei"
         ]
+      },
+      {
+        subject: "penal",
+        chapter: "Infracțiuni",
+        difficulty: "easy",
+        questionText: "Tentativa se pedepsește:",
+        options: [
+          { text: "În toate cazurile", correct: false },
+          { text: "Numai când legea prevede în mod expres", correct: true },
+          { text: "Doar la infracțiunile grave", correct: false },
+          { text: "Doar la infracțiunile contra persoanei", correct: false }
+        ],
+        correctAnswer: 1,
+        explanation: "Conform art. 32 alin. (2) Cod penal, tentativa se pedepsește numai când legea prevede în mod expres.",
+        legalReferences: [
+          "Codul penal - Art. 32 - Tentativa",
+          "Codul penal - Art. 33 - Sancționarea tentativei"
+        ]
+      },
+      {
+        subject: "penal",
+        chapter: "Pedepse",
+        difficulty: "medium",
+        questionText: "Pedeapsa închisorii pe viață poate fi aplicată pentru:",
+        options: [
+          { text: "Orice infracțiune gravă", correct: false },
+          { text: "Numai pentru infracțiunile prevăzute expres de lege", correct: true },
+          { text: "Toate infracțiunile contra vieții", correct: false },
+          { text: "Infracțiunile săvârșite cu intenție", correct: false }
+        ],
+        correctAnswer: 1,
+        explanation: "Conform art. 53 Cod penal, pedeapsa închisorii pe viață poate fi aplicată numai pentru infracțiunile pentru care legea prevede în mod expres această pedeapsă.",
+        legalReferences: [
+          "Codul penal - Art. 53 - Închisoarea pe viață",
+          "Codul penal - Art. 61 - Individualizarea pedepsei"
+        ]
+      },
+      {
+        subject: "penal",
+        chapter: "Circumstanțe atenuante și agravante",
+        difficulty: "medium",
+        questionText: "Care dintre următoarele constituie circumstanță atenuantă:",
+        options: [
+          { text: "Comiterea infracțiunii în stare de legitima apărare", correct: false },
+          { text: "Comportarea bună după comiterea infracțiunii", correct: true },
+          { text: "Vârsta majoră a infractorului", correct: false },
+          { text: "Funcția publică a infractorului", correct: false }
+        ],
+        correctAnswer: 1,
+        explanation: "Potrivit art. 75 alin. (2) lit. d) Cod penal, comportarea bună după comiterea infracțiunii constituie circumstanță atenuantă.",
+        legalReferences: [
+          "Codul penal - Art. 75 - Circumstanțe atenuante legale",
+          "Codul penal - Art. 74 - Individualizarea judiciară a pedepsei"
+        ]
+      },
+      {
+        subject: "penal",
+        chapter: "Infracțiuni",
+        difficulty: "hard",
+        questionText: "Complementul este obligatoriu atunci când:",
+        options: [
+          { text: "Infracțiunea este săvârșită în recidivă", correct: false },
+          { text: "Pedeapsa principală este amenda", correct: false },
+          { text: "Legea prevede în mod obligatoriu aplicarea lui", correct: true },
+          { text: "Infractorul este recidivist", correct: false }
+        ],
+        correctAnswer: 2,
+        explanation: "Conform art. 65 Cod penal, pedepsele complementare se aplică obligatoriu când legea prevede acest lucru în mod expres.",
+        legalReferences: [
+          "Codul penal - Art. 65 - Pedepsele complementare",
+          "Codul penal - Art. 66 - Aplicarea pedepselor complementare"
+        ]
+      },
+      {
+        subject: "civil",
+        chapter: "Proprietatea",
+        difficulty: "medium",
+        questionText: "Uzucapiunea este un mod de:",
+        options: [
+          { text: "Dobândire a dreptului de proprietate", correct: true },
+          { text: "Stingere a obligațiilor", correct: false },
+          { text: "Apărare a dreptului de proprietate", correct: false },
+          { text: "Transfer al dreptului de proprietate", correct: false }
+        ],
+        correctAnswer: 0,
+        explanation: "Conform art. 930 Cod civil, uzucapiunea este un mod de dobândire a dreptului de proprietate prin posesie îndelungată.",
+        legalReferences: [
+          "Codul civil - Art. 930 - Uzucapiunea",
+          "Codul civil - Art. 888 - Modurile de dobândire a proprietății"
+        ]
+      },
+      {
+        subject: "civil",
+        chapter: "Obligațiile",
+        difficulty: "easy",
+        questionText: "Obligația solidară presupune:",
+        options: [
+          { text: "Mai mulți creditori sau mai mulți debitori", correct: true },
+          { text: "Un singur creditor și un singur debitor", correct: false },
+          { text: "Doar debitori persoane juridice", correct: false },
+          { text: "Doar creditori persoane fizice", correct: false }
+        ],
+        correctAnswer: 0,
+        explanation: "Conform art. 1420 Cod civil, obligația este solidară când există mai mulți creditori sau mai mulți debitori și fiecare dintre creditori poate cere plata întregii datorii.",
+        legalReferences: [
+          "Codul civil - Art. 1420 - Solidaritatea activă și pasivă",
+          "Codul civil - Art. 1421 - Efectele solidarității"
+        ]
+      },
+      {
+        subject: "civil-procedural",
+        chapter: "Proba",
+        difficulty: "medium",
+        questionText: "Sarcina probei revine:",
+        options: [
+          { text: "Întotdeauna reclamantului", correct: false },
+          { text: "Celui care face o susținere în proces", correct: true },
+          { text: "Întotdeauna pârâtului", correct: false },
+          { text: "Instanței de judecată", correct: false }
+        ],
+        correctAnswer: 1,
+        explanation: "Potrivit art. 249 Cod de procedură civilă, cel care face o susținere în cursul procesului trebuie să o dovedească, în afară de cazurile anume prevăzute de lege.",
+        legalReferences: [
+          "Codul de procedură civilă - Art. 249 - Sarcina probei",
+          "Codul de procedură civilă - Art. 250 - Obiectul probei"
+        ]
+      },
+      {
+        subject: "civil-procedural",
+        chapter: "Procedura",
+        difficulty: "hard",
+        questionText: "Excepția de necompetenţă se poate invoca:",
+        options: [
+          { text: "Oricând în cursul procesului", correct: false },
+          { text: "Numai la prima zi de înfățișare", correct: true },
+          { text: "Doar în apel", correct: false },
+          { text: "Doar în recurs", correct: false }
+        ],
+        correctAnswer: 1,
+        explanation: "Conform art. 132 Cod de procedură civilă, excepția de necompetenţă se invocă de către părți la prima zi de înfățișare, înainte de orice altă apărare sau cerere.",
+        legalReferences: [
+          "Codul de procedură civilă - Art. 132 - Invocarea excepției",
+          "Codul de procedură civilă - Art. 130 - Competența instanțelor"
+        ]
+      },
+      {
+        subject: "penal-procedural",
+        chapter: "Urmărirea penală",
+        difficulty: "easy",
+        questionText: "Urmărirea penală este efectuată de:",
+        options: [
+          { text: "Judecător", correct: false },
+          { text: "Procuror", correct: true },
+          { text: "Avocat", correct: false },
+          { text: "Martor", correct: false }
+        ],
+        correctAnswer: 1,
+        explanation: "Conform art. 55 Cod de procedură penală, urmărirea penală este efectuată de procuror, care conduce și supraveghează activitatea organelor de cercetare penală.",
+        legalReferences: [
+          "Codul de procedură penală - Art. 55 - Procurorul",
+          "Codul de procedură penală - Art. 305 - Urmărirea penală"
+        ]
+      },
+      {
+        subject: "penal-procedural",
+        chapter: "Judecata",
+        difficulty: "medium",
+        questionText: "Hotărârea prin care se dispune condamnarea inculpatului se numește:",
+        options: [
+          { text: "Sentință", correct: true },
+          { text: "Ordonanță", correct: false },
+          { text: "Încheiere", correct: false },
+          { text: "Decizie preliminară", correct: false }
+        ],
+        correctAnswer: 0,
+        explanation: "Conform art. 374 Cod de procedură penală, hotărârile judecătorești pot fi sentințe (prin care se soluționează fondul cauzei) sau încheieri (pentru rezolvarea unor chestiuni procedurale).",
+        legalReferences: [
+          "Codul de procedură penală - Art. 374 - Hotărâri judecătorești",
+          "Codul de procedură penală - Art. 396 - Deliberarea și votul"
+        ]
+      },
+      {
+        subject: "penal",
+        chapter: "Tentativa",
+        difficulty: "medium",
+        questionText: "Tentativa consumată reprezintă:",
+        options: [
+          { text: "Executarea parțială a actelor de executare", correct: false },
+          { text: "Executarea tuturor actelor de executare fără producerea rezultatului", correct: true },
+          { text: "Executarea cu rezultat parțial", correct: false },
+          { text: "Renunțarea la comiterea infracțiunii", correct: false }
+        ],
+        correctAnswer: 1,
+        explanation: "Conform art. 32 alin. (1) lit. b) Cod penal, tentativa consumată este atunci când infractorul execută toate actele de executare dar rezultatul nu se produce din cauze independente de voința sa.",
+        legalReferences: [
+          "Codul penal - Art. 32 - Tentativa",
+          "Codul penal - Art. 33 - Sancționarea tentativei"
+        ]
+      },
+      {
+        subject: "penal",
+        chapter: "Pedepse",
+        difficulty: "easy",
+        questionText: "Amenda este o pedeapsă:",
+        options: [
+          { text: "Complementară", correct: false },
+          { text: "Accesorii", correct: false },
+          { text: "Principală", correct: true },
+          { text: "Facultativă", correct: false }
+        ],
+        correctAnswer: 2,
+        explanation: "Conform art. 61 lit. b) Cod penal, amenda este o pedeapsă principală aplicabilă persoanelor fizice.",
+        legalReferences: [
+          "Codul penal - Art. 61 - Pedepsele principale",
+          "Codul penal - Art. 62 - Pedeapsa amenzii"
+        ]
+      },
+      {
+        subject: "civil",
+        chapter: "Contracte",
+        difficulty: "hard",
+        questionText: "Leziunea este cauză de anulare a contractului când:",
+        options: [
+          { text: "Există un dezechilibru oarecare între prestații", correct: false },
+          { text: "Există vătămare de peste 1/2 din valoarea prestației", correct: true },
+          { text: "Una din părți nu își execută obligațiile", correct: false },
+          { text: "Contractul este încheiat sub constrângere", correct: false }
+        ],
+        correctAnswer: 1,
+        explanation: "Conform art. 1221 Cod civil, leziunea ca viciu de consimțământ se reține când una dintre părți, profitând de starea de nevoie, de lipsa de experiență sau de lipsa de cunoștințe a celeilalte părți, stipulează în favoarea sa o prestație de o valoare considerabilă mai mare decât valoarea propriei prestații.",
+        legalReferences: [
+          "Codul civil - Art. 1221 - Leziunea",
+          "Codul civil - Art. 1206 - Vicii de consimțământ"
+        ]
+      },
+      {
+        subject: "civil-procedural",
+        chapter: "Executarea",
+        difficulty: "medium",
+        questionText: "Executarea silită se poate face pe baza:",
+        options: [
+          { text: "Oricărui înscris sub semnătură privată", correct: false },
+          { text: "Titlurilor executorii", correct: true },
+          { text: "Acordurilor verbale", correct: false },
+          { text: "Promisiunilor unilaterale", correct: false }
+        ],
+        correctAnswer: 1,
+        explanation: "Potrivit art. 623 Cod de procedură civilă, executarea silită se face numai pe baza unui titlu executoriu.",
+        legalReferences: [
+          "Codul de procedură civilă - Art. 623 - Titlul executoriu",
+          "Codul de procedură civilă - Art. 624 - Încuviințarea executării"
+        ]
+      },
+      {
+        subject: "penal-procedural",
+        chapter: "Căile de atac",
+        difficulty: "hard",
+        questionText: "Apelul se judecă de:",
+        options: [
+          { text: "Aceeași instanță care a pronunțat hotărârea", correct: false },
+          { text: "Instanța ierarhic superioară", correct: true },
+          { text: "Înalta Curte de Casație și Justiție", correct: false },
+          { text: "Curtea de Apel în toate cazurile", correct: false }
+        ],
+        correctAnswer: 1,
+        explanation: "Conform art. 417 Cod de procedură penală, apelul se judecă de instanța ierarhic superioară celei care a pronunțat hotărârea atacată.",
+        legalReferences: [
+          "Codul de procedură penală - Art. 417 - Instanța de apel",
+          "Codul de procedură penală - Art. 408 - Calea de atac a apelului"
+        ]
+      },
+      {
+        subject: "penal",
+        chapter: "Infracțiuni",
+        difficulty: "medium",
+        questionText: "Participația improprie reprezintă:",
+        options: [
+          { text: "Comiterea unei infracțiuni de mai multe persoane", correct: false },
+          { text: "Contribuția la comiterea unei infracțiuni care nu are calitatea cerută de lege", correct: true },
+          { text: "Ajutorul dat după comiterea infracțiunii", correct: false },
+          { text: "Instigarea la o infracțiune", correct: false }
+        ],
+        correctAnswer: 1,
+        explanation: "Conform art. 52 Cod penal, participația improprie există când cel care nu are calitatea cerută de legea penală pentru a fi autor contribuie la săvârșirea unei infracțiuni care reclamă o astfel de calitate.",
+        legalReferences: [
+          "Codul penal - Art. 52 - Participația improprie",
+          "Codul penal - Art. 46 - Formele de participație"
+        ]
+      },
+      {
+        subject: "civil",
+        chapter: "Obligațiile",
+        difficulty: "hard",
+        questionText: "Compensația legală operează când:",
+        options: [
+          { text: "Părțile convin asupra acesteia", correct: false },
+          { text: "Creditele sunt lichide, exigibile și fungibile", correct: true },
+          { text: "Judecătorul o dispune", correct: false },
+          { text: "Una din părți o solicită", correct: false }
+        ],
+        correctAnswer: 1,
+        explanation: "Conform art. 1616 Cod civil, compensația legală operează de drept când creditele sunt lichide (certitudine și determinare), exigibile și au ca obiect bunuri fungibile de aceeași natură.",
+        legalReferences: [
+          "Codul civil - Art. 1616 - Condițiile compensației legale",
+          "Codul civil - Art. 1615 - Efectele compensației"
+        ]
+      },
+      {
+        subject: "civil-procedural",
+        chapter: "Căile de atac",
+        difficulty: "medium",
+        questionText: "Termenul de apel în materie civilă este de:",
+        options: [
+          { text: "10 zile", correct: false },
+          { text: "30 de zile", correct: true },
+          { text: "60 de zile", correct: false },
+          { text: "90 de zile", correct: false }
+        ],
+        correctAnswer: 1,
+        explanation: "Potrivit art. 303 alin. (1) Cod de procedură civilă, apelul se declară în termen de 30 de zile de la comunicarea hotărârii, dacă legea nu prevede altfel.",
+        legalReferences: [
+          "Codul de procedură civilă - Art. 303 - Termenul de declarare a apelului",
+          "Codul de procedură civilă - Art. 301 - Calea de atac a apelului"
+        ]
+      },
+      {
+        subject: "penal",
+        chapter: "Circumstanțe atenuante și agravante",
+        difficulty: "easy",
+        questionText: "Săvârșirea infracțiunii de către un funcționar public în exercitarea atribuțiilor de serviciu reprezintă:",
+        options: [
+          { text: "Circumstanță atenuantă", correct: false },
+          { text: "Circumstanță agravantă", correct: true },
+          { text: "Cauză de nepedepsire", correct: false },
+          { text: "Cauză de justificare", correct: false }
+        ],
+        correctAnswer: 1,
+        explanation: "Conform art. 77 lit. g) Cod penal, săvârșirea infracțiunii de către un funcționar public în exercitarea atribuțiilor de serviciu constituie circumstanță agravantă.",
+        legalReferences: [
+          "Codul penal - Art. 77 - Circumstanțe agravante",
+          "Codul penal - Art. 75 - Circumstanțe atenuante"
+        ]
       }
     ];
 
