@@ -1,6 +1,7 @@
 import { ExternalLink, Download, FileText, BookOpen, Scale, History } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 
 export default function Library() {
   const resources = [
@@ -199,14 +200,16 @@ export default function Library() {
                 </div>
                 
                 <div className="mt-4 pt-4 border-t border-border">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full"
-                    data-testid={`practice-${subject.id}`}
-                  >
-                    Exersează {subject.name}
-                  </Button>
+                  <Link href={`/quiz/${subject.id}`}>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full"
+                      data-testid={`practice-${subject.id}`}
+                    >
+                      Exersează {subject.name}
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
