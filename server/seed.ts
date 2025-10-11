@@ -3,7 +3,7 @@ import { db } from "./db";
 import { questions, users } from "@shared/schema";
 import { eq } from "drizzle-orm";
 
-const sampleQuestions = [
+export const sampleQuestions = [
   // Drept Civil - 10 questions
   {
     subject: "civil",
