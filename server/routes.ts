@@ -202,6 +202,125 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI: Explain wrong answer
+  app.post("/api/ai/explain-wrong-answer", async (req, res) => {
+    try {
+      const { explainWrongAnswer } = await import("./gemini");
+      const { aiExplanations, questions } = await import("@shared/schema");
+      const { eq } = await import("drizzle-orm");
+      
+      const { questionId, userAnswerId } = req.body;
+      const userId = await getDefaultUserId();
+      
+      // Get question details
+      const [question] = await db.select().from(questions).where(eq(questions.id, questionId));
+      if (!question) {
+        return res.status(404).json({ error: "Question not found" });
+      }
+      
+      // Get user answer
+      const answers = await storage.getUserAnswers(userId);
+      const userAnswer = answers.find(a => a.id === userAnswerId);
+      if (!userAnswer) {
+        return res.status(404).json({ error: "Answer not found" });
+      }
+      
+      // Extract option texts
+      const options = question.options as any[];
+      const correctOptionText = options[question.correctAnswer]?.text || "";
+      const userSelectedText = userAnswer.selectedAnswer !== null 
+        ? options[userAnswer.selectedAnswer]?.text || ""
+        : "";
+      
+      // Generate AI explanation
+      const explanation = await explainWrongAnswer({
+        questionText: question.questionText,
+        correctOptionText,
+        userSelectedText,
+        explanation: question.explanation,
+        legalReferences: (question.legalReferences as string[]) || [],
+        subject: question.subject
+      });
+      
+      // Save explanation to database
+      await db.insert(aiExplanations).values({
+        userId,
+        questionId,
+        userAnswerId,
+        explanation
+      });
+      
+      res.json({ explanation });
+    } catch (error) {
+      console.error("AI explanation error:", error);
+      res.status(500).json({ error: "Failed to generate AI explanation" });
+    }
+  });
+
+  // AI: Get upload URL for documents
+  app.post("/api/documents/upload-url", async (req, res) => {
+    try {
+      const { ObjectStorageService } = await import("./objectStorage");
+      const storageService = new ObjectStorageService();
+      
+      const { fileExtension = "pdf" } = req.body;
+      const uploadURL = await storageService.getObjectEntityUploadURL(fileExtension);
+      
+      res.json({ uploadURL });
+    } catch (error) {
+      console.error("Upload URL error:", error);
+      res.status(500).json({ error: "Failed to get upload URL" });
+    }
+  });
+
+  // AI: Process uploaded document
+  app.post("/api/documents/process", async (req, res) => {
+    try {
+      const { ObjectStorageService } = await import("./objectStorage");
+      const { extractTextFromPDF, analyzeLegalDocument } = await import("./gemini");
+      const { uploadedDocuments } = await import("@shared/schema");
+      const storageService = new ObjectStorageService();
+      const userId = await getDefaultUserId();
+      
+      const { uploadURL, fileName, documentType, subject } = req.body;
+      
+      // Normalize object path
+      const objectPath = storageService.normalizeObjectEntityPath(uploadURL);
+      
+      // Download PDF to temporary location
+      const tmpPath = `/tmp/${Date.now()}.pdf`;
+      await storageService.downloadObjectEntityToLocal(objectPath, tmpPath);
+      
+      // Extract text from PDF
+      const extractedText = await extractTextFromPDF(tmpPath);
+      
+      // Analyze document with AI
+      const analysis = await analyzeLegalDocument({
+        documentText: extractedText,
+        documentType: documentType as any
+      });
+      
+      // Save document metadata to database
+      const [document] = await db.insert(uploadedDocuments).values({
+        userId,
+        fileName,
+        documentType,
+        subject,
+        objectPath,
+        extractedText,
+        aiSummary: JSON.stringify(analysis)
+      }).returning();
+      
+      res.json({ 
+        document, 
+        analysis 
+      });
+    } catch (error) {
+      console.error("Document processing error:", error);
+      res.status(500).json({ error: "Failed to process document" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

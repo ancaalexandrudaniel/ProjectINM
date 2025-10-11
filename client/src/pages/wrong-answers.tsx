@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { 
   ArrowLeft, 
@@ -9,11 +9,16 @@ import {
   AlertCircle,
   BookOpen,
   CheckCircle,
-  XCircle
+  XCircle,
+  Sparkles
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 import type { Question, UserAnswer } from "@shared/schema";
+import { useState } from "react";
 
 interface WrongAnswerWithQuestion extends UserAnswer {
   question: Question;
@@ -38,6 +43,8 @@ export default function WrongAnswers() {
   const params = new URLSearchParams(location.split('?')[1] || '');
   const subjectFilter = params.get('subject');
   const chapterFilter = params.get('chapter');
+  const { toast } = useToast();
+  const [aiExplanations, setAiExplanations] = useState<Record<string, string>>({});
 
   const { data: wrongAnswers = [], isLoading } = useQuery<WrongAnswerWithQuestion[]>({
     queryKey: ['/api/wrong-answers', subjectFilter, chapterFilter],
@@ -319,6 +326,63 @@ export default function WrongAnswers() {
                       ))}
                     </div>
                   )}
+
+                  {/* AI Explanation Section */}
+                  <div className="border-t pt-4 space-y-3">
+                    <Button
+                      onClick={async () => {
+                        try {
+                          const response = await apiRequest('/api/ai/explain-wrong-answer', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                              questionId: question.id,
+                              userAnswerId: answer.id
+                            })
+                          });
+                          
+                          const data = await response.json();
+                          setAiExplanations(prev => ({
+                            ...prev,
+                            [answer.id]: data.explanation
+                          }));
+                          
+                          toast({
+                            title: "Explicație AI generată!",
+                            description: "Gemini a analizat greșeala ta și a pregătit o explicație personalizată.",
+                          });
+                        } catch (error) {
+                          toast({
+                            title: "Eroare",
+                            description: "Nu am putut genera explicația AI. Încearcă din nou.",
+                            variant: "destructive"
+                          });
+                        }
+                      }}
+                      variant="outline"
+                      className="w-full"
+                      data-testid={`ai-explain-${index}`}
+                    >
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      {aiExplanations[answer.id] ? "Regenerează Explicație AI" : "Explică cu AI"}
+                    </Button>
+                    
+                    {aiExplanations[answer.id] && (
+                      <div className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/30 rounded-lg p-4">
+                        <div className="flex items-start gap-3">
+                          <Sparkles className="h-5 w-5 text-purple-500 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h4 className="font-semibold mb-2 text-purple-500 flex items-center gap-2">
+                              Explicație AI Personalizată
+                              <Badge variant="secondary" className="text-xs">Gemini</Badge>
+                            </h4>
+                            <p className="text-sm text-foreground whitespace-pre-line" data-testid={`ai-explanation-${index}`}>
+                              {aiExplanations[answer.id]}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Last Attempt Info */}
                   <div className="text-xs text-muted-foreground border-t pt-3">

@@ -61,6 +61,27 @@ export const userProgress = pgTable("user_progress", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const uploadedDocuments = pgTable("uploaded_documents", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  fileName: text("file_name").notNull(),
+  documentType: text("document_type").notNull(), // 'tematica', 'bibliografie', 'subiecte', 'cod', 'curs'
+  subject: text("subject"), // optional, for categorization
+  objectPath: text("object_path").notNull(), // path in object storage
+  extractedText: text("extracted_text"), // extracted PDF text
+  aiSummary: text("ai_summary"), // AI-generated summary
+  uploadedAt: timestamp("uploaded_at").defaultNow(),
+});
+
+export const aiExplanations = pgTable("ai_explanations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  questionId: varchar("question_id").references(() => questions.id).notNull(),
+  userAnswerId: varchar("user_answer_id").references(() => userAnswers.id),
+  explanation: text("explanation").notNull(), // AI-generated explanation
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -87,6 +108,16 @@ export const insertUserProgressSchema = createInsertSchema(userProgress).omit({
   updatedAt: true,
 });
 
+export const insertUploadedDocumentSchema = createInsertSchema(uploadedDocuments).omit({
+  id: true,
+  uploadedAt: true,
+});
+
+export const insertAiExplanationSchema = createInsertSchema(aiExplanations).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -102,3 +133,9 @@ export type InsertUserAnswer = z.infer<typeof insertUserAnswerSchema>;
 
 export type UserProgress = typeof userProgress.$inferSelect;
 export type InsertUserProgress = z.infer<typeof insertUserProgressSchema>;
+
+export type UploadedDocument = typeof uploadedDocuments.$inferSelect;
+export type InsertUploadedDocument = z.infer<typeof insertUploadedDocumentSchema>;
+
+export type AiExplanation = typeof aiExplanations.$inferSelect;
+export type InsertAiExplanation = z.infer<typeof insertAiExplanationSchema>;
