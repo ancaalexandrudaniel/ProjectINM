@@ -248,23 +248,37 @@ Răspunde în format JSON:
     throw new Error("Gemini returned empty response");
   }
   
-  // Check if response looks like JSON
-  const trimmed = rawJson.trim();
-  if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
-    try {
-      return JSON.parse(trimmed);
-    } catch (parseError) {
-      console.error("[analyzeExamPatterns] JSON parse failed:", trimmed);
+  // Try to extract JSON from response
+  let jsonText = rawJson.trim();
+  
+  // Try to find JSON code block (```json ... ``` or ``` ... ```)
+  const codeBlockMatch = jsonText.match(/```(?:json)?\s*\n([\s\S]*?)\n```/);
+  if (codeBlockMatch) {
+    jsonText = codeBlockMatch[1].trim();
+  } else if (jsonText.startsWith('```')) {
+    // Fallback: remove first and last lines if starts with ```
+    const lines = jsonText.split('\n');
+    lines.shift(); // Remove ```json or ```
+    if (lines[lines.length - 1].trim() === '```') {
+      lines.pop(); // Remove closing ```
     }
+    jsonText = lines.join('\n').trim();
   }
   
-  // Fallback for non-JSON responses
-  console.warn("[analyzeExamPatterns] Gemini returned non-JSON, using fallback");
-  return {
-    topChapters: [],
-    recurringTopics: [],
-    recommendations: ["Analiză indisponibilă momentan. Încercați din nou."]
-  };
+  // Try to parse the cleaned JSON
+  try {
+    return JSON.parse(jsonText);
+  } catch (parseError) {
+    console.error("[analyzeExamPatterns] JSON parse failed:", parseError);
+    console.error("[analyzeExamPatterns] Attempted to parse:", jsonText.substring(0, 500));
+    
+    // Final fallback
+    return {
+      topChapters: [],
+      recurringTopics: [],
+      recommendations: ["Analiză indisponibilă momentan. Încercați din nou."]
+    };
+  }
 }
 
 /**

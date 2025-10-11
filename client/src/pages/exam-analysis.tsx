@@ -36,17 +36,18 @@ export default function ExamAnalysisPage() {
     queryKey: ["/api/documents"]
   });
   
-  const examDocs = documents.filter(doc => doc.documentType === "subiecte_anterioare");
+  const examDocs = documents.filter(doc => doc.documentType === "subiecte");
   
   // Analyze exam patterns mutation
   const analyzePatterns = useMutation({
     mutationFn: async () => {
-      return await apiRequest<ExamAnalysis>("POST", "/api/documents/analyze-patterns", {
+      const response = await apiRequest("POST", "/api/documents/analyze-patterns", {
         documentIds: selectedDocs,
         subject: selectedSubject === "civil" ? "Drept Civil" : 
                  selectedSubject === "procesual_civil" ? "Drept Procesual Civil" :
                  selectedSubject === "penal" ? "Drept Penal" : "Drept Procesual Penal"
       });
+      return await response.json() as ExamAnalysis;
     }
   });
   
@@ -179,7 +180,7 @@ export default function ExamAnalysisPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4" data-testid="list-top-chapters">
-                    {analyzePatterns.data.topChapters.length > 0 ? (
+                    {analyzePatterns.data?.topChapters && analyzePatterns.data.topChapters.length > 0 ? (
                       analyzePatterns.data.topChapters.map((chapter, index) => (
                         <div key={index} className="p-4 border rounded-lg">
                           <div className="flex items-start justify-between mb-2">
@@ -192,7 +193,7 @@ export default function ExamAnalysisPage() {
                           <p className="text-sm text-muted-foreground mb-3">
                             Apare de {chapter.frequency} ori
                           </p>
-                          {chapter.articles.length > 0 && (
+                          {chapter.articles && chapter.articles.length > 0 && (
                             <div className="flex flex-wrap gap-2">
                               {chapter.articles.map((article, i) => (
                                 <Badge key={i} variant="outline" className="text-xs">
@@ -211,7 +212,7 @@ export default function ExamAnalysisPage() {
               </Card>
               
               {/* Recurring Topics */}
-              {analyzePatterns.data.recurringTopics.length > 0 && (
+              {analyzePatterns.data?.recurringTopics && analyzePatterns.data.recurringTopics.length > 0 && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -232,7 +233,7 @@ export default function ExamAnalysisPage() {
               )}
               
               {/* Recommendations */}
-              {analyzePatterns.data.recommendations.length > 0 && (
+              {analyzePatterns.data?.recommendations && analyzePatterns.data.recommendations.length > 0 && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">

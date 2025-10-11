@@ -394,7 +394,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           and(
             eq(uploadedDocuments.userId, userId),
             inArray(uploadedDocuments.id, documentIds),
-            eq(uploadedDocuments.documentType, "subiecte_anterioare")
+            eq(uploadedDocuments.documentType, "subiecte")
           )
         );
       
