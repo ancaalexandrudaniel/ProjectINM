@@ -372,6 +372,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI: Analyze exam patterns from uploaded exam documents
+  app.post("/api/documents/analyze-patterns", async (req, res) => {
+    try {
+      const { analyzeExamPatterns } = await import("./gemini");
+      const { uploadedDocuments } = await import("@shared/schema");
+      const { eq, and, inArray } = await import("drizzle-orm");
+      const userId = await getDefaultUserId();
+      
+      const { documentIds, subject } = req.body;
+      
+      if (!documentIds || documentIds.length === 0) {
+        return res.status(400).json({ error: "No documents specified" });
+      }
+      
+      // Fetch exam documents with extracted text
+      const docs = await db
+        .select()
+        .from(uploadedDocuments)
+        .where(
+          and(
+            eq(uploadedDocuments.userId, userId),
+            inArray(uploadedDocuments.id, documentIds),
+            eq(uploadedDocuments.documentType, "subiecte_anterioare")
+          )
+        );
+      
+      if (docs.length === 0) {
+        return res.status(404).json({ error: "No exam documents found" });
+      }
+      
+      // Prepare documents for analysis (extract year from filename if available)
+      const examDocuments = docs.map(doc => {
+        const yearMatch = doc.fileName.match(/20\d{2}/); // Extract year like 2019, 2020, etc.
+        return {
+          year: yearMatch ? yearMatch[0] : "unknown",
+          text: doc.extractedText || ""
+        };
+      });
+      
+      // Analyze with AI
+      const analysis = await analyzeExamPatterns({
+        examDocuments,
+        subject: subject || "Drept Civil"
+      });
+      
+      res.json(analysis);
+    } catch (error) {
+      console.error("Exam pattern analysis error:", error);
+      res.status(500).json({ error: "Failed to analyze exam patterns" });
+    }
+  });
+
   // AI: Delete document
   app.delete("/api/documents/:id", async (req, res) => {
     try {

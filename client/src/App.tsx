@@ -12,6 +12,7 @@ import Performance from "@/pages/performance";
 import WeakPoints from "@/pages/weak-points";
 import WrongAnswers from "@/pages/wrong-answers";
 import Documents from "@/pages/documents";
+import ExamAnalysis from "@/pages/exam-analysis";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/weak-points" component={WeakPoints} />
       <Route path="/wrong-answers" component={WrongAnswers} />
       <Route path="/documents" component={Documents} />
+      <Route path="/exam-analysis" component={ExamAnalysis} />
       <Route component={NotFound} />
     </Switch>
   );

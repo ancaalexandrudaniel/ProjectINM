@@ -181,6 +181,93 @@ Răspunde în format JSON:
 }
 
 /**
+ * Analyzes exam patterns from previous exams PDFs
+ */
+export async function analyzeExamPatterns(params: {
+  examDocuments: Array<{ year: string; text: string }>;
+  subject: string;
+}): Promise<{
+  topChapters: Array<{
+    chapter: string;
+    frequency: number;
+    importance: "critical" | "important" | "moderate";
+    articles: string[];
+  }>;
+  recurringTopics: string[];
+  recommendations: string[];
+}> {
+  const systemPrompt = `Ești un analist expert pentru examenul INM România.
+Analizezi subiecte anterioare pentru a identifica pattern-uri și capitole prioritare.`;
+
+  const docsText = params.examDocuments
+    .map(doc => `=== Anul ${doc.year} ===\n${doc.text.substring(0, 3000)}`)
+    .join("\n\n");
+
+  const userPrompt = `Analizează aceste subiecte anterioare pentru materia ${params.subject}:
+
+${docsText}
+
+Identifică:
+1. Capitolele care apar cel mai frecvent (top 5)
+2. Articole de lege citate recurent
+3. Tipuri de probleme juridice recurente
+4. Recomandări pentru prioritizare studiu
+
+Răspunde în format JSON:
+{
+  "topChapters": [
+    {
+      "chapter": "nume capitol (ex: Contracte civile)",
+      "frequency": număr apariții,
+      "importance": "critical" sau "important" sau "moderate",
+      "articles": ["art. 1234", "art. 5678"]
+    }
+  ],
+  "recurringTopics": ["temă recurentă 1", "temă recurentă 2"],
+  "recommendations": ["recomandare studiu 1", "recomandare 2"]
+}`;
+
+  const result = await ai.models.generateContent({
+    model: "gemini-2.0-flash-exp",
+    systemInstruction: systemPrompt,
+    generationConfig: {
+      responseMimeType: "application/json"
+    },
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: userPrompt }]
+      }
+    ]
+  });
+
+  const rawJson = result.text;
+  console.log("[analyzeExamPatterns] Gemini response:", rawJson);
+  
+  if (!rawJson) {
+    throw new Error("Gemini returned empty response");
+  }
+  
+  // Check if response looks like JSON
+  const trimmed = rawJson.trim();
+  if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+    try {
+      return JSON.parse(trimmed);
+    } catch (parseError) {
+      console.error("[analyzeExamPatterns] JSON parse failed:", trimmed);
+    }
+  }
+  
+  // Fallback for non-JSON responses
+  console.warn("[analyzeExamPatterns] Gemini returned non-JSON, using fallback");
+  return {
+    topChapters: [],
+    recurringTopics: [],
+    recommendations: ["Analiză indisponibilă momentan. Încercați din nou."]
+  };
+}
+
+/**
  * Extracts text from PDF file
  */
 export async function extractTextFromPDF(pdfPath: string): Promise<string> {

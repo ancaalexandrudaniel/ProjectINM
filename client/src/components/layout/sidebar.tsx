@@ -9,7 +9,8 @@ import {
   BookOpen, 
   TrendingUp, 
   AlertTriangle,
-  Upload
+  Upload,
+  BarChart3
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import type { UserProgress } from "@/types/quiz";
@@ -110,6 +111,13 @@ export default function Sidebar() {
             <a className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/documents') ? 'active' : ''}`} data-testid="nav-documents">
               <Upload className="h-5 w-5" />
               <span className="font-medium">Documente PDF</span>
+            </a>
+          </Link>
+          
+          <Link href="/exam-analysis">
+            <a className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/exam-analysis') ? 'active' : ''}`} data-testid="nav-exam-analysis">
+              <BarChart3 className="h-5 w-5" />
+              <span className="font-medium">Analiză Subiecte</span>
             </a>
           </Link>
           
