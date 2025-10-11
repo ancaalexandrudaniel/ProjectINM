@@ -1,0 +1,45 @@
+Bazat pe studiul facut anterior, considerand ca ai terminat facultatea de drept cu ani in urma si nu mai tii minte nimic din termenii juridici, metode de aplicare si tot ce tine de o baza solida de studiu.
+
+
+
+Spre deosebire de alte vremuri, s-a schimbat ceva exceptional in parghiile care pot fi folosite pentru studiu si pregatire pentru acest examen, anume acum exista AI.
+
+
+
+Cum as putea sa folosesc cel mai eficient Gemini sa ma pregatesc pentru acest examen, pornind de la 0. Considerand ca nu am nici o pregatire. Practic iei un om de pe strada care nu a mai invtat in viata lui (consideram ca e licentiat in drept ca sa fie eligibil) si task-ul tau este sa il pregatesti pentru acest examen tinand cont de urmatoarele:
+
+
+
+1. Nu cunoaste toate capabilitatile Gemini care pot fi folosite pentru a inlezni procesul de invatare, te rog sa imi recomanzi toate tool-urile pe care le pot folosi in intermediul google ca sa structurez cat mai eficient si concis materia de studiu
+
+
+
+2. Nu a mai invatat de o perioada mare de timp nimic dar este capabil sa o faca. Recomanda stiluri de studiu si metode consacrate de aprofundare a materiei.
+
+
+
+3. Nu stie nimic despre metodologie, bibliografie si tematica si nici de unde sa o ia sau cum sa o organizeze
+
+
+
+4. Vrea sa foloseasca Gemini cat mai eficient, astfel incat sa nu foloseasca nr total de token-uri alocat unei ferestre de chat si procesele de studiu sa devina greoaie si ineficiente
+
+
+
+5. Este deschis oricarui tip de recomandare atat timp cat il ajuta
+
+
+
+6. Materia care trebuie parcursa este foarte stufoasa, poate mii de pagini, cum ar trebui structurata, evaluata si disecata ca sa ma folosesc de Gemini cat mai eficient.
+
+
+
+7. Cum ii pot da acces lui Gemini catre toate resurselle de care are nevoie sa pregateasca aceasta persoana cat mai eficient
+
+
+
+8. As vrea ca bazat pe studiile de caz pe care le face Gemini sa ne concentram strict pe promovarea examenului, sa evitam rabbitholes care pot consuma timp inutil, sa face highlight pe onele de interes descoperite in urma stuudiului subiectelor din ultimii ani
+
+
+
+9. Ne vom concentra strict pe structura actuala a concursului, nu mai este relevanta cea de dinainte de 2019
