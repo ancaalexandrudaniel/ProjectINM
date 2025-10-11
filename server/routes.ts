@@ -257,19 +257,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI: Get upload URL for documents
-  app.post("/api/documents/upload-url", async (req, res) => {
+  // AI: Upload and process document (simplified - base64 upload)
+  app.post("/api/documents/upload", async (req, res) => {
     try {
-      const { ObjectStorageService } = await import("./objectStorage");
-      const storageService = new ObjectStorageService();
+      const { extractTextFromPDF, analyzeLegalDocument } = await import("./gemini");
+      const { uploadedDocuments } = await import("@shared/schema");
+      const userId = await getDefaultUserId();
+      const fs = await import("fs");
       
-      const { fileExtension = "pdf" } = req.body;
-      const uploadURL = await storageService.getObjectEntityUploadURL(fileExtension);
+      const { fileName, documentType, subject, fileContent } = req.body;
       
-      res.json({ uploadURL });
+      // Save base64 to temporary file
+      const tmpPath = `/tmp/${Date.now()}-${fileName}`;
+      const buffer = Buffer.from(fileContent, 'base64');
+      fs.writeFileSync(tmpPath, buffer);
+      
+      // Extract text from PDF
+      const extractedText = await extractTextFromPDF(tmpPath);
+      
+      // Analyze document with AI
+      const analysis = await analyzeLegalDocument({
+        documentText: extractedText,
+        documentType: documentType as any
+      });
+      
+      // Save document metadata to database
+      const [document] = await db.insert(uploadedDocuments).values({
+        userId,
+        fileName,
+        documentType,
+        subject,
+        objectPath: tmpPath, // store temp path for reference
+        extractedText,
+        aiSummary: analysis.summary
+      }).returning();
+      
+      // Clean up temp file
+      fs.unlinkSync(tmpPath);
+      
+      res.json({ 
+        document, 
+        analysis 
+      });
     } catch (error) {
-      console.error("Upload URL error:", error);
-      res.status(500).json({ error: "Failed to get upload URL" });
+      console.error("Document upload error:", error);
+      res.status(500).json({ error: "Failed to upload document" });
+    }
+  });
+
+  // AI: Get all uploaded documents
+  app.get("/api/documents", async (req, res) => {
+    try {
+      const { uploadedDocuments } = await import("@shared/schema");
+      const { eq } = await import("drizzle-orm");
+      const userId = await getDefaultUserId();
+      
+      const docs = await db
+        .select()
+        .from(uploadedDocuments)
+        .where(eq(uploadedDocuments.userId, userId));
+      
+      res.json(docs);
+    } catch (error) {
+      console.error("Fetch documents error:", error);
+      res.status(500).json({ error: "Failed to fetch documents" });
     }
   });
 
@@ -308,7 +359,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         subject,
         objectPath,
         extractedText,
-        aiSummary: JSON.stringify(analysis)
+        aiSummary: analysis.summary
       }).returning();
       
       res.json({ 
@@ -318,6 +369,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Document processing error:", error);
       res.status(500).json({ error: "Failed to process document" });
+    }
+  });
+
+  // AI: Delete document
+  app.delete("/api/documents/:id", async (req, res) => {
+    try {
+      const { uploadedDocuments } = await import("@shared/schema");
+      const { eq, and } = await import("drizzle-orm");
+      const userId = await getDefaultUserId();
+      const documentId = req.params.id;
+      
+      await db
+        .delete(uploadedDocuments)
+        .where(
+          and(
+            eq(uploadedDocuments.id, documentId),
+            eq(uploadedDocuments.userId, userId)
+          )
+        );
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Delete document error:", error);
+      res.status(500).json({ error: "Failed to delete document" });
     }
   });
 

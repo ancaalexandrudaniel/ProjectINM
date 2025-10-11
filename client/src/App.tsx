@@ -11,6 +11,7 @@ import Library from "@/pages/library";
 import Performance from "@/pages/performance";
 import WeakPoints from "@/pages/weak-points";
 import WrongAnswers from "@/pages/wrong-answers";
+import Documents from "@/pages/documents";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 
@@ -25,6 +26,7 @@ function Router() {
       <Route path="/performance" component={Performance} />
       <Route path="/weak-points" component={WeakPoints} />
       <Route path="/wrong-answers" component={WrongAnswers} />
+      <Route path="/documents" component={Documents} />
       <Route component={NotFound} />
     </Switch>
   );

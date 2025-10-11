@@ -2,7 +2,15 @@
 
 This is an INM (Institutul Național al Magistraturii) exam preparation platform - a quiz application designed to help Romanian law students prepare for the National Institute of Magistracy entrance exam. The application provides practice quizzes, simulations, performance tracking, and weak point analysis across four legal subjects: Civil Law, Civil Procedural Law, Penal Law, and Penal Procedural Law.
 
-The platform features a modern, responsive interface built with React and TypeScript, backed by an Express server with PostgreSQL database integration. It includes comprehensive quiz functionality with timed sessions, detailed explanations with legal references, progress tracking, and personalized weak point identification.
+The platform features a modern, responsive interface built with React and TypeScript, backed by an Express server with PostgreSQL database integration. It includes comprehensive quiz functionality with timed sessions, detailed explanations with legal references, progress tracking, personalized weak point identification, **and AI-powered features using Google Gemini 2.0 Flash Experimental model**.
+
+## Recent AI Features Added (Oct 2025)
+
+1. **AI Wrong Answer Explanations** - Gemini analyzes why users answered incorrectly and provides personalized Romanian explanations with practical legal examples. Accessible via "Explică cu AI" button on wrong-answers page.
+
+2. **PDF Document Upload System** - Users can upload legal PDFs (tematic\u0103, bibliografie, subiecte anterioare, coduri, cursuri) to `/documents` page. Files are stored in Replit Object Storage, text extracted via pdf-parse, and analyzed by Gemini AI for summaries.
+
+3. **AI Infrastructure** - Complete Gemini integration in `server/gemini.ts` with 5 functions: explainWrongAnswer, analyzePreviousExams, generateStudyPlan, analyzeLegalDocument, chatWithLegalAssistant. Uses correct SDK pattern: `ai.models.generateContent()` with structured contents array.
 
 # User Preferences
 

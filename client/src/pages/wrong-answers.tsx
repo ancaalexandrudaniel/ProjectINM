@@ -332,13 +332,14 @@ export default function WrongAnswers() {
                     <Button
                       onClick={async () => {
                         try {
-                          const response = await apiRequest('/api/ai/explain-wrong-answer', {
-                            method: 'POST',
-                            body: JSON.stringify({
+                          const response = await apiRequest(
+                            'POST',
+                            '/api/ai/explain-wrong-answer',
+                            {
                               questionId: question.id,
                               userAnswerId: answer.id
-                            })
-                          });
+                            }
+                          );
                           
                           const data = await response.json();
                           setAiExplanations(prev => ({
