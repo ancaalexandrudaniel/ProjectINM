@@ -343,14 +343,18 @@ export default function WeakPoints() {
                           Exersează Capitol
                         </Button>
                       </Link>
-                      <Button variant="outline" size="sm" data-testid={`view-errors-${index}`}>
-                        Vezi Greșeli
-                      </Button>
-                      <Button variant="ghost" size="sm" className="text-primary hover:text-primary" data-testid={`resources-${index}`}>
-                        <BookOpen className="h-4 w-4 mr-2" />
-                        Resurse bibliografice
-                        <ArrowRight className="h-4 w-4 ml-1" />
-                      </Button>
+                      <Link href={`/wrong-answers?subject=${point.subject}&chapter=${encodeURIComponent(point.chapter)}`}>
+                        <Button variant="outline" size="sm" data-testid={`view-errors-${index}`}>
+                          Vezi Greșeli
+                        </Button>
+                      </Link>
+                      <Link href={`/library?subject=${point.subject}`}>
+                        <Button variant="ghost" size="sm" className="text-primary hover:text-primary" data-testid={`resources-${index}`}>
+                          <BookOpen className="h-4 w-4 mr-2" />
+                          Resurse bibliografice
+                          <ArrowRight className="h-4 w-4 ml-1" />
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                   <div className="text-right">

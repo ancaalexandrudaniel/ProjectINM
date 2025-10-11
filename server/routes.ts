@@ -3,6 +3,17 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertQuizSessionSchema, insertUserAnswerSchema } from "@shared/schema";
 import { z } from "zod";
+import { db } from "./db";
+import { users } from "@shared/schema";
+
+// Helper to get first user ID
+async function getDefaultUserId(): Promise<string> {
+  const allUsers = await db.select().from(users).limit(1);
+  if (allUsers.length === 0) {
+    throw new Error("No users found in database");
+  }
+  return allUsers[0].id;
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get all questions
@@ -131,7 +142,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user progress
   app.get("/api/progress", async (req, res) => {
     try {
-      const progress = await storage.getUserProgress("default-user");
+      const userId = await getDefaultUserId();
+      const progress = await storage.getUserProgress(userId);
       res.json(progress);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch progress" });
@@ -141,7 +153,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user quiz sessions
   app.get("/api/sessions", async (req, res) => {
     try {
-      const sessions = await storage.getUserQuizSessions("default-user");
+      const userId = await getDefaultUserId();
+      const sessions = await storage.getUserQuizSessions(userId);
       res.json(sessions);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch sessions" });
@@ -151,10 +164,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user answers for analysis
   app.get("/api/answers", async (req, res) => {
     try {
-      const answers = await storage.getUserAnswers("default-user");
+      const userId = await getDefaultUserId();
+      const answers = await storage.getUserAnswers(userId);
       res.json(answers);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch answers" });
+    }
+  });
+
+  // Get wrong answers with question details
+  app.get("/api/wrong-answers", async (req, res) => {
+    try {
+      const userId = await getDefaultUserId();
+      const subject = req.query.subject as string | undefined;
+      const chapter = req.query.chapter as string | undefined;
+      
+      const answers = await storage.getUserAnswers(userId);
+      const wrongAnswers = answers.filter(a => !a.isCorrect);
+      
+      const questions = await storage.getAllQuestions();
+      
+      const wrongAnswersWithDetails = wrongAnswers
+        .map(answer => {
+          const question = questions.find(q => q.id === answer.questionId);
+          return question ? { ...answer, question } : null;
+        })
+        .filter(item => item !== null)
+        .filter(item => {
+          if (subject && item.question.subject !== subject) return false;
+          if (chapter && item.question.chapter !== chapter) return false;
+          return true;
+        });
+      
+      res.json(wrongAnswersWithDetails);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch wrong answers" });
     }
   });
 

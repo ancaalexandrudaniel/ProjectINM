@@ -10,6 +10,7 @@ import Simulation from "@/pages/simulation";
 import Library from "@/pages/library";
 import Performance from "@/pages/performance";
 import WeakPoints from "@/pages/weak-points";
+import WrongAnswers from "@/pages/wrong-answers";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/library" component={Library} />
       <Route path="/performance" component={Performance} />
       <Route path="/weak-points" component={WeakPoints} />
+      <Route path="/wrong-answers" component={WrongAnswers} />
       <Route component={NotFound} />
     </Switch>
   );
