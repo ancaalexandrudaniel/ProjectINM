@@ -572,3 +572,95 @@ ${params.context ? `\n\nCONTEXT din documente:\n${params.context}` : ""}`;
 
   return result.text || "Nu am putut genera un răspuns. Încearcă din nou.";
 }
+
+/**
+ * Generate embedding vector for a single text using Gemini embedding model
+ * Uses 768 dimensions (MRL-optimized) for efficient storage
+ */
+export async function generateEmbedding(text: string): Promise<number[]> {
+  if (!text || text.trim().length === 0) {
+    throw new Error("Cannot generate embedding for empty text");
+  }
+
+  const result = await ai.models.embedContent({
+    model: "gemini-embedding-001",
+    contents: text,
+    config: {
+      outputDimensionality: 768 // Use MRL to reduce to 768 dimensions for storage optimization
+    }
+  });
+
+  if (!result.embeddings || result.embeddings.length === 0 || !result.embeddings[0].values) {
+    throw new Error("Gemini returned no embeddings");
+  }
+
+  return result.embeddings[0].values;
+}
+
+/**
+ * Generate embeddings for multiple texts in batch
+ * More efficient than calling generateEmbedding multiple times
+ */
+export async function batchGenerateEmbeddings(texts: string[]): Promise<number[][]> {
+  const embeddings: number[][] = [];
+  
+  // Process in batches to avoid rate limits
+  const batchSize = 10;
+  for (let i = 0; i < texts.length; i += batchSize) {
+    const batch = texts.slice(i, i + batchSize);
+    const batchPromises = batch.map(text => generateEmbedding(text));
+    const batchResults = await Promise.all(batchPromises);
+    embeddings.push(...batchResults);
+  }
+  
+  return embeddings;
+}
+
+/**
+ * Calculate cosine similarity between two embedding vectors
+ * Returns a value between -1 and 1, where 1 means identical vectors
+ */
+export function calculateCosineSimilarity(vec1: number[], vec2: number[]): number {
+  if (vec1.length !== vec2.length) {
+    throw new Error(`Vector dimensions must match: ${vec1.length} vs ${vec2.length}`);
+  }
+
+  let dotProduct = 0;
+  let mag1 = 0;
+  let mag2 = 0;
+
+  for (let i = 0; i < vec1.length; i++) {
+    dotProduct += vec1[i] * vec2[i];
+    mag1 += vec1[i] * vec1[i];
+    mag2 += vec2[i] * vec2[i];
+  }
+
+  mag1 = Math.sqrt(mag1);
+  mag2 = Math.sqrt(mag2);
+
+  if (mag1 === 0 || mag2 === 0) {
+    return 0;
+  }
+
+  return dotProduct / (mag1 * mag2);
+}
+
+/**
+ * Find top-K most similar chunks to a query using cosine similarity
+ */
+export function findTopSimilarChunks(
+  queryEmbedding: number[],
+  chunkEmbeddings: Array<{ embedding: number[]; chunkId: string; text: string }>,
+  topK: number = 5
+): Array<{ chunkId: string; text: string; similarity: number }> {
+  const similarities = chunkEmbeddings.map(chunk => ({
+    chunkId: chunk.chunkId,
+    text: chunk.text,
+    similarity: calculateCosineSimilarity(queryEmbedding, chunk.embedding)
+  }));
+
+  // Sort by similarity descending and take top K
+  return similarities
+    .sort((a, b) => b.similarity - a.similarity)
+    .slice(0, topK);
+}

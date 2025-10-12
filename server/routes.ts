@@ -448,6 +448,256 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // RAG: Process document into chunks
+  app.post("/api/documents/:id/process-chunks", async (req, res) => {
+    try {
+      const { uploadedDocuments, documentChunks } = await import("@shared/schema");
+      const { eq, and } = await import("drizzle-orm");
+      const { chunkText } = await import("./utils/chunking");
+      
+      const userId = await getDefaultUserId();
+      const documentId = req.params.id;
+      
+      // Get document
+      const [document] = await db
+        .select()
+        .from(uploadedDocuments)
+        .where(
+          and(
+            eq(uploadedDocuments.id, documentId),
+            eq(uploadedDocuments.userId, userId)
+          )
+        )
+        .limit(1);
+      
+      if (!document) {
+        return res.status(404).json({ error: "Document not found" });
+      }
+      
+      if (!document.extractedText) {
+        return res.status(400).json({ error: "Document has no extracted text" });
+      }
+      
+      // Delete existing chunks for this document
+      await db.delete(documentChunks).where(eq(documentChunks.documentId, documentId));
+      
+      // Create chunks
+      const chunks = chunkText(document.extractedText, {
+        chunkSize: 800,
+        overlap: 100,
+        minChunkSize: 300
+      });
+      
+      console.log(`[CHUNKING] Created ${chunks.length} chunks from ${document.extractedText.length} chars`);
+      
+      // Save chunks to database
+      const savedChunks = [];
+      for (const chunk of chunks) {
+        const [saved] = await db
+          .insert(documentChunks)
+          .values({
+            documentId: document.id,
+            chunkText: chunk.text,
+            chunkIndex: chunk.index,
+            metadata: {
+              documentType: document.documentType,
+              subject: document.subject,
+              fileName: document.fileName,
+              startPosition: chunk.startPosition,
+              endPosition: chunk.endPosition
+            }
+          })
+          .returning();
+        savedChunks.push(saved);
+      }
+      
+      res.json({
+        documentId: document.id,
+        fileName: document.fileName,
+        chunksCreated: savedChunks.length,
+        totalTextLength: document.extractedText.length
+      });
+    } catch (error) {
+      console.error("Process chunks error:", error);
+      res.status(500).json({ error: "Failed to process document chunks" });
+    }
+  });
+
+  // RAG: Get document chunks
+  app.get("/api/documents/:id/chunks", async (req, res) => {
+    try {
+      const { documentChunks } = await import("@shared/schema");
+      const { eq, asc } = await import("drizzle-orm");
+      
+      const documentId = req.params.id;
+      
+      const chunks = await db
+        .select()
+        .from(documentChunks)
+        .where(eq(documentChunks.documentId, documentId))
+        .orderBy(asc(documentChunks.chunkIndex));
+      
+      res.json(chunks);
+    } catch (error) {
+      console.error("Get chunks error:", error);
+      res.status(500).json({ error: "Failed to fetch document chunks" });
+    }
+  });
+
+  // RAG: Generate embeddings for document chunks
+  app.post("/api/documents/:id/generate-embeddings", async (req, res) => {
+    try {
+      const { documentChunks } = await import("@shared/schema");
+      const { eq, isNull } = await import("drizzle-orm");
+      const { batchGenerateEmbeddings } = await import("./gemini");
+      
+      const documentId = req.params.id;
+      
+      // Get chunks without embeddings
+      const chunks = await db
+        .select()
+        .from(documentChunks)
+        .where(eq(documentChunks.documentId, documentId));
+      
+      if (chunks.length === 0) {
+        return res.status(404).json({ error: "No chunks found for this document" });
+      }
+      
+      console.log(`[EMBEDDINGS] Generating embeddings for ${chunks.length} chunks...`);
+      
+      // Generate embeddings for all chunks
+      const texts = chunks.map(c => c.chunkText);
+      const embeddings = await batchGenerateEmbeddings(texts);
+      
+      console.log(`[EMBEDDINGS] Generated ${embeddings.length} embeddings, updating DB...`);
+      
+      // Update chunks with embeddings
+      let updatedCount = 0;
+      for (let i = 0; i < chunks.length; i++) {
+        await db
+          .update(documentChunks)
+          .set({ embedding: embeddings[i] })
+          .where(eq(documentChunks.id, chunks[i].id));
+        updatedCount++;
+      }
+      
+      console.log(`[EMBEDDINGS] Updated ${updatedCount} chunks with embeddings`);
+      
+      res.json({
+        documentId,
+        chunksProcessed: updatedCount,
+        embeddingDimensions: embeddings[0]?.length || 0
+      });
+    } catch (error) {
+      console.error("Generate embeddings error:", error);
+      res.status(500).json({ error: "Failed to generate embeddings" });
+    }
+  });
+
+  // RAG: Ask legal question with document retrieval
+  app.post("/api/legal-assistant/ask", async (req, res) => {
+    try {
+      const { documentChunks } = await import("@shared/schema");
+      const { isNotNull } = await import("drizzle-orm");
+      const { generateEmbedding, calculateCosineSimilarity } = await import("./gemini");
+      
+      const { question, topK = 5 } = req.body;
+      
+      if (!question || question.trim().length === 0) {
+        return res.status(400).json({ error: "Question is required" });
+      }
+      
+      console.log(`[RAG] Question: "${question}"`);
+      
+      // Generate embedding for question
+      const questionEmbedding = await generateEmbedding(question);
+      console.log(`[RAG] Generated question embedding (${questionEmbedding.length}D)`);
+      
+      // Get all chunks with embeddings
+      const chunks = await db
+        .select()
+        .from(documentChunks)
+        .where(isNotNull(documentChunks.embedding));
+      
+      if (chunks.length === 0) {
+        return res.status(404).json({ 
+          error: "No document embeddings found. Please generate embeddings first." 
+        });
+      }
+      
+      console.log(`[RAG] Searching through ${chunks.length} chunks...`);
+      
+      // Calculate similarities and find top-K
+      const similarities = chunks
+        .map(chunk => ({
+          ...chunk,
+          similarity: calculateCosineSimilarity(
+            questionEmbedding, 
+            chunk.embedding as number[]
+          )
+        }))
+        .sort((a, b) => b.similarity - a.similarity)
+        .slice(0, topK);
+      
+      console.log(`[RAG] Top ${topK} similarities:`, 
+        similarities.map(s => s.similarity.toFixed(4)));
+      
+      // Build context from top chunks
+      const context = similarities
+        .map((s, i) => `[${i + 1}] ${s.chunkText}`)
+        .join('\n\n');
+      
+      // Generate answer using Gemini with RAG context
+      const { GoogleGenAI } = await import("@google/genai");
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+      
+      const systemPrompt = `Ești un asistent juridic expert pentru pregătirea examenului INM.
+Răspunzi la întrebări despre concepte juridice în limba română, bazându-te pe documentele furnizate.
+
+REGULI IMPORTANTE:
+- Răspunde STRICT bazat pe contextul furnizat din documente
+- Citează articole și legi când răspunzi
+- Dacă informația nu există în context, spune clar "Nu găsesc această informație în documentele disponibile"
+- Răspunsuri concise (max 250 cuvinte)
+- Limbaj simplu, fără termeni complicați
+- Exemplifică cu cazuri practice când este relevant
+
+CONTEXT din documente:
+${context}`;
+
+      const result = await ai.models.generateContent({
+        model: "gemini-2.0-flash-exp",
+        systemInstruction: systemPrompt,
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: question }]
+          }
+        ]
+      });
+      
+      const answer = result.text || "Nu am putut genera un răspuns.";
+      
+      // Prepare citations
+      const citations = similarities.map(s => ({
+        chunkId: s.id,
+        text: s.chunkText.substring(0, 200) + (s.chunkText.length > 200 ? "..." : ""),
+        similarity: s.similarity,
+        metadata: s.metadata
+      }));
+      
+      res.json({
+        question,
+        answer,
+        citations,
+        chunksRetrieved: topK
+      });
+    } catch (error) {
+      console.error("Legal assistant error:", error);
+      res.status(500).json({ error: "Failed to answer question" });
+    }
+  });
+
   // AI: Generate personalized study plan
   app.post("/api/study-plan/generate", async (req, res) => {
     try {

@@ -11,7 +11,8 @@ import {
   AlertTriangle,
   Upload,
   BarChart3,
-  Calendar
+  Calendar,
+  Brain
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import type { UserProgress } from "@/types/quiz";
@@ -126,6 +127,13 @@ export default function Sidebar() {
             <a className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/study-plan') ? 'active' : ''}`} data-testid="nav-study-plan">
               <Calendar className="h-5 w-5" />
               <span className="font-medium">Plan de Studiu</span>
+            </a>
+          </Link>
+          
+          <Link href="/legal-assistant">
+            <a className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/legal-assistant') ? 'active' : ''}`} data-testid="nav-legal-assistant">
+              <Brain className="h-5 w-5" />
+              <span className="font-medium">Asistent Juridic AI</span>
             </a>
           </Link>
           

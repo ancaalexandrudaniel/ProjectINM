@@ -14,6 +14,7 @@ import WrongAnswers from "@/pages/wrong-answers";
 import Documents from "@/pages/documents";
 import ExamAnalysis from "@/pages/exam-analysis";
 import StudyPlan from "@/pages/study-plan";
+import LegalAssistant from "@/pages/legal-assistant";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 
@@ -31,6 +32,7 @@ function Router() {
       <Route path="/documents" component={Documents} />
       <Route path="/exam-analysis" component={ExamAnalysis} />
       <Route path="/study-plan" component={StudyPlan} />
+      <Route path="/legal-assistant" component={LegalAssistant} />
       <Route component={NotFound} />
     </Switch>
   );
