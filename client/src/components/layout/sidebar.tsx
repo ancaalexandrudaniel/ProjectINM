@@ -51,11 +51,9 @@ export default function Sidebar() {
     <aside className="w-72 bg-card border-r border-border h-[calc(100vh-73px)] sticky top-[73px] overflow-y-auto">
       <nav className="p-4 sidebar-nav">
         <div className="space-y-1">
-          <Link href="/">
-            <a className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/') ? 'active' : ''}`} data-testid="nav-dashboard">
-              <LayoutDashboard className="h-5 w-5" />
-              <span className="font-medium">Dashboard</span>
-            </a>
+          <Link href="/" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/') ? 'active' : ''}`} data-testid="nav-dashboard">
+            <LayoutDashboard className="h-5 w-5" />
+            <span className="font-medium">Dashboard</span>
           </Link>
           
           <div className="pt-4 pb-2">
@@ -69,22 +67,20 @@ export default function Sidebar() {
             const progressPercent = getSubjectProgress(subject.id);
             
             return (
-              <Link key={subject.id} href={subject.href}>
-                <a className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive(subject.href) ? 'active' : ''}`} data-testid={`nav-${subject.id}`}>
-                  <Icon className="h-5 w-5" />
-                  <div className="flex-1">
-                    <span className="font-medium">{subject.name}</span>
-                    <div className="flex items-center gap-2 mt-1">
-                      <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-primary rounded-full transition-all duration-300" 
-                          style={{ width: `${progressPercent}%` }}
-                        />
-                      </div>
-                      <span className="text-xs text-muted-foreground">{progressPercent}%</span>
+              <Link key={subject.id} href={subject.href} className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive(subject.href) ? 'active' : ''}`} data-testid={`nav-${subject.id}`}>
+                <Icon className="h-5 w-5" />
+                <div className="flex-1">
+                  <span className="font-medium">{subject.name}</span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-primary rounded-full transition-all duration-300" 
+                        style={{ width: `${progressPercent}%` }}
+                      />
                     </div>
+                    <span className="text-xs text-muted-foreground">{progressPercent}%</span>
                   </div>
-                </a>
+                </div>
               </Link>
             );
           })}
@@ -95,60 +91,44 @@ export default function Sidebar() {
             </p>
           </div>
           
-          <Link href="/simulation">
-            <a className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/simulation') ? 'active' : ''}`} data-testid="nav-simulation">
-              <Timer className="h-5 w-5" />
-              <span className="font-medium">Simulare Examen</span>
-            </a>
+          <Link href="/simulation" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/simulation') ? 'active' : ''}`} data-testid="nav-simulation">
+            <Timer className="h-5 w-5" />
+            <span className="font-medium">Simulare Examen</span>
           </Link>
           
-          <Link href="/library">
-            <a className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/library') ? 'active' : ''}`} data-testid="nav-library">
-              <BookOpen className="h-5 w-5" />
-              <span className="font-medium">Bibliotecă Digitală</span>
-            </a>
+          <Link href="/library" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/library') ? 'active' : ''}`} data-testid="nav-library">
+            <BookOpen className="h-5 w-5" />
+            <span className="font-medium">Bibliotecă Digitală</span>
           </Link>
           
-          <Link href="/documents">
-            <a className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/documents') ? 'active' : ''}`} data-testid="nav-documents">
-              <Upload className="h-5 w-5" />
-              <span className="font-medium">Documente PDF</span>
-            </a>
+          <Link href="/documents" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/documents') ? 'active' : ''}`} data-testid="nav-documents">
+            <Upload className="h-5 w-5" />
+            <span className="font-medium">Documente PDF</span>
           </Link>
           
-          <Link href="/exam-analysis">
-            <a className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/exam-analysis') ? 'active' : ''}`} data-testid="nav-exam-analysis">
-              <BarChart3 className="h-5 w-5" />
-              <span className="font-medium">Analiză Subiecte</span>
-            </a>
+          <Link href="/exam-analysis" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/exam-analysis') ? 'active' : ''}`} data-testid="nav-exam-analysis">
+            <BarChart3 className="h-5 w-5" />
+            <span className="font-medium">Analiză Subiecte</span>
           </Link>
           
-          <Link href="/study-plan">
-            <a className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/study-plan') ? 'active' : ''}`} data-testid="nav-study-plan">
-              <Calendar className="h-5 w-5" />
-              <span className="font-medium">Plan de Studiu</span>
-            </a>
+          <Link href="/study-plan" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/study-plan') ? 'active' : ''}`} data-testid="nav-study-plan">
+            <Calendar className="h-5 w-5" />
+            <span className="font-medium">Plan de Studiu</span>
           </Link>
           
-          <Link href="/legal-assistant">
-            <a className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/legal-assistant') ? 'active' : ''}`} data-testid="nav-legal-assistant">
-              <Brain className="h-5 w-5" />
-              <span className="font-medium">Asistent Juridic AI</span>
-            </a>
+          <Link href="/legal-assistant" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/legal-assistant') ? 'active' : ''}`} data-testid="nav-legal-assistant">
+            <Brain className="h-5 w-5" />
+            <span className="font-medium">Asistent Juridic AI</span>
           </Link>
           
-          <Link href="/performance">
-            <a className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/performance') ? 'active' : ''}`} data-testid="nav-performance">
-              <TrendingUp className="h-5 w-5" />
-              <span className="font-medium">Istoric Performanță</span>
-            </a>
+          <Link href="/performance" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/performance') ? 'active' : ''}`} data-testid="nav-performance">
+            <TrendingUp className="h-5 w-5" />
+            <span className="font-medium">Istoric Performanță</span>
           </Link>
           
-          <Link href="/weak-points">
-            <a className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/weak-points') ? 'active' : ''}`} data-testid="nav-weak-points">
-              <AlertTriangle className="h-5 w-5" />
-              <span className="font-medium">Puncte Slabe</span>
-            </a>
+          <Link href="/weak-points" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/weak-points') ? 'active' : ''}`} data-testid="nav-weak-points">
+            <AlertTriangle className="h-5 w-5" />
+            <span className="font-medium">Puncte Slabe</span>
           </Link>
         </div>
       </nav>
