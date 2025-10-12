@@ -16,6 +16,8 @@ The platform features a modern, responsive interface built with React and TypeSc
 
 5. **AI Infrastructure** - Complete Gemini integration in `server/gemini.ts` with 6 functions: explainWrongAnswer, analyzePreviousExams, generateStudyPlan, generatePersonalizedStudyPlan, analyzeLegalDocument, analyzeExamPatterns. Uses correct SDK pattern: `ai.models.generateContent()` with structured contents array and robust JSON extraction (handles markdown code blocks).
 
+6. **RAG Q&A Legal Assistant (Oct 12, 2025)** - Complete Retrieval-Augmented Generation system for intelligent Q&A on uploaded legal documents. Architecture: document chunking (500-1000 char with 100 char overlap) → Gemini embeddings (768D gemini-embedding-001 with MRL optimization) → cosine similarity search (TypeScript implementation, no pgvector) → top-K retrieval → AI answer generation with citations. Located at `/legal-assistant` page with cockpit HUD chat interface. Features: question input, AI answers in Romanian, document citations with similarity scores and chunk previews. Backend: chunking utility in `server/utils/chunking.ts`, embedding/similarity functions in `server/gemini.ts`, endpoints POST /api/legal-assistant/ask, POST /api/documents/:id/process-chunks, POST /api/documents/:id/generate-embeddings. Database: document_chunks table with JSONB embeddings (768 dimensions). Successfully tested chunking (395 chunks from 216k chars), embeddings (0.9042 similarity for same topic), and full UI/API integration. Production-ready pending Gemini API quota upgrade (free tier exhausted during testing).
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
