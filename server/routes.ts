@@ -448,6 +448,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI: Generate personalized study plan
+  app.post("/api/study-plan/generate", async (req, res) => {
+    try {
+      const { generatePersonalizedStudyPlan } = await import("./gemini");
+      const { studyPlans, insertStudyPlanSchema } = await import("@shared/schema");
+      
+      const userId = await getDefaultUserId();
+      const { daysUntilExam, hoursPerDay } = req.body;
+      
+      // Validate input
+      if (!daysUntilExam || !hoursPerDay) {
+        return res.status(400).json({ error: "Missing daysUntilExam or hoursPerDay" });
+      }
+      
+      // Get user progress
+      const progress = await storage.getUserProgress(userId);
+      
+      // Format progress for AI
+      const userProgress = progress.map(p => ({
+        subject: p.subject,
+        chapter: p.chapter,
+        accuracy: p.accuracy || 0,
+        totalQuestions: p.totalQuestions || 0
+      }));
+      
+      // Generate plan with AI
+      const generatedPlan = await generatePersonalizedStudyPlan({
+        userProgress,
+        daysUntilExam: parseInt(daysUntilExam),
+        hoursPerDay: parseInt(hoursPerDay),
+        examPatterns: [] // Can be enhanced later with exam patterns
+      });
+      
+      // Save plan to database
+      const planData = insertStudyPlanSchema.parse({
+        userId,
+        daysUntilExam: parseInt(daysUntilExam),
+        hoursPerDay: parseInt(hoursPerDay),
+        planData: generatedPlan
+      });
+      
+      const [savedPlan] = await db.insert(studyPlans).values(planData).returning();
+      
+      res.json({
+        id: savedPlan.id,
+        ...generatedPlan
+      });
+    } catch (error) {
+      console.error("Study plan generation error:", error);
+      res.status(500).json({ error: "Failed to generate study plan" });
+    }
+  });
+
+  // Get latest study plan
+  app.get("/api/study-plan/latest", async (req, res) => {
+    try {
+      const { studyPlans } = await import("@shared/schema");
+      const { desc, eq } = await import("drizzle-orm");
+      
+      const userId = await getDefaultUserId();
+      
+      const [latestPlan] = await db
+        .select()
+        .from(studyPlans)
+        .where(eq(studyPlans.userId, userId))
+        .orderBy(desc(studyPlans.generatedAt))
+        .limit(1);
+      
+      if (!latestPlan) {
+        return res.status(404).json({ error: "No study plan found" });
+      }
+      
+      res.json({
+        id: latestPlan.id,
+        daysUntilExam: latestPlan.daysUntilExam,
+        hoursPerDay: latestPlan.hoursPerDay,
+        generatedAt: latestPlan.generatedAt,
+        ...latestPlan.planData
+      });
+    } catch (error) {
+      console.error("Get study plan error:", error);
+      res.status(500).json({ error: "Failed to fetch study plan" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
