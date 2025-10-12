@@ -91,6 +91,16 @@ export const studyPlans = pgTable("study_plans", {
   generatedAt: timestamp("generated_at").defaultNow(),
 });
 
+export const documentChunks = pgTable("document_chunks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  documentId: varchar("document_id").references(() => uploadedDocuments.id).notNull(),
+  chunkText: text("chunk_text").notNull(),
+  chunkIndex: integer("chunk_index").notNull(),
+  embedding: jsonb("embedding"), // array of 768 floats
+  metadata: jsonb("metadata"), // {documentType, subject, fileName}
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -132,6 +142,11 @@ export const insertStudyPlanSchema = createInsertSchema(studyPlans).omit({
   generatedAt: true,
 });
 
+export const insertDocumentChunkSchema = createInsertSchema(documentChunks).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -156,3 +171,6 @@ export type InsertAiExplanation = z.infer<typeof insertAiExplanationSchema>;
 
 export type StudyPlan = typeof studyPlans.$inferSelect;
 export type InsertStudyPlan = z.infer<typeof insertStudyPlanSchema>;
+
+export type DocumentChunk = typeof documentChunks.$inferSelect;
+export type InsertDocumentChunk = z.infer<typeof insertDocumentChunkSchema>;
