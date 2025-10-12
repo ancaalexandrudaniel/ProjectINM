@@ -10,7 +10,11 @@ The platform features a modern, responsive interface built with React and TypeSc
 
 2. **PDF Document Upload System** - Users can upload legal PDFs (tematic\u0103, bibliografie, subiecte anterioare, coduri, cursuri) to `/documents` page. Files are stored in Replit Object Storage, text extracted via pdf-parse, and analyzed by Gemini AI for summaries.
 
-3. **AI Infrastructure** - Complete Gemini integration in `server/gemini.ts` with 5 functions: explainWrongAnswer, analyzePreviousExams, generateStudyPlan, analyzeLegalDocument, chatWithLegalAssistant. Uses correct SDK pattern: `ai.models.generateContent()` with structured contents array.
+3. **Exam Pattern Analysis** - AI identifies recurring chapters, legal articles, and study priorities from previous exam PDFs (2019-2024). Located at `/exam-analysis` page with priority badges (Critic, Important, Moderat) in Romanian. Successfully tested with real INM exam documents.
+
+4. **AI-Powered Personalized Study Plans** - Gemini generates customized study schedules based on user progress, weak areas, and time available. Located at `/study-plan` page. Features daily schedule with date/topic/hours allocation, priority chapters (based on <60% accuracy), weekly goals, and study tips. Fully tested end-to-end with real user data.
+
+5. **AI Infrastructure** - Complete Gemini integration in `server/gemini.ts` with 6 functions: explainWrongAnswer, analyzePreviousExams, generateStudyPlan, generatePersonalizedStudyPlan, analyzeLegalDocument, analyzeExamPatterns. Uses correct SDK pattern: `ai.models.generateContent()` with structured contents array and robust JSON extraction (handles markdown code blocks).
 
 # User Preferences
 
