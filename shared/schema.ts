@@ -82,6 +82,15 @@ export const aiExplanations = pgTable("ai_explanations", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const studyPlans = pgTable("study_plans", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  daysUntilExam: integer("days_until_exam").notNull(),
+  hoursPerDay: integer("hours_per_day").notNull(),
+  planData: jsonb("plan_data").notNull(), // AI-generated study plan structure
+  generatedAt: timestamp("generated_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -118,6 +127,11 @@ export const insertAiExplanationSchema = createInsertSchema(aiExplanations).omit
   createdAt: true,
 });
 
+export const insertStudyPlanSchema = createInsertSchema(studyPlans).omit({
+  id: true,
+  generatedAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -139,3 +153,6 @@ export type InsertUploadedDocument = z.infer<typeof insertUploadedDocumentSchema
 
 export type AiExplanation = typeof aiExplanations.$inferSelect;
 export type InsertAiExplanation = z.infer<typeof insertAiExplanationSchema>;
+
+export type StudyPlan = typeof studyPlans.$inferSelect;
+export type InsertStudyPlan = z.infer<typeof insertStudyPlanSchema>;

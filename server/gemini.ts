@@ -181,6 +181,138 @@ Răspunde în format JSON:
 }
 
 /**
+ * Generates personalized study plan based on user progress and exam date
+ */
+export async function generatePersonalizedStudyPlan(params: {
+  userProgress: Array<{
+    subject: string;
+    chapter: string;
+    accuracy: number;
+    totalQuestions: number;
+  }>;
+  daysUntilExam: number;
+  hoursPerDay: number;
+  examPatterns?: Array<{
+    chapter: string;
+    importance: string;
+  }>;
+}): Promise<{
+  dailySchedule: Array<{
+    day: number;
+    date: string;
+    topics: string[];
+    focus: string;
+    hours: number;
+  }>;
+  priorityChapters: string[];
+  weeklyGoals: string[];
+  studyTips: string[];
+}> {
+  const systemPrompt = `Ești un coach expert pentru pregătirea examenului INM România.
+Creezi planuri de studiu personalizate folosind:
+- Analiza punctelor slabe ale candidatului
+- Pattern-uri din examenele anterioare
+- Tehnica repetării spațiate (spaced repetition)
+- Optimizarea timpului disponibil`;
+
+  const progressText = params.userProgress
+    .map(p => `${p.subject} / ${p.chapter}: ${p.accuracy}% (${p.totalQuestions} întrebări)`)
+    .join("\n");
+
+  const patternsText = params.examPatterns?.length
+    ? params.examPatterns.map(p => `${p.chapter} (${p.importance})`).join(", ")
+    : "Nu sunt disponibile pattern-uri";
+
+  const userPrompt = `Creează un plan de studiu personalizat pentru examenul INM:
+
+**Progres actual:**
+${progressText || "Niciun progres înregistrat"}
+
+**Pattern-uri examene anterioare:**
+${patternsText}
+
+**Timp disponibil:**
+- ${params.daysUntilExam} zile până la examen
+- ${params.hoursPerDay} ore/zi pentru studiu
+
+**Cerințe plan:**
+1. Prioritizează capitole cu accuracy <60% (critice)
+2. Include capitole frecvente din examene (bazat pe patterns)
+3. Alocare timp realistă (${params.hoursPerDay}h/zi)
+4. Repetare spațiată: revizuire după 2 zile, 5 zile, 10 zile
+5. Include zile de pauză/review (1 zi la 7 zile)
+6. Ultimele 3 zile: simulări complete
+
+Răspunde în format JSON (limba română pentru text):
+{
+  "dailySchedule": [
+    {
+      "day": 1,
+      "date": "2025-10-13",
+      "topics": ["Capitol 1", "Capitol 2"],
+      "focus": "Învățare capitol nou",
+      "hours": 4
+    }
+  ],
+  "priorityChapters": ["capitol critical 1", "capitol critical 2"],
+  "weeklyGoals": ["Săptămâna 1: ...", "Săptămâna 2: ..."],
+  "studyTips": ["Sfat 1", "Sfat 2"]
+}`;
+
+  const result = await ai.models.generateContent({
+    model: "gemini-2.0-flash-exp",
+    systemInstruction: systemPrompt,
+    generationConfig: {
+      responseMimeType: "application/json"
+    },
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: userPrompt }]
+      }
+    ]
+  });
+
+  const rawJson = result.text;
+  console.log("[generatePersonalizedStudyPlan] Gemini response:", rawJson);
+
+  if (!rawJson) {
+    throw new Error("Gemini returned empty response");
+  }
+
+  // Try to extract JSON from response (same pattern as analyzeExamPatterns)
+  let jsonText = rawJson.trim();
+
+  // Try to find JSON code block
+  const codeBlockMatch = jsonText.match(/```(?:json)?\s*\n([\s\S]*?)\n```/);
+  if (codeBlockMatch) {
+    jsonText = codeBlockMatch[1].trim();
+  } else if (jsonText.startsWith('```')) {
+    const lines = jsonText.split('\n');
+    lines.shift();
+    if (lines[lines.length - 1].trim() === '```') {
+      lines.pop();
+    }
+    jsonText = lines.join('\n').trim();
+  }
+
+  try {
+    return JSON.parse(jsonText);
+  } catch (parseError) {
+    console.error("[generatePersonalizedStudyPlan] JSON parse failed:", parseError);
+    console.error("[generatePersonalizedStudyPlan] Attempted to parse:", jsonText.substring(0, 500));
+
+    // Final fallback
+    return {
+      dailySchedule: [],
+      priorityChapters: [],
+      weeklyGoals: [],
+      studyTips: ["Plan indisponibil momentan. Încercați din nou."]
+    };
+  }
+}
+
+/**
  * Analyzes exam patterns from previous exams PDFs
  */
 export async function analyzeExamPatterns(params: {
