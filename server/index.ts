@@ -1,6 +1,12 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { setupVite, log } from "./vite";
+import path from "path";
+
+// Ensure NODE_ENV is set for deployment
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = 'production';
+}
 
 const app = express();
 
@@ -61,10 +67,23 @@ app.use((req, res, next) => {
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
+  console.log(`[SERVER] NODE_ENV: ${process.env.NODE_ENV}`);
+  console.log(`[SERVER] Mode: ${process.env.NODE_ENV !== "production" ? "DEVELOPMENT (Vite)" : "PRODUCTION (Static)"}`);
+  
   if (process.env.NODE_ENV !== "production") {
     await setupVite(app, server);
   } else {
-    serveStatic(app);
+    // Serve static files manually to fix MIME type issues
+    const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
+    console.log(`[SERVER] Serving static from: ${distPath}`);
+    
+    // Serve static assets first (before catch-all route)
+    app.use(express.static(distPath));
+    
+    // Fall through to index.html for client-side routing
+    app.use("*", (_req, res) => {
+      res.sendFile(path.resolve(distPath, "index.html"));
+    });
   }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
