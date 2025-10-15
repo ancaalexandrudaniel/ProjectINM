@@ -1,0 +1,23 @@
+DEPLOYMENT INSTRUCTIONS
+======================
+
+Current Status: Build is ready with MIME type fix
+Next Step: Force redeploy from Replit UI
+
+Option 1: Use Deployments tab
+- Go to Deployments tab in Replit
+- Click "Redeploy" or "Deploy again"
+- Wait for build to complete (~60 seconds)
+
+Option 2: Make a dummy change to trigger rebuild
+- Edit any file (add a comment)
+- Replit will auto-rebuild on file change
+- Check deployment updates
+
+After redeploy:
+✓ CSS will serve as text/css (not text/html)
+✓ JS will serve as application/javascript (not text/html)  
+✓ React will mount correctly
+✓ Desktop browsers will work
+
+The fix is already in dist/index.js - deployment just needs to pick it up.
