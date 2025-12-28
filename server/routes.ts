@@ -813,6 +813,213 @@ ${context}`;
     }
   });
 
+  // ============================================
+  // BULK IMPORT & SEARCH ROUTES
+  // ============================================
+
+  // Get all question batches
+  app.get("/api/question-batches", async (req, res) => {
+    try {
+      const { questionBatches } = await import("@shared/schema");
+      const { eq, desc } = await import("drizzle-orm");
+      const userId = await getDefaultUserId();
+      
+      const batches = await db
+        .select()
+        .from(questionBatches)
+        .where(eq(questionBatches.userId, userId))
+        .orderBy(desc(questionBatches.uploadedAt));
+      
+      res.json(batches);
+    } catch (error) {
+      console.error("Get batches error:", error);
+      res.status(500).json({ error: "Failed to fetch question batches" });
+    }
+  });
+
+  // Bulk import questions from LLM session
+  app.post("/api/questions/bulk-import", async (req, res) => {
+    try {
+      const { questions, questionBatches, insertQuestionSchema, insertQuestionBatchSchema } = await import("@shared/schema");
+      const userId = await getDefaultUserId();
+      
+      const { batchName, subject, sourceType, sourceLLM, questionsData } = req.body;
+      
+      if (!batchName || !subject || !questionsData || !Array.isArray(questionsData)) {
+        return res.status(400).json({ error: "Missing required fields: batchName, subject, questionsData[]" });
+      }
+      
+      // Create batch record
+      const [batch] = await db.insert(questionBatches).values({
+        userId,
+        batchName,
+        subject,
+        sourceType: sourceType || 'llm-session',
+        sourceLLM: sourceLLM || null,
+        questionsCount: questionsData.length
+      }).returning();
+      
+      // Insert questions
+      const insertedQuestions = [];
+      for (const q of questionsData) {
+        try {
+          const [inserted] = await db.insert(questions).values({
+            subject,
+            chapter: q.chapter || 'General',
+            topic: q.topic || null,
+            difficulty: q.difficulty || 'medium',
+            questionText: q.questionText,
+            options: q.options,
+            correctAnswer: q.correctAnswer,
+            explanation: q.explanation || '',
+            legalReferences: q.legalReferences || null,
+            aiFeedback: q.aiFeedback || null,
+            sourceType: sourceType || 'llm-session',
+            sourceLLM: sourceLLM || null,
+            batchId: batch.id
+          }).returning();
+          insertedQuestions.push(inserted);
+        } catch (qErr) {
+          console.warn("Failed to insert question:", qErr);
+        }
+      }
+      
+      res.json({
+        batch,
+        importedCount: insertedQuestions.length,
+        totalProvided: questionsData.length
+      });
+    } catch (error) {
+      console.error("Bulk import error:", error);
+      res.status(500).json({ error: "Failed to bulk import questions" });
+    }
+  });
+
+  // Search questions with filters
+  app.get("/api/questions/search", async (req, res) => {
+    try {
+      const { questions } = await import("@shared/schema");
+      const { eq, ilike, and, or, desc } = await import("drizzle-orm");
+      
+      const { subject, chapter, topic, difficulty, keyword, sourceType, limit: limitStr } = req.query;
+      const limit = parseInt(limitStr as string) || 50;
+      
+      let query = db.select().from(questions);
+      const conditions = [];
+      
+      if (subject) {
+        conditions.push(eq(questions.subject, subject as string));
+      }
+      if (chapter) {
+        conditions.push(eq(questions.chapter, chapter as string));
+      }
+      if (topic) {
+        conditions.push(eq(questions.topic, topic as string));
+      }
+      if (difficulty) {
+        conditions.push(eq(questions.difficulty, difficulty as string));
+      }
+      if (sourceType) {
+        conditions.push(eq(questions.sourceType, sourceType as string));
+      }
+      if (keyword) {
+        conditions.push(
+          or(
+            ilike(questions.questionText, `%${keyword}%`),
+            ilike(questions.explanation, `%${keyword}%`)
+          )
+        );
+      }
+      
+      const results = await db
+        .select()
+        .from(questions)
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(questions.createdAt))
+        .limit(limit);
+      
+      res.json(results);
+    } catch (error) {
+      console.error("Search questions error:", error);
+      res.status(500).json({ error: "Failed to search questions" });
+    }
+  });
+
+  // Get question topics
+  app.get("/api/question-topics", async (req, res) => {
+    try {
+      const { questionTopics } = await import("@shared/schema");
+      const { eq } = await import("drizzle-orm");
+      
+      const { subject } = req.query;
+      
+      let results;
+      if (subject) {
+        results = await db.select().from(questionTopics).where(eq(questionTopics.subject, subject as string));
+      } else {
+        results = await db.select().from(questionTopics);
+      }
+      
+      res.json(results);
+    } catch (error) {
+      console.error("Get topics error:", error);
+      res.status(500).json({ error: "Failed to fetch question topics" });
+    }
+  });
+
+  // Create question topic
+  app.post("/api/question-topics", async (req, res) => {
+    try {
+      const { questionTopics } = await import("@shared/schema");
+      
+      const { subject, topicName, description, articleReferences } = req.body;
+      
+      if (!subject || !topicName) {
+        return res.status(400).json({ error: "Missing required fields: subject, topicName" });
+      }
+      
+      const [topic] = await db.insert(questionTopics).values({
+        subject,
+        topicName,
+        description: description || null,
+        articleReferences: articleReferences || null
+      }).returning();
+      
+      res.json(topic);
+    } catch (error) {
+      console.error("Create topic error:", error);
+      res.status(500).json({ error: "Failed to create topic" });
+    }
+  });
+
+  // Get unique chapters/topics for a subject (for filters)
+  app.get("/api/questions/filters/:subject", async (req, res) => {
+    try {
+      const { questions } = await import("@shared/schema");
+      const { eq, sql } = await import("drizzle-orm");
+      
+      const { subject } = req.params;
+      
+      const chapters = await db
+        .selectDistinct({ chapter: questions.chapter })
+        .from(questions)
+        .where(eq(questions.subject, subject));
+      
+      const topics = await db
+        .selectDistinct({ topic: questions.topic })
+        .from(questions)
+        .where(eq(questions.subject, subject));
+      
+      res.json({
+        chapters: chapters.map(c => c.chapter).filter(Boolean),
+        topics: topics.map(t => t.topic).filter(Boolean)
+      });
+    } catch (error) {
+      console.error("Get filters error:", error);
+      res.status(500).json({ error: "Failed to fetch filters" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
