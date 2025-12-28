@@ -100,25 +100,25 @@
   }
 }
 
-/* Custom styles for quiz components */
+/* Custom styles for quiz components - dark mode HUD */
 .quiz-option:hover {
   border-color: hsl(var(--primary));
-  background-color: hsl(210, 90%, 97%);
+  background-color: hsl(206, 70%, 12%);
 }
 
 .quiz-option.selected {
   border-color: hsl(var(--primary));
-  background-color: hsl(210, 90%, 95%);
+  background-color: hsl(206, 70%, 15%);
 }
 
 .quiz-option.correct {
   border-color: hsl(var(--success));
-  background-color: hsl(145, 65%, 95%);
+  background-color: hsl(145, 65%, 12%);
 }
 
 .quiz-option.incorrect {
   border-color: hsl(var(--destructive));
-  background-color: hsl(0, 75%, 95%);
+  background-color: hsl(0, 75%, 12%);
 }
 
 .progress-ring {
