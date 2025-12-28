@@ -62,29 +62,40 @@ export default function Documents() {
       }
 
       setIsUploading(true);
+      console.log("[UPLOAD] Starting upload...", uploadFile.name, uploadFile.size);
 
       // Convert file to base64 for upload
       const reader = new FileReader();
       const base64Promise = new Promise<string>((resolve, reject) => {
         reader.onload = () => {
           const base64 = reader.result as string;
+          console.log("[UPLOAD] Base64 ready, length:", base64.length);
           resolve(base64.split(',')[1]); // Remove data:application/pdf;base64, prefix
         };
-        reader.onerror = reject;
+        reader.onerror = (e) => {
+          console.error("[UPLOAD] FileReader error:", e);
+          reject(e);
+        };
         reader.readAsDataURL(uploadFile);
       });
 
       const base64Content = await base64Promise;
+      console.log("[UPLOAD] Sending to server, content length:", base64Content.length);
 
       // Upload and process in single request
-      const processResponse = await apiRequest('POST', '/api/documents/upload', {
-        fileName: uploadFile.name,
-        documentType,
-        subject,
-        fileContent: base64Content
-      });
-
-      return processResponse.json();
+      try {
+        const processResponse = await apiRequest('POST', '/api/documents/upload', {
+          fileName: uploadFile.name,
+          documentType,
+          subject,
+          fileContent: base64Content
+        });
+        console.log("[UPLOAD] Response received");
+        return processResponse.json();
+      } catch (err) {
+        console.error("[UPLOAD] API error:", err);
+        throw err;
+      }
     },
     onSuccess: () => {
       toast({
