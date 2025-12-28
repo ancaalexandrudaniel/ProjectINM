@@ -286,6 +286,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.warn("[UPLOAD] PDF extraction failed, using empty text");
         extractedText = "";
       }
+      // Clean text: remove null bytes and invalid UTF8 characters for PostgreSQL
+      extractedText = extractedText.replace(/\x00/g, '').replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '');
       console.log("[UPLOAD] Extracted text length:", extractedText?.length || 0);
       
       // Try AI analysis, but don't fail if quota exceeded
