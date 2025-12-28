@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useSearch } from "wouter";
+import { Link } from "wouter";
 import { 
   ArrowLeft, 
   Search,
@@ -54,21 +54,24 @@ export default function SpeteBank() {
   const [keyword, setKeyword] = useState('');
   const [expandedCaseStudy, setExpandedCaseStudy] = useState<string | null>(null);
 
-  const buildQueryString = () => {
-    const params = new URLSearchParams();
-    if (subject) params.append('subject', subject);
-    if (examDay) params.append('examDay', examDay);
-    if (difficulty) params.append('difficulty', difficulty);
-    if (keyword) params.append('keyword', keyword);
-    params.append('limit', '50');
-    return params.toString();
+  const buildQueryKey = () => {
+    const params: Record<string, string> = {};
+    if (subject && subject !== 'all') params.subject = subject;
+    if (examDay && examDay !== 'all') params.examDay = examDay;
+    if (difficulty && difficulty !== 'all') params.difficulty = difficulty;
+    if (keyword && keyword.trim() !== '') params.keyword = keyword.trim();
+    params.limit = '50';
+    return params;
   };
 
-  const { data: caseStudies = [], isLoading, refetch } = useQuery<CaseStudy[]>({
-    queryKey: ['/api/case-studies/search', subject, examDay, difficulty, keyword],
+  const queryParams = buildQueryKey();
+  const queryString = new URLSearchParams(queryParams).toString();
+
+  const { data: caseStudies = [], isLoading, isError, refetch } = useQuery<CaseStudy[]>({
+    queryKey: ['/api/case-studies/search', queryParams],
     queryFn: async () => {
-      const response = await fetch(`/api/case-studies/search?${buildQueryString()}`);
-      if (!response.ok) throw new Error('Failed to fetch');
+      const response = await fetch(`/api/case-studies/search?${queryString}`);
+      if (!response.ok) throw new Error('Failed to fetch case studies');
       return response.json();
     },
   });
