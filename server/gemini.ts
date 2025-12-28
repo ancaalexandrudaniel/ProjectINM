@@ -44,7 +44,7 @@ Te rog să explici:
 Răspunde în maximum 150 cuvinte, ton prietenos, fără formule de încheiere.`;
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-2.0-flash",
     systemInstruction: systemPrompt,
     contents: [
       {
@@ -88,7 +88,7 @@ Răspunde în format JSON cu următoarea structură:
 }`;
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-2.0-flash",
     systemInstruction: systemPrompt,
     generationConfig: {
       responseMimeType: "application/json"
@@ -159,7 +159,7 @@ Răspunde în format JSON:
 }`;
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-2.0-flash",
     systemInstruction: systemPrompt,
     generationConfig: {
       responseMimeType: "application/json"
@@ -260,7 +260,7 @@ Răspunde în format JSON (limba română pentru text):
 }`;
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-2.0-flash",
     systemInstruction: systemPrompt,
     generationConfig: {
       responseMimeType: "application/json"
@@ -360,7 +360,7 @@ Răspunde în format JSON:
 }`;
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-2.0-flash",
     systemInstruction: systemPrompt,
     generationConfig: {
       responseMimeType: "application/json"
@@ -489,7 +489,7 @@ Răspunde în format JSON:
   }
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-2.0-flash",
     systemInstruction: systemPrompt,
     generationConfig: {
       responseMimeType: "application/json"
@@ -563,7 +563,7 @@ ${params.context ? `\n\nCONTEXT din documente:\n${params.context}` : ""}`;
   });
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-2.0-flash",
     systemInstruction: systemPrompt,
     contents: contents
   });
