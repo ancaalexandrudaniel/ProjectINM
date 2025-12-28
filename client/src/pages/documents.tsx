@@ -6,13 +6,11 @@ import {
   Upload, 
   FileText, 
   BookOpen,
-  Scale,
   Sparkles,
   Trash2,
-  Eye,
-  CheckCircle
+  Plus
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -27,6 +25,14 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const documentTypeLabels: Record<string, string> = {
   'tematica': 'Tematică Examen',
@@ -50,6 +56,7 @@ export default function Documents() {
   const [documentType, setDocumentType] = useState<string>('');
   const [subject, setSubject] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { data: documents = [], isLoading } = useQuery<UploadedDocument[]>({
     queryKey: ['/api/documents'],
@@ -64,13 +71,12 @@ export default function Documents() {
       setIsUploading(true);
       console.log("[UPLOAD] Starting upload...", uploadFile.name, uploadFile.size);
 
-      // Convert file to base64 for upload
       const reader = new FileReader();
       const base64Promise = new Promise<string>((resolve, reject) => {
         reader.onload = () => {
           const base64 = reader.result as string;
           console.log("[UPLOAD] Base64 ready, length:", base64.length);
-          resolve(base64.split(',')[1]); // Remove data:application/pdf;base64, prefix
+          resolve(base64.split(',')[1]);
         };
         reader.onerror = (e) => {
           console.error("[UPLOAD] FileReader error:", e);
@@ -82,7 +88,6 @@ export default function Documents() {
       const base64Content = await base64Promise;
       console.log("[UPLOAD] Sending to server, content length:", base64Content.length);
 
-      // Upload and process in single request
       try {
         const processResponse = await apiRequest('POST', '/api/documents/upload', {
           fileName: uploadFile.name,
@@ -107,6 +112,7 @@ export default function Documents() {
       setDocumentType('');
       setSubject('');
       setIsUploading(false);
+      setDialogOpen(false);
     },
     onError: (error: Error) => {
       toast({
@@ -153,19 +159,30 @@ export default function Documents() {
         </div>
       </div>
 
-      {/* Upload Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Upload className="h-5 w-5" />
-            Încarcă Document Nou
-          </CardTitle>
-          <CardDescription>
-            PDF-uri cu tematici, bibliografie, subiecte 2019-2024, coduri sau cursuri
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Upload Button - Primary Action */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogTrigger asChild>
+          <Button 
+            size="lg" 
+            className="w-full py-6 text-lg gap-3"
+            data-testid="open-upload-dialog"
+          >
+            <Plus className="h-6 w-6" />
+            Încarcă și Procesează cu AI
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Upload className="h-5 w-5" />
+              Încarcă Document Nou
+            </DialogTitle>
+            <DialogDescription>
+              PDF-uri cu tematici, bibliografie, subiecte 2019-2024, coduri sau cursuri
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="file-upload">Fișier PDF</Label>
               <Input
@@ -213,28 +230,28 @@ export default function Documents() {
                 </SelectContent>
               </Select>
             </div>
-          </div>
 
-          <Button
-            onClick={() => uploadMutation.mutate()}
-            disabled={!uploadFile || !documentType || !subject || isUploading}
-            className="w-full"
-            data-testid="upload-button"
-          >
-            {isUploading ? (
-              <>
-                <Sparkles className="h-4 w-4 mr-2 animate-spin" />
-                AI procesează documentul...
-              </>
-            ) : (
-              <>
-                <Upload className="h-4 w-4 mr-2" />
-                Încarcă și Procesează cu AI
-              </>
-            )}
-          </Button>
-        </CardContent>
-      </Card>
+            <Button
+              onClick={() => uploadMutation.mutate()}
+              disabled={!uploadFile || !documentType || !subject || isUploading}
+              className="w-full mt-4"
+              data-testid="upload-button"
+            >
+              {isUploading ? (
+                <>
+                  <Sparkles className="h-4 w-4 mr-2 animate-spin" />
+                  AI procesează documentul...
+                </>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4 mr-2" />
+                  Încarcă și Procesează
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Documents List */}
       <div>
