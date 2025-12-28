@@ -15,6 +15,8 @@ import Documents from "@/pages/documents";
 import ExamAnalysis from "@/pages/exam-analysis";
 import StudyPlan from "@/pages/study-plan";
 import LegalAssistant from "@/pages/legal-assistant";
+import BulkImport from "@/pages/bulk-import";
+import QuestionBank from "@/pages/question-bank";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 
@@ -33,6 +35,10 @@ function Router() {
       <Route path="/exam-analysis" component={ExamAnalysis} />
       <Route path="/study-plan" component={StudyPlan} />
       <Route path="/legal-assistant" component={LegalAssistant} />
+      <Route path="/bulk-import" component={BulkImport} />
+      <Route path="/question-bank" component={QuestionBank} />
+      <Route path="/raw-data" component={Documents} />
+      <Route path="/case-studies" component={Dashboard} />
       <Route component={NotFound} />
     </Switch>
   );
