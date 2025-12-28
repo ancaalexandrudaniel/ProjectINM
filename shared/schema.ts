@@ -144,14 +144,33 @@ export const legalResources = pgTable("legal_resources", {
 export const caseStudies = pgTable("case_studies", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").references(() => users.id).notNull(),
-  subject: text("subject").notNull(),
+  subject: text("subject").notNull(), // 'civil', 'civil-procedural', 'penal', 'penal-procedural'
+  examDay: text("exam_day"), // 'day1' (Civil + PPC), 'day2' (Penal + PPP)
   title: text("title").notNull(),
-  scenario: text("scenario").notNull(), // the case description
-  questions: jsonb("questions"), // array of questions about the case
-  referenceArticles: jsonb("reference_articles"), // relevant legal articles
-  sampleAnswer: text("sample_answer"), // model answer
-  difficulty: text("difficulty").notNull(), // 'easy', 'medium', 'hard'
+  scenario: text("scenario").notNull(),
+  questions: jsonb("questions"),
+  referenceArticles: jsonb("reference_articles"),
+  sampleAnswer: text("sample_answer"),
+  modelEvaluation: text("model_evaluation"), // grading criteria and evaluation guide
+  aiFeedback: text("ai_feedback"), // AI-generated feedback from LLM session
+  sourceType: text("source_type"), // 'llm-session', 'manual', 'exam-past'
+  sourceLLM: text("source_llm"), // 'chatgpt', 'claude', 'gemini'
+  batchId: varchar("batch_id"), // reference to case study batch
+  difficulty: text("difficulty").notNull(),
+  estimatedTime: integer("estimated_time"), // minutes to solve
   createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const caseStudyBatches = pgTable("case_study_batches", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  batchName: text("batch_name").notNull(),
+  subject: text("subject").notNull(),
+  examDay: text("exam_day"), // 'day1', 'day2'
+  sourceType: text("source_type").notNull(),
+  sourceLLM: text("source_llm"),
+  caseStudiesCount: integer("case_studies_count").default(0),
+  uploadedAt: timestamp("uploaded_at").defaultNow(),
 });
 
 // Insert schemas
@@ -220,6 +239,11 @@ export const insertCaseStudySchema = createInsertSchema(caseStudies).omit({
   createdAt: true,
 });
 
+export const insertCaseStudyBatchSchema = createInsertSchema(caseStudyBatches).omit({
+  id: true,
+  uploadedAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -259,3 +283,6 @@ export type InsertLegalResource = z.infer<typeof insertLegalResourceSchema>;
 
 export type CaseStudy = typeof caseStudies.$inferSelect;
 export type InsertCaseStudy = z.infer<typeof insertCaseStudySchema>;
+
+export type CaseStudyBatch = typeof caseStudyBatches.$inferSelect;
+export type InsertCaseStudyBatch = z.infer<typeof insertCaseStudyBatchSchema>;

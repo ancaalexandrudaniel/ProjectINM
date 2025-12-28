@@ -17,6 +17,9 @@ import StudyPlan from "@/pages/study-plan";
 import LegalAssistant from "@/pages/legal-assistant";
 import BulkImport from "@/pages/bulk-import";
 import QuestionBank from "@/pages/question-bank";
+import SpeteImport from "@/pages/spete-import";
+import SpeteBank from "@/pages/spete-bank";
+import Etapa2Placeholder from "@/pages/etapa2-placeholder";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 
@@ -38,7 +41,10 @@ function Router() {
       <Route path="/bulk-import" component={BulkImport} />
       <Route path="/question-bank" component={QuestionBank} />
       <Route path="/raw-data" component={Documents} />
-      <Route path="/case-studies" component={Dashboard} />
+      <Route path="/spete-import" component={SpeteImport} />
+      <Route path="/spete-bank" component={SpeteBank} />
+      <Route path="/psihologic">{() => <Etapa2Placeholder type="psihologic" />}</Route>
+      <Route path="/interviu">{() => <Etapa2Placeholder type="interviu" />}</Route>
       <Route component={NotFound} />
     </Switch>
   );

@@ -1054,6 +1054,183 @@ ${context}`;
     }
   });
 
+  // ============================================
+  // CASE STUDIES (SPEȚE) ROUTES
+  // ============================================
+
+  // Get all case study batches
+  app.get("/api/case-study-batches", async (req, res) => {
+    try {
+      const { caseStudyBatches } = await import("@shared/schema");
+      const { eq, desc } = await import("drizzle-orm");
+      const userId = await getDefaultUserId();
+      
+      const batches = await db
+        .select()
+        .from(caseStudyBatches)
+        .where(eq(caseStudyBatches.userId, userId))
+        .orderBy(desc(caseStudyBatches.uploadedAt));
+      
+      res.json(batches);
+    } catch (error) {
+      console.error("Get case study batches error:", error);
+      res.status(500).json({ error: "Failed to fetch case study batches" });
+    }
+  });
+
+  // Bulk import case studies from LLM session
+  app.post("/api/case-studies/bulk-import", async (req, res) => {
+    try {
+      const { caseStudies, caseStudyBatches } = await import("@shared/schema");
+      const { z } = await import("zod");
+      const userId = await getDefaultUserId();
+      
+      const requestSchema = z.object({
+        batchName: z.string().min(1, "Batch name is required"),
+        subject: z.string().min(1, "Subject is required"),
+        examDay: z.string().optional().nullable(),
+        sourceType: z.string().optional().default('llm-session'),
+        sourceLLM: z.string().optional().nullable(),
+        caseStudiesData: z.array(z.object({
+          title: z.string().min(1, "Title is required"),
+          scenario: z.string().min(1, "Scenario is required"),
+          questions: z.array(z.string()).optional().nullable(),
+          referenceArticles: z.array(z.string()).optional().nullable(),
+          sampleAnswer: z.string().optional().nullable(),
+          modelEvaluation: z.string().optional().nullable(),
+          aiFeedback: z.string().optional().nullable(),
+          difficulty: z.enum(['easy', 'medium', 'hard']).optional().default('medium'),
+          estimatedTime: z.number().optional().nullable()
+        })).min(1, "At least 1 case study required")
+      });
+      
+      const parseResult = requestSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Validation failed", 
+          details: parseResult.error.errors 
+        });
+      }
+      
+      const { batchName, subject, examDay, sourceType, sourceLLM, caseStudiesData } = parseResult.data;
+      
+      const [batch] = await db.insert(caseStudyBatches).values({
+        userId,
+        batchName,
+        subject,
+        examDay: examDay || null,
+        sourceType,
+        sourceLLM: sourceLLM || null,
+        caseStudiesCount: caseStudiesData.length
+      }).returning();
+      
+      const insertedCaseStudies = [];
+      const errors: Array<{index: number; error: string}> = [];
+      
+      for (let i = 0; i < caseStudiesData.length; i++) {
+        const cs = caseStudiesData[i];
+        try {
+          const [inserted] = await db.insert(caseStudies).values({
+            userId,
+            subject,
+            examDay: examDay || null,
+            title: cs.title,
+            scenario: cs.scenario,
+            questions: cs.questions,
+            referenceArticles: cs.referenceArticles,
+            sampleAnswer: cs.sampleAnswer,
+            modelEvaluation: cs.modelEvaluation,
+            aiFeedback: cs.aiFeedback,
+            sourceType,
+            sourceLLM: sourceLLM || null,
+            batchId: batch.id,
+            difficulty: cs.difficulty,
+            estimatedTime: cs.estimatedTime
+          }).returning();
+          insertedCaseStudies.push(inserted);
+        } catch (csErr: any) {
+          console.warn(`Failed to insert case study ${i}:`, csErr.message);
+          errors.push({ index: i, error: csErr.message });
+        }
+      }
+      
+      res.json({
+        batch,
+        importedCount: insertedCaseStudies.length,
+        totalProvided: caseStudiesData.length,
+        errors: errors.length > 0 ? errors : undefined
+      });
+    } catch (error) {
+      console.error("Bulk import case studies error:", error);
+      res.status(500).json({ error: "Failed to bulk import case studies" });
+    }
+  });
+
+  // Search case studies with filters
+  app.get("/api/case-studies/search", async (req, res) => {
+    try {
+      const { caseStudies } = await import("@shared/schema");
+      const { eq, ilike, and, or, desc } = await import("drizzle-orm");
+      
+      const { subject, examDay, difficulty, keyword, limit: limitStr } = req.query;
+      const limit = parseInt(limitStr as string) || 50;
+      
+      const conditions = [];
+      
+      if (subject && subject !== 'all' && subject !== '') {
+        conditions.push(eq(caseStudies.subject, subject as string));
+      }
+      if (examDay && examDay !== 'all' && examDay !== '') {
+        conditions.push(eq(caseStudies.examDay, examDay as string));
+      }
+      if (difficulty && difficulty !== 'all' && difficulty !== '') {
+        conditions.push(eq(caseStudies.difficulty, difficulty as string));
+      }
+      if (keyword && keyword !== '') {
+        conditions.push(
+          or(
+            ilike(caseStudies.title, `%${keyword}%`),
+            ilike(caseStudies.scenario, `%${keyword}%`)
+          )
+        );
+      }
+      
+      const results = await db
+        .select()
+        .from(caseStudies)
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(caseStudies.createdAt))
+        .limit(limit);
+      
+      res.json(results);
+    } catch (error) {
+      console.error("Search case studies error:", error);
+      res.status(500).json({ error: "Failed to search case studies" });
+    }
+  });
+
+  // Get single case study by ID
+  app.get("/api/case-studies/:id", async (req, res) => {
+    try {
+      const { caseStudies } = await import("@shared/schema");
+      const { eq } = await import("drizzle-orm");
+      
+      const [caseStudy] = await db
+        .select()
+        .from(caseStudies)
+        .where(eq(caseStudies.id, req.params.id));
+      
+      if (!caseStudy) {
+        return res.status(404).json({ error: "Case study not found" });
+      }
+      
+      res.json(caseStudy);
+    } catch (error) {
+      console.error("Get case study error:", error);
+      res.status(500).json({ error: "Failed to fetch case study" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
