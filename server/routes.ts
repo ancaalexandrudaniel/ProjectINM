@@ -279,16 +279,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Extract text from PDF
       console.log("[UPLOAD] Extracting text...");
-      const extractedText = await extractTextFromPDF(tmpPath);
+      let extractedText = "";
+      try {
+        extractedText = await extractTextFromPDF(tmpPath);
+      } catch (pdfErr) {
+        console.warn("[UPLOAD] PDF extraction failed, using empty text");
+        extractedText = "";
+      }
       console.log("[UPLOAD] Extracted text length:", extractedText?.length || 0);
       
-      // Analyze document with AI
-      console.log("[UPLOAD] Analyzing with AI...");
-      const analysis = await analyzeLegalDocument({
-        documentText: extractedText,
-        documentType: documentType as any
-      });
-      console.log("[UPLOAD] AI analysis complete");
+      // Try AI analysis, but don't fail if quota exceeded
+      let aiSummary = "Document încărcat. Analiza AI va fi disponibilă când quota se resetează.";
+      try {
+        console.log("[UPLOAD] Analyzing with AI...");
+        const analysis = await analyzeLegalDocument({
+          documentText: extractedText,
+          documentType: documentType as any
+        });
+        aiSummary = analysis.summary;
+        console.log("[UPLOAD] AI analysis complete");
+      } catch (aiErr: any) {
+        console.warn("[UPLOAD] AI analysis failed (quota?):", aiErr?.status || aiErr?.message);
+        // Keep default message
+      }
       
       // Save document metadata to database
       console.log("[UPLOAD] Saving to database...");
@@ -297,17 +310,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         fileName,
         documentType,
         subject,
-        objectPath: tmpPath, // store temp path for reference
+        objectPath: tmpPath,
         extractedText,
-        aiSummary: analysis.summary
+        aiSummary
       }).returning();
       
       // Clean up temp file
-      fs.unlinkSync(tmpPath);
+      try {
+        fs.unlinkSync(tmpPath);
+      } catch (e) {
+        // ignore cleanup errors
+      }
       
+      console.log("[UPLOAD] Success!");
       res.json({ 
         document, 
-        analysis 
+        analysis: { summary: aiSummary, keyPoints: [] }
       });
     } catch (error) {
       console.error("Document upload error:", error);
