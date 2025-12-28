@@ -16,12 +16,17 @@ export const questions = pgTable("questions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   subject: text("subject").notNull(), // 'civil', 'civil-procedural', 'penal', 'penal-procedural'
   chapter: text("chapter").notNull(),
+  topic: text("topic"), // specific topic within chapter
   difficulty: text("difficulty").notNull(), // 'easy', 'medium', 'hard'
   questionText: text("question_text").notNull(),
   options: jsonb("options").notNull(), // Array of option objects
   correctAnswer: integer("correct_answer").notNull(), // Index of correct option
   explanation: text("explanation").notNull(),
   legalReferences: jsonb("legal_references"), // Array of legal reference strings
+  aiFeedback: text("ai_feedback"), // AI-generated feedback from LLM session
+  sourceType: text("source_type"), // 'llm-session', 'manual', 'exam-past'
+  sourceLLM: text("source_llm"), // 'chatgpt', 'claude', 'gemini'
+  batchId: varchar("batch_id"), // reference to question batch
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -101,6 +106,54 @@ export const documentChunks = pgTable("document_chunks", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const questionTopics = pgTable("question_topics", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  subject: text("subject").notNull(), // 'civil', 'civil-procedural', 'penal', 'penal-procedural'
+  topicName: text("topic_name").notNull(),
+  description: text("description"),
+  articleReferences: jsonb("article_references"), // array of article numbers/ranges
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const questionBatches = pgTable("question_batches", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  batchName: text("batch_name").notNull(),
+  subject: text("subject").notNull(),
+  topicId: varchar("topic_id").references(() => questionTopics.id),
+  sourceType: text("source_type").notNull(), // 'llm-session', 'manual', 'exam-past'
+  sourceLLM: text("source_llm"), // 'chatgpt', 'claude', 'gemini', etc.
+  questionsCount: integer("questions_count").default(0),
+  uploadedAt: timestamp("uploaded_at").defaultNow(),
+});
+
+export const legalResources = pgTable("legal_resources", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  resourceType: text("resource_type").notNull(), // 'article', 'doctrine', 'jurisprudence', 'summary'
+  subject: text("subject").notNull(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  articleRef: text("article_ref"), // e.g., "Art. 1234 Cod Civil"
+  sourceLLM: text("source_llm"),
+  tags: jsonb("tags"), // array of tags
+  linkedArticles: jsonb("linked_articles"), // array of related article refs
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const caseStudies = pgTable("case_studies", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  subject: text("subject").notNull(),
+  title: text("title").notNull(),
+  scenario: text("scenario").notNull(), // the case description
+  questions: jsonb("questions"), // array of questions about the case
+  referenceArticles: jsonb("reference_articles"), // relevant legal articles
+  sampleAnswer: text("sample_answer"), // model answer
+  difficulty: text("difficulty").notNull(), // 'easy', 'medium', 'hard'
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -147,6 +200,26 @@ export const insertDocumentChunkSchema = createInsertSchema(documentChunks).omit
   createdAt: true,
 });
 
+export const insertQuestionTopicSchema = createInsertSchema(questionTopics).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertQuestionBatchSchema = createInsertSchema(questionBatches).omit({
+  id: true,
+  uploadedAt: true,
+});
+
+export const insertLegalResourceSchema = createInsertSchema(legalResources).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertCaseStudySchema = createInsertSchema(caseStudies).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -174,3 +247,15 @@ export type InsertStudyPlan = z.infer<typeof insertStudyPlanSchema>;
 
 export type DocumentChunk = typeof documentChunks.$inferSelect;
 export type InsertDocumentChunk = z.infer<typeof insertDocumentChunkSchema>;
+
+export type QuestionTopic = typeof questionTopics.$inferSelect;
+export type InsertQuestionTopic = z.infer<typeof insertQuestionTopicSchema>;
+
+export type QuestionBatch = typeof questionBatches.$inferSelect;
+export type InsertQuestionBatch = z.infer<typeof insertQuestionBatchSchema>;
+
+export type LegalResource = typeof legalResources.$inferSelect;
+export type InsertLegalResource = z.infer<typeof insertLegalResourceSchema>;
+
+export type CaseStudy = typeof caseStudies.$inferSelect;
+export type InsertCaseStudy = z.infer<typeof insertCaseStudySchema>;
