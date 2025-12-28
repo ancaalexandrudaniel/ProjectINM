@@ -429,10 +429,8 @@ export async function extractTextFromPDF(pdfPath: string): Promise<string> {
   
   // Try to parse PDF, fallback to plain text if parsing fails
   try {
-    const { PDFParse } = await import("pdf-parse");
-    const parser = new PDFParse({ data: dataBuffer });
-    const result = await parser.getText();
-    await parser.destroy(); // cleanup resources
+    const pdfParse = (await import("pdf-parse")).default;
+    const result = await pdfParse(dataBuffer);
     return result.text;
   } catch (pdfError) {
     console.warn("[extractTextFromPDF] PDF parsing failed, using fallback:", pdfError);
