@@ -260,28 +260,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI: Upload and process document (simplified - base64 upload)
   app.post("/api/documents/upload", async (req, res) => {
     try {
+      console.log("[UPLOAD] Starting document upload...");
       const { extractTextFromPDF, analyzeLegalDocument } = await import("./gemini");
       const { uploadedDocuments } = await import("@shared/schema");
       const userId = await getDefaultUserId();
       const fs = await import("fs");
       
       const { fileName, documentType, subject, fileContent } = req.body;
+      console.log("[UPLOAD] File:", fileName, "Type:", documentType, "Subject:", subject);
+      console.log("[UPLOAD] Content length:", fileContent?.length || 0);
       
       // Save base64 to temporary file
       const tmpPath = `/tmp/${Date.now()}-${fileName}`;
       const buffer = Buffer.from(fileContent, 'base64');
+      console.log("[UPLOAD] Buffer size:", buffer.length);
       fs.writeFileSync(tmpPath, buffer);
+      console.log("[UPLOAD] Saved to temp:", tmpPath);
       
       // Extract text from PDF
+      console.log("[UPLOAD] Extracting text...");
       const extractedText = await extractTextFromPDF(tmpPath);
+      console.log("[UPLOAD] Extracted text length:", extractedText?.length || 0);
       
       // Analyze document with AI
+      console.log("[UPLOAD] Analyzing with AI...");
       const analysis = await analyzeLegalDocument({
         documentText: extractedText,
         documentType: documentType as any
       });
+      console.log("[UPLOAD] AI analysis complete");
       
       // Save document metadata to database
+      console.log("[UPLOAD] Saving to database...");
       const [document] = await db.insert(uploadedDocuments).values({
         userId,
         fileName,
