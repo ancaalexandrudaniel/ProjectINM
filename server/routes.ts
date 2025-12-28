@@ -840,54 +840,86 @@ ${context}`;
   // Bulk import questions from LLM session
   app.post("/api/questions/bulk-import", async (req, res) => {
     try {
-      const { questions, questionBatches, insertQuestionSchema, insertQuestionBatchSchema } = await import("@shared/schema");
+      const { questions, questionBatches } = await import("@shared/schema");
+      const { z } = await import("zod");
       const userId = await getDefaultUserId();
       
-      const { batchName, subject, sourceType, sourceLLM, questionsData } = req.body;
+      // Validate request body
+      const requestSchema = z.object({
+        batchName: z.string().min(1, "Batch name is required"),
+        subject: z.string().min(1, "Subject is required"),
+        sourceType: z.string().optional().default('llm-session'),
+        sourceLLM: z.string().optional().nullable(),
+        questionsData: z.array(z.object({
+          questionText: z.string().min(1, "Question text is required"),
+          options: z.array(z.object({
+            id: z.number(),
+            text: z.string()
+          })).min(2, "At least 2 options required"),
+          correctAnswer: z.number().min(0),
+          explanation: z.string().optional().default(''),
+          chapter: z.string().optional().default('General'),
+          topic: z.string().optional().nullable(),
+          difficulty: z.enum(['easy', 'medium', 'hard']).optional().default('medium'),
+          legalReferences: z.array(z.string()).optional().nullable(),
+          aiFeedback: z.string().optional().nullable()
+        })).min(1, "At least 1 question required")
+      });
       
-      if (!batchName || !subject || !questionsData || !Array.isArray(questionsData)) {
-        return res.status(400).json({ error: "Missing required fields: batchName, subject, questionsData[]" });
+      const parseResult = requestSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Validation failed", 
+          details: parseResult.error.errors 
+        });
       }
+      
+      const { batchName, subject, sourceType, sourceLLM, questionsData } = parseResult.data;
       
       // Create batch record
       const [batch] = await db.insert(questionBatches).values({
         userId,
         batchName,
         subject,
-        sourceType: sourceType || 'llm-session',
+        sourceType,
         sourceLLM: sourceLLM || null,
         questionsCount: questionsData.length
       }).returning();
       
-      // Insert questions
+      // Insert questions with validation errors tracking
       const insertedQuestions = [];
-      for (const q of questionsData) {
+      const errors: Array<{index: number; error: string}> = [];
+      
+      for (let i = 0; i < questionsData.length; i++) {
+        const q = questionsData[i];
         try {
           const [inserted] = await db.insert(questions).values({
             subject,
-            chapter: q.chapter || 'General',
-            topic: q.topic || null,
-            difficulty: q.difficulty || 'medium',
+            chapter: q.chapter,
+            topic: q.topic,
+            difficulty: q.difficulty,
             questionText: q.questionText,
             options: q.options,
             correctAnswer: q.correctAnswer,
-            explanation: q.explanation || '',
-            legalReferences: q.legalReferences || null,
-            aiFeedback: q.aiFeedback || null,
-            sourceType: sourceType || 'llm-session',
+            explanation: q.explanation,
+            legalReferences: q.legalReferences,
+            aiFeedback: q.aiFeedback,
+            sourceType,
             sourceLLM: sourceLLM || null,
             batchId: batch.id
           }).returning();
           insertedQuestions.push(inserted);
-        } catch (qErr) {
-          console.warn("Failed to insert question:", qErr);
+        } catch (qErr: any) {
+          console.warn(`Failed to insert question ${i}:`, qErr.message);
+          errors.push({ index: i, error: qErr.message });
         }
       }
       
       res.json({
         batch,
         importedCount: insertedQuestions.length,
-        totalProvided: questionsData.length
+        totalProvided: questionsData.length,
+        errors: errors.length > 0 ? errors : undefined
       });
     } catch (error) {
       console.error("Bulk import error:", error);
@@ -904,25 +936,25 @@ ${context}`;
       const { subject, chapter, topic, difficulty, keyword, sourceType, limit: limitStr } = req.query;
       const limit = parseInt(limitStr as string) || 50;
       
-      let query = db.select().from(questions);
       const conditions = [];
       
-      if (subject) {
+      // Only add condition if value exists and is not 'all'
+      if (subject && subject !== 'all' && subject !== '') {
         conditions.push(eq(questions.subject, subject as string));
       }
-      if (chapter) {
+      if (chapter && chapter !== 'all' && chapter !== '') {
         conditions.push(eq(questions.chapter, chapter as string));
       }
-      if (topic) {
+      if (topic && topic !== 'all' && topic !== '') {
         conditions.push(eq(questions.topic, topic as string));
       }
-      if (difficulty) {
+      if (difficulty && difficulty !== 'all' && difficulty !== '') {
         conditions.push(eq(questions.difficulty, difficulty as string));
       }
-      if (sourceType) {
+      if (sourceType && sourceType !== 'all' && sourceType !== '') {
         conditions.push(eq(questions.sourceType, sourceType as string));
       }
-      if (keyword) {
+      if (keyword && keyword !== '') {
         conditions.push(
           or(
             ilike(questions.questionText, `%${keyword}%`),
@@ -930,6 +962,8 @@ ${context}`;
           )
         );
       }
+      
+      let query = db.select().from(questions);
       
       const results = await db
         .select()

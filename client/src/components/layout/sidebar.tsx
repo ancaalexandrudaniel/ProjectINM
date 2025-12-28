@@ -81,6 +81,7 @@ export default function Sidebar() {
             <button 
               onClick={() => toggleSection('raw')}
               className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors"
+              data-testid="section-toggle-raw"
             >
               <span className="flex items-center gap-2">
                 <Database className="h-4 w-4" />
@@ -108,6 +109,7 @@ export default function Sidebar() {
             <button 
               onClick={() => toggleSection('historical')}
               className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors"
+              data-testid="section-toggle-historical"
             >
               <span className="flex items-center gap-2">
                 <History className="h-4 w-4" />
@@ -135,6 +137,7 @@ export default function Sidebar() {
             <button 
               onClick={() => toggleSection('part1')}
               className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors"
+              data-testid="section-toggle-part1"
             >
               <span className="flex items-center gap-2">
                 <ClipboardList className="h-4 w-4" />
@@ -194,6 +197,7 @@ export default function Sidebar() {
             <button 
               onClick={() => toggleSection('part2')}
               className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors"
+              data-testid="section-toggle-part2"
             >
               <span className="flex items-center gap-2">
                 <PenTool className="h-4 w-4" />
