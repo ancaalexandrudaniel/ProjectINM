@@ -206,10 +206,16 @@ function validateJSON(jsonString: string): ValidationResult {
     
     const hasMultipleCorrect = correctAnswers.length > 1;
     const hasSingleCorrect = correctAnswer !== null || correctAnswers.length === 1;
-    const hasNoneCorrect = correctAnswer === null && correctAnswers.length === 0;
+    const hasNoneCorrect = correctAnswer === null && correctAnswers.length === 0 && Array.isArray(q.correctAnswers);
 
-    if (!hasSingleCorrect && !hasMultipleCorrect && !hasNoneCorrect) {
-      errors.push({ index: i, field: 'correctAnswer', message: 'Lipsește răspunsul corect' });
+    // Valid scenarios:
+    // 1. correctAnswer is a number (single correct)
+    // 2. correctAnswers has 1+ elements (single or multiple correct)
+    // 3. correctAnswers is explicitly [] (none correct - God Mode)
+    const hasValidAnswer = hasSingleCorrect || hasMultipleCorrect || hasNoneCorrect;
+
+    if (!hasValidAnswer && q.correctAnswer === undefined && !Array.isArray(q.correctAnswers)) {
+      errors.push({ index: i, field: 'correctAnswer', message: 'Lipsește răspunsul corect (correctAnswer sau correctAnswers)' });
     }
 
     if (correctAnswer !== null && (correctAnswer < 0 || correctAnswer >= (q.options?.length || 4))) {
@@ -229,14 +235,15 @@ function validateJSON(jsonString: string): ValidationResult {
       warnings.push({ index: i, field: 'explanation', message: 'Lipsește explicația detaliată' });
     }
 
-    const normalizedOptions = (q.options || []).map((opt: any) => 
+    // Normalize options for display (extract text from objects)
+    const displayOptions = (q.options || []).map((opt: any) => 
       typeof opt === 'string' ? opt : (opt.text || '')
     );
 
     questions.push({
       index: i,
       questionText: q.questionText || '',
-      options: normalizedOptions,
+      options: displayOptions,
       correctAnswer: correctAnswer,
       correctAnswers: correctAnswers,
       explanation: q.explanation,
