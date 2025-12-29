@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { 
@@ -83,6 +83,9 @@ export default function QuizGodMode() {
 
   const queryClient = useQueryClient();
 
+  const [questions, setQuestions] = useState<GodModeQuestion[]>([]);
+  const [questionsGenerated, setQuestionsGenerated] = useState(false);
+
   const { data: rawQuestions = [], isLoading } = useQuery<QuizQuestion[]>({
     queryKey: ['/api/quiz/random', subjects, questionCount, 'god-mode'],
     queryFn: async () => {
@@ -94,9 +97,13 @@ export default function QuizGodMode() {
     },
   });
 
-  const questions = useMemo(() => {
-    return rawQuestions.map(q => generateGodModeAnswers(q, godModeSet));
-  }, [rawQuestions, godModeSet]);
+  useEffect(() => {
+    if (rawQuestions.length > 0 && !questionsGenerated) {
+      const generatedQuestions = rawQuestions.map(q => generateGodModeAnswers(q, godModeSet));
+      setQuestions(generatedQuestions);
+      setQuestionsGenerated(true);
+    }
+  }, [rawQuestions, godModeSet, questionsGenerated]);
 
   useEffect(() => {
     if (isComplete) return;
@@ -161,7 +168,9 @@ export default function QuizGodMode() {
     }
   };
 
-  if (isLoading) {
+  const totalCorrect = results.filter(r => r.correct).length;
+
+  if (isLoading || (rawQuestions.length > 0 && !questionsGenerated)) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
