@@ -22,6 +22,7 @@ import SpeteBank from "@/pages/spete-bank";
 import Etapa2Placeholder from "@/pages/etapa2-placeholder";
 import QuizModeSelect from "@/pages/quiz-mode-select";
 import QuizGodMode from "@/pages/quiz-god-mode";
+import LegalArticlesImport from "@/pages/legal-articles-import";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 
@@ -47,6 +48,7 @@ function Router() {
       <Route path="/spete-bank" component={SpeteBank} />
       <Route path="/quiz-select" component={QuizModeSelect} />
       <Route path="/quiz-god-mode" component={QuizGodMode} />
+      <Route path="/legal-articles-import" component={LegalArticlesImport} />
       <Route path="/psihologic">{() => <Etapa2Placeholder type="psihologic" />}</Route>
       <Route path="/interviu">{() => <Etapa2Placeholder type="interviu" />}</Route>
       <Route component={NotFound} />

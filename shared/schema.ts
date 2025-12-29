@@ -174,6 +174,43 @@ export const caseStudyBatches = pgTable("case_study_batches", {
   uploadedAt: timestamp("uploaded_at").defaultNow(),
 });
 
+export const legalArticles = pgTable("legal_articles", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  articleNumber: integer("article_number").notNull(),
+  title: text("title").notNull(),
+  subject: text("subject").notNull(), // 'civil', 'civil-procedural', 'penal', 'penal-procedural'
+  lawSource: text("law_source"), // 'Codul civil', 'Codul penal', etc.
+  segments: jsonb("segments").notNull(), // {official, trad, puncte, juris, radar, logica, conex}
+  rawContent: text("raw_content"), // concatenated full text for search
+  batchId: varchar("batch_id").references(() => legalArticleBatches.id),
+  isProcessedForRag: boolean("is_processed_for_rag").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const legalArticleBatches = pgTable("legal_article_batches", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  batchName: text("batch_name").notNull(),
+  subject: text("subject").notNull(),
+  lawSource: text("law_source"), // 'Codul civil', 'Codul penal', etc.
+  articleRange: text("article_range"), // '1166-1170'
+  sourceLLM: text("source_llm"), // 'chatgpt', 'claude', 'gemini'
+  articlesCount: integer("articles_count").default(0),
+  uploadedAt: timestamp("uploaded_at").defaultNow(),
+});
+
+export const legalArticleChunks = pgTable("legal_article_chunks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  articleId: varchar("article_id").references(() => legalArticles.id).notNull(),
+  segmentType: text("segment_type").notNull(), // 'official', 'trad', 'puncte', 'juris', 'radar', 'logica', 'conex'
+  chunkText: text("chunk_text").notNull(),
+  chunkIndex: integer("chunk_index").notNull(),
+  embedding: jsonb("embedding"), // array of 768 floats
+  metadata: jsonb("metadata"), // {articleNumber, title, subject, segmentType}
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -245,6 +282,21 @@ export const insertCaseStudyBatchSchema = createInsertSchema(caseStudyBatches).o
   uploadedAt: true,
 });
 
+export const insertLegalArticleSchema = createInsertSchema(legalArticles).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertLegalArticleBatchSchema = createInsertSchema(legalArticleBatches).omit({
+  id: true,
+  uploadedAt: true,
+});
+
+export const insertLegalArticleChunkSchema = createInsertSchema(legalArticleChunks).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -287,3 +339,12 @@ export type InsertCaseStudy = z.infer<typeof insertCaseStudySchema>;
 
 export type CaseStudyBatch = typeof caseStudyBatches.$inferSelect;
 export type InsertCaseStudyBatch = z.infer<typeof insertCaseStudyBatchSchema>;
+
+export type LegalArticle = typeof legalArticles.$inferSelect;
+export type InsertLegalArticle = z.infer<typeof insertLegalArticleSchema>;
+
+export type LegalArticleBatch = typeof legalArticleBatches.$inferSelect;
+export type InsertLegalArticleBatch = z.infer<typeof insertLegalArticleBatchSchema>;
+
+export type LegalArticleChunk = typeof legalArticleChunks.$inferSelect;
+export type InsertLegalArticleChunk = z.infer<typeof insertLegalArticleChunkSchema>;

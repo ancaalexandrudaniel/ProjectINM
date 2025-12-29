@@ -1261,6 +1261,342 @@ ${context}`;
     }
   });
 
+  // ==================== LEGAL ARTICLES ENDPOINTS ====================
+
+  // Bulk import legal articles from structured JSON
+  app.post("/api/legal-articles/bulk-import", async (req, res) => {
+    try {
+      const { legalArticles, legalArticleBatches } = await import("@shared/schema");
+      const userId = await getDefaultUserId();
+      
+      const { 
+        batchName, 
+        subject, 
+        lawSource,
+        sourceLLM,
+        articles: articlesData,
+        meta 
+      } = req.body;
+      
+      if (!articlesData || !Array.isArray(articlesData) || articlesData.length === 0) {
+        return res.status(400).json({ error: "No articles provided" });
+      }
+      
+      if (!subject) {
+        return res.status(400).json({ error: "Subject is required" });
+      }
+      
+      // Validate articles have required fields before processing
+      const validArticles = articlesData.filter((a: any) => 
+        a.article && typeof a.article === 'number' && a.title && a.segments && typeof a.segments === 'object'
+      );
+      
+      if (validArticles.length === 0) {
+        return res.status(400).json({ error: "No valid articles found. Each article must have: article (number), title (string), segments (object)" });
+      }
+      
+      // Extract article range from validated data
+      const articleNumbers = validArticles.map((a: any) => a.article);
+      const minArticle = Math.min(...articleNumbers);
+      const maxArticle = Math.max(...articleNumbers);
+      const articleRange = minArticle === maxArticle ? `${minArticle}` : `${minArticle}-${maxArticle}`;
+      
+      // Create batch
+      const [batch] = await db.insert(legalArticleBatches).values({
+        userId,
+        batchName: batchName || `${lawSource || 'Articole'} ${articleRange}`,
+        subject,
+        lawSource: lawSource || meta?.source || null,
+        articleRange,
+        sourceLLM: sourceLLM || null,
+        articlesCount: validArticles.length
+      }).returning();
+      
+      // Insert validated articles only
+      const insertedArticles = [];
+      const errors: { index: number; error: string }[] = [];
+      
+      for (let i = 0; i < validArticles.length; i++) {
+        const art = validArticles[i];
+        try {
+          
+          // Build raw content from all segments
+          const rawContent = Object.entries(art.segments || {})
+            .map(([key, value]) => `[${key.toUpperCase()}]\n${value}`)
+            .join('\n\n');
+          
+          const [inserted] = await db.insert(legalArticles).values({
+            userId,
+            articleNumber: art.article,
+            title: art.title,
+            subject,
+            lawSource: lawSource || meta?.source || null,
+            segments: art.segments,
+            rawContent: art.raw || rawContent,
+            batchId: batch.id,
+            isProcessedForRag: false
+          }).returning();
+          
+          insertedArticles.push(inserted);
+        } catch (artErr: any) {
+          console.warn(`Failed to insert article ${art.article}:`, artErr.message);
+          errors.push({ index: i, error: artErr.message });
+        }
+      }
+      
+      res.json({
+        batch,
+        importedCount: insertedArticles.length,
+        totalProvided: articlesData.length,
+        articleRange,
+        errors: errors.length > 0 ? errors : undefined
+      });
+    } catch (error) {
+      console.error("Bulk import legal articles error:", error);
+      res.status(500).json({ error: "Failed to bulk import legal articles" });
+    }
+  });
+
+  // Get all legal article batches
+  app.get("/api/legal-article-batches", async (req, res) => {
+    try {
+      const { legalArticleBatches } = await import("@shared/schema");
+      const { eq, desc } = await import("drizzle-orm");
+      const userId = await getDefaultUserId();
+      
+      const batches = await db
+        .select()
+        .from(legalArticleBatches)
+        .where(eq(legalArticleBatches.userId, userId))
+        .orderBy(desc(legalArticleBatches.uploadedAt));
+      
+      res.json(batches);
+    } catch (error) {
+      console.error("Get legal article batches error:", error);
+      res.status(500).json({ error: "Failed to fetch legal article batches" });
+    }
+  });
+
+  // Get all legal articles with optional filters
+  app.get("/api/legal-articles", async (req, res) => {
+    try {
+      const { legalArticles } = await import("@shared/schema");
+      const { eq, and, gte, lte, ilike, desc, asc } = await import("drizzle-orm");
+      const userId = await getDefaultUserId();
+      
+      const { subject, lawSource, articleFrom, articleTo, search, batchId } = req.query;
+      
+      const conditions = [eq(legalArticles.userId, userId)];
+      
+      if (subject && subject !== 'all') {
+        conditions.push(eq(legalArticles.subject, subject as string));
+      }
+      if (lawSource) {
+        conditions.push(eq(legalArticles.lawSource, lawSource as string));
+      }
+      if (articleFrom) {
+        conditions.push(gte(legalArticles.articleNumber, parseInt(articleFrom as string)));
+      }
+      if (articleTo) {
+        conditions.push(lte(legalArticles.articleNumber, parseInt(articleTo as string)));
+      }
+      if (batchId) {
+        conditions.push(eq(legalArticles.batchId, batchId as string));
+      }
+      if (search) {
+        conditions.push(ilike(legalArticles.rawContent, `%${search}%`));
+      }
+      
+      const articles = await db
+        .select()
+        .from(legalArticles)
+        .where(and(...conditions))
+        .orderBy(asc(legalArticles.articleNumber));
+      
+      res.json(articles);
+    } catch (error) {
+      console.error("Get legal articles error:", error);
+      res.status(500).json({ error: "Failed to fetch legal articles" });
+    }
+  });
+
+  // Get single legal article by ID
+  app.get("/api/legal-articles/:id", async (req, res) => {
+    try {
+      const { legalArticles } = await import("@shared/schema");
+      const { eq } = await import("drizzle-orm");
+      
+      const [article] = await db
+        .select()
+        .from(legalArticles)
+        .where(eq(legalArticles.id, req.params.id));
+      
+      if (!article) {
+        return res.status(404).json({ error: "Legal article not found" });
+      }
+      
+      res.json(article);
+    } catch (error) {
+      console.error("Get legal article error:", error);
+      res.status(500).json({ error: "Failed to fetch legal article" });
+    }
+  });
+
+  // Delete legal article batch (and its articles)
+  app.delete("/api/legal-article-batches/:id", async (req, res) => {
+    try {
+      const { legalArticles, legalArticleBatches } = await import("@shared/schema");
+      const { eq, and } = await import("drizzle-orm");
+      const userId = await getDefaultUserId();
+      const batchId = req.params.id;
+      
+      // Delete articles first
+      await db.delete(legalArticles).where(eq(legalArticles.batchId, batchId));
+      
+      // Delete batch
+      await db.delete(legalArticleBatches).where(
+        and(
+          eq(legalArticleBatches.id, batchId),
+          eq(legalArticleBatches.userId, userId)
+        )
+      );
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Delete legal article batch error:", error);
+      res.status(500).json({ error: "Failed to delete legal article batch" });
+    }
+  });
+
+  // Process legal articles for RAG (chunk segments and generate embeddings)
+  app.post("/api/legal-articles/:id/process-rag", async (req, res) => {
+    try {
+      const { legalArticles, legalArticleChunks } = await import("@shared/schema");
+      const { eq } = await import("drizzle-orm");
+      const { chunkText } = await import("./utils/chunking");
+      const { batchGenerateEmbeddings } = await import("./gemini");
+      
+      const articleId = req.params.id;
+      
+      // Get article
+      const [article] = await db
+        .select()
+        .from(legalArticles)
+        .where(eq(legalArticles.id, articleId));
+      
+      if (!article) {
+        return res.status(404).json({ error: "Article not found" });
+      }
+      
+      // Delete existing chunks for this article
+      await db.delete(legalArticleChunks).where(eq(legalArticleChunks.articleId, articleId));
+      
+      // Create chunks from each segment
+      const segments = article.segments as Record<string, string>;
+      const allChunks: { text: string; segmentType: string; index: number }[] = [];
+      
+      for (const [segmentType, segmentText] of Object.entries(segments)) {
+        if (!segmentText || typeof segmentText !== 'string') continue;
+        
+        // Chunk the segment
+        const segmentChunks = chunkText(segmentText, {
+          chunkSize: 600,
+          overlap: 50,
+          minChunkSize: 200
+        });
+        
+        for (const chunk of segmentChunks) {
+          allChunks.push({
+            text: chunk.text,
+            segmentType,
+            index: allChunks.length
+          });
+        }
+      }
+      
+      if (allChunks.length === 0) {
+        return res.status(400).json({ error: "No text to chunk in article segments" });
+      }
+      
+      console.log(`[RAG] Created ${allChunks.length} chunks for article ${article.articleNumber}`);
+      
+      // Generate embeddings
+      const texts = allChunks.map(c => c.text);
+      const embeddings = await batchGenerateEmbeddings(texts);
+      
+      // Save chunks with embeddings
+      const savedChunks = [];
+      for (let i = 0; i < allChunks.length; i++) {
+        const [saved] = await db
+          .insert(legalArticleChunks)
+          .values({
+            articleId,
+            segmentType: allChunks[i].segmentType,
+            chunkText: allChunks[i].text,
+            chunkIndex: allChunks[i].index,
+            embedding: embeddings[i],
+            metadata: {
+              articleNumber: article.articleNumber,
+              title: article.title,
+              subject: article.subject,
+              segmentType: allChunks[i].segmentType
+            }
+          })
+          .returning();
+        savedChunks.push(saved);
+      }
+      
+      // Mark article as processed
+      await db
+        .update(legalArticles)
+        .set({ isProcessedForRag: true })
+        .where(eq(legalArticles.id, articleId));
+      
+      res.json({
+        articleId,
+        articleNumber: article.articleNumber,
+        chunksCreated: savedChunks.length,
+        embeddingDimensions: embeddings[0]?.length || 0
+      });
+    } catch (error) {
+      console.error("Process article RAG error:", error);
+      res.status(500).json({ error: "Failed to process article for RAG" });
+    }
+  });
+
+  // Get statistics for legal articles
+  app.get("/api/legal-articles/stats", async (req, res) => {
+    try {
+      const { legalArticles, legalArticleBatches } = await import("@shared/schema");
+      const { eq, count } = await import("drizzle-orm");
+      const userId = await getDefaultUserId();
+      
+      const [articlesCount] = await db
+        .select({ count: count() })
+        .from(legalArticles)
+        .where(eq(legalArticles.userId, userId));
+      
+      const [batchesCount] = await db
+        .select({ count: count() })
+        .from(legalArticleBatches)
+        .where(eq(legalArticleBatches.userId, userId));
+      
+      const [ragProcessed] = await db
+        .select({ count: count() })
+        .from(legalArticles)
+        .where(eq(legalArticles.isProcessedForRag, true));
+      
+      res.json({
+        totalArticles: articlesCount?.count || 0,
+        totalBatches: batchesCount?.count || 0,
+        ragProcessedArticles: ragProcessed?.count || 0
+      });
+    } catch (error) {
+      console.error("Get legal articles stats error:", error);
+      res.status(500).json({ error: "Failed to fetch stats" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

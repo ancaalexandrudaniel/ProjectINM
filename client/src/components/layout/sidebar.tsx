@@ -100,6 +100,10 @@ export default function Sidebar() {
           
           {expandedSections['raw'] && (
             <div className="pl-2 space-y-1">
+              <Link href="/legal-articles-import" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/legal-articles-import') ? 'active' : ''}`} data-testid="nav-legal-articles-import">
+                <Plus className="h-4 w-4" />
+                <span>Import Articole</span>
+              </Link>
               <Link href="/raw-data" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/raw-data') ? 'active' : ''}`} data-testid="nav-raw-data">
                 <FolderOpen className="h-4 w-4" />
                 <span>Resurse Juridice</span>
