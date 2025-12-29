@@ -23,7 +23,10 @@ import {
   Upload,
   BookOpen,
   Users,
-  MessageSquare
+  MessageSquare,
+  GraduationCap,
+  Flame,
+  Target
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -178,7 +181,16 @@ export default function Sidebar() {
                   </Link>
                   
                   <div className="py-1 px-4">
-                    <span className="text-xs text-muted-foreground">Practică:</span>
+                    <span className="text-xs text-muted-foreground">Moduri de test:</span>
+                  </div>
+                  
+                  <Link href="/quiz-select" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/quiz-select') ? 'active' : ''}`} data-testid="nav-quiz-select">
+                    <Target className="h-4 w-4" />
+                    <span>Alege Modul</span>
+                  </Link>
+                  
+                  <div className="py-1 px-4">
+                    <span className="text-xs text-muted-foreground">Practică pe materii:</span>
                   </div>
                   
                   {subjects.map((subject) => {
