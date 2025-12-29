@@ -30,11 +30,11 @@ export default function Header() {
             
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-medium">Andrei Popescu</p>
+                <p className="text-sm font-medium">Judecator Alex Anca</p>
                 <p className="text-xs text-muted-foreground">Candidat INM 2025</p>
               </div>
               <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold">
-                AP
+                AA
               </div>
             </div>
           </div>
