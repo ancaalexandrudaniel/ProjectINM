@@ -844,7 +844,12 @@ ${context}`;
       const { z } = await import("zod");
       const userId = await getDefaultUserId();
       
-      // Validate request body
+      // Validate request body - supports both single answer and multiple answers
+      const optionSchema = z.union([
+        z.string(),
+        z.object({ id: z.number(), text: z.string() })
+      ]);
+      
       const requestSchema = z.object({
         batchName: z.string().min(1, "Batch name is required"),
         subject: z.string().min(1, "Subject is required"),
@@ -852,11 +857,9 @@ ${context}`;
         sourceLLM: z.string().optional().nullable(),
         questionsData: z.array(z.object({
           questionText: z.string().min(1, "Question text is required"),
-          options: z.array(z.object({
-            id: z.number(),
-            text: z.string()
-          })).min(2, "At least 2 options required"),
-          correctAnswer: z.number().min(0),
+          options: z.array(optionSchema).min(2, "At least 2 options required"),
+          correctAnswer: z.number().nullable().optional(),
+          correctAnswers: z.array(z.number()).optional().default([]),
           explanation: z.string().optional().default(''),
           chapter: z.string().optional().default('General'),
           topic: z.string().optional().nullable(),
@@ -893,14 +896,41 @@ ${context}`;
       for (let i = 0; i < questionsData.length; i++) {
         const q = questionsData[i];
         try {
+          // Normalize options to array of objects with id and text
+          const normalizedOptions = q.options.map((opt, idx) => {
+            if (typeof opt === 'string') {
+              return { id: idx, text: opt };
+            }
+            return opt;
+          });
+          
+          // Determine correctAnswer and correctAnswersMultiple
+          let finalCorrectAnswer: number | null = null;
+          let finalCorrectAnswersMultiple: number[] | null = null;
+          
+          if (q.correctAnswer !== null && q.correctAnswer !== undefined) {
+            // Single correct answer
+            finalCorrectAnswer = q.correctAnswer;
+          } else if (q.correctAnswers && q.correctAnswers.length === 1) {
+            // Single answer in array format
+            finalCorrectAnswer = q.correctAnswers[0];
+          } else if (q.correctAnswers && q.correctAnswers.length > 1) {
+            // Multiple correct answers
+            finalCorrectAnswersMultiple = q.correctAnswers;
+          } else if (q.correctAnswers && q.correctAnswers.length === 0) {
+            // No correct answer (God Mode Set C edge case)
+            finalCorrectAnswersMultiple = [];
+          }
+          
           const [inserted] = await db.insert(questions).values({
             subject,
             chapter: q.chapter,
             topic: q.topic,
             difficulty: q.difficulty,
             questionText: q.questionText,
-            options: q.options,
-            correctAnswer: q.correctAnswer,
+            options: normalizedOptions,
+            correctAnswer: finalCorrectAnswer,
+            correctAnswersMultiple: finalCorrectAnswersMultiple,
             explanation: q.explanation,
             legalReferences: q.legalReferences,
             aiFeedback: q.aiFeedback,

@@ -72,8 +72,8 @@ const llmPromptTemplate = `Transformă toate grilele din conversația noastră �
 
 Pentru FIECARE întrebare, extrage SEPARAT:
 1. Textul întrebării (fără opțiuni, fără numerotare)
-2. Cele 4 opțiuni de răspuns
-3. Răspunsul corect (index 0-3)
+2. Cele 4 opțiuni de răspuns (doar text, array de 4 stringuri)
+3. Răspunsul corect
 4. Explicația detaliată
 5. Articolele de lege relevante
 
@@ -81,14 +81,10 @@ Returnează un array JSON cu structura:
 [
   {
     "questionText": "Textul exact al întrebării, curat, fără A) B) C) D)",
-    "options": [
-      {"text": "Prima opțiune", "id": 0},
-      {"text": "A doua opțiune", "id": 1},
-      {"text": "A treia opțiune", "id": 2},
-      {"text": "A patra opțiune", "id": 3}
-    ],
+    "options": ["Prima opțiune", "A doua opțiune", "A treia opțiune", "A patra opțiune"],
     "correctAnswer": 1,
-    "explanation": "Explicația completă de ce opțiunea B este corectă...",
+    "correctAnswers": [],
+    "explanation": "Explicația completă de ce opțiunea este corectă...",
     "legalReferences": ["Art. 2517 Cod Civil", "Art. 1350 Cod Civil"],
     "chapter": "Obligații",
     "topic": "Prescripție",
@@ -96,26 +92,37 @@ Returnează un array JSON cu structura:
   }
 ]
 
+REGULI PENTRU RĂSPUNSURI:
+- Dacă există UN SINGUR răspuns corect: correctAnswer = index (0-3), correctAnswers = []
+- Dacă există MAI MULTE răspunsuri corecte: correctAnswer = null, correctAnswers = [0, 2] (exemplu)
+- Dacă NICIUNUL nu e corect (God Mode Set C): correctAnswer = null, correctAnswers = []
+
 IMPORTANT:
-- correctAnswer este INDEX-ul (0, 1, 2 sau 3), NU litera (A, B, C, D)
+- options este un array de 4 stringuri simple, NU obiecte
+- correctAnswer este INDEX-ul (0, 1, 2 sau 3) sau null
 - Fiecare câmp trebuie să conțină DOAR informația sa, fără contaminare
 - Păstrează explicațiile complete, nu le prescurta`;
 
 const exampleJSON = `[
   {
     "questionText": "Care este termenul general de prescripție pentru acțiunile personale?",
-    "options": [
-      {"text": "1 an", "id": 0},
-      {"text": "3 ani", "id": 1},
-      {"text": "5 ani", "id": 2},
-      {"text": "10 ani", "id": 3}
-    ],
+    "options": ["1 an", "3 ani", "5 ani", "10 ani"],
     "correctAnswer": 1,
-    "explanation": "Conform art. 2517 din Codul Civil, termenul general de prescripție extinctivă este de 3 ani. Acest termen se aplică tuturor drepturilor la acțiune pentru care legea nu prevede un alt termen.",
+    "correctAnswers": [],
+    "explanation": "Conform art. 2517 din Codul Civil, termenul general de prescripție extinctivă este de 3 ani.",
     "legalReferences": ["Art. 2517 Cod Civil"],
     "chapter": "Prescripția extinctivă",
-    "topic": "Termene de prescripție",
     "difficulty": "medium"
+  },
+  {
+    "questionText": "Care dintre următoarele constituie cauze de suspendare a prescripției extinctive?",
+    "options": ["Forța majoră", "Recunoașterea dreptului", "Introducerea cererii de chemare în judecată", "Executarea voluntară parțială"],
+    "correctAnswer": null,
+    "correctAnswers": [0, 2],
+    "explanation": "Forța majoră și introducerea cererii de chemare în judecată sunt cauze de suspendare.",
+    "legalReferences": ["Art. 2532 Cod Civil", "Art. 2537 Cod Civil"],
+    "chapter": "Prescripția extinctivă",
+    "difficulty": "hard"
   }
 ]`;
 
@@ -129,12 +136,15 @@ interface ValidationResult {
 interface ParsedQuestion {
   index: number;
   questionText: string;
-  options: Array<{text: string; id: number}>;
-  correctAnswer: number;
+  options: string[];
+  correctAnswer: number | null;
+  correctAnswers: number[];
   explanation?: string;
   hasExplanation: boolean;
   hasLegalReferences: boolean;
   chapter?: string;
+  isMultipleCorrect: boolean;
+  isNoneCorrect: boolean;
 }
 
 interface ValidationError {
@@ -191,11 +201,26 @@ function validateJSON(jsonString: string): ValidationResult {
       warnings.push({ index: i, field: 'options', message: `${q.options.length} opțiuni (recomandat: 4)` });
     }
 
-    if (typeof q.correctAnswer !== 'number') {
-      errors.push({ index: i, field: 'correctAnswer', message: 'correctAnswer trebuie să fie număr (0-3)' });
-    } else if (q.correctAnswer < 0 || q.correctAnswer >= (q.options?.length || 4)) {
-      errors.push({ index: i, field: 'correctAnswer', message: `Index invalid: ${q.correctAnswer}` });
+    const correctAnswers: number[] = Array.isArray(q.correctAnswers) ? q.correctAnswers : [];
+    const correctAnswer: number | null = typeof q.correctAnswer === 'number' ? q.correctAnswer : null;
+    
+    const hasMultipleCorrect = correctAnswers.length > 1;
+    const hasSingleCorrect = correctAnswer !== null || correctAnswers.length === 1;
+    const hasNoneCorrect = correctAnswer === null && correctAnswers.length === 0;
+
+    if (!hasSingleCorrect && !hasMultipleCorrect && !hasNoneCorrect) {
+      errors.push({ index: i, field: 'correctAnswer', message: 'Lipsește răspunsul corect' });
     }
+
+    if (correctAnswer !== null && (correctAnswer < 0 || correctAnswer >= (q.options?.length || 4))) {
+      errors.push({ index: i, field: 'correctAnswer', message: `Index invalid: ${correctAnswer}` });
+    }
+
+    correctAnswers.forEach((idx: number) => {
+      if (idx < 0 || idx >= (q.options?.length || 4)) {
+        errors.push({ index: i, field: 'correctAnswers', message: `Index invalid în correctAnswers: ${idx}` });
+      }
+    });
 
     const hasExplanation = !!q.explanation && q.explanation.length > 10;
     const hasLegalReferences = Array.isArray(q.legalReferences) && q.legalReferences.length > 0;
@@ -204,15 +229,22 @@ function validateJSON(jsonString: string): ValidationResult {
       warnings.push({ index: i, field: 'explanation', message: 'Lipsește explicația detaliată' });
     }
 
+    const normalizedOptions = (q.options || []).map((opt: any) => 
+      typeof opt === 'string' ? opt : (opt.text || '')
+    );
+
     questions.push({
       index: i,
       questionText: q.questionText || '',
-      options: q.options || [],
-      correctAnswer: q.correctAnswer ?? -1,
+      options: normalizedOptions,
+      correctAnswer: correctAnswer,
+      correctAnswers: correctAnswers,
       explanation: q.explanation,
       hasExplanation,
       hasLegalReferences,
-      chapter: q.chapter
+      chapter: q.chapter,
+      isMultipleCorrect: hasMultipleCorrect,
+      isNoneCorrect: hasNoneCorrect
     });
   });
 
@@ -593,29 +625,48 @@ export default function BulkImport() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 max-h-[500px] overflow-y-auto">
-              {validation.questions.slice(0, 5).map((q, i) => (
-                <div key={i} className="p-3 bg-muted/50 rounded-lg space-y-2">
-                  <div className="flex items-start justify-between">
-                    <Badge variant="outline">#{q.index + 1}</Badge>
-                    <div className="flex gap-1">
-                      {q.hasExplanation && <Badge variant="secondary" className="text-xs">Explicație</Badge>}
-                      {q.hasLegalReferences && <Badge variant="secondary" className="text-xs">Art. Lege</Badge>}
-                      {q.chapter && <Badge variant="outline" className="text-xs">{q.chapter}</Badge>}
-                    </div>
-                  </div>
-                  <p className="text-sm font-medium">{q.questionText.slice(0, 150)}...</p>
-                  <div className="grid grid-cols-2 gap-1">
-                    {q.options.map((opt: any, oi: number) => (
-                      <div 
-                        key={oi} 
-                        className={`text-xs p-1 rounded ${oi === q.correctAnswer ? 'bg-green-500/20 text-green-400' : 'bg-background'}`}
-                      >
-                        {String.fromCharCode(65 + oi)}) {typeof opt === 'string' ? opt.slice(0, 30) : opt.text?.slice(0, 30)}...
+              {validation.questions.slice(0, 5).map((q, i) => {
+                const isCorrect = (idx: number) => {
+                  if (q.correctAnswer !== null && q.correctAnswer === idx) return true;
+                  if (q.correctAnswers.includes(idx)) return true;
+                  return false;
+                };
+                
+                return (
+                  <div key={i} className="p-3 bg-muted/50 rounded-lg space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline">#{q.index + 1}</Badge>
+                        {q.isMultipleCorrect && (
+                          <Badge className="bg-orange-500/20 text-orange-400 text-xs">Multiple</Badge>
+                        )}
+                        {q.isNoneCorrect && (
+                          <Badge className="bg-red-500/20 text-red-400 text-xs">God Mode</Badge>
+                        )}
                       </div>
-                    ))}
+                      <div className="flex gap-1">
+                        {q.hasExplanation && <Badge variant="secondary" className="text-xs">Explicație</Badge>}
+                        {q.hasLegalReferences && <Badge variant="secondary" className="text-xs">Art. Lege</Badge>}
+                        {q.chapter && <Badge variant="outline" className="text-xs">{q.chapter}</Badge>}
+                      </div>
+                    </div>
+                    <p className="text-sm font-medium">{q.questionText.slice(0, 150)}...</p>
+                    <div className="grid grid-cols-2 gap-1">
+                      {q.options.map((opt: string, oi: number) => (
+                        <div 
+                          key={oi} 
+                          className={`text-xs p-1 rounded ${isCorrect(oi) ? 'bg-green-500/20 text-green-400' : 'bg-background'}`}
+                        >
+                          {String.fromCharCode(65 + oi)}) {opt.slice(0, 30)}...
+                        </div>
+                      ))}
+                    </div>
+                    {q.isNoneCorrect && (
+                      <div className="text-xs text-red-400 italic">⚠ Niciun răspuns corect</div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
               {validation.questions.length > 5 && (
                 <p className="text-center text-muted-foreground text-sm">
                   + {validation.questions.length - 5} întrebări...

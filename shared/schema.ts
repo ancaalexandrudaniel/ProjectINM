@@ -20,7 +20,8 @@ export const questions = pgTable("questions", {
   difficulty: text("difficulty").notNull(), // 'easy', 'medium', 'hard'
   questionText: text("question_text").notNull(),
   options: jsonb("options").notNull(), // Array of option objects
-  correctAnswer: integer("correct_answer").notNull(), // Index of correct option
+  correctAnswer: integer("correct_answer"), // Index of correct option (null for multiple correct)
+  correctAnswersMultiple: jsonb("correct_answers_multiple"), // Array of indices for God Mode (e.g., [0,2] or [] for "none correct")
   explanation: text("explanation").notNull(),
   legalReferences: jsonb("legal_references"), // Array of legal reference strings
   aiFeedback: text("ai_feedback"), // AI-generated feedback from LLM session
