@@ -1,0 +1,151 @@
+{
+  "session_metadata": {
+    "segment_articole": "Cod civil art. 1166-1203",
+    "data_referinta": "2024-12-30",
+    "set_type": "A",
+    "total_intrebari": 20,
+    "scor": "16/20",
+    "procent": "80%"
+  },
+  
+  "intrebari": [
+    {
+      "id": 1,
+      "tip_set": "A",
+      "tulpina": "Ce este o \"invitație la ofertă\"?",
+      
+      "variante": [
+        {
+          "litera": "a",
+          "text": "O ofertă fermă adresată unui cerc nedeterminat...",
+          "este_corecta": false
+        },
+        {
+          "litera": "b",
+          "text": "O propunere adresată publicului larg...",
+          "este_corecta": false
+        },
+        {
+          "litera": "c",
+          "text": "O simplă solicitare adresată publicului...",
+          "este_corecta": true
+        },
+        {
+          "litera": "d",
+          "text": "O formă specială de contract...",
+          "este_corecta": false
+        }
+      ],
+      
+      "raspuns_utilizator": "c",
+      "este_corect": true,
+      
+      "feedback": {
+        "verdict": "CORECT",
+        "explicatie_generala": "Invitația la ofertă este o simplă solicitare prin care cineva invită publicul să facă oferte, dar nu este ea însăși o ofertă...",
+        
+        "are_exceptii": true,
+        "exceptii": {
+          "regula_generala": {
+            "text": "Propunere la public nedeterminat = invitație la ofertă (chiar dacă e precisă)",
+            "explicatie": "Cel care o face NU se obligă la nimic - doar invită publicul să facă oferte",
+            "exemple": [
+              "Anunț 'vând apartament' (fără toate detaliile) - doar cheamă persoanele interesate să vină cu propuneri"
+            ]
+          },
+          "exceptie": {
+            "text": "Când din împrejurări rezultă NEÎNDOIELNIC intenția de a se obliga → devine OFERTĂ",
+            "conditie": "Din împrejurări rezultă neîndoielnic intenția de a se obliga",
+            "efect": "Devine ofertă (cel care o face E obligat să respecte termenii)",
+            "explicatie": "Dacă ai pus toate elementele (produs + preț fix + disponibil), practic te-ai angajat deja la acel preț",
+            "exemple": [
+              "Produs la raft cu PREȚ AFIȘAT (magazinul e obligat să vândă)",
+              "Meniu restaurant cu prețuri (restaurantul e obligat să servească)",
+              "Automat de vânzare (întotdeauna ofertă)"
+            ],
+            "contra_exemple": [
+              "Produs în vitrină FĂRĂ preț (poate fi doar decorativ)",
+              "Anunț 'preț negociabil' (vrea să discute)"
+            ]
+          }
+        },
+        
+        "analiza_variante": {
+          "a": {
+            "este_corecta": false,
+            "explicatie": "Spunea că e 'ofertă fermă care produce efecte contractuale imediate' - dar asta e contradictoriu! Invitația la ofertă NU este ofertă și NU produce efecte contractuale.",
+            "capcana": "Confundă invitația cu oferta propriu-zisă"
+          },
+          "b": {
+            "este_corecta": false,
+            "explicatie": "Vorbea despre 'ofertă completă și obligatorie' - din nou, confundă invitația cu oferta propriu-zisă.",
+            "capcana": "Sugerează obligativitate când nu există"
+          },
+          "c": {
+            "este_corecta": true,
+            "explicatie": "Exact! Invitația la ofertă este o simplă solicitare prin care cineva invită publicul să facă oferte, dar nu este ea însăși o ofertă.",
+            "de_ce_e_corecta": "Definește corect conceptul: simplă solicitare, fără obligație"
+          },
+          "d": {
+            "este_corecta": false,
+            "explicatie": "Inventa un 'contract automat' - dar asta e imposibil! Contractul se naște doar când oferta (făcută de persoana interesată) este acceptată.",
+            "capcana": "Creează un mecanism juridic inexistent"
+          }
+        },
+        
+        "retine": "Invitație la ofertă = 'hai să discutăm' (fără obligație). Ofertă = 'îți propun asta, dacă accepți suntem legați' (cu obligație)."
+      },
+      
+      "concepte_cheie": ["invitație la ofertă", "ofertă", "obligație", "condiții de validitate"],
+      "articole_relevante": ["art. 1189"],
+      "dificultate": "mediu",
+      "tags": ["definitii", "incheierea_contractului", "are_exceptii"]
+    }
+    // ... restul întrebărilor
+  ],
+  
+  "analiza_finale": {
+    "scoruri": {
+      "total_corecte": 16,
+      "total_intrebari": 20,
+      "procent": 80
+    },
+    "pattern_erori": [
+      {
+        "concept": "condiții suspensive",
+        "numar_erori": 3,
+        "tip_eroare": "confuzie între momentul încheierii și nașterea obligației"
+      },
+      {
+        "concept": "formă vs fond",
+        "numar_erori": 1,
+        "tip_eroare": "confuzie între cerință de formă și cerință de validitate"
+      }
+    ],
+    "remedii": [
+      "Recitește mini-harta, secțiunea 'Condiții'",
+      "Exersează diferența dintre 'contract încheiat' și 'obligație născută'"
+    ]
+  },
+  
+  "glosar_incremental": [
+    {
+      "termen": "invitație la ofertă",
+      "definitie": "Simplă solicitare adresată publicului prin care cel care o face invită persoanele interesate să formuleze ele însele o ofertă, fără ca solicitarea să constituie ea însăși o ofertă",
+      "aplicare": "Anunțuri de tipul 'vând apartament' (fără toate detaliile esențiale)",
+      "distinctie_de": "ofertă (care obligă pe cel care o face)"
+    }
+    // ... alți termeni
+  ],
+  
+  "jurnal_erori": [
+    {
+      "intrebare_id": 5,
+      "concept": "moment încheierii contractului",
+      "articol": "art. 1186",
+      "tip_greseala": "confuzie între prezență și absență fizică",
+      "remediu": "Reține: prezență = percepe DIRECT acceptarea (inclusiv telefon); absență = primește COMUNICAREA"
+    }
+    // ... alte erori
+  ]
+}
