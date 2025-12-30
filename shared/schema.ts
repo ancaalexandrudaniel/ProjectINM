@@ -25,6 +25,10 @@ export const questions = pgTable("questions", {
   explanation: text("explanation").notNull(),
   legalReferences: jsonb("legal_references"), // Array of legal reference strings
   aiFeedback: text("ai_feedback"), // AI-generated feedback from LLM session
+  feedbackDetailed: jsonb("feedback_detailed"), // Rich feedback: analiza_variante, exceptii, retine
+  keyConcepts: text("key_concepts").array(), // concepte_cheie for filtering
+  tags: text("tags").array(), // tags for categorization
+  hasExceptions: boolean("has_exceptions").default(false), // flag for questions with legal exceptions
   sourceType: text("source_type"), // 'llm-session', 'manual', 'exam-past'
   sourceLLM: text("source_llm"), // 'chatgpt', 'claude', 'gemini'
   batchId: varchar("batch_id"), // reference to question batch

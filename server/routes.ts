@@ -957,6 +957,167 @@ ${context}`;
     }
   });
 
+  // Bulk import questions from LLM session with rich feedback format
+  app.post("/api/questions/bulk-import-session", async (req, res) => {
+    try {
+      const { questions, questionBatches } = await import("@shared/schema");
+      const { z } = await import("zod");
+      const userId = await getDefaultUserId();
+      
+      // Schema for the rich session format
+      const variantSchema = z.object({
+        litera: z.string(),
+        text: z.string(),
+        este_corecta: z.boolean()
+      });
+      
+      const feedbackSchema = z.object({
+        verdict: z.string().optional(),
+        explicatie_generala: z.string().optional(),
+        are_exceptii: z.boolean().optional(),
+        exceptii: z.any().optional(),
+        analiza_variante: z.record(z.any()).optional(),
+        retine: z.string().optional()
+      }).passthrough();
+      
+      const intrebareSchema = z.object({
+        id: z.number().optional(),
+        tip_set: z.string().optional(),
+        tulpina: z.string(),
+        variante: z.array(variantSchema).min(2),
+        raspuns_utilizator: z.string().optional(),
+        este_corect: z.boolean().optional(),
+        feedback: feedbackSchema.optional(),
+        concepte_cheie: z.array(z.string()).optional(),
+        articole_relevante: z.array(z.string()).optional(),
+        dificultate: z.string().optional(),
+        tags: z.array(z.string()).optional()
+      });
+      
+      const sessionSchema = z.object({
+        session_metadata: z.object({
+          segment_articole: z.string().optional(),
+          data_referinta: z.string().optional(),
+          set_type: z.string().optional(),
+          total_intrebari: z.number().optional(),
+          scor: z.string().optional(),
+          procent: z.string().optional()
+        }).optional(),
+        intrebari: z.array(intrebareSchema).min(1),
+        analiza_finale: z.any().optional(),
+        glosar_incremental: z.any().optional(),
+        jurnal_erori: z.any().optional()
+      });
+      
+      const requestSchema = z.object({
+        sessionData: sessionSchema,
+        subject: z.string().min(1),
+        chapter: z.string().optional(),
+        sourceLLM: z.string().optional()
+      });
+      
+      const parseResult = requestSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Validation failed", 
+          details: parseResult.error.errors 
+        });
+      }
+      
+      const { sessionData, subject, chapter, sourceLLM } = parseResult.data;
+      const meta = sessionData.session_metadata;
+      
+      // Create batch with session metadata
+      const batchName = meta?.segment_articole || `Sesiune ${new Date().toLocaleDateString('ro-RO')}`;
+      
+      const [batch] = await db.insert(questionBatches).values({
+        userId,
+        batchName,
+        subject,
+        sourceType: 'llm-session',
+        sourceLLM: sourceLLM || null,
+        questionsCount: sessionData.intrebari.length
+      }).returning();
+      
+      // Insert questions with rich feedback
+      const insertedQuestions = [];
+      const errors: Array<{index: number; error: string}> = [];
+      
+      for (let i = 0; i < sessionData.intrebari.length; i++) {
+        const q = sessionData.intrebari[i];
+        try {
+          // Convert variante to options format
+          const options = q.variante.map((v, idx) => ({
+            id: idx,
+            text: v.text,
+            litera: v.litera
+          }));
+          
+          // Find correct answers
+          const correctIndices = q.variante
+            .map((v, idx) => v.este_corecta ? idx : -1)
+            .filter(idx => idx !== -1);
+          
+          const correctAnswer = correctIndices.length === 1 ? correctIndices[0] : null;
+          const correctAnswersMultiple = correctIndices.length !== 1 ? correctIndices : null;
+          
+          // Build feedbackDetailed from rich feedback
+          const feedbackDetailed = q.feedback ? {
+            explicatie_generala: q.feedback.explicatie_generala,
+            analiza_variante: q.feedback.analiza_variante,
+            exceptii: q.feedback.exceptii,
+            retine: q.feedback.retine,
+            are_exceptii: q.feedback.are_exceptii
+          } : null;
+          
+          // Map difficulty
+          const difficultyMap: Record<string, string> = {
+            'usor': 'easy', 'ușor': 'easy', 'easy': 'easy',
+            'mediu': 'medium', 'medium': 'medium',
+            'greu': 'hard', 'hard': 'hard', 'dificil': 'hard'
+          };
+          const difficulty = difficultyMap[q.dificultate?.toLowerCase() || 'medium'] || 'medium';
+          
+          const [inserted] = await db.insert(questions).values({
+            subject,
+            chapter: chapter || meta?.segment_articole || 'General',
+            topic: meta?.segment_articole,
+            difficulty,
+            questionText: q.tulpina,
+            options,
+            correctAnswer,
+            correctAnswersMultiple,
+            explanation: q.feedback?.explicatie_generala || '',
+            legalReferences: q.articole_relevante,
+            feedbackDetailed,
+            keyConcepts: q.concepte_cheie,
+            tags: q.tags,
+            hasExceptions: q.feedback?.are_exceptii || false,
+            sourceType: 'llm-session',
+            sourceLLM: sourceLLM || null,
+            batchId: batch.id
+          }).returning();
+          
+          insertedQuestions.push(inserted);
+        } catch (qErr: any) {
+          console.warn(`Failed to insert question ${i}:`, qErr.message);
+          errors.push({ index: i, error: qErr.message });
+        }
+      }
+      
+      res.json({
+        batch,
+        importedCount: insertedQuestions.length,
+        totalProvided: sessionData.intrebari.length,
+        sessionMetadata: meta,
+        errors: errors.length > 0 ? errors : undefined
+      });
+    } catch (error) {
+      console.error("Bulk import session error:", error);
+      res.status(500).json({ error: "Failed to bulk import session questions" });
+    }
+  });
+
   // Search questions with filters
   app.get("/api/questions/search", async (req, res) => {
     try {

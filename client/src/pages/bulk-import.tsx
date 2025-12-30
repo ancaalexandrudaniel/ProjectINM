@@ -263,17 +263,102 @@ function validateJSON(jsonString: string): ValidationResult {
   };
 }
 
+// Session format validation
+interface SessionValidationResult {
+  isValid: boolean;
+  questions: SessionParsedQuestion[];
+  errors: string[];
+  metadata?: any;
+}
+
+interface SessionParsedQuestion {
+  id: number;
+  tulpina: string;
+  variante: { litera: string; text: string; este_corecta: boolean }[];
+  hasExceptii: boolean;
+  hasFeedback: boolean;
+  concepte: string[];
+  articole: string[];
+}
+
+function validateSessionJSON(jsonString: string): SessionValidationResult {
+  const errors: string[] = [];
+  const questions: SessionParsedQuestion[] = [];
+
+  if (!jsonString.trim()) {
+    return { isValid: false, questions: [], errors: [] };
+  }
+
+  let parsed: any;
+  try {
+    parsed = JSON.parse(jsonString);
+  } catch (e: any) {
+    errors.push(`JSON invalid: ${e.message}`);
+    return { isValid: false, questions: [], errors };
+  }
+
+  const intrebari = parsed.intrebari || (Array.isArray(parsed) ? parsed : null);
+  
+  if (!intrebari || !Array.isArray(intrebari) || intrebari.length === 0) {
+    errors.push("JSON-ul trebuie să conțină un array 'intrebari' cu cel puțin o întrebare");
+    return { isValid: false, questions: [], errors };
+  }
+
+  for (let i = 0; i < intrebari.length; i++) {
+    const q = intrebari[i];
+    
+    if (!q.tulpina || typeof q.tulpina !== 'string') {
+      errors.push(`Întrebarea ${i + 1}: Lipsește câmpul 'tulpina' (textul întrebării)`);
+      continue;
+    }
+    
+    if (!Array.isArray(q.variante) || q.variante.length < 2) {
+      errors.push(`Întrebarea ${i + 1}: Lipsesc 'variante' (minim 2)`);
+      continue;
+    }
+
+    const invalidVariant = q.variante.find((v: any, idx: number) => 
+      typeof v.litera !== 'string' || typeof v.text !== 'string' || typeof v.este_corecta !== 'boolean'
+    );
+    if (invalidVariant) {
+      errors.push(`Întrebarea ${i + 1}: Fiecare variantă trebuie să aibă litera, text și este_corecta`);
+      continue;
+    }
+
+    questions.push({
+      id: q.id || i + 1,
+      tulpina: q.tulpina,
+      variante: q.variante,
+      hasExceptii: q.feedback?.are_exceptii || false,
+      hasFeedback: !!q.feedback?.explicatie_generala,
+      concepte: q.concepte_cheie || [],
+      articole: q.articole_relevante || []
+    });
+  }
+
+  return {
+    isValid: questions.length > 0 && errors.length === 0,
+    questions,
+    errors,
+    metadata: parsed.session_metadata
+  };
+}
+
 export default function BulkImport() {
   const { toast } = useToast();
+  const [importMode, setImportMode] = useState<'simple' | 'session'>('simple');
   const [batchName, setBatchName] = useState('');
   const [subject, setSubject] = useState('');
   const [sourceType, setSourceType] = useState('llm-session');
   const [sourceLLM, setSourceLLM] = useState('');
   const [jsonData, setJsonData] = useState('');
+  const [sessionJsonData, setSessionJsonData] = useState('');
+  const [sessionChapter, setSessionChapter] = useState('');
   const [showGuide, setShowGuide] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
   const validation = useMemo(() => validateJSON(jsonData), [jsonData]);
+  const sessionValidation = useMemo(() => validateSessionJSON(sessionJsonData), [sessionJsonData]);
 
   const { data: batches = [], isLoading } = useQuery<QuestionBatch[]>({
     queryKey: ['/api/question-batches'],
@@ -310,6 +395,36 @@ export default function BulkImport() {
     }
   });
 
+  const sessionImportMutation = useMutation({
+    mutationFn: async () => {
+      const sessionData = JSON.parse(sessionJsonData);
+      const response = await apiRequest('POST', '/api/questions/bulk-import-session', {
+        sessionData,
+        subject,
+        chapter: sessionChapter || undefined,
+        sourceLLM: sourceLLM || undefined
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Import Sesiune Reușit!",
+        description: `${data.importedCount} din ${data.totalProvided} întrebări importate cu feedback detaliat.`,
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/question-batches'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/questions'] });
+      setSessionJsonData('');
+      setSessionChapter('');
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Eroare la import sesiune",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
   const copyPrompt = () => {
     navigator.clipboard.writeText(llmPromptTemplate);
     toast({ title: "Prompt copiat!", description: "Lipește-l în ChatGPT/Claude/Gemini" });
@@ -340,6 +455,34 @@ export default function BulkImport() {
           Ghid Pas cu Pas
         </Button>
       </div>
+
+      {/* Mode Selection Tabs */}
+      <Tabs value={importMode} onValueChange={(v) => setImportMode(v as 'simple' | 'session')} className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="simple" data-testid="tab-simple-import">
+            Format Simplu
+          </TabsTrigger>
+          <TabsTrigger value="session" data-testid="tab-session-import">
+            <Sparkles className="h-4 w-4 mr-1" />
+            Format Sesiune
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="simple" className="mt-4">
+          <p className="text-sm text-muted-foreground mb-4">
+            Format de bază: array de întrebări cu questionText, options, correctAnswer
+          </p>
+        </TabsContent>
+        
+        <TabsContent value="session" className="mt-4">
+          <div className="p-3 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/30 rounded-lg mb-4">
+            <p className="text-sm">
+              <strong className="text-purple-400">Format Îmbogățit:</strong> Include feedback detaliat per variantă, excepții juridice, 
+              concepte cheie, analiză erori și glosar incremental.
+            </p>
+          </div>
+        </TabsContent>
+      </Tabs>
 
       <Dialog open={showGuide} onOpenChange={setShowGuide}>
         <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
@@ -461,6 +604,137 @@ export default function BulkImport() {
       </Dialog>
 
       <div className="grid lg:grid-cols-2 gap-6">
+        {/* Session Import Card */}
+        {importMode === 'session' && (
+          <Card className="border-purple-500/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-purple-400" />
+                Import Sesiune cu Feedback Detaliat
+              </CardTitle>
+              <CardDescription>
+                Format îmbogățit cu analiză per variantă și excepții juridice
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="session-subject">Materie *</Label>
+                  <Select value={subject} onValueChange={setSubject}>
+                    <SelectTrigger id="session-subject" data-testid="select-session-subject">
+                      <SelectValue placeholder="Alege materia..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(subjectLabels).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="session-chapter">Capitol (opțional)</Label>
+                  <Input
+                    id="session-chapter"
+                    placeholder="ex: Contracte art. 1166-1203"
+                    value={sessionChapter}
+                    onChange={(e) => setSessionChapter(e.target.value)}
+                    data-testid="input-session-chapter"
+                  />
+                </div>
+
+                <div className="space-y-2 col-span-2">
+                  <Label htmlFor="session-llm">LLM Folosit</Label>
+                  <Input
+                    id="session-llm"
+                    placeholder="ex: Claude-3.5-Sonnet"
+                    value={sourceLLM}
+                    onChange={(e) => setSourceLLM(e.target.value)}
+                    data-testid="input-session-llm"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="session-json">JSON Sesiune *</Label>
+                <Textarea
+                  id="session-json"
+                  placeholder={`Paste-uiește JSON-ul cu structura:\n{\n  "session_metadata": {...},\n  "intrebari": [\n    {\n      "tulpina": "...",\n      "variante": [...],\n      "feedback": {...}\n    }\n  ]\n}`}
+                  value={sessionJsonData}
+                  onChange={(e) => setSessionJsonData(e.target.value)}
+                  className="min-h-[200px] font-mono text-sm"
+                  data-testid="textarea-session-json"
+                />
+              </div>
+
+              {sessionJsonData && (
+                <div className="space-y-2">
+                  {sessionValidation.errors.length > 0 && (
+                    <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                      <p className="font-medium text-red-500 flex items-center gap-2 mb-2">
+                        <XCircle className="h-4 w-4" />
+                        {sessionValidation.errors.length} erori
+                      </p>
+                      <ul className="text-sm text-red-400 space-y-1">
+                        {sessionValidation.errors.map((err, i) => (
+                          <li key={i}>• {err}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {sessionValidation.isValid && (
+                    <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                      <p className="font-medium text-green-500 flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4" />
+                        {sessionValidation.questions.length} întrebări valide
+                      </p>
+                      {sessionValidation.metadata && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Segment: {sessionValidation.metadata.segment_articole || 'N/A'} | 
+                          Set: {sessionValidation.metadata.set_type || 'N/A'}
+                        </p>
+                      )}
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {sessionValidation.questions.slice(0, 3).map((q) => (
+                          <Badge key={q.id} variant="outline" className="text-xs">
+                            #{q.id} {q.hasExceptii && '⚠️'} {q.hasFeedback && '💬'}
+                          </Badge>
+                        ))}
+                        {sessionValidation.questions.length > 3 && (
+                          <Badge variant="secondary" className="text-xs">
+                            +{sessionValidation.questions.length - 3} altele
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <Button
+                className="w-full"
+                disabled={!sessionValidation.isValid || !subject || sessionImportMutation.isPending}
+                onClick={() => sessionImportMutation.mutate()}
+                data-testid="btn-import-session"
+              >
+                {sessionImportMutation.isPending ? (
+                  <>Importare...</>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Importă Sesiune ({sessionValidation.questions.length} întrebări)
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Simple Import Card */}
+        {importMode === 'simple' && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -622,8 +896,9 @@ export default function BulkImport() {
             </Button>
           </CardContent>
         </Card>
+        )}
 
-        {showPreview && validation.questions.length > 0 && (
+        {showPreview && validation.questions.length > 0 && importMode === 'simple' && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
