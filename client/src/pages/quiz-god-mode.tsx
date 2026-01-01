@@ -11,7 +11,11 @@ import {
   XCircle,
   AlertTriangle,
   Ban,
-  Sparkles
+  Sparkles,
+  Lightbulb,
+  BookOpen,
+  FileText,
+  Info
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -389,34 +393,116 @@ export default function QuizGodMode() {
           </div>
 
           {showFeedback && (
-            <div className={`p-4 rounded-lg mb-6 ${
-              results[results.length - 1]?.correct 
-                ? 'bg-green-500/10 border border-green-500/30' 
-                : 'bg-red-500/10 border border-red-500/30'
-            }`}>
-              <div className="flex items-center gap-2 mb-2">
-                {results[results.length - 1]?.correct ? (
-                  <>
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
-                    <span className="font-semibold text-green-500">Corect!</span>
-                  </>
-                ) : (
-                  <>
-                    <XCircle className="h-5 w-5 text-red-500" />
-                    <span className="font-semibold text-red-500">Greșit</span>
-                  </>
+            <div className="space-y-4 mb-6">
+              <div className={`p-4 rounded-lg ${
+                results[results.length - 1]?.correct 
+                  ? 'bg-green-500/10 border border-green-500/30' 
+                  : 'bg-red-500/10 border border-red-500/30'
+              }`}>
+                <div className="flex items-center gap-2 mb-2">
+                  {results[results.length - 1]?.correct ? (
+                    <>
+                      <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      <span className="font-semibold text-green-500">Corect!</span>
+                    </>
+                  ) : (
+                    <>
+                      <XCircle className="h-5 w-5 text-red-500" />
+                      <span className="font-semibold text-red-500">Greșit</span>
+                    </>
+                  )}
+                </div>
+                {!results[results.length - 1]?.correct && (
+                  <p className="text-sm">
+                    <strong>Răspunsuri corecte:</strong>{' '}
+                    {question.hasZeroCorrect 
+                      ? 'Niciunul' 
+                      : question.correctAnswersSet.map(i => String.fromCharCode(65 + i)).join(', ')}
+                  </p>
                 )}
               </div>
-              {question.explanation && (
-                <p className="text-sm text-muted-foreground">{question.explanation}</p>
+
+              {(question.feedbackDetailed?.explicatie_generala || question.explanation) && (
+                <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <BookOpen className="h-5 w-5 text-blue-400" />
+                    <span className="font-semibold text-blue-400">Explicație Completă</span>
+                  </div>
+                  <p className="text-sm text-foreground/90 whitespace-pre-line">
+                    {question.feedbackDetailed?.explicatie_generala || question.explanation}
+                  </p>
+                </div>
               )}
-              {!results[results.length - 1]?.correct && (
-                <p className="text-sm mt-2">
-                  <strong>Răspunsuri corecte:</strong>{' '}
-                  {question.hasZeroCorrect 
-                    ? 'Niciunul' 
-                    : question.correctAnswersSet.map(i => String.fromCharCode(65 + i)).join(', ')}
-                </p>
+
+              {question.feedbackDetailed?.analiza_variante && Object.keys(question.feedbackDetailed.analiza_variante).length > 0 && (
+                <div className="p-4 rounded-lg bg-purple-500/10 border border-purple-500/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <FileText className="h-5 w-5 text-purple-400" />
+                    <span className="font-semibold text-purple-400">Analiza Variantelor</span>
+                  </div>
+                  <div className="space-y-2">
+                    {Object.entries(question.feedbackDetailed.analiza_variante).map(([litera, analysis]) => (
+                      <div key={litera} className={`p-2 rounded text-sm ${
+                        analysis.este_corecta 
+                          ? 'bg-green-500/10 border-l-2 border-green-500' 
+                          : 'bg-red-500/5 border-l-2 border-red-500/50'
+                      }`}>
+                        <span className={`font-bold ${analysis.este_corecta ? 'text-green-400' : 'text-red-400'}`}>
+                          {litera.toUpperCase()})
+                        </span>{' '}
+                        <span className="text-foreground/80">{analysis.explicatie}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {question.feedbackDetailed?.retine && (
+                <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Lightbulb className="h-5 w-5 text-yellow-400" />
+                    <span className="font-semibold text-yellow-400">Reține</span>
+                  </div>
+                  <div className="text-sm text-foreground/90 whitespace-pre-line">
+                    {Array.isArray(question.feedbackDetailed.retine) 
+                      ? question.feedbackDetailed.retine.join('\n') 
+                      : question.feedbackDetailed.retine}
+                  </div>
+                </div>
+              )}
+
+              {question.feedbackDetailed?.schema_aplicatie_practica && (
+                <div className="p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <FileText className="h-5 w-5 text-cyan-400" />
+                    <span className="font-semibold text-cyan-400">Aplicație Practică</span>
+                  </div>
+                  <pre className="text-xs text-foreground/90 whitespace-pre-wrap font-mono overflow-x-auto">
+                    {question.feedbackDetailed.schema_aplicatie_practica}
+                  </pre>
+                </div>
+              )}
+
+              {question.feedbackDetailed?.atentie && (
+                <div className="p-4 rounded-lg bg-orange-500/10 border border-orange-500/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <AlertTriangle className="h-5 w-5 text-orange-400" />
+                    <span className="font-semibold text-orange-400">Atenție</span>
+                  </div>
+                  <p className="text-sm text-foreground/90 whitespace-pre-line">
+                    {question.feedbackDetailed.atentie}
+                  </p>
+                </div>
+              )}
+
+              {question.keyConcepts && question.keyConcepts.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {question.keyConcepts.map((concept, idx) => (
+                    <Badge key={idx} variant="outline" className="bg-primary/10">
+                      {concept}
+                    </Badge>
+                  ))}
+                </div>
               )}
             </div>
           )}

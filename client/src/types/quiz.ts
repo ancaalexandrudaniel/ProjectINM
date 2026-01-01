@@ -3,6 +3,21 @@ export interface QuizOption {
   correct: boolean;
 }
 
+export interface VariantAnalysis {
+  este_corecta: boolean;
+  explicatie: string;
+}
+
+export interface FeedbackDetailed {
+  explicatie_generala?: string;
+  analiza_variante?: Record<string, VariantAnalysis>;
+  retine?: string | string[];
+  schema_aplicatie_practica?: string;
+  atentie?: string;
+  exceptii?: any;
+  are_exceptii?: boolean;
+}
+
 export interface QuizQuestion {
   id: string;
   subject: string;
@@ -13,6 +28,9 @@ export interface QuizQuestion {
   correctAnswer: number;
   explanation: string;
   legalReferences?: string[];
+  feedbackDetailed?: FeedbackDetailed;
+  keyConcepts?: string[];
+  hasExceptions?: boolean;
 }
 
 export interface QuizSession {
