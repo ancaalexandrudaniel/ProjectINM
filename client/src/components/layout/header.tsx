@@ -16,9 +16,9 @@ export default function Header() {
           </div>
           
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center gap-2 bg-secondary px-4 py-2 rounded-lg">
+            <div className="hidden md:flex items-center gap-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-lg">
               <div className="text-sm">
-                <p className="font-medium">28 Septembrie 2025</p>
+                <p className="font-medium text-primary">28 Septembrie 2025</p>
                 <p className="text-xs text-muted-foreground">Test Grilă</p>
               </div>
             </div>

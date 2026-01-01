@@ -275,9 +275,9 @@ export default function QuizGodMode() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 bg-secondary px-4 py-2 rounded-lg">
-                <Clock className="h-5 w-5 text-orange-500" />
-                <span className="font-mono font-semibold text-lg">{formatTime(timeElapsed)}</span>
+              <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500/30 px-4 py-2 rounded-lg">
+                <Clock className="h-5 w-5 text-orange-400" />
+                <span className="font-mono font-semibold text-lg text-orange-400">{formatTime(timeElapsed)}</span>
               </div>
               <Link href="/quiz-select">
                 <Button variant="ghost" size="icon">
