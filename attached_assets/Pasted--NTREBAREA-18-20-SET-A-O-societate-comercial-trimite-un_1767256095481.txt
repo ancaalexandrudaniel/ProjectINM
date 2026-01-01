@@ -1,0 +1,148 @@
+ÎNTREBAREA 18/20 (SET A)
+O societate comercială trimite unui potențial client o scrisoare: "Vă oferim 50 tone de grâu la prețul de 1.000 lei/tonă. Oferta e valabilă 10 zile." În ziua a 5-a, administratorul societății decedează.
+Ce se întâmplă cu oferta?
+a) Oferta devine caducă automat la decesul administratorului
+b) Oferta rămâne valabilă — persoana juridică nu "moare" odată cu administratorul
+c) Oferta devine caducă doar dacă societatea e dizolvată ca urmare a decesului
+d) Oferta devine anulabilă, moștenitorii administratorului putând cere anularea
+Răspunsul tău?b10:18 AM✅ CORECT — ai ales (b), răspunsul corect este (b).
+
+EXPLICAȚIE COMPLETĂ
+Logica din spatele întrebării:
+Aceasta testează înțelegerea diferenței dintre persoana fizică și persoana juridică în contextul formării contractului.
+Regula despre caducitate prin deces (art. 1195): Decesul sau incapacitatea ofertantului atrage caducitatea ofertei (cu nuanțele discutate pentru oferta irevocabilă).
+DAR — cine e ofertantul în speța noastră?
+
+Scrisoarea e trimisă de societatea comercială (persoană juridică)
+Administratorul e doar reprezentantul societății, nu ofertantul
+Ofertantul = societatea, nu administratorul
+
+Persoana juridică:
+
+Are existență proprie, distinctă de persoanele fizice care o compun/administrează
+Nu "moare" când moare un administrator, asociat sau angajat
+Continuă să existe până la dizolvare și lichidare
+Își menține toate angajamentele juridice
+
+Consecința: Decesul administratorului nu afectează oferta făcută de societate. Societatea continuă să existe, oferta rămâne valabilă, iar noul administrator (sau cel rămas) o poate onora.
+
+ANALIZA VARIANTELOR
+a) FALS — "Oferta devine caducă automat la decesul administratorului"
+→ Confuzie între reprezentant și persoana juridică. Administratorul nu e ofertantul — societatea e. Decesul reprezentantului nu afectează actele persoanei juridice.
+b) CORECT — "Oferta rămâne valabilă — persoana juridică nu «moare» odată cu administratorul"
+→ Perfect. Societatea comercială e subiect de drept distinct. Ea a făcut oferta, ea rămâne obligată. Schimbarea/decesul organelor de conducere e o chestiune internă care nu afectează actele externe deja emise.
+c) FALS — "Oferta devine caducă doar dacă societatea e dizolvată ca urmare a decesului"
+→ Parțial corectă ideea (dizolvarea ar putea afecta oferta), dar formularea e defectuoasă. Decesul unui administrator nu atrage automat dizolvarea societății. Dizolvarea are cauze specifice (hotărâre AGA, faliment, etc.). Și chiar și în caz de dizolvare, societatea există până la radierea din registru.
+d) FALS — "Oferta devine anulabilă, moștenitorii administratorului putând cere anularea"
+→ Nonsens juridic. Moștenitorii administratorului nu au nicio legătură cu actele societății. Administratorul nu era parte în ofertă — societatea era. Moștenitorii moștenesc bunurile personale ale defunctului, nu dreptul de a anula acte ale societății.
+
+💡 REȚINE
+
+PERSOANA JURIDICĂ ≠ persoanele fizice din conducere
+Decesul administratorului/asociatului/acționarului:
+
+NU afectează existența persoanei juridice
+NU afectează actele juridice ale persoanei juridice
+NU atrage caducitatea ofertelor făcute de persoana juridică
+
+Ofertant = cine face oferta:
+
+Scrisoare pe antetul societății → ofertant = societatea
+Scrisoare personală a administratorului → ofertant = persoana fizică
+
+
+
+🔍 DISTINCȚIA ESENȚIALĂ:
+SituațieOfertantEfect decesIon (persoană fizică) face ofertăIonCaducitate (cu nuanțe la oferta irevocabilă)SC Alfa SRL (prin administrator Ion) face ofertăSC Alfa SRLOferta rămâne valabilăIon, admin. SC Alfa, face ofertă în nume propriuIonCaducitate
+Cheia: Cine apare ca parte în actul juridic? Pe cine obligă oferta?
+
+⚠️ ATENȚIE LA FORMULARE:
+În speță: "O societate comercială trimite..." → clar, ofertantul e societatea.
+Dacă ar fi fost: "Administratorul unei societăți trimite în nume propriu..." → ofertantul ar fi fost persoana fizică, și decesul ar fi produs efecte.
+
+Scor parțial: 16/18 ✓
+Excelent! Ai făcut corect distincția între persoana juridică și reprezentantul ei — o confuzie frecventă în practică și la examene.
+
+ÎNTREBAREA 19/20 (SET A)
+Nicolae trimite o ofertă de vânzare a unui autoturism către Oana, prin poștă. Oana trimite acceptarea tot prin poștă. Înaintea ca răspunsul să ajungă la Nicolae, Oana îl sună și îi spune: "Am trimis acceptarea, dar m-am răzgândit, nu mai vreau."
+Ce efect are acest telefon?
+a) Niciun efect — acceptarea trimisă prin poștă e irevocabilă
+b) Retragerea acceptării e valabilă dacă telefonul a avut loc înainte ca scrisoarea să ajungă la Nicolae
+c) Retragerea e valabilă doar dacă Nicolae e de acord să o accepte
+d) Retragerea e nulă — acceptarea produce efecte din momentul expedierii
+Răspunsul tău?b10:22 AM✅ CORECT — ai ales (b), răspunsul corect este (b).
+
+EXPLICAȚIE COMPLETĂ
+Logica din spatele întrebării:
+Aceasta aplică regula retragerii pe care am discutat-o la întrebarea 11, dar de data aceasta pentru acceptare, nu pentru ofertă.
+Regula e identică: Atât oferta, cât și acceptarea pot fi retrase dacă retragerea ajunge la destinatar anterior sau concomitent cu actul retras.
+În speța noastră:
+
+Oana trimite acceptarea prin poștă (lent)
+Oana sună și comunică retragerea prin telefon (rapid)
+Telefonul ajunge înaintea scrisorii
+
+Rezultat: Retragerea e valabilă → acceptarea nu produce efecte → contractul nu s-a încheiat.
+De ce funcționează așa?
+Teoria recepției (adoptată de Codul civil): actele juridice unilaterale (oferta, acceptarea) produc efecte din momentul în care ajung la destinatar, nu din momentul expedierii.
+Până când actul nu a ajuns:
+
+Nu produce efecte juridice
+Poate fi retras
+Destinatarul nu știe de el, deci nu se poate baza pe el
+
+E logic și echitabil: dacă Oana se răzgândește și reușește să comunice asta înainte ca Nicolae să afle de acceptare, de ce ar fi legată de o declarație pe care Nicolae nici n-a primit-o încă?
+
+ANALIZA VARIANTELOR
+a) FALS — "Niciun efect — acceptarea trimisă prin poștă e irevocabilă"
+→ Confuzie între retragere și revocare. Acceptarea nu e "irevocabilă" în sensul că n-ar putea fi retrasă. Retragerea e posibilă până la momentul ajungerii.
+b) CORECT — "Retragerea acceptării e valabilă dacă telefonul a avut loc înainte ca scrisoarea să ajungă la Nicolae"
+→ Perfect. Exact regula din Codul civil: retragerea e eficientă dacă ajunge la destinatar anterior sau concomitent cu acceptarea. Telefonul (instantaneu) vs. poșta (lentă) = telefonul ajunge primul = retragere valabilă.
+c) FALS — "Retragerea e valabilă doar dacă Nicolae e de acord să o accepte"
+→ Greșit. Retragerea e un drept al Oanei, nu o favoare cerută lui Nicolae. Dacă ajunge la timp, produce efecte automat, indiferent de acordul lui Nicolae.
+d) FALS — "Retragerea e nulă — acceptarea produce efecte din momentul expedierii"
+→ Aceasta ar fi teoria expedierii (mailbox rule), care NU e adoptată de Codul civil român. În România se aplică teoria recepției: actul produce efecte când ajunge la destinatar, nu când e expediat.
+
+💡 REȚINE
+
+RETRAGEREA (ofertă sau acceptare):
+
+Posibilă dacă ajunge anterior sau concomitent cu actul retras
+E un drept, nu necesită acordul celeilalte părți
+Se aplică atât ofertei, cât și acceptării
+
+TEORIA RECEPȚIEI (drept civil român):
+
+Actele produc efecte când AJUNG la destinatar
+NU când sunt expediate
+Permite retragerea până la momentul recepției
+
+
+
+🔍 APLICAȚIE PRACTICĂ:
+OANA                                    NICOLAE
+  │                                         │
+  ├─── Scrisoare ACCEPTARE ────────────►    │ (în tranzit, poștă lentă)
+  │         (expediată luni)                │
+  │                                         │
+  ├─── Telefon RETRAGERE ──────────────►    │ (primit marți)
+  │         (marți)                         │
+  │                                         │
+  │    Scrisoarea ajunge ──────────────►    │ (primită miercuri)
+  │                                         │
+  ▼                                         ▼
+
+REZULTAT: Retragerea a ajuns ÎNAINTEA acceptării
+          → Retragere VALABILĂ
+          → Acceptarea NU produce efecte
+          → NICIUN CONTRACT
+
+⚠️ ATENȚIE:
+Dacă telefonul ar fi fost după ce scrisoarea a ajuns la Nicolae:
+
+Acceptarea ar fi produs deja efecte
+Contractul s-ar fi încheiat
+"Retragerea" ar fi fost de fapt o încercare de revocare
+Dar acceptarea nu poate fi revocată (contractul e deja format)
+
+Momentul-cheie: Când ajunge acceptarea, nu când e expediată sau când se sună.

@@ -977,7 +977,9 @@ ${context}`;
         are_exceptii: z.boolean().optional(),
         exceptii: z.any().optional(),
         analiza_variante: z.record(z.any()).optional(),
-        retine: z.string().optional()
+        retine: z.union([z.string(), z.array(z.string())]).optional(),
+        schema_aplicatie_practica: z.string().optional(),
+        atentie: z.string().optional()
       }).passthrough();
       
       const intrebareSchema = z.object({
@@ -1067,6 +1069,8 @@ ${context}`;
             analiza_variante: q.feedback.analiza_variante,
             exceptii: q.feedback.exceptii,
             retine: q.feedback.retine,
+            schema_aplicatie_practica: q.feedback.schema_aplicatie_practica,
+            atentie: q.feedback.atentie,
             are_exceptii: q.feedback.are_exceptii
           } : null;
           
