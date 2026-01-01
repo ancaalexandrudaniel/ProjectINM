@@ -124,6 +124,31 @@ export default function QuizGodMode() {
   const toggleAnswer = (index: number) => {
     if (showFeedback) return;
     setNoCorrectSelected(false);
+    
+    // Set A: Radio behavior - only one selection allowed
+    if (godModeSet === 'A') {
+      setSelectedAnswers(prev => 
+        prev.includes(index) ? [] : [index]
+      );
+      return;
+    }
+    
+    // Set B: Maximum 3 selections
+    if (godModeSet === 'B') {
+      setSelectedAnswers(prev => {
+        if (prev.includes(index)) {
+          return prev.filter(i => i !== index);
+        }
+        if (prev.length >= 3) {
+          // Already at max, don't add more
+          return prev;
+        }
+        return [...prev, index];
+      });
+      return;
+    }
+    
+    // Set C: All 4 selections allowed
     setSelectedAnswers(prev => 
       prev.includes(index) 
         ? prev.filter(i => i !== index)
@@ -275,9 +300,9 @@ export default function QuizGodMode() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500/30 px-4 py-2 rounded-lg">
-                <Clock className="h-5 w-5 text-orange-400" />
-                <span className="font-mono font-semibold text-lg text-orange-400">{formatTime(timeElapsed)}</span>
+              <div className="flex items-center gap-2 bg-black border border-green-500/50 px-4 py-2 rounded-lg shadow-[0_0_10px_rgba(34,197,94,0.3)]">
+                <Clock className="h-5 w-5 text-green-400 drop-shadow-[0_0_4px_rgba(34,197,94,0.8)]" />
+                <span className="font-mono font-bold text-lg text-green-400 drop-shadow-[0_0_6px_rgba(34,197,94,0.8)] tracking-wider">{formatTime(timeElapsed)}</span>
               </div>
               <Link href="/quiz-select">
                 <Button variant="ghost" size="icon">
@@ -309,18 +334,25 @@ export default function QuizGodMode() {
             <h4 className="text-xl font-medium leading-relaxed">{question.questionText}</h4>
           </div>
 
-          {godModeSet !== 'A' && (
-            <div className="p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg mb-4 text-sm">
+          <div className="p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg mb-4 text-sm">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-orange-500" />
                 <span className="text-orange-400">
-                  {godModeSet === 'B' 
-                    ? 'Selectează TOATE răspunsurile corecte (1-3)'
-                    : 'Pot fi 0-4 răspunsuri corecte. Dacă niciunul nu e corect, apasă "Niciunul corect".'}
+                  {godModeSet === 'A' && 'Selectează UN SINGUR răspuns corect'}
+                  {godModeSet === 'B' && 'Selectează 1-3 răspunsuri corecte'}
+                  {godModeSet === 'C' && 'Pot fi 0-4 răspunsuri corecte'}
                 </span>
               </div>
+              {!showFeedback && (
+                <Badge variant="outline" className="border-orange-500/50 text-orange-400">
+                  {godModeSet === 'A' && `${selectedAnswers.length}/1`}
+                  {godModeSet === 'B' && `${selectedAnswers.length}/3 max`}
+                  {godModeSet === 'C' && `${noCorrectSelected ? '0' : selectedAnswers.length}/4`}
+                </Badge>
+              )}
             </div>
-          )}
+          </div>
 
           <div className="space-y-3 mb-6">
             {question.options?.map((option: any, index: number) => {
@@ -367,24 +399,28 @@ export default function QuizGodMode() {
             {godModeSet === 'C' && (
               <div
                 onClick={selectNoCorrect}
-                className={`flex items-center gap-4 p-4 border rounded-lg cursor-pointer transition-all ${
+                className={`flex items-center gap-4 p-4 border-2 border-dashed rounded-lg cursor-pointer transition-all ${
                   showFeedback && question.hasZeroCorrect
                     ? 'border-green-500 bg-green-500/10'
                     : showFeedback && noCorrectSelected && !question.hasZeroCorrect
                     ? 'border-red-500 bg-red-500/10'
                     : noCorrectSelected
-                    ? 'border-primary bg-primary/10'
-                    : 'border-border hover:border-primary/50'
+                    ? 'border-red-500 bg-red-500/10'
+                    : 'border-red-500/30 bg-red-500/5 hover:border-red-500/60 hover:bg-red-500/10'
                 }`}
                 data-testid="option-none"
               >
-                <Checkbox
-                  checked={noCorrectSelected}
-                  disabled={showFeedback}
-                  className="h-5 w-5"
-                />
-                <Ban className="h-5 w-5 text-muted-foreground" />
-                <span className="flex-1 font-medium">Niciunul corect</span>
+                <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 font-bold text-lg ${
+                  noCorrectSelected 
+                    ? 'border-red-500 bg-red-500 text-white' 
+                    : 'border-red-500/50 text-red-400'
+                }`}>
+                  0
+                </div>
+                <Ban className={`h-5 w-5 ${noCorrectSelected ? 'text-red-400' : 'text-red-400/70'}`} />
+                <span className={`flex-1 font-semibold ${noCorrectSelected ? 'text-red-400' : 'text-red-400/70'}`}>
+                  Niciunul nu este corect
+                </span>
                 {showFeedback && question.hasZeroCorrect && (
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
                 )}
