@@ -363,26 +363,63 @@ function validateJSON(jsonString: string, applyAutoFix: boolean = true): Validat
   }
 
   questionsArray.forEach((q, i) => {
-    if (!q.questionText || typeof q.questionText !== 'string') {
-      errors.push({ index: i, field: 'questionText', message: 'Lipsește textul întrebării' });
-    } else if (q.questionText.length < 10) {
+    // Support both formats:
+    // Set A (old): { questionText, options, correctAnswer/correctAnswers }
+    // Set B (new): { tulpina, variante: [{litera, text, este_corecta}], feedback }
+    
+    const isSetBFormat = q.tulpina && Array.isArray(q.variante);
+    
+    // Normalize to common format
+    let questionText: string;
+    let options: any[];
+    let correctAnswers: number[] = [];
+    let correctAnswer: number | null = null;
+    
+    if (isSetBFormat) {
+      // Convert Set B format
+      questionText = q.tulpina;
+      options = q.variante.map((v: any) => v.text || v);
+      
+      // Extract correct answers from variante.este_corecta
+      q.variante.forEach((v: any, idx: number) => {
+        if (v.este_corecta === true) {
+          correctAnswers.push(idx);
+        }
+      });
+      
+      if (correctAnswers.length === 1) {
+        correctAnswer = correctAnswers[0];
+      }
+    } else {
+      // Use Set A format directly
+      questionText = q.questionText;
+      options = q.options || [];
+      correctAnswers = Array.isArray(q.correctAnswers) ? q.correctAnswers : [];
+      correctAnswer = typeof q.correctAnswer === 'number' ? q.correctAnswer : null;
+    }
+    
+    // Validation
+    if (!questionText || typeof questionText !== 'string') {
+      errors.push({ index: i, field: 'questionText', message: 'Lipsește textul întrebării (questionText sau tulpina)' });
+    } else if (questionText.length < 10) {
       warnings.push({ index: i, field: 'questionText', message: 'Text prea scurt' });
     }
 
-    if (!Array.isArray(q.options)) {
-      errors.push({ index: i, field: 'options', message: 'Lipsesc opțiunile (array)' });
-    } else if (q.options.length < 2) {
+    if (!Array.isArray(options) || options.length === 0) {
+      errors.push({ index: i, field: 'options', message: 'Lipsesc opțiunile (options sau variante)' });
+    } else if (options.length < 2) {
       errors.push({ index: i, field: 'options', message: 'Minim 2 opțiuni necesare' });
-    } else if (q.options.length !== 4) {
-      warnings.push({ index: i, field: 'options', message: `${q.options.length} opțiuni (recomandat: 4)` });
+    } else if (options.length !== 4) {
+      warnings.push({ index: i, field: 'options', message: `${options.length} opțiuni (recomandat: 4)` });
     }
-
-    const correctAnswers: number[] = Array.isArray(q.correctAnswers) ? q.correctAnswers : [];
-    const correctAnswer: number | null = typeof q.correctAnswer === 'number' ? q.correctAnswer : null;
     
     const hasMultipleCorrect = correctAnswers.length > 1;
     const hasSingleCorrect = correctAnswer !== null || correctAnswers.length === 1;
-    const hasNoneCorrect = correctAnswer === null && correctAnswers.length === 0 && Array.isArray(q.correctAnswers);
+    // For Set B, none correct if no variante has este_corecta=true
+    // For Set A, none correct if correctAnswers is explicitly []
+    const hasNoneCorrect = isSetBFormat 
+      ? correctAnswers.length === 0 
+      : (correctAnswer === null && correctAnswers.length === 0 && Array.isArray(q.correctAnswers));
 
     // Valid scenarios:
     // 1. correctAnswer is a number (single correct)
@@ -390,42 +427,49 @@ function validateJSON(jsonString: string, applyAutoFix: boolean = true): Validat
     // 3. correctAnswers is explicitly [] (none correct - God Mode)
     const hasValidAnswer = hasSingleCorrect || hasMultipleCorrect || hasNoneCorrect;
 
-    if (!hasValidAnswer && q.correctAnswer === undefined && !Array.isArray(q.correctAnswers)) {
+    if (!hasValidAnswer && !isSetBFormat && q.correctAnswer === undefined && !Array.isArray(q.correctAnswers)) {
       errors.push({ index: i, field: 'correctAnswer', message: 'Lipsește răspunsul corect (correctAnswer sau correctAnswers)' });
     }
 
-    if (correctAnswer !== null && (correctAnswer < 0 || correctAnswer >= (q.options?.length || 4))) {
+    if (correctAnswer !== null && (correctAnswer < 0 || correctAnswer >= options.length)) {
       errors.push({ index: i, field: 'correctAnswer', message: `Index invalid: ${correctAnswer}` });
     }
 
     correctAnswers.forEach((idx: number) => {
-      if (idx < 0 || idx >= (q.options?.length || 4)) {
+      if (idx < 0 || idx >= options.length) {
         errors.push({ index: i, field: 'correctAnswers', message: `Index invalid în correctAnswers: ${idx}` });
       }
     });
 
-    const hasExplanation = !!q.explanation && q.explanation.length > 10;
-    const hasLegalReferences = Array.isArray(q.legalReferences) && q.legalReferences.length > 0;
+    // For Set B, check feedback for explanation
+    const explanation = isSetBFormat 
+      ? (q.feedback?.explicatie_generala || q.feedback?.retine || '')
+      : (q.explanation || '');
+    const hasExplanation = explanation.length > 10;
+    
+    const hasLegalReferences = isSetBFormat
+      ? (Array.isArray(q.articole_relevante) && q.articole_relevante.length > 0)
+      : (Array.isArray(q.legalReferences) && q.legalReferences.length > 0);
 
     if (!hasExplanation) {
       warnings.push({ index: i, field: 'explanation', message: 'Lipsește explicația detaliată' });
     }
 
-    // Normalize options for display (extract text from objects)
-    const displayOptions = (q.options || []).map((opt: any) => 
-      typeof opt === 'string' ? opt : (opt.text || '')
+    // Normalize options for display
+    const displayOptions = options.map((opt: any) => 
+      typeof opt === 'string' ? opt : (opt.text || opt)
     );
 
     questions.push({
       index: i,
-      questionText: q.questionText || '',
+      questionText: questionText || '',
       options: displayOptions,
       correctAnswer: correctAnswer,
       correctAnswers: correctAnswers,
-      explanation: q.explanation,
+      explanation: explanation,
       hasExplanation,
       hasLegalReferences,
-      chapter: q.chapter,
+      chapter: isSetBFormat ? q.capitol : q.chapter,
       isMultipleCorrect: hasMultipleCorrect,
       isNoneCorrect: hasNoneCorrect
     });
