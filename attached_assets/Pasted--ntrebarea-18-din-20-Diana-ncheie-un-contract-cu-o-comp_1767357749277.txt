@@ -1,0 +1,83 @@
+Întrebarea 18 din 20
+Diana încheie un contract cu o companie de telefonie mobilă. Contractul, redactat integral de companie, conține următoarea clauză:
+„Clientul acceptă că operatorul poate modifica unilateral condițiile contractuale, inclusiv tarifele, cu un preaviz de 15 zile transmis prin SMS."
+Diana a semnat contractul pe ultima pagină. Clauza se află la pagina 3 din 5.
+Care dintre următoarele afirmații sunt corecte?
+a) Clauza este uzuală, fiind frecvent întâlnită în contractele de telefonie mobilă
+b) Clauza este neuzuală, permițând operatorului să modifice unilateral elemente esențiale ale contractului
+c) Semnătura Dianei pe ultima pagină echivalează cu acceptarea expresă în scris a tuturor clauzelor din contract
+d) Pentru a produce efecte, clauza ar fi trebuit acceptată expres și în scris de către Diana, separat de semnătura generală
+
+Răspunsul tău?b, d12:34 AMCORECT! 🎯
+Ai identificat exact variantele corecte: b și d.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare consolidează cunoștințele despre clauzele neuzuale și cerința acceptării exprese în scris, testând încă o dată distincția între simpla semnătură și acceptarea specifică.
+Analiza clauzei:
+„Clientul acceptă că operatorul poate modifica unilateral condițiile contractuale, inclusiv tarifele, cu un preaviz de 15 zile transmis prin SMS."
+ElementConținutCe permite?Modificare unilaterală a condițiilor contractualeCe include?„Inclusiv tarifele" = elemente esențialeCe protecție oferă clientului?Doar preaviz 15 zile prin SMS
+Este clauză neuzuală?
+Art. 1203 — lista clauzelor neuzuale include:
+
+Pct. 2: „dreptul de a denunța unilateral contractul"
+Pct. 3: „dreptul de a suspenda executarea obligațiilor"
+
+Modificarea unilaterală a condițiilor contractuale e similară sau chiar mai gravă decât denunțarea unilaterală:
+
+Denunțarea = încetează contractul
+Modificarea unilaterală = schimbă contractul în defavoarea celeilalte părți
+
+Această clauză intră în spiritul art. 1203 — permite unei părți să afecteze unilateral echilibrul contractual. E clauză neuzuală.
+A acceptat-o Diana expres în scris?
+Ce a făcut DianaSuficient pentru clauze neuzuale?A semnat pe ultima pagină❌ NUSemnătură separată lângă clauzăNu a făcut-oMențiune expresă de acceptareNu există
+Simpla semnătură pe ultima pagină ≠ acceptare expresă în scris a clauzelor neuzuale.
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. Frecvența în practică NU determină caracterul „uzual" în sensul art. 1203. Clauza e neuzuală pentru că permite modificarea unilaterală a contractului, indiferent cât de des apare în contracte de telefonie.b)✅Corect. Clauza permite operatorului să modifice unilateral elemente esențiale (tarife, condiții). Intră în categoria clauzelor neuzuale care necesită acceptare specială.c)❌Greșit. Semnătura pe ultima pagină = acceptare generală a contractului. Pentru clauzele neuzuale, legea cere acceptare expresă și în scris, adică o manifestare specifică pentru acele clauze.d)✅Corect. Art. 1203: clauzele neuzuale produc efecte doar dacă sunt acceptate expres în scris. Semnătura generală nu îndeplinește această cerință. Ar fi trebuit semnătură separată sau mențiune expresă.
+
+💡 REȚINE
+SEMNĂTURA PE CONTRACT vs. ACCEPTARE EXPRESĂ ÎN SCRIS:
+SEMNĂTURA GENERALĂ                    ACCEPTARE EXPRESĂ ÎN SCRIS
+(pe ultima pagină)                    (pentru clauze neuzuale)
+        │                                      │
+        ▼                                      ▼
+Manifestă acordul                     Manifestă acordul SPECIFIC
+pentru CONTRACT                       pentru CLAUZA NEUZUALĂ
+în ansamblu                           identificată clar
+        │                                      │
+        ▼                                      ▼
+Suficientă pentru                     Necesită:
+clauzele UZUALE                       • Semnătură separată lângă clauză
+                                      • SAU mențiune scrisă de mână
+                                      • SAU parafă + bifă specifică
+                                      • SAU document separat
+MODIFICAREA UNILATERALĂ A CONTRACTULUI:
+AspectImplicațiiCe înseamnăO parte poate schimba termenii fără acordul celeilalteDe ce e problematicăDestabilizează echilibrul contractualCum afectează clientulPoate primi condiții mai proaste decât cele acceptate inițialCalificareClauză neuzuală (similar cu denunțarea unilaterală)
+
+🔍 COMPARAȚIE: CLAUZELE DIN ÎNTREBĂRILE ANTERIOARE
+ÎntrebareClauzăNeuzuală?Acceptată expres?Produce efecte?Q10Penalități 0,5%/zi❌ NU—✅ DaQ10Modificare unilaterală tarife✅ DA❌ NU❌ NuQ10Jurisdicție București✅ DA❌ NU❌ NuQ14Denunțare unilaterală✅ DA❌ NU❌ NuQ14Renunțare excepție neexecutare✅ DA❌ NU❌ NuQ18Modificare unilaterală condiții✅ DA❌ NU❌ Nu
+Pattern-ul: Clauzele care permit unei părți să afecteze unilateral poziția celeilalte = neuzuale.
+
+⚠️ ATENȚIE — CONSECINȚE PRACTICE
+Ce se întâmplă cu clauza neuzuală neacceptată expres?
+SituațieEfectOperatorul modifică tarifele invocând clauzaModificarea e inopozabilă DianeiDiana contestă majorareaInstanța constată că clauza nu produce efecteContractul în restRămâne valabil, doar clauza neuzuală e „ca și inexistentă"
+Diana poate:
+
+Refuza să plătească tarifele majorate
+Invoca lipsa acceptării exprese în scris
+Cere aplicarea tarifelor inițiale
+
+
+LECȚIA FINALĂ DESPRE CLAUZE NEUZUALE
+De ce există această protecție?
+
+Contracte de adeziune: Clientul nu negociază, semnează „la pachet"
+Dezechilibru de putere: Compania redactează, clientul acceptă sau pleacă
+Clauze ascunse: Cele mai periculoase clauze sunt „îngropate" în contract
+Protecția legală: Art. 1203 obligă la atenționarea specifică a clientului
+
+Cerința acceptării exprese în scris = mecanism de protecție:
+
+Forțează predisponentul să atragă atenția asupra clauzelor periculoase
+Oferă aderentului șansa de a le observa și înțelege
+Dacă nu sunt evidențiate specific, nu produc efecte

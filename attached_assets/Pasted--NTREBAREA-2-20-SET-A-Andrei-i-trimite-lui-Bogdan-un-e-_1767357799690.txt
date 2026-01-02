@@ -1,0 +1,43 @@
+ÎNTREBAREA 2/20 (SET A)
+Andrei îi trimite lui Bogdan un e-mail: "Îți vând mașina mea cu 15.000 euro. Ai la dispoziție 7 zile să te decizi." În ziua a 3-a, Andrei îi trimite un alt e-mail: "M-am răzgândit, nu mai vând."
+Ce efect produce "răzgândirea" lui Andrei?
+a) Oferta este revocată valabil, iar Bogdan nu mai poate accepta
+b) Revocarea nu produce niciun efect, oferta rămâne în vigoare până în ziua a 7-a
+c) Oferta devine caducă din momentul primirii revocării de către Bogdan
+d) Revocarea e valabilă doar dacă Bogdan confirmă primirea e-mailului
+Răspunsul tău?bDec 31, 2025✅ CORECT — ai ales (b), răspunsul corect este (b).
+
+EXPLICAȚIE COMPLETĂ
+Logica din spatele întrebării:
+Când ofertantul acordă un termen de acceptare ("ai 7 zile să te decizi"), el se obligă să mențină oferta pe toată durata acelui termen. Aceasta devine ofertă irevocabilă.
+De ce? Pentru că destinatarul are nevoie de timp să se gândească, să verifice, să ia o decizie. Ar fi nedrept ca ofertantul să poată retrage oferta oricând — l-ar pune pe destinatar într-o poziție de incertitudine permanentă.
+Consecința directă: Dacă ofertantul încearcă să revoce o ofertă irevocabilă, revocarea nu produce niciun efect. E ca și cum n-ar fi trimis-o. Oferta rămâne în picioare, iar dacă Bogdan acceptă în ziua a 6-a, contractul se încheie.
+
+ANALIZA VARIANTELOR
+a) FALS — "Oferta este revocată valabil, iar Bogdan nu mai poate accepta"
+→ Greșit. Oferta cu termen = irevocabilă. Andrei NU poate revoca valabil. Declarația lui de "răzgândire" e ineficientă juridic.
+b) CORECT — "Revocarea nu produce niciun efect, oferta rămâne în vigoare până în ziua a 7-a"
+→ Perfect. Codul civil e explicit: "Declarația de revocare a unei oferte irevocabile nu produce niciun efect." Bogdan poate accepta oricând până la expirarea termenului.
+c) FALS — "Oferta devine caducă din momentul primirii revocării de către Bogdan"
+→ Confuzie între concepte. Caducitatea intervine când:
+
+acceptarea nu ajunge în termen
+destinatarul refuză oferta
+(la oferta irevocabilă) deces/incapacitate ofertant DOAR dacă natura afacerii o impune
+
+Revocarea intempestivă NU produce caducitate.
+d) FALS — "Revocarea e valabilă doar dacă Bogdan confirmă primirea e-mailului"
+→ Inventat. Nu există o astfel de regulă. Problema nu e dacă Bogdan a primit revocarea, ci că revocarea e lipsită de efecte indiferent de primire, pentru că oferta e irevocabilă.
+
+💡 REȚINE
+
+OFERTĂ CU TERMEN = IREVOCABILĂ
+Revocarea ofertei irevocabile = ZERO EFECTE (ca și cum n-ar exista)
+Oferta rămâne în vigoare → acceptarea în termen = contract încheiat
+
+
+⚠️ ATENȚIE LA CAPCANĂ (frecventă la INM):
+Nu confunda:
+
+RETRAGEREA ofertei (înainte/concomitent cu ajungerea la destinatar) → posibilă
+REVOCAREA ofertei irevocabile (după ce a ajuns) → imposibilă/fără efect
