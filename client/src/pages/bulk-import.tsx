@@ -589,7 +589,9 @@ export default function BulkImport() {
 
   const importMutation = useMutation({
     mutationFn: async () => {
-      const questionsData = JSON.parse(jsonData);
+      // Apply auto-fix before parsing
+      const { fixed: fixedJson } = autoFixJSON(jsonData);
+      const questionsData = JSON.parse(fixedJson);
       const response = await apiRequest('POST', '/api/questions/bulk-import', {
         batchName,
         subject,
