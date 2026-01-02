@@ -708,10 +708,18 @@ export default function BulkImport() {
             options: q.variante.map((v: any) => v.text),
             correctAnswer: correctAnswers.length === 1 ? correctAnswers[0] : null,
             correctAnswers: correctAnswers,
-            explanation: feedbackParts.join('\n\n') || '',
+            explanation: q.feedback?.explicatie_generala || '',
             chapter: q.capitol || 'General',
             legalReferences: q.articole_relevante || null,
-            aiFeedback: q.feedback ? JSON.stringify(q.feedback) : null
+            feedbackDetailed: q.feedback ? {
+              explicatie_generala: q.feedback.explicatie_generala,
+              analiza_variante: q.feedback.analiza_variante,
+              retine: q.feedback.retine,
+              schema_aplicatie_practica: q.feedback.schema_aplicatie_practica,
+              atentie: q.feedback.atentie,
+              are_exceptii: q.feedback.are_exceptii,
+              exceptii: q.feedback.exceptii
+            } : null
           };
         }
         

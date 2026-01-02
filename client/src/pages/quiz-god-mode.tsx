@@ -194,12 +194,15 @@ export default function QuizGodMode() {
   const [questionsGenerated, setQuestionsGenerated] = useState(false);
 
   const { data: rawQuestions = [], isLoading } = useQuery<QuizQuestion[]>({
-    queryKey: ['/api/quiz/random', subjects, questionCount, 'god-mode'],
+    queryKey: ['/api/quiz/random', subjects, questionCount, godModeSet, 'god-mode'],
     queryFn: async () => {
-      const url = subjects !== 'all' 
-        ? `/api/quiz/random?subject=${subjects}&count=${questionCount}`
-        : `/api/quiz/random?count=${questionCount}`;
-      const response = await fetch(url);
+      const params = new URLSearchParams();
+      params.set('count', String(questionCount));
+      params.set('setType', godModeSet);
+      if (subjects !== 'all') {
+        params.set('subject', subjects);
+      }
+      const response = await fetch(`/api/quiz/random?${params.toString()}`);
       return response.json();
     },
   });

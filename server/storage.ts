@@ -29,7 +29,7 @@ export interface IStorage {
   getQuestionsBySubject(subject: string): Promise<Question[]>;
   getQuestionsByChapter(subject: string, chapter: string): Promise<Question[]>;
   getQuestionsByDifficulty(difficulty: string): Promise<Question[]>;
-  getRandomQuestions(subject?: string, count?: number): Promise<Question[]>;
+  getRandomQuestions(subject?: string, count?: number, setType?: string): Promise<Question[]>;
   createQuestion(question: InsertQuestion): Promise<Question>;
 
   // Quiz Sessions
@@ -91,9 +91,19 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(questions).where(eq(questions.difficulty, difficulty));
   }
 
-  async getRandomQuestions(subject?: string, count = 20): Promise<Question[]> {
-    const query = subject
-      ? db.select().from(questions).where(eq(questions.subject, subject)).orderBy(drizzleSql`RANDOM()`).limit(count)
+  async getRandomQuestions(subject?: string, count = 20, setType?: string): Promise<Question[]> {
+    let conditions = [];
+    
+    if (subject) {
+      conditions.push(eq(questions.subject, subject));
+    }
+    
+    if (setType) {
+      conditions.push(eq(questions.setType, setType));
+    }
+    
+    const query = conditions.length > 0
+      ? db.select().from(questions).where(and(...conditions)).orderBy(drizzleSql`RANDOM()`).limit(count)
       : db.select().from(questions).orderBy(drizzleSql`RANDOM()`).limit(count);
     
     return await query;

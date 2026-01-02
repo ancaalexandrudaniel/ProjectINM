@@ -42,7 +42,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const subject = req.query.subject as string;
       const count = parseInt(req.query.count as string) || 20;
-      const questions = await storage.getRandomQuestions(subject, count);
+      const setType = req.query.setType as string | undefined;
+      const questions = await storage.getRandomQuestions(subject, count, setType);
       res.json(questions);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch random questions" });
@@ -866,7 +867,16 @@ ${context}`;
           topic: z.string().optional().nullable(),
           difficulty: z.enum(['easy', 'medium', 'hard']).optional().default('medium'),
           legalReferences: z.array(z.string()).optional().nullable(),
-          aiFeedback: z.string().optional().nullable()
+          aiFeedback: z.string().optional().nullable(),
+          feedbackDetailed: z.object({
+            explicatie_generala: z.string().optional(),
+            analiza_variante: z.record(z.any()).optional(),
+            retine: z.union([z.string(), z.array(z.string())]).optional(),
+            schema_aplicatie_practica: z.string().optional(),
+            atentie: z.string().optional(),
+            are_exceptii: z.boolean().optional(),
+            exceptii: z.any().optional()
+          }).optional().nullable()
         })).min(1, "At least 1 question required")
       });
       
@@ -985,6 +995,7 @@ ${context}`;
             explanation: q.explanation,
             legalReferences: q.legalReferences,
             aiFeedback: q.aiFeedback,
+            feedbackDetailed: q.feedbackDetailed || null,
             sourceType,
             sourceLLM: sourceLLM || null,
             batchId: batch.id
