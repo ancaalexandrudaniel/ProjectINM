@@ -18,6 +18,7 @@ export const questions = pgTable("questions", {
   chapter: text("chapter").notNull(),
   topic: text("topic"), // specific topic within chapter
   difficulty: text("difficulty").notNull(), // 'easy', 'medium', 'hard'
+  setType: text("set_type").notNull(), // 'A' (1 correct), 'B' (1-3 correct), 'C' (0-4 correct) - required, no default
   questionText: text("question_text").notNull(),
   options: jsonb("options").notNull(), // Array of option objects
   correctAnswer: integer("correct_answer"), // Index of correct option (null for multiple correct)

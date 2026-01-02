@@ -853,6 +853,7 @@ ${context}`;
       const requestSchema = z.object({
         batchName: z.string().min(1, "Batch name is required"),
         subject: z.string().min(1, "Subject is required"),
+        setType: z.enum(['A', 'B', 'C'], { required_error: "Set type is required" }),
         sourceType: z.string().optional().default('llm-session'),
         sourceLLM: z.string().optional().nullable(),
         questionsData: z.array(z.object({
@@ -877,7 +878,56 @@ ${context}`;
         });
       }
       
-      const { batchName, subject, sourceType, sourceLLM, questionsData } = parseResult.data;
+      const { batchName, subject, setType, sourceType, sourceLLM, questionsData } = parseResult.data;
+      
+      // Validate set type rules for all questions BEFORE creating batch
+      const setTypeViolations: Array<{index: number; message: string}> = [];
+      
+      for (let i = 0; i < questionsData.length; i++) {
+        const q = questionsData[i];
+        // Count correct answers - check both correctAnswer and correctAnswers
+        let correctCount = 0;
+        if (q.correctAnswer !== null && q.correctAnswer !== undefined) {
+          correctCount = 1;
+        }
+        if (q.correctAnswers && q.correctAnswers.length > 0) {
+          // If correctAnswers exists and has entries, use its length
+          // This handles cases where both might be set
+          correctCount = q.correctAnswers.length;
+        }
+        
+        let violation = '';
+        switch (setType) {
+          case 'A':
+            if (correctCount !== 1) {
+              violation = `Set A necesită exact 1 răspuns corect, găsite: ${correctCount}`;
+            }
+            break;
+          case 'B':
+            if (correctCount < 1 || correctCount > 3) {
+              violation = `Set B necesită 1-3 răspunsuri corecte, găsite: ${correctCount}`;
+            }
+            break;
+          case 'C':
+            // Set C: 0-4 correct answers
+            if (correctCount > 4) {
+              violation = `Set C permite maxim 4 răspunsuri corecte, găsite: ${correctCount}`;
+            }
+            break;
+        }
+        
+        if (violation) {
+          setTypeViolations.push({ index: i, message: violation });
+        }
+      }
+      
+      if (setTypeViolations.length > 0) {
+        return res.status(400).json({
+          error: "Set type validation failed",
+          message: `${setTypeViolations.length} întrebări nu respectă regulile ${setType === 'A' ? 'Set A' : setType === 'B' ? 'Set B' : 'Set C'}`,
+          violations: setTypeViolations.slice(0, 10)
+        });
+      }
       
       // Create batch record
       const [batch] = await db.insert(questionBatches).values({
@@ -927,6 +977,7 @@ ${context}`;
             chapter: q.chapter,
             topic: q.topic,
             difficulty: q.difficulty,
+            setType,
             questionText: q.questionText,
             options: normalizedOptions,
             correctAnswer: finalCorrectAnswer,
@@ -1014,6 +1065,7 @@ ${context}`;
       const requestSchema = z.object({
         sessionData: sessionSchema,
         subject: z.string().min(1),
+        setType: z.enum(['A', 'B', 'C'], { required_error: "Set type is required" }),
         chapter: z.string().optional(),
         sourceLLM: z.string().optional()
       });
@@ -1026,8 +1078,48 @@ ${context}`;
         });
       }
       
-      const { sessionData, subject, chapter, sourceLLM } = parseResult.data;
+      const { sessionData, subject, setType, chapter, sourceLLM } = parseResult.data;
       const meta = sessionData.session_metadata;
+      
+      // Validate set type rules for all questions BEFORE creating batch
+      const setTypeViolations: Array<{index: number; message: string}> = [];
+      
+      for (let i = 0; i < sessionData.intrebari.length; i++) {
+        const q = sessionData.intrebari[i];
+        const correctCount = q.variante.filter(v => v.este_corecta).length;
+        
+        let violation = '';
+        switch (setType) {
+          case 'A':
+            if (correctCount !== 1) {
+              violation = `Set A necesită exact 1 răspuns corect, găsite: ${correctCount}`;
+            }
+            break;
+          case 'B':
+            if (correctCount < 1 || correctCount > 3) {
+              violation = `Set B necesită 1-3 răspunsuri corecte, găsite: ${correctCount}`;
+            }
+            break;
+          case 'C':
+            // Set C: 0-4 correct answers
+            if (correctCount > 4) {
+              violation = `Set C permite maxim 4 răspunsuri corecte, găsite: ${correctCount}`;
+            }
+            break;
+        }
+        
+        if (violation) {
+          setTypeViolations.push({ index: i, message: violation });
+        }
+      }
+      
+      if (setTypeViolations.length > 0) {
+        return res.status(400).json({
+          error: "Set type validation failed",
+          message: `${setTypeViolations.length} întrebări nu respectă regulile ${setType === 'A' ? 'Set A' : setType === 'B' ? 'Set B' : 'Set C'}`,
+          violations: setTypeViolations.slice(0, 10)
+        });
+      }
       
       // Create batch with session metadata
       const batchName = meta?.segment_articole || `Sesiune ${new Date().toLocaleDateString('ro-RO')}`;
@@ -1087,6 +1179,7 @@ ${context}`;
             chapter: chapter || meta?.segment_articole || 'General',
             topic: meta?.segment_articole,
             difficulty,
+            setType,
             questionText: q.tulpina,
             options,
             correctAnswer,

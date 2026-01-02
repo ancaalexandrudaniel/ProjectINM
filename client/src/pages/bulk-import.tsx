@@ -320,7 +320,7 @@ function autoFixJSON(jsonString: string): { fixed: string; fixes: string[] } {
   return { fixed: result, fixes };
 }
 
-function validateJSON(jsonString: string, applyAutoFix: boolean = true): ValidationResult & { autoFixes?: string[] } {
+function validateJSON(jsonString: string, applyAutoFix: boolean = true, selectedSetType: 'A' | 'B' | 'C' = 'A'): ValidationResult & { autoFixes?: string[] } {
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
   const questions: ParsedQuestion[] = [];
@@ -460,6 +460,35 @@ function validateJSON(jsonString: string, applyAutoFix: boolean = true): Validat
       typeof opt === 'string' ? opt : (opt.text || opt)
     );
 
+    // Validate against selected set type rules - violations are ERRORS that block import
+    const correctCount = hasNoneCorrect ? 0 : (hasMultipleCorrect ? correctAnswers.length : (hasSingleCorrect ? 1 : 0));
+    
+    let setTypeViolation = '';
+    switch (selectedSetType) {
+      case 'A':
+        // Set A: exactly 1 correct answer
+        if (correctCount !== 1) {
+          setTypeViolation = `Set A necesită exact 1 răspuns corect, găsite: ${correctCount}`;
+        }
+        break;
+      case 'B':
+        // Set B: 1-3 correct answers
+        if (correctCount < 1 || correctCount > 3) {
+          setTypeViolation = `Set B necesită 1-3 răspunsuri corecte, găsite: ${correctCount}`;
+        }
+        break;
+      case 'C':
+        // Set C: 0-4 correct answers
+        if (correctCount > 4) {
+          setTypeViolation = `Set C permite maxim 4 răspunsuri corecte, găsite: ${correctCount}`;
+        }
+        break;
+    }
+    
+    if (setTypeViolation) {
+      errors.push({ index: i, field: 'setType', message: setTypeViolation });
+    }
+
     questions.push({
       index: i,
       questionText: questionText || '',
@@ -501,7 +530,7 @@ interface SessionParsedQuestion {
   articole: string[];
 }
 
-function validateSessionJSON(jsonString: string): SessionValidationResult & { autoFixes?: string[] } {
+function validateSessionJSON(jsonString: string, selectedSetType: 'A' | 'B' | 'C' = 'A'): SessionValidationResult & { autoFixes?: string[] } {
   const errors: string[] = [];
   const questions: SessionParsedQuestion[] = [];
 
@@ -548,6 +577,33 @@ function validateSessionJSON(jsonString: string): SessionValidationResult & { au
       continue;
     }
 
+    // Validate set type rules
+    const correctCount = q.variante.filter((v: any) => v.este_corecta === true).length;
+    let setTypeViolation = '';
+    
+    switch (selectedSetType) {
+      case 'A':
+        if (correctCount !== 1) {
+          setTypeViolation = `Set A necesită exact 1 răspuns corect, găsite: ${correctCount}`;
+        }
+        break;
+      case 'B':
+        if (correctCount < 1 || correctCount > 3) {
+          setTypeViolation = `Set B necesită 1-3 răspunsuri corecte, găsite: ${correctCount}`;
+        }
+        break;
+      case 'C':
+        if (correctCount > 4) {
+          setTypeViolation = `Set C permite maxim 4 răspunsuri corecte, găsite: ${correctCount}`;
+        }
+        break;
+    }
+    
+    if (setTypeViolation) {
+      errors.push(`Întrebarea ${i + 1}: ${setTypeViolation}`);
+      continue;
+    }
+
     questions.push({
       id: q.id || i + 1,
       tulpina: q.tulpina,
@@ -567,11 +623,30 @@ function validateSessionJSON(jsonString: string): SessionValidationResult & { au
   };
 }
 
+const setTypeLabels: Record<string, { label: string; description: string; rules: string }> = {
+  'A': { 
+    label: 'Set A - Fundații', 
+    description: 'Exact 1 răspuns corect. Variante plauzibile, nu triviale.',
+    rules: '1 răspuns corect'
+  },
+  'B': { 
+    label: 'Set B - Avansat', 
+    description: '1-3 răspunsuri corecte. Condiții suplimentare, excepții, termeni absoluți.',
+    rules: '1-3 răspunsuri corecte'
+  },
+  'C': { 
+    label: 'Set C - Expert', 
+    description: '0-4 răspunsuri corecte. Nuanțe fine: "poate vs trebuie", "nul vs anulabil".',
+    rules: '0-4 răspunsuri corecte'
+  }
+};
+
 export default function BulkImport() {
   const { toast } = useToast();
   const [importMode, setImportMode] = useState<'simple' | 'session'>('simple');
   const [batchName, setBatchName] = useState('');
   const [subject, setSubject] = useState('');
+  const [setType, setSetType] = useState<'A' | 'B' | 'C'>('A');
   const [sourceType, setSourceType] = useState('llm-session');
   const [sourceLLM, setSourceLLM] = useState('');
   const [jsonData, setJsonData] = useState('');
@@ -580,8 +655,8 @@ export default function BulkImport() {
   const [showGuide, setShowGuide] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
-  const validation = useMemo(() => validateJSON(jsonData), [jsonData]);
-  const sessionValidation = useMemo(() => validateSessionJSON(sessionJsonData), [sessionJsonData]);
+  const validation = useMemo(() => validateJSON(jsonData, true, setType), [jsonData, setType]);
+  const sessionValidation = useMemo(() => validateSessionJSON(sessionJsonData, setType), [sessionJsonData, setType]);
 
   const { data: batches = [], isLoading } = useQuery<QuestionBatch[]>({
     queryKey: ['/api/question-batches'],
@@ -638,6 +713,7 @@ export default function BulkImport() {
       const response = await apiRequest('POST', '/api/questions/bulk-import', {
         batchName,
         subject,
+        setType,
         sourceType,
         sourceLLM: sourceLLM || null,
         questionsData
@@ -671,6 +747,7 @@ export default function BulkImport() {
       const response = await apiRequest('POST', '/api/questions/bulk-import-session', {
         sessionData,
         subject,
+        setType,
         chapter: sessionChapter || undefined,
         sourceLLM: sourceLLM || undefined
       });
@@ -915,7 +992,7 @@ export default function BulkImport() {
                   />
                 </div>
 
-                <div className="space-y-2 col-span-2">
+                <div className="space-y-2">
                   <Label htmlFor="session-llm">LLM Folosit</Label>
                   <Input
                     id="session-llm"
@@ -924,6 +1001,25 @@ export default function BulkImport() {
                     onChange={(e) => setSourceLLM(e.target.value)}
                     data-testid="input-session-llm"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="session-set-type">Tip Set *</Label>
+                  <Select value={setType} onValueChange={(v) => setSetType(v as 'A' | 'B' | 'C')}>
+                    <SelectTrigger id="session-set-type" data-testid="select-session-set-type">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(setTypeLabels).map(([value, info]) => (
+                        <SelectItem key={value} value={value}>
+                          {info.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {setTypeLabels[setType].rules}
+                  </p>
                 </div>
               </div>
 
@@ -1086,6 +1182,31 @@ export default function BulkImport() {
               </div>
             </div>
 
+            {/* Set Type Selector */}
+            <div className="space-y-2">
+              <Label htmlFor="set-type">Tip Set (God Mode) *</Label>
+              <Select value={setType} onValueChange={(v) => setSetType(v as 'A' | 'B' | 'C')}>
+                <SelectTrigger id="set-type" data-testid="select-set-type">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(setTypeLabels).map(([value, info]) => (
+                    <SelectItem key={value} value={value}>
+                      <div className="flex flex-col">
+                        <span>{info.label}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                {setTypeLabels[setType].description}
+              </p>
+              <Badge variant="outline" className="text-xs">
+                Regula: {setTypeLabels[setType].rules}
+              </Badge>
+            </div>
+
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="json-data">Date JSON *</Label>
@@ -1153,6 +1274,7 @@ export default function BulkImport() {
                     <div className="flex gap-4 mt-2 text-sm text-muted-foreground">
                       <span>{validation.questions.filter(q => q.hasExplanation).length} cu explicație</span>
                       <span>{validation.questions.filter(q => q.hasLegalReferences).length} cu referințe legale</span>
+                      <Badge variant="outline" className="ml-2">{setTypeLabels[setType].label}</Badge>
                     </div>
                   </div>
                 )}
