@@ -163,7 +163,16 @@ function autoFixJSON(jsonString: string): { fixed: string; fixes: string[] } {
   const fixes: string[] = [];
   let result = jsonString;
   
-  // 1. Elimină trailing commas înainte de ] sau }
+  // 0. Elimină emoji-urile și caracterele speciale non-JSON
+  // Emoji-urile (✅, ❌, etc.) cauzează erori de parsare
+  const beforeEmoji = result;
+  // Remove common emoji characters that break JSON parsing
+  result = result.replace(/[\u2705\u274C\u274E\u2714\u2716\u2611\u2612\u2B50\u26A0\u2139\u{1F4A1}\u{1F4D6}\u{1F4DD}\u{1F4DA}]/gu, '');
+  if (result !== beforeEmoji) {
+    fixes.push('Emoji-uri eliminate (✅, ❌, etc.)');
+  }
+  
+  // 1. Elimină trailing commas înainte de
   const beforeTrailing = result;
   result = result.replace(/,(\s*[\]}])/g, '$1');
   if (result !== beforeTrailing) {
