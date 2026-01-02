@@ -211,12 +211,19 @@ function autoFixJSON(jsonString: string): { fixed: string; fixes: string[] } {
       } else {
         // Suntem în string - verificăm dacă e sfârșitul sau un " în interior
         // E sfârșitul dacă e urmat de: , ] } : sau whitespace+unul din acestea
-        const afterQuote = result.substring(i + 1).trimStart();
-        const isEndOfString = afterQuote.length === 0 || 
-                              afterQuote[0] === ',' || 
-                              afterQuote[0] === ']' || 
-                              afterQuote[0] === '}' || 
-                              afterQuote[0] === ':';
+        // DAR: dacă e urmat de \ (escape sequence ca \n), e încă în interior!
+        const afterQuote = result.substring(i + 1);
+        const afterQuoteTrimmed = afterQuote.trimStart();
+        
+        // Verifică dacă imediat după ghilimele urmează escape sequence (\n, \t, etc.)
+        const startsWithEscape = afterQuote.length > 0 && afterQuote[0] === '\\';
+        
+        const isEndOfString = !startsWithEscape && (
+                              afterQuoteTrimmed.length === 0 || 
+                              afterQuoteTrimmed[0] === ',' || 
+                              afterQuoteTrimmed[0] === ']' || 
+                              afterQuoteTrimmed[0] === '}' || 
+                              afterQuoteTrimmed[0] === ':');
         
         if (isEndOfString) {
           // E sfârșitul stringului
