@@ -163,32 +163,32 @@ function autoFixJSON(jsonString: string): { fixed: string; fixes: string[] } {
   const fixes: string[] = [];
   let result = jsonString;
   
-  // 1. Înlocuiește ghilimelele românești cu cele drepte
-  const originalLength = result.length;
-  result = result.replace(/[„"]/g, '"');
-  result = result.replace(/['']/g, "'");
-  if (result.length !== originalLength || result !== jsonString.replace(/[„""'']/g, (m) => m === '„' || m === '"' || m === '"' ? '"' : "'")) {
-    if (jsonString.includes('„') || jsonString.includes('"') || jsonString.includes('"')) {
-      fixes.push('Ghilimele românești „" înlocuite cu ""');
-    }
-  }
-  
-  // 2. Elimină trailing commas înainte de ] sau }
+  // 1. Elimină trailing commas înainte de ] sau }
   const beforeTrailing = result;
   result = result.replace(/,(\s*[\]}])/g, '$1');
   if (result !== beforeTrailing) {
     fixes.push('Virgule în exces eliminate (trailing commas)');
   }
   
-  // 3. Înlocuiește newlines neescapate din stringuri
-  // Găsește stringuri și escapează newlines din interiorul lor
-  let inString = false;
-  let escaped = false;
+  // 2. Înlocuiește ghilimelele drepte din interiorul stringurilor cu versiuni escapate
+  // Problema: LLM-urile generează uneori " în loc de „" sau \"
+  // Strategia: Găsim perechile de ghilimele care delimitează stringuri JSON
+  // și escapăm cele din interior
+  
+  // Pattern pentru a găsi string-uri JSON: "key": "value" sau elemente de array
+  // Folosim o abordare mai robustă: detectăm contextul
+  
   let fixedChars: string[] = [];
-  let hadNewlineInString = false;
+  let inString = false;
+  let stringStart = -1;
+  let escaped = false;
+  let hadQuoteFix = false;
+  let hadNewlineFix = false;
   
   for (let i = 0; i < result.length; i++) {
     const char = result[i];
+    const prevChar = i > 0 ? result[i - 1] : '';
+    const nextChar = i < result.length - 1 ? result[i + 1] : '';
     
     if (escaped) {
       fixedChars.push(char);
@@ -203,15 +203,41 @@ function autoFixJSON(jsonString: string): { fixed: string; fixes: string[] } {
     }
     
     if (char === '"') {
-      inString = !inString;
-      fixedChars.push(char);
+      if (!inString) {
+        // Începutul unui string
+        inString = true;
+        stringStart = i;
+        fixedChars.push(char);
+      } else {
+        // Suntem în string - verificăm dacă e sfârșitul sau un " în interior
+        // E sfârșitul dacă e urmat de: , ] } : sau whitespace+unul din acestea
+        const afterQuote = result.substring(i + 1).trimStart();
+        const isEndOfString = afterQuote.length === 0 || 
+                              afterQuote[0] === ',' || 
+                              afterQuote[0] === ']' || 
+                              afterQuote[0] === '}' || 
+                              afterQuote[0] === ':';
+        
+        if (isEndOfString) {
+          // E sfârșitul stringului
+          inString = false;
+          fixedChars.push(char);
+        } else {
+          // E un " în interiorul stringului - escapează-l
+          fixedChars.push('\\');
+          fixedChars.push(char);
+          hadQuoteFix = true;
+        }
+      }
       continue;
     }
     
+    // Escapează newlines reale din interiorul stringurilor
     if (inString && (char === '\n' || char === '\r')) {
-      fixedChars.push('\\n');
-      hadNewlineInString = true;
-      if (char === '\r' && result[i + 1] === '\n') {
+      fixedChars.push('\\');
+      fixedChars.push('n');
+      hadNewlineFix = true;
+      if (char === '\r' && nextChar === '\n') {
         i++; // Skip \n after \r
       }
       continue;
@@ -220,12 +246,16 @@ function autoFixJSON(jsonString: string): { fixed: string; fixes: string[] } {
     fixedChars.push(char);
   }
   
-  if (hadNewlineInString) {
-    result = fixedChars.join('');
+  if (hadQuoteFix) {
+    fixes.push('Ghilimele " din interior escapate cu \\"');
+  }
+  if (hadNewlineFix) {
     fixes.push('Newlines neescapate din stringuri convertite în \\n');
   }
   
-  // 4. Încearcă să detecteze și să repare JSON trunchiat
+  result = fixedChars.join('');
+  
+  // 3. Încearcă să detecteze și să repare JSON trunchiat
   const openBrackets = (result.match(/\[/g) || []).length;
   const closeBrackets = (result.match(/\]/g) || []).length;
   const openBraces = (result.match(/\{/g) || []).length;

@@ -1,0 +1,134 @@
+{
+  "intrebari": [
+    {
+      "tulpina": "Un producător de mobilă trimite unui potențial client următorul e-mail:\n\n„Stimate domn, vă informăm că producem mobilier la comandă. Pentru un dormitor complet (pat, dulap, noptiere), prețurile noastre pornesc de la 8.000 lei, în funcție de materialele alese. Suntem la dispoziția dumneavoastră pentru a discuta detaliile."\n\nClientul răspunde imediat: „Accept oferta de 8.000 lei pentru dormitor complet."\n\nCare dintre următoarele afirmații sunt corecte?",
+      "variante": [
+        {"litera": "a", "text": "Mesajul producătorului constituie o ofertă de a contracta, întrucât conține obiectul și prețul", "este_corecta": false},
+        {"litera": "b", "text": "Mesajul producătorului constituie o invitație de a trata, nu o ofertă", "este_corecta": true},
+        {"litera": "c", "text": "Răspunsul clientului poate fi calificat ca ofertă fermă adresată producătorului", "este_corecta": true},
+        {"litera": "d", "text": "S-a încheiat un contract valabil de confecționare mobilier la prețul de 8.000 lei", "este_corecta": false}
+      ],
+      "feedback": {
+        "explicatie_generala": "Această întrebare testează distincția fundamentală între ofertă și invitație la negocieri (invitatio ad offerendum), precum și recalificarea răspunsului la o invitație.\n\n**Analiza mesajului producătorului:**\n\nMesajul NU e ofertă pentru că îi lipsesc caracteristicile esențiale:\n- „prețurile pornesc de la 8.000 lei" → preț nedeterminat, doar un minim orientativ\n- „în funcție de materialele alese" → element esențial nespecificat\n- „pentru a discuta detaliile" → exprimă intenția de a negocia, nu de a se obliga\n\nO ofertă trebuie să fie fermă, precisă și completă. Aici avem doar o prezentare comercială care invită la discuții.\n\n**Analiza răspunsului clientului:**\n\nClientul spune „Accept oferta de 8.000 lei". Dar nu poți accepta ceva ce nu e ofertă. Ce face de fapt clientul?\n- Formulează el însuși o propunere cu termeni preciși (8.000 lei, dormitor complet)\n- Această propunere = ofertă fermă adresată producătorului\n- Rolurile s-au inversat: clientul devine ofertant, producătorul devine destinatar",
+        "analiza_variante": {
+          "a": {"este_corecta": false, "explicatie": "Greșit. „Pornesc de la" ≠ preț determinat. Lipsesc elemente esențiale (materiale). E doar invitație la negocieri."},
+          "b": {"este_corecta": true, "explicatie": "Corect. Mesajul are caracter informativ, orientativ, și invită la discuții ulterioare. Toate indiciile arată că nu e ofertă."},
+          "c": {"este_corecta": true, "explicatie": "Corect. „Accept 8.000 lei pentru dormitor complet" = propunere precisă cu obiect și preț determinate. E ofertă, nu acceptare."},
+          "d": {"este_corecta": false, "explicatie": "Greșit. Fără ofertă validă nu poate exista acceptare. Fără acceptare nu există contract. Răspunsul clientului e ofertă nouă, neacceptată încă."}
+        },
+        "retine": "**OFERTĂ vs. INVITAȚIE LA NEGOCIERI:**\n\n| Criteriu | Ofertă | Invitație |\n|----------|--------|----------|\n| Preț | Determinat sau determinabil precis | Orientativ, „de la", „negociabil" |\n| Elemente esențiale | Complete | Incomplete sau vagi |\n| Intenție | De a se obliga la acceptare | De a discuta, negocia |\n| Efect la „acceptare" | Contract încheiat | „Acceptarea" devine ea însăși ofertă |\n\n**RECALIFICAREA ACTULUI:**\n- „Accept" adresat unei invitații ≠ acceptare\n- = ofertă nouă care așteaptă acceptarea celuilalt\n- Judecătorul califică actul după conținut, nu după denumirea dată de părți",
+        "schema_aplicatie_practica": null,
+        "atentie": "La INM, formulări precum:\n- „prețuri de la..."\n- „aproximativ..."\n- „în funcție de..."\n- „pentru a discuta..."\n\n= indicatori clari că NU e ofertă, ci invitație.",
+        "exceptii": null
+      },
+      "concepte_cheie": ["ofertă", "invitație la negocieri", "invitatio ad offerendum", "recalificarea actului juridic", "intenția de a se obliga"],
+      "articole_relevante": ["art. 1188 C.civ.", "art. 1189 C.civ."],
+      "materie": "civil",
+      "capitol": "Formarea contractului"
+    },
+    {
+      "tulpina": "Andrei îi trimite Biancăi o scrisoare: „Îți vând mașina mea pentru 15.000 euro. Oferta e valabilă 10 zile." A doua zi, Andrei vinde mașina lui Călin, care plătește și primește mașina imediat. În ziua a 5-a, Bianca trimite o scrisoare de acceptare care ajunge la Andrei în ziua a 7-a.\n\nCare dintre următoarele afirmații sunt corecte?",
+      "variante": [
+        {"litera": "a", "text": "Contractul dintre Andrei și Bianca s-a încheiat în ziua a 7-a, când acceptarea a ajuns la Andrei", "este_corecta": true},
+        {"litera": "b", "text": "Oferta a devenit caducă în momentul vânzării către Călin, deci Bianca nu mai putea accepta", "este_corecta": false},
+        {"litera": "c", "text": "Bianca poate cere daune-interese de la Andrei pentru revocarea ofertei irevocabile", "este_corecta": true},
+        {"litera": "d", "text": "Contractul dintre Andrei și Călin este nul pentru că Andrei era obligat să vândă Biancăi", "este_corecta": false}
+      ],
+      "feedback": {
+        "explicatie_generala": "Această întrebare testează efectele ofertei irevocabile și consecințele revocării ei, precum și principiul relativității efectelor contractului.\n\n**Analiza situației:**\n\n1. **Oferta lui Andrei către Bianca:**\n- Conține termen de 10 zile → ofertă irevocabilă (art. 1191 C.civ.)\n- Oferta irevocabilă NU poate fi revocată în termenul stipulat\n- Dar „nu poate fi revocată" nu înseamnă că ofertantul e fizic împiedicat să dispună de bun\n\n2. **Vânzarea către Călin (ziua 2):**\n- Contract perfect valabil între Andrei și Călin\n- Călin e terț de bună-credință, primește mașina, plătește prețul\n- Contractul NU e nul — Andrei era proprietar și putea dispune de bun\n\n3. **Acceptarea Biancăi (ziua 5→7):**\n- Trimisă în termen (ziua 5), ajunsă în termen (ziua 7)\n- Teoria recepției: contractul se încheie când acceptarea ajunge\n- Deci în ziua a 7-a s-a „încheiat" contractul Andrei-Bianca\n\n4. **Problema:** Andrei a vândut același bun de două ori!\n- Contract 1: Andrei-Călin (ziua 2) — executat, Călin are mașina\n- Contract 2: Andrei-Bianca (ziua 7) — încheiat, dar imposibil de executat\n\n**Soluția juridică:**\n\nAndrei datorează daune-interese Biancăi pentru:\n- Revocarea ofertei irevocabile (art. 1191 alin. 2 C.civ.: revocarea produce efecte, dar angajează răspunderea)\n- Neexecutarea contractului încheiat (nu poate preda mașina)",
+        "analiza_variante": {
+          "a": {"este_corecta": true, "explicatie": "Corect. Acceptarea ajunge în ziua 7, în interiorul termenului de 10 zile. Contractul se încheie la momentul recepției acceptării, indiferent că bunul a fost între timp înstrăinat."},
+          "b": {"este_corecta": false, "explicatie": "Greșit. Caducitatea intervine pentru cauze limitativ prevăzute (art. 1195 C.civ.): expirarea termenului, refuzul destinatarului, decesul/incapacitatea (cu nuanțe). Vânzarea bunului către altcineva NU e cauză de caducitate a ofertei."},
+          "c": {"este_corecta": true, "explicatie": "Corect. Art. 1191 alin. 2 C.civ.: revocarea ofertei irevocabile nu împiedică formarea contractului dacă acceptarea ajunge în termen, dar angajează răspunderea ofertantului pentru prejudiciul cauzat. Bianca poate cere daune."},
+          "d": {"este_corecta": false, "explicatie": "Greșit. Contractul Andrei-Călin e perfect valabil. Andrei era proprietar, Călin e terț de bună-credință. Obligația lui Andrei de a menține oferta față de Bianca nu afectează validitatea actelor cu terții. E principiul relativității: contractele produc efecte doar între părți."}
+        },
+        "retine": "**OFERTA IREVOCABILĂ — efecte:**\n\n| Situație | Efect |\n|----------|-------|\n| Ofertantul „revocă" în termen | Revocarea NU produce efecte asupra formării contractului |\n| Destinatarul acceptă în termen | Contract încheiat, chiar dacă ofertantul s-a „răzgândit" |\n| Ofertantul înstrăinează bunul | Contractul cu terțul e VALABIL, dar ofertantul răspunde față de destinatarul ofertei |\n\n**CADUCITATEA OFERTEI — cauze limitative (art. 1195 C.civ.):**\n- Acceptarea nu ajunge în termen\n- Destinatarul refuză oferta\n- Decesul/incapacitatea ofertantului sau destinatarului (cu nuanțe pentru oferta irevocabilă)\n\n**NU sunt cauze de caducitate:**\n- Revocarea ofertei irevocabile\n- Înstrăinarea bunului către terți\n- Simpla schimbare de intenție a ofertantului",
+        "schema_aplicatie_practica": "```\nZIUA 1     ZIUA 2          ZIUA 5           ZIUA 7         ZIUA 10\n   │          │               │                │               │\n   ▼          ▼               ▼                ▼               ▼\nOfertă    Vânzare         Bianca           Acceptarea      Termen\ncătre     către           trimite          ajunge la       expiră\nBianca    Călin           acceptarea       Andrei\n(10 zile) (executat)                       \n   │          │               │                │\n   │          │               │                ▼\n   │          │               │          CONTRACT 2\n   │          │               │          (Andrei-Bianca)\n   │          ▼               │          = încheiat dar\n   │     CONTRACT 1           │            inexecutabil\n   │     (Andrei-Călin)       │\n   │     = valabil +          │\n   │       executat           │\n   │                          │\n   └──────────────────────────┴─────────────────────────────────\n                              \n   REZULTAT: Andrei datorează daune-interese Biancăi\n```",
+        "atentie": "**VÂNZAREA BUNULUI ALTUIA:**\n- Contractul nu e nul\n- E valabil, dar generează obligația de daune-interese pentru neexecutare\n- Terțul de bună-credință e protejat",
+        "exceptii": null
+      },
+      "concepte_cheie": ["ofertă irevocabilă", "teoria recepției", "caducitatea ofertei", "relativitatea efectelor contractului", "daune-interese", "revocarea ofertei"],
+      "articole_relevante": ["art. 1191 C.civ.", "art. 1195 C.civ."],
+      "materie": "civil",
+      "capitol": "Formarea contractului"
+    },
+    {
+      "tulpina": "Maria publică un anunț pe un site imobiliar: „Vând apartament 2 camere, str. Florilor nr. 10, 80.000 euro, accept doar plata integrală." George vizitează apartamentul și îi spune Mariei: „Cumpăr apartamentul, dar plătesc 40.000 acum și 40.000 peste 6 luni." Maria răspunde: „Nu, am spus plata integrală. Dacă vrei în rate, facem 45.000 acum și 40.000 peste 6 luni."\n\nCare dintre următoarele afirmații sunt corecte?",
+      "variante": [
+        {"litera": "a", "text": "Anunțul Mariei constituie ofertă de a contracta, fiind suficient de precisă și adresată publicului", "este_corecta": false},
+        {"litera": "b", "text": "Propunerea lui George constituie contraofertă care a dus la respingerea implicită a ofertei inițiale", "este_corecta": true},
+        {"litera": "c", "text": "Răspunsul Mariei constituie o nouă contraofertă, George devenind acum destinatarul acesteia", "este_corecta": true},
+        {"litera": "d", "text": "Dacă George acceptă ultima propunere a Mariei, contractul e valabil încheiat în formă verbală", "este_corecta": false}
+      ],
+      "feedback": {
+        "explicatie_generala": "Această întrebare testează mecanismul contraofertei și cerința formei autentice pentru imobile, combinând două concepte frecvent testate la INM.\n\n**Analiza lanțului de propuneri:**\n\n1. **Anunțul Mariei:**\n- Adresat publicului (site imobiliar)\n- Regula: propunerea către public = invitație la ofertă, NU ofertă\n- Excepție: dacă legea, uzanțele sau circumstanțele indică altfel\n- Aici: anunț imobiliar standard → invitație la ofertă\n\n2. **Propunerea lui George („40.000 acum + 40.000 în 6 luni"):**\n- Modifică un element esențial: modalitatea de plată\n- Maria ceruse „doar plata integrală" → George propune rate\n- Orice modificare a elementelor esențiale = contraofertă (art. 1197 C.civ.)\n- Contraoferta = respingere implicită a ofertei/invitației anterioare + ofertă nouă\n\n3. **Răspunsul Mariei („45.000 acum + 40.000 în 6 luni"):**\n- Nu acceptă propunerea lui George\n- Formulează termeni noi (sumă diferită: 45.000 în loc de 40.000 prima tranșă)\n- = nouă contraofertă\n- Acum George e destinatarul, Maria e ofertantă\n\n4. **Dacă George ar accepta verbal?**\n- STOP! Vânzare de imobil = formă autentică obligatorie (art. 1244 C.civ.)\n- Acordul verbal, oricât de complet, = nul absolut\n- Nu se încheie niciun contract fără act notarial",
+        "analiza_variante": {
+          "a": {"este_corecta": false, "explicatie": "Greșit. Anunțul pe site imobiliar = propunere către public = regula generală e că valorează invitație la ofertă, nu ofertă. Chiar dacă conține elemente precise, destinatarul e nedeterminat, iar în materie imobiliară uzanța e că anunțurile sunt invitații."},
+          "b": {"este_corecta": true, "explicatie": "Corect. George modifică modalitatea de plată (element esențial). Art. 1197 C.civ.: acceptarea cu modificări = contraofertă = respingere implicită a propunerii anterioare."},
+          "c": {"este_corecta": true, "explicatie": "Corect. Maria nu acceptă termenii lui George, ci propune alții noi. E o nouă contraofertă. Rolurile se inversează din nou: Maria ofertantă, George destinatar."},
+          "d": {"este_corecta": false, "explicatie": "CAPCANĂ! Chiar dacă mecanismul ofertă-acceptare ar fi complet, vânzarea de imobile necesită formă autentică ad validitatem. Acceptarea verbală = nicio valoare juridică. Contractul NU se încheie."}
+        },
+        "retine": "**LANȚUL CONTRAOFERTELOR:**\n\nFIECARE CONTRAOFERTĂ:\n- Respinge implicit propunerea anterioară\n- Creează o ofertă nouă\n- Inversează rolurile (ofertant ↔ destinatar)\n\n**FORMA AUTENTICĂ — IMOBILE:**\n\n| Tip act | Formă cerută | Sancțiune |\n|---------|--------------|----------|\n| Vânzare imobil | Autentică (notarială) | Nulitate absolută |\n| Antecontract imobil | Autentică (notarială) | Nulitate absolută |\n| Acord verbal pe imobil | — | ZERO efecte juridice |",
+        "schema_aplicatie_practica": "```\nPROPUNERE INIȚIALĂ          CONTRAOFERTĂ 1           CONTRAOFERTĂ 2\n    (Maria)          →          (George)        →        (Maria)\n                              \n„80.000, plată              „40.000 + 40.000        „45.000 + 40.000\nintegrală"                   în rate"                în rate"\n                              \n= invitație                 = respinge implicit     = respinge implicit\n                              invitația +             contraoferta 1 +\n                              ofertă nouă             ofertă nouă\n                              \nDestinatar: public          Destinatar: Maria       Destinatar: George\n```",
+        "atentie": "**Capcana variantei (d):**\n\nE tentant să gândești: „Mecanismul ofertă-contraofertă-acceptare e complet, deci contract încheiat."\n\nGREȘIT! Trebuie întotdeauna să verifici:\n1. ✅ Există ofertă validă?\n2. ✅ Există acceptare conformă?\n3. ❓ **Este respectată forma cerută de lege?**\n\nPentru imobile, pasul 3 e eliminatoriu. Fără formă autentică = nimic.",
+        "exceptii": null
+      },
+      "concepte_cheie": ["contraofertă", "respingere implicită", "formă autentică", "vânzare imobile", "inversarea rolurilor"],
+      "articole_relevante": ["art. 1197 C.civ.", "art. 1244 C.civ."],
+      "materie": "civil",
+      "capitol": "Formarea contractului"
+    },
+    {
+      "tulpina": "Daniel trimite un e-mail către Elena: „Îți ofer spre vânzare colecția mea de timbre pentru suma de 5.000 lei. Așteaptă-mă să confirm disponibilitatea și prețul final săptămâna viitoare."\n\nCare dintre următoarele afirmații sunt corecte?",
+      "variante": [
+        {"litera": "a", "text": "Mesajul lui Daniel este o ofertă de a contracta, întrucât conține obiectul și prețul", "este_corecta": false},
+        {"litera": "b", "text": "Mesajul lui Daniel nu este o ofertă, ci o invitație la negocieri, deoarece și-a rezervat dreptul de confirmare ulterioară", "este_corecta": true},
+        {"litera": "c", "text": "Dacă Elena răspunde „Accept", contractul se încheie imediat", "este_corecta": false},
+        {"litera": "d", "text": "Formularea „așteaptă-mă să confirm" indică intenția lui Daniel de a amâna încheierea contractului", "este_corecta": true}
+      ],
+      "feedback": {
+        "explicatie_generala": "Această întrebare testează intenția de a se obliga ca element esențial al ofertei și rezerva de confirmare ca indicator al lipsei acestei intenții.\n\n**Analiza mesajului lui Daniel:**\n\nMesajul conține:\n- ✅ Obiect determinat (colecția de timbre)\n- ✅ Preț indicat (5.000 lei)\n- ❌ **DAR:** „Așteaptă-mă să confirm disponibilitatea și prețul final"\n\nAceastă formulare schimbă totul:\n- Daniel își rezervă dreptul de a confirma **disponibilitatea** → poate că nici nu vrea să vândă\n- Daniel își rezervă dreptul de a confirma **prețul final** → 5.000 lei nu e prețul definitiv\n- „Săptămâna viitoare" → amână orice angajament pentru mai târziu\n\n**Ce lipsește pentru a fi ofertă?**\n\nArt. 1188 C.civ.: Oferta trebuie să exprime **intenția de a se obliga** în caz de acceptare.\n\nCând cineva spune „așteaptă să confirm", transmite exact contrariul:\n- „Nu mă oblig încă"\n- „Nu te poți baza pe acești termeni"\n- „Trebuie să mai vorbim"\n\n= **invitație la negocieri**, nu ofertă",
+        "analiza_variante": {
+          "a": {"este_corecta": false, "explicatie": "Greșit. Obiectul și prețul sunt condiții necesare, dar nu suficiente. Lipsește elementul esențial: intenția de a se obliga. Rezerva de confirmare neagă această intenție."},
+          "b": {"este_corecta": true, "explicatie": "Corect. Rezervarea dreptului de confirmare ulterioară = semnal clar că nu există încă intenție de angajament juridic. E invitație la negocieri."},
+          "c": {"este_corecta": false, "explicatie": "Greșit. Nu poți „accepta" o invitație la negocieri. Răspunsul Elenei ar fi, cel mult, o ofertă din partea ei (dacă ar conține termeni preciși), sau doar o continuare a negocierilor."},
+          "d": {"este_corecta": true, "explicatie": "Corect. „Așteaptă-mă să confirm" = amânarea momentului în care Daniel ar fi dispus să se oblige. Indică intenția de a amâna formarea oricărui acord obligatoriu."}
+        },
+        "retine": "**OFERTĂ — ELEMENTE CUMULATIVE:**\n\n| Element | Întrebare-cheie | În speță |\n|---------|-----------------|----------|\n| Obiect determinat | Ce se vinde/cumpără? | ✅ Colecția de timbre |\n| Preț determinat | La ce preț? | ❌ „Prețul final" = încă nestabilit |\n| Intenția de a se obliga | Ofertantul e gata să fie legat la acceptare? | ❌ „Așteaptă să confirm" = NU |\n\n**Lipsa unui singur element = NU e ofertă**\n\n**FORMULĂRI CARE NEAGĂ INTENȚIA DE A SE OBLIGA:**\n- „Așteaptă să confirm..."\n- „Sub rezerva confirmării..."\n- „Rămâne să discutăm..."\n- „Prețul e orientativ..."\n- „Disponibilitate sub rezervă..."\n- „Fără angajament din partea mea..."\n\n= Toate acestea transformă propunerea în **invitație la negocieri**",
+        "schema_aplicatie_practica": "```\n| Formulare | Calificare | De ce? |\n|-----------|------------|--------|\n| „Îți vând X cu 5.000 lei" | OFERTĂ | Termeni compleți + intenție de angajament |\n| „Îți vând X cu 5.000 lei, oferta e valabilă 10 zile" | OFERTĂ IREVOCABILĂ | + termen = irevocabilitate |\n| „Îți vând X cu 5.000 lei, așteaptă să confirm" | INVITAȚIE | Rezerva de confirmare neagă intenția |\n| „Vând X, prețuri de la 5.000 lei" | INVITAȚIE | Preț nedeterminat |\n```",
+        "atentie": "**Capcana variantei (a):**\n\nE o greșeală frecventă să consideri că prezența obiectului și prețului = automat ofertă.\n\n**NU!** Intenția de a se obliga e la fel de importantă. Fără ea, ai doar o invitație, chiar dacă termenii par compleți.\n\n**Trucul de identificare:** Întreabă-te: „Dacă destinatarul spune DA, ofertantul e imediat obligat?" Dacă răspunsul e „Nu, mai trebuie să confirme/discute/verifice" → nu e ofertă.",
+        "exceptii": null
+      },
+      "concepte_cheie": ["intenția de a se obliga", "rezerva de confirmare", "invitație la negocieri", "elemente esențiale ale ofertei"],
+      "articole_relevante": ["art. 1188 C.civ."],
+      "materie": "civil",
+      "capitol": "Formarea contractului"
+    },
+    {
+      "tulpina": "Societatea Alfa SRL publică pe site-ul propriu: „Ofertă specială: laptopuri model X, 3.000 lei bucata, stoc limitat la 50 de unități." În aceeași zi, 60 de clienți comandă online câte un laptop, completând formularul de comandă și plătind integral cu cardul.\n\nCare dintre următoarele afirmații sunt corecte?",
+      "variante": [
+        {"litera": "a", "text": "S-au încheiat 60 de contracte valabile, societatea fiind obligată să livreze toate laptopurile comandate", "este_corecta": false},
+        {"litera": "b", "text": "S-au încheiat doar 50 de contracte, în ordinea cronologică a comenzilor, oferta fiind limitată la stocul disponibil", "este_corecta": true},
+        {"litera": "c", "text": "Anunțul societății constituie ofertă către public, întrucât conține elementele esențiale și indică intenția de a se obliga în limita stocului", "este_corecta": true},
+        {"litera": "d", "text": "Clienții care nu vor primi laptopuri pot cere daune-interese de la societate pentru publicitate înșelătoare", "este_corecta": false}
+      ],
+      "feedback": {
+        "explicatie_generala": "Această întrebare testează oferta către public cu stoc limitat și efectele acceptării când cererea depășește oferta.\n\n**Analiza anunțului Alfa SRL:**\n\nAnunțul conține:\n- ✅ Obiect determinat (laptopuri model X)\n- ✅ Preț determinat (3.000 lei/bucată)\n- ✅ Indicație clară de limită („stoc limitat la 50 de unități")\n- ✅ Mecanism de acceptare (comandă online + plată)\n\n**Este ofertă sau invitație?**\n\nRegula generală: propunerea către public = invitație la ofertă.\n\n**EXCEPȚIE (art. 1189 alin. 1 C.civ.):** Propunerea valorează ofertă dacă aceasta rezultă din:\n- Lege\n- Uzanțe\n- **Împrejurări**\n\nAici, împrejurările indică ofertă:\n- Preț fix, nu „de la" sau „negociabil"\n- Stoc precizat explicit\n- Mecanism automat de acceptare (comandă + plată online)\n- Context e-commerce unde clienții se bazează pe termenii afișați\n\n**Efectul limitei de stoc:**\n\nCând oferta precizează „stoc limitat la 50 unități":\n- Ofertantul își limitează angajamentul la 50 de contracte\n- Primele 50 de acceptări (în ordine cronologică) = contracte valabile\n- Acceptările 51-60 = nu mai au ce accepta, oferta fiind epuizată\n- NU e vina societății, NU e publicitate înșelătoare — limita era comunicată clar",
+        "analiza_variante": {
+          "a": {"este_corecta": false, "explicatie": "Greșit. Oferta era limitată la 50 de unități. Nu poți accepta o ofertă care nu mai există. Societatea nu poate fi obligată să livreze bunuri pe care nu le-a oferit."},
+          "b": {"este_corecta": true, "explicatie": "Corect. Oferta acoperea 50 de unități. Primele 50 de comenzi (cronologic) = 50 de acceptări = 50 de contracte. Restul de 10 clienți au „acceptat" după epuizarea ofertei."},
+          "c": {"este_corecta": true, "explicatie": "Corect. Anunțul îndeplinește condițiile ofertei: elemente esențiale complete + împrejurările (e-commerce, preț fix, mecanism automat) indică intenție de angajament. Limita de stoc e parte din ofertă, nu o negare a intenției."},
+          "d": {"este_corecta": false, "explicatie": "Greșit. Societatea a comunicat clar limita („stoc limitat la 50"). Nu există înșelăciune sau publicitate înșelătoare. Clienții 51-60 au riscat, știind că stocul e limitat. Vor primi rambursarea plății, nu daune-interese."}
+        },
+        "retine": "**OFERTA CU STOC LIMITAT:**\n\n| Element | Efect |\n|---------|-------|\n| „Stoc limitat la X unități" | Oferta acoperă maximum X acceptări |\n| Acceptarea X+1 | Nu formează contract — oferta e epuizată |\n| Ordinea acceptărilor | Cronologică (primul venit, primul servit) |\n| Plățile pentru acceptări peste limită | Se restituie (plata nedatorată) |\n\n**PROPUNERE CĂTRE PUBLIC — CÂND E OFERTĂ?**\n\nREGULA: Propunere către public = INVITAȚIE\n\nEXCEPȚII (devine OFERTĂ) când rezultă din:\n- Lege (ex: obligații ale comercianților)\n- Uzanțe (ex: e-commerce cu preț fix și comandă automată)\n- Împrejurări (ex: automat de cafea, parcare cu barieră)\n\n**INDICATORI CĂ E OFERTĂ (nu invitație):**\n- Preț fix (nu „de la", „negociabil")\n- Mecanism automat de acceptare\n- Termeni compleți, fără rezerve\n- Context în care clientul nu mai negociază",
+        "schema_aplicatie_practica": "```\nANUNȚ ONLINE                   COMENZI (60 clienți)              REZULTAT\n„50 unități,                   \n3.000 lei"                     \n     │                              │                              \n     ▼                              ▼                              \n  OFERTĂ                     Comenzile 1-50              50 CONTRACTE\n  (limitată la 50)           = acceptări valabile        încheiate\n                                    │                              \n                                    ▼                              \n                             Comenzile 51-60             NICIUN CONTRACT\n                             = oferta deja epuizată      plățile se restituie\n```",
+        "atentie": "**Diferența între situații:**\n\n| Situație | Efect pentru clienții „în plus" |\n|----------|--------------------------------|\n| Ofertă cu stoc limitat comunicat | Restituire plată, fără daune |\n| Ofertă fără limită + refuz arbitrar | Posibile daune pentru revocare abuzivă |\n| Publicitate înșelătoare (stoc inexistent) | Daune + posibile sancțiuni |\n\nÎn speța noastră: limita era comunicată clar → clienții 51-60 nu au drept la daune.",
+        "exceptii": null
+      },
+      "concepte_cheie": ["ofertă către public", "stoc limitat", "e-commerce", "epuizarea ofertei", "plata nedatorată"],
+      "articole_relevante": ["art. 1189 C.civ."],
+      "materie": "civil",
+      "capitol": "Formarea contractului"
+    }
+  ]
+}
