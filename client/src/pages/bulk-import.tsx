@@ -591,7 +591,50 @@ export default function BulkImport() {
     mutationFn: async () => {
       // Apply auto-fix before parsing
       const { fixed: fixedJson } = autoFixJSON(jsonData);
-      const questionsData = JSON.parse(fixedJson);
+      const parsed = JSON.parse(fixedJson);
+      
+      // Extract array from wrapper object if needed
+      const rawQuestions = Array.isArray(parsed) ? parsed : (parsed.intrebari || []);
+      
+      // Convert Set B format to Set A format for server compatibility
+      const questionsData = rawQuestions.map((q: any) => {
+        const isSetBFormat = q.tulpina && Array.isArray(q.variante);
+        
+        if (isSetBFormat) {
+          // Convert Set B (tulpina/variante) to Set A (questionText/options)
+          const correctAnswers: number[] = [];
+          q.variante.forEach((v: any, idx: number) => {
+            if (v.este_corecta === true) correctAnswers.push(idx);
+          });
+          
+          // Build explanation from feedback
+          const feedbackParts: string[] = [];
+          if (q.feedback?.explicatie_generala) feedbackParts.push(q.feedback.explicatie_generala);
+          if (q.feedback?.retine) {
+            const retine = Array.isArray(q.feedback.retine) ? q.feedback.retine.join('\n') : q.feedback.retine;
+            feedbackParts.push(`**Reține:**\n${retine}`);
+          }
+          if (q.feedback?.schema_aplicatie_practica) {
+            feedbackParts.push(`**Schema practică:**\n${q.feedback.schema_aplicatie_practica}`);
+          }
+          if (q.feedback?.atentie) feedbackParts.push(`**Atenție:** ${q.feedback.atentie}`);
+          
+          return {
+            questionText: q.tulpina,
+            options: q.variante.map((v: any) => v.text),
+            correctAnswer: correctAnswers.length === 1 ? correctAnswers[0] : null,
+            correctAnswers: correctAnswers,
+            explanation: feedbackParts.join('\n\n') || '',
+            chapter: q.capitol || 'General',
+            legalReferences: q.articole_relevante || null,
+            aiFeedback: q.feedback ? JSON.stringify(q.feedback) : null
+          };
+        }
+        
+        // Already in Set A format
+        return q;
+      });
+      
       const response = await apiRequest('POST', '/api/questions/bulk-import', {
         batchName,
         subject,
