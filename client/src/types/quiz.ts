@@ -23,9 +23,11 @@ export interface QuizQuestion {
   subject: string;
   chapter: string;
   difficulty: string;
+  setType?: 'A' | 'B' | 'C';
   questionText: string;
   options: QuizOption[];
   correctAnswer: number;
+  correctAnswersMultiple?: number[]; // For God Mode: array of correct indices, empty array = none correct
   explanation: string;
   legalReferences?: string[];
   feedbackDetailed?: FeedbackDetailed;

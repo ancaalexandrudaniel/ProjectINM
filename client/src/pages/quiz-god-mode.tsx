@@ -123,47 +123,54 @@ function renderMarkdownContent(text: string) {
 interface GodModeQuestion extends QuizQuestion {
   correctAnswersSet: number[];
   hasZeroCorrect: boolean;
+  shuffledOptions: { originalIndex: number; text: string; correct: boolean }[];
+  shuffleMap: number[]; // shuffleMap[displayIndex] = originalIndex
+}
+
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 }
 
 function generateGodModeAnswers(question: QuizQuestion, set: 'A' | 'B' | 'C'): GodModeQuestion {
-  const realCorrect = question.correctAnswer;
-  const optionsCount = question.options?.length || 4;
-  
+  // Use correctAnswersMultiple from database if available, otherwise fallback to correctAnswer
   let correctAnswersSet: number[] = [];
   let hasZeroCorrect = false;
 
-  if (set === 'A') {
-    correctAnswersSet = [realCorrect];
-  } else if (set === 'B') {
-    const count = Math.floor(Math.random() * 3) + 1;
-    correctAnswersSet = [realCorrect];
-    const otherIndices = Array.from({ length: optionsCount }, (_, i) => i).filter(i => i !== realCorrect);
-    const shuffled = otherIndices.sort(() => Math.random() - 0.5);
-    for (let i = 0; i < count - 1 && i < shuffled.length; i++) {
-      correctAnswersSet.push(shuffled[i]);
-    }
-    correctAnswersSet.sort((a, b) => a - b);
+  if (question.correctAnswersMultiple !== undefined && question.correctAnswersMultiple !== null) {
+    // Use data from database (imported questions)
+    correctAnswersSet = [...question.correctAnswersMultiple];
+    hasZeroCorrect = correctAnswersSet.length === 0;
   } else {
-    const rand = Math.random();
-    if (rand < 0.15) {
-      correctAnswersSet = [];
-      hasZeroCorrect = true;
-    } else {
-      const count = Math.floor(Math.random() * 4) + 1;
-      correctAnswersSet = [realCorrect];
-      const otherIndices = Array.from({ length: optionsCount }, (_, i) => i).filter(i => i !== realCorrect);
-      const shuffled = otherIndices.sort(() => Math.random() - 0.5);
-      for (let i = 0; i < count - 1 && i < shuffled.length; i++) {
-        correctAnswersSet.push(shuffled[i]);
-      }
-      correctAnswersSet.sort((a, b) => a - b);
-    }
+    // Fallback for legacy questions: use correctAnswer
+    correctAnswersSet = [question.correctAnswer];
   }
+
+  // Create shuffled options with tracking of original indices
+  const optionsWithIndex = question.options.map((opt, idx) => ({
+    originalIndex: idx,
+    text: opt.text,
+    correct: opt.correct
+  }));
+  
+  const shuffledOptions = shuffleArray(optionsWithIndex);
+  const shuffleMap = shuffledOptions.map(opt => opt.originalIndex);
+  
+  // Translate correctAnswersSet to shuffled indices
+  const shuffledCorrectSet = correctAnswersSet.map(origIdx => 
+    shuffledOptions.findIndex(opt => opt.originalIndex === origIdx)
+  ).sort((a, b) => a - b);
 
   return {
     ...question,
-    correctAnswersSet,
-    hasZeroCorrect
+    correctAnswersSet: shuffledCorrectSet,
+    hasZeroCorrect,
+    shuffledOptions,
+    shuffleMap
   };
 }
 
@@ -451,7 +458,7 @@ export default function QuizGodMode() {
           </div>
 
           <div className="space-y-3 mb-6">
-            {question.options?.map((option: any, index: number) => {
+            {question.shuffledOptions?.map((option, index) => {
               const isSelected = selectedAnswers.includes(index);
               const isCorrect = question.correctAnswersSet.includes(index);
               
@@ -481,7 +488,7 @@ export default function QuizGodMode() {
                   <span className="font-semibold text-muted-foreground w-6">
                     {String.fromCharCode(65 + index)})
                   </span>
-                  <span className="flex-1">{option.text || option}</span>
+                  <span className="flex-1">{option.text}</span>
                   {showFeedback && isCorrect && (
                     <CheckCircle2 className="h-5 w-5 text-green-500" />
                   )}
@@ -545,12 +552,26 @@ export default function QuizGodMode() {
                   )}
                 </div>
                 {!results[results.length - 1]?.correct && (
-                  <p className="text-sm">
-                    <strong>Răspunsuri corecte:</strong>{' '}
-                    {question.hasZeroCorrect 
-                      ? 'Niciunul' 
-                      : question.correctAnswersSet.map(i => String.fromCharCode(65 + i)).join(', ')}
-                  </p>
+                  <div className="text-sm space-y-1">
+                    <p>
+                      <strong>Răspunsul tău:</strong>{' '}
+                      <span className="text-red-400">
+                        {noCorrectSelected 
+                          ? 'Niciunul' 
+                          : selectedAnswers.length === 0 
+                            ? 'Niciun răspuns selectat'
+                            : selectedAnswers.map(i => String.fromCharCode(65 + i)).join(', ')}
+                      </span>
+                    </p>
+                    <p>
+                      <strong>Răspuns corect:</strong>{' '}
+                      <span className="text-green-400">
+                        {question.hasZeroCorrect 
+                          ? 'Niciunul' 
+                          : question.correctAnswersSet.map(i => String.fromCharCode(65 + i)).join(', ')}
+                      </span>
+                    </p>
+                  </div>
                 )}
               </div>
 
@@ -573,18 +594,28 @@ export default function QuizGodMode() {
                     <span className="font-semibold text-purple-400">Analiza Variantelor</span>
                   </div>
                   <div className="space-y-2">
-                    {Object.entries(question.feedbackDetailed.analiza_variante).map(([litera, analysis]) => (
-                      <div key={litera} className={`p-2 rounded text-sm ${
-                        analysis.este_corecta 
-                          ? 'bg-green-500/10 border-l-2 border-green-500' 
-                          : 'bg-red-500/5 border-l-2 border-red-500/50'
-                      }`}>
-                        <span className={`font-bold ${analysis.este_corecta ? 'text-green-400' : 'text-red-400'}`}>
-                          {litera.toUpperCase()})
-                        </span>{' '}
-                        <span className="text-foreground/80">{analysis.explicatie}</span>
-                      </div>
-                    ))}
+                    {question.shuffledOptions.map((opt, displayIdx) => {
+                      const lowerLetter = String.fromCharCode(97 + opt.originalIndex); // a, b, c, d
+                      const upperLetter = String.fromCharCode(65 + opt.originalIndex); // A, B, C, D
+                      // Check both lowercase and uppercase keys
+                      const analysis = question.feedbackDetailed?.analiza_variante?.[lowerLetter] 
+                        || question.feedbackDetailed?.analiza_variante?.[upperLetter];
+                      if (!analysis) return null;
+                      
+                      const displayLetter = String.fromCharCode(65 + displayIdx); // A, B, C, D
+                      return (
+                        <div key={displayIdx} className={`p-2 rounded text-sm ${
+                          analysis.este_corecta 
+                            ? 'bg-green-500/10 border-l-2 border-green-500' 
+                            : 'bg-red-500/5 border-l-2 border-red-500/50'
+                        }`}>
+                          <span className={`font-bold ${analysis.este_corecta ? 'text-green-400' : 'text-red-400'}`}>
+                            {displayLetter})
+                          </span>{' '}
+                          <span className="text-foreground/80">{analysis.explicatie}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
