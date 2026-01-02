@@ -159,7 +159,91 @@ interface ValidationWarning {
   message: string;
 }
 
-function validateJSON(jsonString: string): ValidationResult {
+function autoFixJSON(jsonString: string): { fixed: string; fixes: string[] } {
+  const fixes: string[] = [];
+  let result = jsonString;
+  
+  // 1. Înlocuiește ghilimelele românești cu cele drepte
+  const originalLength = result.length;
+  result = result.replace(/[„"]/g, '"');
+  result = result.replace(/['']/g, "'");
+  if (result.length !== originalLength || result !== jsonString.replace(/[„""'']/g, (m) => m === '„' || m === '"' || m === '"' ? '"' : "'")) {
+    if (jsonString.includes('„') || jsonString.includes('"') || jsonString.includes('"')) {
+      fixes.push('Ghilimele românești „" înlocuite cu ""');
+    }
+  }
+  
+  // 2. Elimină trailing commas înainte de ] sau }
+  const beforeTrailing = result;
+  result = result.replace(/,(\s*[\]}])/g, '$1');
+  if (result !== beforeTrailing) {
+    fixes.push('Virgule în exces eliminate (trailing commas)');
+  }
+  
+  // 3. Înlocuiește newlines neescapate din stringuri
+  // Găsește stringuri și escapează newlines din interiorul lor
+  let inString = false;
+  let escaped = false;
+  let fixedChars: string[] = [];
+  let hadNewlineInString = false;
+  
+  for (let i = 0; i < result.length; i++) {
+    const char = result[i];
+    
+    if (escaped) {
+      fixedChars.push(char);
+      escaped = false;
+      continue;
+    }
+    
+    if (char === '\\') {
+      escaped = true;
+      fixedChars.push(char);
+      continue;
+    }
+    
+    if (char === '"') {
+      inString = !inString;
+      fixedChars.push(char);
+      continue;
+    }
+    
+    if (inString && (char === '\n' || char === '\r')) {
+      fixedChars.push('\\n');
+      hadNewlineInString = true;
+      if (char === '\r' && result[i + 1] === '\n') {
+        i++; // Skip \n after \r
+      }
+      continue;
+    }
+    
+    fixedChars.push(char);
+  }
+  
+  if (hadNewlineInString) {
+    result = fixedChars.join('');
+    fixes.push('Newlines neescapate din stringuri convertite în \\n');
+  }
+  
+  // 4. Încearcă să detecteze și să repare JSON trunchiat
+  const openBrackets = (result.match(/\[/g) || []).length;
+  const closeBrackets = (result.match(/\]/g) || []).length;
+  const openBraces = (result.match(/\{/g) || []).length;
+  const closeBraces = (result.match(/\}/g) || []).length;
+  
+  if (openBrackets > closeBrackets) {
+    result = result + ']'.repeat(openBrackets - closeBrackets);
+    fixes.push(`Adăugate ${openBrackets - closeBrackets} paranteze pătrate lipsă ]`);
+  }
+  if (openBraces > closeBraces) {
+    result = result + '}'.repeat(openBraces - closeBraces);
+    fixes.push(`Adăugate ${openBraces - closeBraces} acolade lipsă }`);
+  }
+  
+  return { fixed: result, fixes };
+}
+
+function validateJSON(jsonString: string, applyAutoFix: boolean = true): ValidationResult & { autoFixes?: string[] } {
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
   const questions: ParsedQuestion[] = [];
@@ -168,12 +252,21 @@ function validateJSON(jsonString: string): ValidationResult {
     return { isValid: false, questions: [], errors: [], warnings: [] };
   }
 
+  let textToParse = jsonString;
+  let autoFixes: string[] = [];
+  
+  if (applyAutoFix) {
+    const fixResult = autoFixJSON(jsonString);
+    textToParse = fixResult.fixed;
+    autoFixes = fixResult.fixes;
+  }
+
   let parsed: any[];
   try {
-    parsed = JSON.parse(jsonString);
+    parsed = JSON.parse(textToParse);
   } catch (e: any) {
     errors.push({ index: -1, field: 'JSON', message: `JSON invalid: ${e.message}` });
-    return { isValid: false, questions: [], errors, warnings };
+    return { isValid: false, questions: [], errors, warnings, autoFixes };
   }
 
   if (!Array.isArray(parsed)) {
@@ -281,7 +374,7 @@ interface SessionParsedQuestion {
   articole: string[];
 }
 
-function validateSessionJSON(jsonString: string): SessionValidationResult {
+function validateSessionJSON(jsonString: string): SessionValidationResult & { autoFixes?: string[] } {
   const errors: string[] = [];
   const questions: SessionParsedQuestion[] = [];
 
@@ -289,12 +382,15 @@ function validateSessionJSON(jsonString: string): SessionValidationResult {
     return { isValid: false, questions: [], errors: [] };
   }
 
+  // Apply auto-fix first
+  const { fixed: textToParse, fixes: autoFixes } = autoFixJSON(jsonString);
+
   let parsed: any;
   try {
-    parsed = JSON.parse(jsonString);
+    parsed = JSON.parse(textToParse);
   } catch (e: any) {
     errors.push(`JSON invalid: ${e.message}`);
-    return { isValid: false, questions: [], errors };
+    return { isValid: false, questions: [], errors, autoFixes };
   }
 
   const intrebari = parsed.intrebari || (Array.isArray(parsed) ? parsed : null);
@@ -397,7 +493,9 @@ export default function BulkImport() {
 
   const sessionImportMutation = useMutation({
     mutationFn: async () => {
-      const sessionData = JSON.parse(sessionJsonData);
+      // Apply auto-fix before parsing
+      const { fixed: fixedJson } = autoFixJSON(sessionJsonData);
+      const sessionData = JSON.parse(fixedJson);
       const response = await apiRequest('POST', '/api/questions/bulk-import-session', {
         sessionData,
         subject,
@@ -671,6 +769,20 @@ export default function BulkImport() {
 
               {sessionJsonData && (
                 <div className="space-y-2">
+                  {sessionValidation.autoFixes && sessionValidation.autoFixes.length > 0 && (
+                    <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                      <p className="font-medium text-blue-400 flex items-center gap-2 mb-2">
+                        <Sparkles className="h-4 w-4" />
+                        Auto-corecții aplicate:
+                      </p>
+                      <ul className="text-sm text-blue-300 space-y-1">
+                        {sessionValidation.autoFixes.map((fix, i) => (
+                          <li key={i}>✓ {fix}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   {sessionValidation.errors.length > 0 && (
                     <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
                       <p className="font-medium text-red-500 flex items-center gap-2 mb-2">
