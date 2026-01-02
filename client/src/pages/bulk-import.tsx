@@ -338,7 +338,7 @@ function validateJSON(jsonString: string, applyAutoFix: boolean = true): Validat
     autoFixes = fixResult.fixes;
   }
 
-  let parsed: any[];
+  let parsed: any;
   try {
     parsed = JSON.parse(textToParse);
   } catch (e: any) {
@@ -346,17 +346,23 @@ function validateJSON(jsonString: string, applyAutoFix: boolean = true): Validat
     return { isValid: false, questions: [], errors, warnings, autoFixes };
   }
 
-  if (!Array.isArray(parsed)) {
-    errors.push({ index: -1, field: 'format', message: 'JSON-ul trebuie să fie un array []' });
+  // Accept both array format [...] and object format { "intrebari": [...] }
+  let questionsArray: any[];
+  if (Array.isArray(parsed)) {
+    questionsArray = parsed;
+  } else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.intrebari)) {
+    questionsArray = parsed.intrebari;
+  } else {
+    errors.push({ index: -1, field: 'format', message: 'JSON-ul trebuie să fie un array [] sau un obiect { "intrebari": [...] }' });
     return { isValid: false, questions: [], errors, warnings };
   }
 
-  if (parsed.length === 0) {
+  if (questionsArray.length === 0) {
     errors.push({ index: -1, field: 'format', message: 'Array-ul este gol' });
     return { isValid: false, questions: [], errors, warnings };
   }
 
-  parsed.forEach((q, i) => {
+  questionsArray.forEach((q, i) => {
     if (!q.questionText || typeof q.questionText !== 'string') {
       errors.push({ index: i, field: 'questionText', message: 'Lipsește textul întrebării' });
     } else if (q.questionText.length < 10) {
