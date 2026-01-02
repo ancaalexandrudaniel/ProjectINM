@@ -210,20 +210,60 @@ function autoFixJSON(jsonString: string): { fixed: string; fixes: string[] } {
         fixedChars.push(char);
       } else {
         // Suntem în string - verificăm dacă e sfârșitul sau un " în interior
-        // E sfârșitul dacă e urmat de: , ] } : sau whitespace+unul din acestea
-        // DAR: dacă e urmat de \ (escape sequence ca \n), e încă în interior!
+        // E sfârșitul doar dacă urmează un context JSON valid:
+        // - "," urmat de " (next property/array element)
+        // - "," urmat de { sau [ (nested object/array)
+        // - "]" sau "}" (end of array/object)
+        // - ":" (after property name)
         const afterQuote = result.substring(i + 1);
         const afterQuoteTrimmed = afterQuote.trimStart();
         
         // Verifică dacă imediat după ghilimele urmează escape sequence (\n, \t, etc.)
         const startsWithEscape = afterQuote.length > 0 && afterQuote[0] === '\\';
         
-        const isEndOfString = !startsWithEscape && (
-                              afterQuoteTrimmed.length === 0 || 
-                              afterQuoteTrimmed[0] === ',' || 
-                              afterQuoteTrimmed[0] === ']' || 
-                              afterQuoteTrimmed[0] === '}' || 
-                              afterQuoteTrimmed[0] === ':');
+        let isEndOfString = false;
+        
+        if (!startsWithEscape && afterQuoteTrimmed.length > 0) {
+          const nextNonWs = afterQuoteTrimmed[0];
+          
+          if (nextNonWs === ']' || nextNonWs === '}') {
+            // End of array or object
+            isEndOfString = true;
+          } else if (nextNonWs === ':') {
+            // After property name - but only if current string looks like a property name
+            // Property names are typically short and don't contain newlines or special chars
+            const currentStringContent = result.substring(stringStart + 1, i);
+            // Property name: no newlines, no escape sequences, reasonable length
+            const looksLikePropertyName = currentStringContent.length < 50 && 
+                                          !currentStringContent.includes('\\n') &&
+                                          !currentStringContent.includes('\n') &&
+                                          !/[„""«»]/.test(currentStringContent);
+            if (looksLikePropertyName) {
+              isEndOfString = true;
+            }
+          } else if (nextNonWs === ',') {
+            // After comma, check what follows
+            // Valid JSON: "value", "nextValue" OR "value", { OR "value", [
+            const afterComma = afterQuoteTrimmed.substring(1).trimStart();
+            if (afterComma.length > 0) {
+              const afterCommaCh = afterComma[0];
+              // Valid: next is " (string), { (object), [ (array), or JSON literals
+              // Be careful: "t" could be start of text in content, not "true"
+              // So only check for structural chars, not literal starts
+              isEndOfString = afterCommaCh === '"' || 
+                              afterCommaCh === '{' || 
+                              afterCommaCh === '[' ||
+                              afterCommaCh === ']' ||
+                              afterCommaCh === '}' ||
+                              /^-?\d/.test(afterComma) ||
+                              afterComma.startsWith('true') ||
+                              afterComma.startsWith('false') ||
+                              afterComma.startsWith('null');
+            }
+          }
+        } else if (!startsWithEscape && afterQuoteTrimmed.length === 0) {
+          isEndOfString = true;
+        }
         
         if (isEndOfString) {
           // E sfârșitul stringului
