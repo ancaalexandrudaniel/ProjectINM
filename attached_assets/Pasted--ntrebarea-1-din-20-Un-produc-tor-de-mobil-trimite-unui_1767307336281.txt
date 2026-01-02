@@ -1,0 +1,1826 @@
+Întrebarea 1 din 20
+Un producător de mobilă trimite unui potențial client următorul e-mail:
+
+„Stimate domn, vă informăm că producem mobilier la comandă. Pentru un dormitor complet (pat, dulap, noptiere), prețurile noastre pornesc de la 8.000 lei, în funcție de materialele alese. Suntem la dispoziția dumneavoastră pentru a discuta detaliile."
+
+Clientul răspunde imediat: „Accept oferta de 8.000 lei pentru dormitor complet."
+Care dintre următoarele afirmații sunt corecte?
+a) Mesajul producătorului constituie o ofertă de a contracta, întrucât conține obiectul și prețul
+b) Mesajul producătorului constituie o invitație de a trata, nu o ofertă
+c) Răspunsul clientului poate fi calificat ca ofertă fermă adresată producătorului
+d) S-a încheiat un contract valabil de confecționare mobilier la prețul de 8.000 lei
+
+Răspunsul tău? (una, două sau trei variante, ex: „b" sau „b, c" sau „a, c, d")b, c3:30 PMCORECT! 🎯
+Ai identificat exact variantele corecte: b și c.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează distincția fundamentală între ofertă și invitație la negocieri (invitatio ad offerendum), precum și recalificarea răspunsului la o invitație.
+Analiza mesajului producătorului:
+Mesajul NU e ofertă pentru că îi lipsesc caracteristicile esențiale:
+
+„prețurile pornesc de la 8.000 lei" → preț nedeterminat, doar un minim orientativ
+„în funcție de materialele alese" → element esențial nespecificat
+„pentru a discuta detaliile" → exprimă intenția de a negocia, nu de a se obliga
+
+O ofertă trebuie să fie fermă, precisă și completă. Aici avem doar o prezentare comercială care invită la discuții.
+Analiza răspunsului clientului:
+Clientul spune „Accept oferta de 8.000 lei". Dar nu poți accepta ceva ce nu e ofertă. Ce face de fapt clientul?
+
+Formulează el însuși o propunere cu termeni preciși (8.000 lei, dormitor complet)
+Această propunere = ofertă fermă adresată producătorului
+Rolurile s-au inversat: clientul devine ofertant, producătorul devine destinatar
+
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. „Pornesc de la" ≠ preț determinat. Lipsesc elemente esențiale (materiale). E doar invitație la negocieri.b)✅Corect. Mesajul are caracter informativ, orientativ, și invită la discuții ulterioare. Toate indiciile arată că nu e ofertă.c)✅Corect. „Accept 8.000 lei pentru dormitor complet" = propunere precisă cu obiect și preț determinate. E ofertă, nu acceptare.d)❌Greșit. Fără ofertă validă nu poate exista acceptare. Fără acceptare nu există contract. Răspunsul clientului e ofertă nouă, neacceptată încă.
+
+💡 REȚINE
+OFERTĂ vs. INVITAȚIE LA NEGOCIERI:
+CriteriuOfertăInvitațiePrețDeterminat sau determinabil precisOrientativ, „de la", „negociabil"Elemente esențialeCompleteIncomplete sau vagiIntențieDe a se obliga la acceptareDe a discuta, negociaEfect la „acceptare"Contract încheiat„Acceptarea" devine ea însăși ofertă
+RECALIFICAREA ACTULUI:
+
+„Accept" adresat unei invitații ≠ acceptare
+= ofertă nouă care așteaptă acceptarea celuilalt
+Judecătorul califică actul după conținut, nu după denumirea dată de părți
+
+
+⚠️ ATENȚIE
+La INM, formulări precum:
+
+„prețuri de la..."
+„aproximativ..."
+„în funcție de..."
+„pentru a discuta..."
+
+= indicatori clari că NU e ofertă, ci invitație.
+
+Scor parțial Set B: 1/1 ✅
+
+Întrebarea 2 din 20
+Andrei îi trimite Biancăi o scrisoare: „Îți vând mașina mea pentru 15.000 euro. Oferta e valabilă 10 zile." A doua zi, Andrei vinde mașina lui Călin, care plătește și primește mașina imediat. În ziua a 5-a, Bianca trimite o scrisoare de acceptare care ajunge la Andrei în ziua a 7-a.
+Care dintre următoarele afirmații sunt corecte?
+a) Contractul dintre Andrei și Bianca s-a încheiat în ziua a 7-a, când acceptarea a ajuns la Andrei
+b) Oferta a devenit caducă în momentul vânzării către Călin, deci Bianca nu mai putea accepta
+c) Bianca poate cere daune-interese de la Andrei pentru revocarea ofertei irevocabile
+d) Contractul dintre Andrei și Călin este nul pentru că Andrei era obligat să vândă Biancăi
+
+Răspunsul tău?a, c3:35 PMCORECT! 🎯
+Ai identificat exact variantele corecte: a și c.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează efectele ofertei irevocabile și consecințele revocării ei, precum și principiul relativității efectelor contractului.
+Analiza situației:
+
+Oferta lui Andrei către Bianca:
+
+Conține termen de 10 zile → ofertă irevocabilă (art. 1191)
+Oferta irevocabilă NU poate fi revocată în termenul stipulat
+Dar „nu poate fi revocată" nu înseamnă că ofertantul e fizic împiedicat să dispună de bun
+
+
+Vânzarea către Călin (ziua 2):
+
+Contract perfect valabil între Andrei și Călin
+Călin e terț de bună-credință, primește mașina, plătește prețul
+Contractul NU e nul — Andrei era proprietar și putea dispune de bun
+
+
+Acceptarea Biancăi (ziua 5→7):
+
+Trimisă în termen (ziua 5), ajunsă în termen (ziua 7)
+Teoria recepției: contractul se încheie când acceptarea ajunge
+Deci în ziua a 7-a s-a „încheiat" contractul Andrei-Bianca
+
+
+Problema: Andrei a vândut același bun de două ori!
+
+Contract 1: Andrei-Călin (ziua 2) — executat, Călin are mașina
+Contract 2: Andrei-Bianca (ziua 7) — încheiat, dar imposibil de executat
+
+
+
+Soluția juridică:
+Andrei datorează daune-interese Biancăi pentru:
+
+Revocarea ofertei irevocabile (art. 1191 alin. 2: revocarea produce efecte, dar angajează răspunderea)
+Neexecutarea contractului încheiat (nu poate preda mașina)
+
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)✅Corect. Acceptarea ajunge în ziua 7, în interiorul termenului de 10 zile. Contractul se încheie la momentul recepției acceptării, indiferent că bunul a fost între timp înstrăinat.b)❌Greșit. Caducitatea intervine pentru cauze limitativ prevăzute (art. 1195): expirarea termenului, refuzul destinatarului, decesul/incapacitatea (cu nuanțe). Vânzarea bunului către altcineva NU e cauză de caducitate a ofertei.c)✅Corect. Art. 1191 alin. 2: revocarea ofertei irevocabile nu împiedică formarea contractului dacă acceptarea ajunge în termen, dar angajează răspunderea ofertantului pentru prejudiciul cauzat. Bianca poate cere daune.d)❌Greșit. Contractul Andrei-Călin e perfect valabil. Andrei era proprietar, Călin e terț de bună-credință. Obligația lui Andrei de a menține oferta față de Bianca nu afectează validitatea actelor cu terții. E principiul relativității: contractele produc efecte doar între părți.
+
+💡 REȚINE
+OFERTA IREVOCABILĂ — efecte:
+SituațieEfectOfertantul „revocă" în termenRevocarea NU produce efecte asupra formării contractuluiDestinatarul acceptă în termenContract încheiat, chiar dacă ofertantul s-a „răzgândit"Ofertantul înstrăinează bunulContractul cu terțul e VALABIL, dar ofertantul răspunde față de destinatarul ofertei
+VÂNZAREA BUNULUI ALTUIA:
+
+Contractul nu e nul
+E valabil, dar generează obligația de daune-interese pentru neexecutare
+Terțul de bună-credință e protejat
+
+CADUCITATEA OFERTEI — cauze limitative (art. 1195):
+
+Acceptarea nu ajunge în termen
+Destinatarul refuză oferta
+Decesul/incapacitatea ofertantului sau destinatarului (cu nuanțe pentru oferta irevocabilă)
+
+⚠️ NU sunt cauze de caducitate:
+
+Revocarea ofertei irevocabile
+Înstrăinarea bunului către terți
+Simpla schimbare de intenție a ofertantului
+
+
+🔍 SCHEMA CRONOLOGICĂ
+ZIUA 1     ZIUA 2          ZIUA 5           ZIUA 7         ZIUA 10
+   │          │               │                │               │
+   ▼          ▼               ▼                ▼               ▼
+Ofertă    Vânzare         Bianca           Acceptarea      Termen
+către     către           trimite          ajunge la       expiră
+Bianca    Călin           acceptarea       Andrei
+(10 zile) (executat)                       
+   │          │               │                │
+   │          │               │                ▼
+   │          │               │          CONTRACT 2
+   │          │               │          (Andrei-Bianca)
+   │          ▼               │          = încheiat dar
+   │     CONTRACT 1           │            inexecutabil
+   │     (Andrei-Călin)       │
+   │     = valabil +          │
+   │       executat           │
+   │                          │
+   └──────────────────────────┴─────────────────────────────────
+                              
+   REZULTAT: Andrei datorează daune-interese Biancăi
+
+Scor parțial Set B: 2/2 ✅
+
+Întrebarea 3 din 20
+Maria publică un anunț pe un site imobiliar: „Vând apartament 2 camere, str. Florilor nr. 10, 80.000 euro, accept doar plata integrală." George vizitează apartamentul și îi spune Mariei: „Cumpăr apartamentul, dar plătesc 40.000 acum și 40.000 peste 6 luni." Maria răspunde: „Nu, am spus plata integrală. Dacă vrei în rate, facem 45.000 acum și 40.000 peste 6 luni."
+Care dintre următoarele afirmații sunt corecte?
+a) Anunțul Mariei constituie ofertă de a contracta, fiind suficient de precisă și adresată publicului
+b) Propunerea lui George constituie contraofertă care a dus la respingerea implicită a ofertei inițiale
+c) Răspunsul Mariei constituie o nouă contraofertă, George devenind acum destinatarul acesteia
+d) Dacă George acceptă ultima propunere a Mariei, contractul e valabil încheiat în formă verbală
+
+Răspunsul tău?b, c (Daca esti tentat sa zici ca si e si d, te rog verifica si observa ca nu are forma autentica)3:45 PM3 / 3CORECT! 🎯
+Ai identificat exact variantele corecte: b și c.
+Și apreciez vigilența ta la varianta d — exact acolo era capcana!
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează mecanismul contraofertei și cerința formei autentice pentru imobile, combinând două concepte frecvent testate la INM.
+Analiza lanțului de propuneri:
+
+Anunțul Mariei:
+
+Adresat publicului (site imobiliar)
+Regula: propunerea către public = invitație la ofertă, NU ofertă
+Excepție: dacă legea, uzanțele sau circumstanțele indică altfel
+Aici: anunț imobiliar standard → invitație la ofertă
+
+
+Propunerea lui George („40.000 acum + 40.000 în 6 luni"):
+
+Modifică un element esențial: modalitatea de plată
+Maria ceruse „doar plata integrală" → George propune rate
+Orice modificare a elementelor esențiale = contraofertă (art. 1197)
+Contraoferta = respingere implicită a ofertei/invitației anterioare + ofertă nouă
+
+
+Răspunsul Mariei („45.000 acum + 40.000 în 6 luni"):
+
+Nu acceptă propunerea lui George
+Formulează termeni noi (sumă diferită: 45.000 în loc de 40.000 prima tranșă)
+= nouă contraofertă
+Acum George e destinatarul, Maria e ofertantă
+
+
+Dacă George ar accepta verbal?
+
+STOP! Vânzare de imobil = formă autentică obligatorie (art. 1244)
+Acordul verbal, oricât de complet, = nul absolut
+Nu se încheie niciun contract fără act notarial
+
+
+
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. Anunțul pe site imobiliar = propunere către public = regula generală e că valorează invitație la ofertă, nu ofertă. Chiar dacă conține elemente precise, destinatarul e nedeterminat, iar în materie imobiliară uzanța e că anunțurile sunt invitații.b)✅Corect. George modifică modalitatea de plată (element esențial). Art. 1197: acceptarea cu modificări = contraofertă = respingere implicită a propunerii anterioare.c)✅Corect. Maria nu acceptă termenii lui George, ci propune alții noi. E o nouă contraofertă. Rolurile se inversează din nou: Maria ofertantă, George destinatar.d)❌CAPCANĂ! Chiar dacă mecanismul ofertă-acceptare ar fi complet, vânzarea de imobile necesită formă autentică ad validitatem. Acceptarea verbală = nicio valoare juridică. Contractul NU se încheie.
+
+💡 REȚINE
+LANȚUL CONTRAOFERTELOR:
+PROPUNERE INIȚIALĂ          CONTRAOFERTĂ 1           CONTRAOFERTĂ 2
+    (Maria)          →          (George)        →        (Maria)
+                              
+„80.000, plată              „40.000 + 40.000        „45.000 + 40.000
+integrală"                   în rate"                în rate"
+                              
+= invitație                 = respinge implicit     = respinge implicit
+                              invitația +             contraoferta 1 +
+                              ofertă nouă             ofertă nouă
+                              
+Destinatar: public          Destinatar: Maria       Destinatar: George
+FIECARE CONTRAOFERTĂ:
+
+Respinge implicit propunerea anterioară
+Creează o ofertă nouă
+Inversează rolurile (ofertant ↔ destinatar)
+
+FORMA AUTENTICĂ — IMOBILE:
+Tip actFormă cerutăSancțiuneVânzare imobilAutentică (notarială)Nulitate absolutăAntecontract imobilAutentică (notarială)Nulitate absolutăAcord verbal pe imobil—ZERO efecte juridice
+
+⚠️ ATENȚIE
+Capcana variantei (d):
+E tentant să gândești: „Mecanismul ofertă-contraofertă-acceptare e complet, deci contract încheiat."
+GREȘIT! Trebuie întotdeauna să verifici:
+
+✅ Există ofertă validă?
+✅ Există acceptare conformă?
+❓ Este respectată forma cerută de lege?
+
+Pentru imobile, pasul 3 e eliminatoriu. Fără formă autentică = nimic.
+
+Scor parțial Set B: 3/3 ✅
+Excelent! Ești foarte atent la capcanele clasice.
+
+Întrebarea 4 din 20
+Daniel trimite un e-mail către Elena: „Îți ofer spre vânzare colecția mea de timbre pentru suma de 5.000 lei. Așteaptă-mă să confirm disponibilitatea și prețul final săptămâna viitoare."
+Care dintre următoarele afirmații sunt corecte?
+a) Mesajul lui Daniel este o ofertă de a contracta, întrucât conține obiectul și prețul
+b) Mesajul lui Daniel nu este o ofertă, ci o invitație la negocieri, deoarece și-a rezervat dreptul de confirmare ulterioară
+c) Dacă Elena răspunde „Accept", contractul se încheie imediat
+d) Formularea „așteaptă-mă să confirm" indică intenția lui Daniel de a amâna încheierea contractului
+
+Răspunsul tău?b, d4:24 PMCORECT! 🎯
+Ai identificat exact variantele corecte: b și d.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează intenția de a se obliga ca element esențial al ofertei și rezerva de confirmare ca indicator al lipsei acestei intenții.
+Analiza mesajului lui Daniel:
+Mesajul conține:
+
+✅ Obiect determinat (colecția de timbre)
+✅ Preț indicat (5.000 lei)
+❌ DAR: „Așteaptă-mă să confirm disponibilitatea și prețul final"
+
+Această formulare schimbă totul:
+
+Daniel își rezervă dreptul de a confirma disponibilitatea → poate că nici nu vrea să vândă
+Daniel își rezervă dreptul de a confirma prețul final → 5.000 lei nu e prețul definitiv
+„Săptămâna viitoare" → amână orice angajament pentru mai târziu
+
+Ce lipsește pentru a fi ofertă?
+Art. 1188: Oferta trebuie să exprime intenția de a se obliga în caz de acceptare.
+Când cineva spune „așteaptă să confirm", transmite exact contrariul:
+
+„Nu mă oblig încă"
+„Nu te poți baza pe acești termeni"
+„Trebuie să mai vorbim"
+
+= invitație la negocieri, nu ofertă
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. Obiectul și prețul sunt condiții necesare, dar nu suficiente. Lipsește elementul esențial: intenția de a se obliga. Rezerva de confirmare neagă această intenție.b)✅Corect. Rezervarea dreptului de confirmare ulterioară = semnal clar că nu există încă intenție de angajament juridic. E invitație la negocieri.c)❌Greșit. Nu poți „accepta" o invitație la negocieri. Răspunsul Elenei ar fi, cel mult, o ofertă din partea ei (dacă ar conține termeni preciși), sau doar o continuare a negocierilor.d)✅Corect. „Așteaptă-mă să confirm" = amânarea momentului în care Daniel ar fi dispus să se oblige. Indică intenția de a amâna formarea oricărui acord obligatoriu.
+
+💡 REȚINE
+OFERTĂ — ELEMENTE CUMULATIVE:
+ElementÎntrebare-cheieÎn spețăObiect determinatCe se vinde/cumpără?✅ Colecția de timbrePreț determinatLa ce preț?❌ „Prețul final" = încă nestabilitIntenția de a se obligaOfertantul e gata să fie legat la acceptare?❌ „Așteaptă să confirm" = NU
+Lipsa unui singur element = NU e ofertă
+FORMULĂRI CARE NEAGĂ INTENȚIA DE A SE OBLIGA:
+
+„Așteaptă să confirm..."
+„Sub rezerva confirmării..."
+„Rămâne să discutăm..."
+„Prețul e orientativ..."
+„Disponibilitate sub rezervă..."
+„Fără angajament din partea mea..."
+
+= Toate acestea transformă propunerea în invitație la negocieri
+
+🔍 COMPARAȚIE
+FormulareCalificareDe ce?„Îți vând X cu 5.000 lei"OFERTĂTermeni compleți + intenție de angajament„Îți vând X cu 5.000 lei, oferta e valabilă 10 zile"OFERTĂ IREVOCABILĂ+ termen = irevocabilitate„Îți vând X cu 5.000 lei, așteaptă să confirm"INVITAȚIERezerva de confirmare neagă intenția„Vând X, prețuri de la 5.000 lei"INVITAȚIEPreț nedeterminat
+
+⚠️ ATENȚIE
+Capcana variantei (a):
+E o greșeală frecventă să consideri că prezența obiectului și prețului = automat ofertă.
+NU! Intenția de a se obliga e la fel de importantă. Fără ea, ai doar o invitație, chiar dacă termenii par compleți.
+Trucul de identificare: Întreabă-te: „Dacă destinatarul spune DA, ofertantul e imediat obligat?" Dacă răspunsul e „Nu, mai trebuie să confirme/discute/verifice" → nu e ofertă.
+
+Scor parțial Set B: 4/4 ✅
+Continui impecabil!
+
+Întrebarea 5 din 20
+Societatea Alfa SRL publică pe site-ul propriu: „Ofertă specială: laptopuri model X, 3.000 lei bucata, stoc limitat la 50 de unități." În aceeași zi, 60 de clienți comandă online câte un laptop, completând formularul de comandă și plătind integral cu cardul.
+Care dintre următoarele afirmații sunt corecte?
+a) S-au încheiat 60 de contracte valabile, societatea fiind obligată să livreze toate laptopurile comandate
+b) S-au încheiat doar 50 de contracte, în ordinea cronologică a comenzilor, oferta fiind limitată la stocul disponibil
+c) Anunțul societății constituie ofertă către public, întrucât conține elementele esențiale și indică intenția de a se obliga în limita stocului
+d) Clienții care nu vor primi laptopuri pot cere daune-interese de la societate pentru publicitate înșelătoare
+
+Răspunsul tău?b, c12:01 AMCORECT! 🎯
+Ai identificat exact variantele corecte: b și c.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează oferta către public cu stoc limitat și efectele acceptării când cererea depășește oferta.
+Analiza anunțului Alfa SRL:
+Anunțul conține:
+
+✅ Obiect determinat (laptopuri model X)
+✅ Preț determinat (3.000 lei/bucată)
+✅ Indicație clară de limită („stoc limitat la 50 de unități")
+✅ Mecanism de acceptare (comandă online + plată)
+
+Este ofertă sau invitație?
+Regula generală: propunerea către public = invitație la ofertă.
+EXCEPȚIE (art. 1189 alin. 1): Propunerea valorează ofertă dacă aceasta rezultă din:
+
+Lege
+Uzanțe
+Împrejurări
+
+Aici, împrejurările indică ofertă:
+
+Preț fix, nu „de la" sau „negociabil"
+Stoc precizat explicit
+Mecanism automat de acceptare (comandă + plată online)
+Context e-commerce unde clienții se bazează pe termenii afișați
+
+Efectul limitei de stoc:
+Când oferta precizează „stoc limitat la 50 unități":
+
+Ofertantul își limitează angajamentul la 50 de contracte
+Primele 50 de acceptări (în ordine cronologică) = contracte valabile
+Acceptările 51-60 = nu mai au ce accepta, oferta fiind epuizată
+NU e vina societății, NU e publicitate înșelătoare — limita era comunicată clar
+
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. Oferta era limitată la 50 de unități. Nu poți accepta o ofertă care nu mai există. Societatea nu poate fi obligată să livreze bunuri pe care nu le-a oferit.b)✅Corect. Oferta acoperea 50 de unități. Primele 50 de comenzi (cronologic) = 50 de acceptări = 50 de contracte. Restul de 10 clienți au „acceptat" după epuizarea ofertei.c)✅Corect. Anunțul îndeplinește condițiile ofertei: elemente esențiale complete + împrejurările (e-commerce, preț fix, mecanism automat) indică intenție de angajament. Limita de stoc e parte din ofertă, nu o negare a intenției.d)❌Greșit. Societatea a comunicat clar limita („stoc limitat la 50"). Nu există înșelăciune sau publicitate înșelătoare. Clienții 51-60 au riscat, știind că stocul e limitat. Vor primi rambursarea plății, nu daune-interese.
+
+💡 REȚINE
+OFERTA CU STOC LIMITAT:
+ElementEfect„Stoc limitat la X unități"Oferta acoperă maximum X acceptăriAcceptarea X+1Nu formează contract — oferta e epuizatăOrdinea acceptărilorCronologică (primul venit, primul servit)Plățile pentru acceptări peste limităSe restituie (plata nedatorată)
+PROPUNERE CĂTRE PUBLIC — CÂND E OFERTĂ?
+REGULA: Propunere către public = INVITAȚIE
+
+EXCEPȚII (devine OFERTĂ) când rezultă din:
+├── Lege (ex: obligații ale comercianților)
+├── Uzanțe (ex: e-commerce cu preț fix și comandă automată)
+└── Împrejurări (ex: automat de cafea, parcare cu barieră)
+INDICATORI CĂ E OFERTĂ (nu invitație):
+
+Preț fix (nu „de la", „negociabil")
+Mecanism automat de acceptare
+Termeni compleți, fără rezerve
+Context în care clientul nu mai negociază
+
+
+🔍 SCHEMA CRONOLOGICĂ
+ANUNȚ ONLINE                   COMENZI (60 clienți)              REZULTAT
+„50 unități,                   
+3.000 lei"                     
+     │                              │                              
+     ▼                              ▼                              
+  OFERTĂ                     Comenzile 1-50              50 CONTRACTE
+  (limitată la 50)           = acceptări valabile        încheiate
+                                    │                              
+                                    ▼                              
+                             Comenzile 51-60             NICIUN CONTRACT
+                             = oferta deja epuizată      plățile se restituie
+
+⚠️ ATENȚIE
+Diferența între:
+SituațieEfect pentru clienții „în plus"Ofertă cu stoc limitat comunicatRestituire plată, fără dauneOfertă fără limită + refuz arbitrarPosibile daune pentru revocare abuzivăPublicitate înșelătoare (stoc inexistent)Daune + posibile sancțiuni
+În speța noastră: limita era comunicată clar → clienții 51-60 nu au drept la daune.
+
+Scor parțial Set B: 5/5 ✅
+Excelent! Mergi perfect.
+
+Întrebarea 6 din 20
+Florin și Geta negociază vânzarea unui teren agricol. După mai multe discuții, Florin îi trimite Getei un e-mail: „Confirm acordul nostru: îți vând terenul de 2 hectare din comuna X pentru 20.000 euro. Te rog să-mi confirmi și tu în scris pentru a finaliza înțelegerea."
+Geta răspunde: „Confirm. Când mergem la notar?"
+Care dintre următoarele afirmații sunt corecte?
+a) Contractul de vânzare s-a încheiat prin schimbul de e-mailuri, urmând ca actul notarial să fie doar o formalitate de publicitate
+b) Nu s-a încheiat niciun contract — vânzarea terenurilor necesită formă autentică ad validitatem
+c) S-a încheiat un antecontract valabil prin schimbul de e-mailuri, care obligă părțile să încheie actul autentic
+d) Formularea „te rog să-mi confirmi pentru a finaliza" indică intenția de a amâna încheierea contractului pentru momentul autentificării
+
+Răspunsul tău?b, d12:04 AMCORECT! 🎯
+Ai identificat exact variantele corecte: b și d.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează cerința formei autentice pentru terenuri și intenția de a amâna încheierea contractului, combinând două concepte pe care le-ai stăpânit deja excelent.
+Analiza situației:
+
+Obiectul contractului:
+
+Teren agricol de 2 hectare
+Terenurile = imobile = formă autentică obligatorie (art. 1244)
+
+
+Schimbul de e-mailuri:
+
+Florin: „Confirm acordul... îți vând terenul... pentru 20.000 euro"
+Geta: „Confirm. Când mergem la notar?"
+= acord pe elemente esențiale (obiect + preț)
+DAR: formă = e-mail, nu act autentic notarial
+
+
+Formularea-cheie:
+
+„Te rog să-mi confirmi și tu în scris pentru a finaliza înțelegerea"
+„Când mergem la notar?"
+Ambele părți înțeleg că nu au încheiat nimic definitiv
+Momentul încheierii = rezervat pentru autentificare
+
+
+
+De ce nu s-a încheiat nimic?
+Două motive cumulative (exact ca în Q20 Set A):
+A) Forma autentică obligatorie:
+
+Art. 1244: Vânzarea imobilelor (inclusiv terenuri) = formă autentică ad validitatem
+E-mailul ≠ formă autentică
+Sancțiune: nulitate absolută
+
+B) Intenția de a amâna:
+
+„Pentru a finaliza" = recunoaștere că nu e încă finalizat
+„Când mergem la notar?" = părțile știu că actul notarial e constitutiv
+Nu au vrut să se oblige prin e-mail
+
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. Pentru imobile, actul notarial NU e „formalitate de publicitate". E cerință de validitate (ad validitatem). Fără el, contractul e nul absolut, nu doar inopozabil.b)✅Corect. Terenurile sunt imobile. Art. 1244 impune forma autentică. E-mailurile nu îndeplinesc această cerință. Acordul verbal/scris simplu = nul absolut.c)❌CAPCANĂ CLASICĂ! Și antecontractul pentru imobile necesită aceeași formă autentică (art. 1279 alin. 3 coroborat cu art. 1244). E-mailul nu poate forma nici măcar un antecontract valabil pentru teren.d)✅Corect. „Pentru a finaliza" + „la notar" = indicatori clari că părțile nu consideră schimbul de e-mailuri ca fiind actul definitiv. Au amânat încheierea pentru momentul autentificării.
+
+💡 REȚINE
+FORMA AUTENTICĂ PENTRU IMOBILE — REGULA COMPLETĂ:
+Act juridicObiectFormă cerutăSancțiuneContract de vânzareTeren/Apartament/ImobilAutentică notarialăNulitate absolutăAntecontract (promisiune)Teren/Apartament/ImobilAutentică notarialăNulitate absolutăAcord verbal/e-mailTeren/Apartament/Imobil—ZERO efecte
+NU POȚI „SALVA" ACORDUL RECALIFICÂNDU-L:
+
+„Nu e contract, dar măcar e antecontract" → GREȘIT!
+Antecontractul pentru imobile cere aceeași formă
+Acordul informal pentru imobile = juridic inexistent
+
+ACTUL NOTARIAL PENTRU IMOBILE:
+FuncțieExplicațieAd validitatemFără el, actul e NUL (nu doar greu de probat)ConstitutivContractul se naște în momentul autentificăriiNU doar probatoriuNu e vorba doar de dovadă, ci de existența actului
+
+🔍 COMPARAȚIE: FORMA AUTENTICĂ
+SituațieForma actuluiEfectVânzare teren prin act notarialAutentică ✅Contract valabilVânzare teren prin e-mailSimplă ❌Nul absolutAntecontract teren prin act notarialAutentică ✅Antecontract valabilAntecontract teren prin e-mailSimplă ❌Nul absolutVânzare mașină prin e-mailSimplă ✅Contract valabil (mobil = consensual)
+
+⚠️ ATENȚIE
+Indicatori ai intenției de a amâna:
+FormulareSemnificație„Pentru a finaliza"Recunoaște că nu e încă finalizat„Când mergem la notar?"Actul notarial = momentul încheierii„Ne vedem la notar"Amână angajamentul„Rămâne să semnăm actele"Semnătura oficială = constitutivă
+Toate acestea arată că părțile nu au vrut să se oblige prin discuțiile preliminare.
+
+Scor parțial Set B: 6/6 ✅
+Impresionant! Șase din șase, fără greșeală.
+
+Întrebarea 7 din 20
+Horea îi trimite Ioanei o scrisoare: „Îți vând pianul meu de concert pentru 10.000 euro. Dacă nu primesc răspuns în 14 zile, consider că ai acceptat."
+Ioana nu răspunde nimic. După 14 zile, Horea îi solicită plata prețului.
+Care dintre următoarele afirmații sunt corecte?
+a) Contractul s-a încheiat prin tăcerea Ioanei, conform termenului stabilit de Horea
+b) Tăcerea nu valorează acceptare, deci niciun contract nu s-a încheiat
+c) Horea nu poate impune unilateral o semnificație juridică tăcerii Ioanei
+d) Contractul s-ar fi putut încheia prin tăcere doar dacă între părți existau raporturi de afaceri anterioare care să justifice această uzanță
+
+Răspunsul tău?b, c, d12:06 AMCORECT! 🎯
+Ai identificat exact variantele corecte: b, c și d.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează regula că tăcerea nu valorează acceptare și excepțiile limitative de la această regulă.
+Analiza situației:
+
+Oferta lui Horea:
+
+Obiect determinat (pian de concert)
+Preț determinat (10.000 euro)
+= ofertă validă
+
+
+Clauza problematică:
+
+„Dacă nu primesc răspuns în 14 zile, consider că ai acceptat"
+Horea încearcă să atribuie tăcerii Ioanei valoare de acceptare
+Poate ofertantul face asta unilateral?
+
+
+Regula fundamentală (art. 1196 alin. 2):
+
+Tăcerea nu valorează acceptare
+E o regulă de protecție: nimeni nu poate fi obligat contractual prin simpla pasivitate
+
+
+Poate Horea deroga unilateral de la regulă?
+
+NU!
+Ofertantul nu poate impune destinatarului obligația de a răspunde
+Nu poate atribui unilateral semnificație juridică tăcerii altuia
+Ar fi absurd: ți-aș putea trimite 100 de oferte și „te-aș obliga" dacă nu răspunzi la toate
+
+
+
+
+EXCEPȚIILE — CÂND TĂCEREA VALOREAZĂ ACCEPTARE?
+Art. 1196 alin. 2 — tăcerea valorează acceptare doar dacă rezultă din:
+ExcepțieExempluLegeTacita relocațiune (art. 1810): dacă locatarul rămâne în imobil după expirarea contractului și locatorul nu se opuneAcordul părțilorClauză contractuală anterioară prin care părțile au convenit că tăcerea = acceptare pentru comenzi viitoarePractici stabilite între părțiFurnizor și client care de 5 ani lucrează astfel: furnizorul trimite ofertă, clientul tace, marfa se livreazăUzanțeÎn anumite domenii comerciale, tăcerea la o ofertă de reînnoire = acceptare
+În speța noastră:
+
+Nu există lege aplicabilă
+Nu există acord anterior între Horea și Ioana
+Nu există practici stabilite (nu se menționează relații anterioare)
+Nu există uzanțe aplicabile vânzării unui pian
+
+→ Nicio excepție aplicabilă → Tăcerea NU valorează acceptare → NICIUN CONTRACT
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. Ofertantul nu poate stabili unilateral că tăcerea = acceptare. Regula art. 1196 alin. 2 îl protejează pe destinatar, nu poate fi înlăturată de ofertant.b)✅Corect. Regula generală: tăcerea nu valorează acceptare. Ioana nu a făcut nimic = nu a acceptat = niciun contract.c)✅Corect. Principiu fundamental: nimeni nu poate impune altuia obligații prin declarație unilaterală. Horea poate propune, dar nu poate „decide" ce înseamnă tăcerea Ioanei.d)✅Corect. Aceasta e una dintre excepțiile reale. Dacă Horea și Ioana ar fi avut o practică stabilită de colaborare (ex: Ioana cumpără regulat instrumente de la Horea, și de obicei tace când acceptă), atunci tăcerea ar fi putut valora acceptare.
+
+💡 REȚINE
+TĂCEREA NU VALOREAZĂ ACCEPTARE — REGULA ȘI EXCEPȚIILE:
+REGULA GENERALĂ (art. 1196 alin. 2):
+┌─────────────────────────────────────────────┐
+│         TĂCEREA ≠ ACCEPTARE                 │
+│                                             │
+│  • Destinatarul nu e obligat să răspundă    │
+│  • Pasivitatea nu creează obligații         │
+│  • Ofertantul nu poate schimba asta         │
+└─────────────────────────────────────────────┘
+                    │
+                    │ EXCEPȚII (limitative):
+                    ▼
+    ┌───────────────┬───────────────┬───────────────┬───────────────┐
+    │     LEGE      │    ACORD      │   PRACTICI    │    UZANȚE     │
+    │               │   ANTERIOR    │   ÎNTRE PĂRȚI │               │
+    ├───────────────┼───────────────┼───────────────┼───────────────┤
+    │ Ex: tacita    │ Ex: contract  │ Ex: colaborare│ Ex: domenii   │
+    │ relocațiune   │ cadru care    │ repetată unde │ comerciale    │
+    │               │ prevede asta  │ tăcerea=DA    │ specifice     │
+    └───────────────┴───────────────┴───────────────┴───────────────┘
+CE NU POATE FACE OFERTANTUL:
+ÎncercareEfect„Dacă nu răspunzi, accept că ești de acord"Fără efect juridic„Lipsa refuzului = acceptare"Fără efect juridic„Tăcerea ta va fi interpretată ca DA"Fără efect juridicStabilire unilaterală de termen pentru tăcereFără efect juridic
+
+🔍 COMPARAȚIE: TĂCERE VS. ACCEPTARE TACITĂ
+ConceptCe presupuneEfectTăcereZero acțiune, zero manifestareNU e acceptare (regula)Acceptare tacităActe/fapte concludente care arată voința de a acceptaE acceptare validă
+Exemplu de diferență:
+
+Ioana nu răspunde deloc → tăcere → niciun contract
+Ioana trimite banii fără să scrie nimic → acceptare tacită prin act concludent → contract încheiat
+
+
+⚠️ ATENȚIE
+Capcana practică:
+Mulți cred că dacă ofertantul scrie „lipsa răspunsului = acceptare", asta devine obligatoriu pentru destinatar.
+GREȘIT! E exact invers:
+
+Regula protejează destinatarul
+Ofertantul nu poate modifica unilateral protecția legală a altuia
+Doar legea, acordul mutual, practicile sau uzanțele pot face tăcerea să valoreze acceptare
+
+
+Scor parțial Set B: 7/7 ✅
+Perfect! Ai identificat toate cele trei răspunsuri corecte.
+
+Întrebarea 8 din 20
+Iulian, comerciant de autoturisme second-hand, afișează în parcul auto un anunț pe un BMW: „Preț: 15.000 euro, negociabil." Karla intră în parc, vede anunțul și îi spune lui Iulian: „Plătesc 15.000 euro cash, chiar acum."
+Care dintre următoarele afirmații sunt corecte?
+a) Anunțul lui Iulian constituie ofertă fermă, iar răspunsul Karlei este acceptare pură și simplă — contractul s-a încheiat
+b) Cuvântul „negociabil" transformă anunțul într-o invitație la negocieri, nu o ofertă
+c) Răspunsul Karlei este o ofertă fermă la prețul de 15.000 euro, pe care Iulian o poate accepta sau refuza
+d) Uzanțele comerciale din domeniul auto ar putea influența calificarea anunțului ca ofertă sau invitație
+
+Răspunsul tău?b, c, d12:09 AMCORECT! 🎯
+Ai identificat exact variantele corecte: b, c și d.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează efectul cuvântului „negociabil" asupra calificării unei propuneri și rolul uzanțelor comerciale.
+Analiza anunțului lui Iulian:
+
+Elementele prezente:
+
+Obiect determinat (BMW-ul din parc)
+Preț indicat (15.000 euro)
+DAR: „negociabil"
+
+
+Ce semnifică „negociabil"?
+
+Prețul NU e ferm, NU e definitiv
+Iulian semnalează că e dispus să discute, să ajusteze
+= lipsă de intenție de a se obliga la termenii afișați
+= invitație la negocieri, nu ofertă
+
+
+Comparație:
+
+FormulareCalificare„Preț: 15.000 euro"Posibil ofertă (preț ferm)„Preț: 15.000 euro, negociabil"Invitație (preț deschis discuției)„Preț: de la 15.000 euro"Invitație (preț minim, nu fix)
+Analiza răspunsului Karlei:
+
+Karla spune: „Plătesc 15.000 euro cash, chiar acum"
+E o propunere precisă, fermă, cu termeni compleți
+Dacă anunțul era invitație → răspunsul Karlei = ofertă
+Iulian devine destinatar, poate accepta sau nu
+
+Rolul uzanțelor comerciale:
+Art. 1189 prevede că propunerea către public valorează ofertă dacă rezultă din lege, uzanțe sau împrejurări.
+În domeniul auto second-hand:
+
+Uzanța generală: prețurile afișate sunt orientative, se negociază
+„Negociabil" confirmă această uzanță
+DAR: uzanțele pot varia (unele parcuri au politică „preț fix")
+Instanța ar analiza uzanțele concrete din domeniu
+
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. „Negociabil" neagă fermitatea prețului. Fără preț ferm, nu există ofertă. Karla nu poate „accepta" o invitație — răspunsul ei e ofertă, nu acceptare.b)✅Corect. „Negociabil" = semnal explicit că prețul nu e definitiv. Iulian invită la discuții, nu se obligă la 15.000 euro.c)✅Corect. Propunerea Karlei (15.000 euro cash, imediat) e precisă și fermă. E o ofertă completă pe care Iulian o poate accepta, refuza sau contraoferta.d)✅Corect. Uzanțele comerciale sunt relevante pentru calificarea propunerilor către public. În domeniul auto, uzanța negocierii e răspândită, dar nu universală — instanța ar verifica practica concretă.
+
+💡 REȚINE
+CUVINTE CARE TRANSFORMĂ OFERTA ÎN INVITAȚIE:
+FormulareEfectDe ce?„Negociabil"InvitațiePrețul nu e ferm„De la..."InvitațiePreț minim, nu fix„Orientativ"InvitațieNu e angajament„Aproximativ"InvitațieValoare incertă„Discutabil"InvitațieDeschis ajustării„Sau cel mai bun preț oferit"InvitațieAșteaptă propuneri
+INVERSAREA ROLURILOR:
+ANUNȚ CU „NEGOCIABIL"           RĂSPUNS FERM AL CLIENTULUI
+      (Iulian)                         (Karla)
+         │                                │
+         ▼                                ▼
+    INVITAȚIE                          OFERTĂ
+    la negocieri                     fermă, precisă
+         │                                │
+         │                                ▼
+         │                         Iulian devine
+         │                         DESTINATAR
+         │                                │
+         └────────────────────────────────┤
+                                          ▼
+                              Iulian poate:
+                              • Accepta → contract
+                              • Refuza → nimic
+                              • Contraoferta → negociere
+
+🔍 UZANȚELE COMERCIALE — RELEVANȚĂ
+Art. 1189 alin. 1: Propunerea către public valorează ofertă dacă rezultă din:
+
+Lege
+Uzanțe
+Împrejurări
+
+Cum funcționează în practică:
+DomeniuUzanța tipicăEfectAuto second-handPrețuri negociabileAnunțuri = invitațiiSupermarketPrețuri fixe pe raftExpunere cu preț = ofertăImobiliarePrețuri orientativeAnunțuri = invitațiiE-commercePreț fix, comandă automatăAnunț = ofertă (de regulă)
+În speța noastră: „Negociabil" confirmă explicit uzanța domeniului auto.
+
+⚠️ ATENȚIE
+Dacă Iulian ar fi scris doar „Preț: 15.000 euro" (fără „negociabil")?
+Situația ar fi fost mai ambiguă:
+
+Într-un supermarket: probabil ofertă (uzanța prețului fix)
+Într-un parc auto: probabil tot invitație (uzanța domeniului)
+Instanța ar analiza împrejurările concrete
+
+„Negociabil" elimină ambiguitatea — e clar invitație.
+
+Scor parțial Set B: 8/8 ✅
+Excelent!Opt întrebări, opt răspunsuri perfecte.
+
+Întrebarea 9 din 20
+Liviu îi trimite Marianei o ofertă de vânzare a unei opere de artă pentru 50.000 euro, cu mențiunea: „Oferta este irevocabilă timp de 30 de zile." În ziua a 10-a, Liviu decedează. Moștenitorii lui Liviu susțin că oferta a devenit caducă.
+Care dintre următoarele afirmații sunt corecte?
+a) Oferta a devenit caducă automat la decesul lui Liviu, conform regulii generale privind caducitatea
+b) Oferta irevocabilă nu devine caducă prin decesul ofertantului, rămânând valabilă întregul termen de 30 de zile
+c) Oferta devine caducă doar dacă natura afacerii sau împrejurările impun acest lucru
+d) Mariana poate accepta oferta în termenul rămas, iar moștenitorii vor fi obligați să execute contractul
+
+Răspunsul tău?c12:12 AMPARȚIAL CORECT!
+Ai identificat corect varianta c, dar ai omis varianta d care este de asemenea corectă.
+Răspunsurile corecte sunt: c și d.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează exact excepția pe care ai greșit-o la Întrebarea 7 din Set A — efectul decesului asupra ofertei irevocabile.
+Mă bucur că ai identificat corect varianta c de data asta! Hai să vedem de ce și d e corectă.
+Regula și excepția (art. 1195):
+Tip ofertăEfect deces ofertantOfertă revocabilăCaducitate automatăOfertă irevocabilăCaducitate DOAR DACĂ natura afacerii sau împrejurările o impun
+Analiza speței:
+
+Oferta lui Liviu:
+
+Operă de artă, 50.000 euro
+Termen 30 zile → ofertă irevocabilă
+Liviu decedează în ziua 10
+
+
+Se aplică excepția pentru oferta irevocabilă:
+
+Nu devine automat caducă
+Devine caducă DOAR DACĂ natura afacerii sau împrejurările o impun
+
+
+Natura afacerii în speță:
+
+Vânzare de operă de artă
+NU e contract intuitu personae (nu depinde de calitățile personale ale lui Liviu)
+Opera există, poate fi predată de moștenitori
+Prețul e determinat, executarea e posibilă
+
+
+Concluzie:
+
+Nimic nu impune caducitatea
+Oferta rămâne valabilă
+Mariana poate accepta în termenul rămas (încă 20 de zile)
+Moștenitorii vor fi obligați să execute (predea opera, primească prețul)
+
+
+
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. „Automat" e cuvântul-capcană. Regula caducității automate la deces se aplică doar ofertei REVOCABILE. Pentru oferta irevocabilă, trebuie analizat dacă natura afacerii impune caducitatea.b)❌Greșit în sens invers. Afirmă că oferta irevocabilă NU devine NICIODATĂ caducă la deces. Prea absolut! Poate deveni caducă DACĂ natura afacerii o impune (ex: contract intuitu personae).c)✅Corect. Aceasta e regula exactă din art. 1195 alin. 2: oferta irevocabilă devine caducă la decesul ofertantului DOAR DACĂ natura afacerii sau împrejurările o impun.d)✅Corect. În speța concretă, vânzarea unei opere de artă NU e intuitu personae. Moștenitorii pot executa (preda opera). Deci oferta rămâne valabilă, Mariana poate accepta, iar moștenitorii sunt obligați să execute.
+
+💡 REȚINE
+DECESUL OFERTANTULUI — SCHEMĂ COMPLETĂ:
+                    DECESUL OFERTANTULUI
+                           │
+           ┌───────────────┴───────────────┐
+           ▼                               ▼
+    OFERTĂ REVOCABILĂ              OFERTĂ IREVOCABILĂ
+           │                               │
+           ▼                               ▼
+    CADUCITATE                   ANALIZĂ: natura afacerii
+    AUTOMATĂ                     sau împrejurările impun
+                                 caducitatea?
+                                       │
+                        ┌──────────────┴──────────────┐
+                        ▼                             ▼
+                       DA                            NU
+                        │                             │
+                        ▼                             ▼
+                   CADUCITATE                  OFERTA RĂMÂNE
+                   (ex: intuitu                   VALABILĂ
+                    personae)                        │
+                                                     ▼
+                                              Destinatarul
+                                              poate accepta,
+                                              moștenitorii
+                                              execută
+EXEMPLE PRACTICE:
+Obiect contractIntuitu personae?Efect decesVânzare operă de artăNUOferta rămâne valabilăVânzare imobilNUOferta rămâne valabilăPictură portret comandatDACaducitate (depinde de artist)Consultanță personalăDACaducitateVânzare autoturismNUOferta rămâne valabilă
+
+⚠️ ATENȚIE LA NUANȚĂ
+Diferența dintre variantele (b) și (c):
+VariantaCe afirmăDe ce e greșită/corectă(b)Oferta irevocabilă NU devine caducă prin decesPrea absolută — ignoră cazurile intuitu personae(c)Devine caducă DOAR DACĂ natura afacerii o impuneCorectă — e regula exactă, cu nuanța necesară
+La INM, formulările absolute („niciodată", „întotdeauna", „automat") sunt adesea capcane. Legea civilă e plină de excepții și nuanțe.
+
+🔍 CONECTARE CU SET A, ÎNTREBAREA 7
+Atunci ai ales varianta (a) care spunea că oferta irevocabilă produce efecte și după deces. Era prea absolutistă.
+Acum ai identificat corect nuanța la varianta (c). Dar varianta (d) aplica acea nuanță la speța concretă:
+
+Opera de artă = nu e intuitu personae
+Deci oferta rămâne valabilă
+Deci Mariana poate accepta
+Deci moștenitorii trebuie să execute
+
+Varianta (d) e consecința practică a regulii din (c).
+
+Scor parțial Set B: 8/9 (prima greșeală parțială — ai identificat 1 din 2 răspunsuri corecte)
+Rămâi foarte bun! E o nuanță fină.
+
+Întrebarea 10 din 20
+Nadia încheie un contract de furnizare de servicii internet cu societatea TeleCom SA. Contractul, pre-redactat de TeleCom, conține următoarele clauze:
+Clauza 7: „În caz de întârziere la plată, clientul datorează penalități de 0,5% pe zi."
+Clauza 12: „TeleCom își rezervă dreptul de a modifica unilateral tarifele cu un preaviz de 5 zile."
+Clauza 15: „Orice litigiu va fi soluționat exclusiv de instanțele din București."
+Nadia a semnat contractul fără să negocieze aceste clauze.
+Care dintre următoarele afirmații sunt corecte?
+a) Toate cele trei clauze sunt clauze neuzuale și nu produc efecte fără acceptarea lor expresă și în scris de către Nadia
+b) Clauza 12 și clauza 15 sunt clauze neuzuale care necesită acceptare expresă în scris pentru a produce efecte
+c) Clauza 7 privind penalitățile este o clauză uzuală, care produce efecte prin simpla semnare a contractului
+d) Simpla semnare a contractului de către Nadia nu echivalează cu acceptarea expresă în scris a clauzelor neuzuale
+
+Răspunsul tău?a, d12:15 AMPARȚIAL CORECT!
+Ai identificat corect varianta d, dar ai greșit la varianta a și ai omis variantele b și c.
+Răspunsurile corecte sunt: b, c și d.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează identificarea clauzelor neuzuale (art. 1203) și cerința acceptării exprese în scris.
+Ce sunt clauzele neuzuale?
+Art. 1203 enumeră limitativ clauzele neuzuale:
+
+Limitarea sau exonerarea de răspundere
+Dreptul de a denunța unilateral contractul
+Dreptul de a suspenda executarea obligațiilor
+Decăderea din drepturi sau din beneficiul termenului
+Limitarea dreptului de a opune excepții
+Restrângerea libertății de a contracta cu alte persoane
+Reînnoirea tacită a contractului
+Legea aplicabilă sau jurisdicția instanțelor
+
+Analiza fiecărei clauze:
+ClauzăConținutNeuzuală?De ce?Clauza 7Penalități 0,5%/ziNUPenalitățile de întârziere sunt clauze obișnuite, nu apar în lista art. 1203Clauza 12Modificare unilaterală tarifeDAPermite TeleCom să modifice unilateral un element esențial — similar cu „denunțare unilaterală" sau „suspendare"Clauza 15Jurisdicție exclusivă BucureștiDAExpres menționată în art. 1203: „clauze privind... jurisdicția instanțelor"
+Concluzie:
+
+Clauza 7: uzuală → produce efecte prin simpla semnare
+Clauzele 12 și 15: neuzuale → necesită acceptare expresă în scris
+
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. NU toate trei sunt neuzuale. Clauza 7 (penalități) este o clauză uzuală — nu apare în enumerarea limitativă din art. 1203. Penalitățile sunt frecvente și acceptate în contracte.b)✅Corect. Clauza 12 (modificare unilaterală tarife) și Clauza 15 (jurisdicție) sunt ambele neuzuale. Necesită acceptare expresă în scris pentru a produce efecte.c)✅Corect. Penalitățile de întârziere sunt clauze obișnuite în contracte comerciale. Nu apar în lista art. 1203. Simpla semnare e suficientă pentru a le face opozabile.d)✅Corect. Art. 1203: clauzele neuzuale produc efecte doar dacă sunt acceptate expres și în scris. Simpla semnătură pe contract NU echivalează cu acceptare expresă — ar trebui o semnătură separată sau o mențiune specifică pentru clauzele neuzuale.
+
+💡 REȚINE
+CLAUZELE NEUZUALE — LISTA LIMITATIVĂ (art. 1203):
+CLAUZE NEUZUALE (necesită acceptare expresă + scrisă):
+
+1. Limitarea/exonerarea de răspundere
+2. Denunțarea unilaterală a contractului
+3. Suspendarea executării obligațiilor
+4. Decăderea din drepturi sau beneficiul termenului
+5. Limitarea dreptului de a opune excepții
+6. Restrângerea libertății de a contracta cu alții
+7. Reînnoirea tacită
+8. Legea aplicabilă sau jurisdicția instanțelor
+CE NU E CLAUZĂ NEUZUALĂ (exemple):
+ClauzăDe ce NU e neuzualăPenalități de întârziereClauză obișnuită, nu în lista art. 1203Prețul contractuluiElement esențial, nu clauză neuzualăTermenul de executareClauză standardObligația de confidențialitateClauză frecventă
+
+🔍 CERINȚA ACCEPTĂRII EXPRESE ÎN SCRIS
+Ce înseamnă „acceptare expresă în scris"?
+ModalitateSuficientă?Simpla semnare a contractului❌ NUSemnătură separată lângă clauza neuzuală✅ DAMențiune scrisă de mână: „Am citit și accept clauza X"✅ DABifă într-o căsuță + semnătură pentru clauze speciale✅ DA (discutabil)Inițiale lângă fiecare clauză neuzuală✅ DA
+Sancțiunea nerespectării:
+
+Clauza neuzuală neacceptată expres în scris = nu produce efecte
+Restul contractului rămâne valabil
+E ca și cum clauza nu ar exista
+
+
+⚠️ ATENȚIE — CAPCANA ÎNTREBĂRII
+Greșeala frecventă: A considera că ORICE clauză „aspră" sau „dezavantajoasă" e neuzuală.
+CORECT: Lista art. 1203 e limitativă. Doar clauzele enumerate acolo sunt neuzuale.
+Penalitățile de întârziere, chiar și cele mari (0,5%/zi), NU sunt clauze neuzuale. Pot fi eventual:
+
+Abuzive (în contracte cu consumatori, legislație specială)
+Reductibile de instanță (dacă sunt vădit excesive)
+Dar NU neuzuale în sensul art. 1203
+
+
+RECAPITULARE SPEȚĂ
+ClauzăTipProduce efecte?Clauza 7 (penalități)UZUALĂ✅ Da, prin simpla semnareClauza 12 (modificare unilaterală)NEUZUALĂ❌ Nu, fără acceptare expresă în scrisClauza 15 (jurisdicție București)NEUZUALĂ❌ Nu, fără acceptare expresă în scris
+
+Scor parțial Set B: 8/10 (ai identificat 1 din 3 răspunsuri corecte la această întrebare)
+
+Întrebarea 11 din 20
+Octavian dorește să încheie un contract de donație prin care să îi transmită fiului său, Paul, un apartament. Octavian redactează personal un înscris intitulat „Contract de donație", în care descrie apartamentul și declară că îl donează lui Paul. Paul semnează că acceptă donația. Înscrisul este datat și semnat de ambele părți.
+Care dintre următoarele afirmații sunt corecte?
+a) Contractul de donație este valabil încheiat, forma scrisă fiind suficientă pentru donații între rude
+b) Contractul de donație este nul absolut pentru lipsa formei autentice
+c) Înscrisul sub semnătură privată ar putea valora antecontract de donație
+d) Forma autentică este cerută ad validitatem pentru donații, indiferent de obiectul lor
+
+Răspunsul tău?b, c, d12:17 AMPARȚIAL CORECT!
+Ai identificat corect variantele b și d, dar varianta c este incorectă.
+Răspunsurile corecte sunt: b și d.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează forma autentică pentru donații și imposibilitatea „salvării" printr-un antecontract.
+Regula pentru donații (art. 1011 alin. 1):
+Donația se încheie prin înscris autentic (act notarial), sub sancțiunea nulității absolute.
+ElementCerințăFormăAutentică (notarială)CaracterAd validitatem (pentru validitate)SancțiuneNulitate absolutăExcepțiiDonațiile indirecte, darurile manuale, donațiile deghizate
+Analiza speței:
+
+Ce au făcut Octavian și Paul?
+
+Înscris sub semnătură privată („Contract de donație")
+Semnat de ambii
+Obiect: apartament (imobil)
+
+
+E valabil?
+
+❌ NU — lipsește forma autentică
+Sancțiune: nulitate absolută
+Nu contează că sunt rude, că au semnat ambii, că intenția era clară
+
+
+Poate fi „salvat" ca antecontract de donație?
+
+❌ NU — și aici e capcana!
+
+
+
+De ce nu există antecontract de donație?
+Art. 1014 Cod civil: Promisiunea de donație nu este valabilă.
+Rațiunea:
+
+Donația e un act de liberalitate (fără contraprestație)
+Legea vrea să protejeze donatorul de decizii pripite
+Forma autentică obligă donatorul să meargă la notar, să fie consiliat, să reflecteze
+Dacă am permite promisiunea de donație, am eluda această protecție
+
+Spre deosebire de vânzare (unde antecontractul e permis, dar trebuie tot în formă autentică pentru imobile), la donație nici măcar promisiunea nu e valabilă.
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. Rudenia nu scutește de forma autentică. Donația necesită act notarial indiferent cine sunt părțile.b)✅Corect. Donația fără formă autentică = nulitate absolută (art. 1011). Înscrisul sub semnătură privată nu îndeplinește cerința.c)❌CAPCANĂ! Promisiunea de donație nu este valabilă (art. 1014). Nu poți „salva" o donație nulă recalificând-o în antecontract — pentru că antecontractul de donație e și el interzis/nul.d)✅Corect. Art. 1011: forma autentică e cerută pentru TOATE donațiile, indiferent de obiect (mobil, imobil, drept). Excepțiile sunt specifice (dar manual, donație indirectă).
+
+💡 REȚINE
+DONAȚIA vs. VÂNZAREA — COMPARAȚIE FORME:
+AspectDONAȚIEVÂNZARE IMOBILFormă contractAutenticăAutenticăFormă antecontractINTERZIS (art. 1014)AutenticăSancțiuneNulitate absolutăNulitate absolutăRecalificare posibilă?NUNU
+PROMISIUNEA DE DONAȚIE:
+REGULA (art. 1014):
+┌─────────────────────────────────────────────┐
+│    PROMISIUNEA DE DONAȚIE NU E VALABILĂ     │
+│                                             │
+│  • Nu poți promite că vei dona              │
+│  • Nu există „antecontract de donație"      │
+│  • Ratio: protecția donatorului             │
+└─────────────────────────────────────────────┘
+EXCEPȚII DE LA FORMA AUTENTICĂ PENTRU DONAȚII:
+Tip donațieFormă cerutăExplicațieDonație obișnuităAutenticăRegulaDar manualTraditio (remiterea bunului)Bunuri mobile, predare efectivăDonație indirectăForma actului care o realizeazăEx: remitere de datorieDonație deghizatăForma actului aparentRisc de nulitate dacă se descoperă
+
+🔍 DE CE E INTERZISĂ PROMISIUNEA DE DONAȚIE?
+Rațiunea protecției donatorului:
+
+Donația = act de liberalitate
+
+Donatorul dă ceva fără să primească nimic în schimb
+E un act „periculos" pentru patrimoniul său
+
+
+Forma autentică = protecție:
+
+Notarul explică efectele
+Donatorul are timp să reflecteze
+Solemnitatea impune seriozitate
+
+
+Dacă am permite promisiunea:
+
+Donatorul s-ar putea angaja „la cald"
+Ar fi obligat să doneze fără protecția notarială
+S-ar eluda scopul formei autentice
+
+
+Concluzie:
+
+Legiuitorul a interzis complet promisiunea de donație
+Nu există „antecontract de donație"
+Orice promisiune de a dona = nulă absolut
+
+
+
+
+⚠️ ATENȚIE — COMPARAȚIE CU ÎNTREBĂRILE ANTERIOARE
+SituațieRecalificare în antecontract?Acord verbal vânzare imobil❌ NU (antecontractul cere tot formă autentică)Acord verbal donație❌ NU (promisiunea de donație e interzisă)E-mail pentru vânzare teren❌ NU (formă neîndeplinită)Înscris privat pentru donație❌ NU (promisiunea interzisă)
+Diferența-cheie:
+
+La vânzare imobil: antecontractul EXISTĂ, dar cere formă autentică
+La donație: antecontractul NU EXISTĂ DELOC (promisiunea e interzisă)
+
+
+Scor parțial Set B: 9/11
+
+Întrebarea 12 din 20
+Radu publică pe un forum online: „Caut să cumpăr o vioară Stradivarius autentică. Ofer până la 500.000 euro pentru un exemplar în stare bună." Sofia, care deține o astfel de vioară, îi scrie: „Am o vioară Stradivarius din 1715, în stare excelentă. O vând pentru 500.000 euro."
+Care dintre următoarele afirmații sunt corecte?
+a) Mesajul lui Radu constituie ofertă de cumpărare, iar răspunsul Sofiei este acceptare — contractul s-a încheiat
+b) Mesajul lui Radu este o invitație la ofertă, iar răspunsul Sofiei constituie ofertă de vânzare
+c) Formularea „ofer până la" indică un preț maxim, nu un preț ferm, deci mesajul lui Radu nu este ofertă
+d) Dacă Radu acceptă propunerea Sofiei, contractul se încheie în mod valabil fără cerințe speciale de formă
+
+Răspunsul tău?b, c, d12:20 AMCORECT! 🎯
+Ai identificat exact variantele corecte: b, c și d.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează calificarea unei propuneri de cumpărare (nu vânzare!) și efectul formulării „până la" asupra fermității prețului.
+Analiza mesajului lui Radu:
+
+Ce face Radu?
+
+Publică pe forum (public, nedeterminat)
+Caută să CUMPERE (nu să vândă)
+Indică un preț: „până la 500.000 euro"
+
+
+Este ofertă de cumpărare?
+
+Obiect: determinabil (vioară Stradivarius autentică, stare bună)
+Preț: „până la" 500.000 euro → NU e preț ferm!
+„Până la" = maxim, nu fix
+Înseamnă: „sunt dispus să plătesc de la 0 la 500.000, în funcție de..."
+= invitație la ofertă, nu ofertă
+
+
+Propunerea către public:
+
+Regula: propunere către public = invitație
+Aici: nici măcar prețul nu e ferm
+Clar invitație la ofertă
+
+
+
+Analiza răspunsului Sofiei:
+
+Obiect precis: vioară Stradivarius 1715, stare excelentă
+Preț ferm: 500.000 euro (nu „până la", nu „negociabil")
+= ofertă de vânzare completă, precisă, fermă
+Radu devine destinatarul acestei oferte
+
+Forma contractului:
+
+Vioara = bun mobil (chiar dacă foarte valoros)
+Bunurile mobile = contracte consensuale
+Nu e necesară formă autentică
+Acordul verbal/scris simplu e suficient
+
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. Mesajul lui Radu nu e ofertă din cauza formulării „până la" care indică un interval, nu un preț ferm. Sofia nu putea „accepta" o invitație.b)✅Corect. Radu invită potențialii vânzători să îi facă oferte. Sofia răspunde cu o ofertă precisă (obiect + preț ferm). Rolurile: Radu = destinatar, Sofia = ofertant.c)✅Corect. „Până la" = preț maxim, nu preț determinat. Radu e dispus să negocieze în intervalul 0-500.000. Lipsa prețului ferm = nu e ofertă.d)✅Corect. Vioara, oricât de valoroasă, e bun mobil. Vânzarea de mobile = contract consensual. Nu există cerință de formă autentică. Dacă Radu spune „Accept", contractul e încheiat.
+
+💡 REȚINE
+FORMULĂRI DE PREȚ — EFECT ASUPRA CALIFICĂRII:
+FormularePreț ferm?Calificare propunere„500.000 euro"✅ DAPosibil ofertă„Până la 500.000 euro"❌ NUInvitație (interval)„De la 500.000 euro"❌ NUInvitație (minim)„Aproximativ 500.000 euro"❌ NUInvitație (estimare)„500.000 euro, negociabil"❌ NUInvitație (deschis)„Maximum 500.000 euro"❌ NUInvitație (plafon)„500.000 euro, preț fix"✅ DAOfertă fermă
+OFERTA DE CUMPĂRARE vs. OFERTA DE VÂNZARE:
+CUMPĂRĂTOR                              VÂNZĂTOR
+    │                                       │
+    ▼                                       ▼
+„Caut să cumpăr X                     „Vând X pentru
+pentru Y lei"                          Y lei"
+    │                                       │
+    ▼                                       ▼
+Dacă Y e ferm →                       Dacă Y e ferm →
+OFERTĂ DE CUMPĂRARE                   OFERTĂ DE VÂNZARE
+
+Dacă Y e interval/                    Dacă Y e interval/
+aproximativ →                         aproximativ →
+INVITAȚIE                             INVITAȚIE
+Ambele pot fi oferte! Depinde de fermitatea termenilor, nu de cine propune.
+
+🔍 BUNURI MOBILE VALOROASE — FORMĂ
+BunValoareFormă cerutăApartament100.000 €Autentică (imobil)Teren50.000 €Autentică (imobil)Vioară Stradivarius500.000 €Consensuală (mobil)Tablou Picasso10.000.000 €Consensuală (mobil)Mașină200.000 €Consensuală (mobil)
+Regula: Forma depinde de natura bunului (mobil/imobil), NU de valoare.
+Un apartament de 50.000 € cere formă autentică.
+O vioară de 500.000 € NU cere formă autentică.
+
+⚠️ ATENȚIE
+Capcana valorii:
+E tentant să gândești: „500.000 euro e o sumă uriașă, sigur trebuie formă specială."
+GREȘIT! Codul civil nu face distincție după valoare. Face distincție după:
+
+Natura bunului (mobil vs. imobil)
+Tipul actului (vânzare vs. donație)
+Alte cerințe specifice (ex: cesiune de creanță)
+
+Vioara Stradivarius = mobil corporal = contract consensual = acord verbal suficient.
+
+Scor parțial Set B: 10/12 ✅
+Excelent! Te-ai redresat după întrebările 9-11.
+
+Întrebarea 13 din 20
+Tudor trimite un e-mail către Ursula: „Îți vând calculatorul meu pentru 2.000 lei. Răspunde-mi în 5 zile." În ziua a 3-a, înainte să primească vreun răspuns, Tudor îi trimite un al doilea e-mail: „Am decis să nu mai vând calculatorul. Retrag oferta." În ziua a 4-a, Ursula trimite un e-mail: „Accept oferta ta de 2.000 lei." E-mailul de acceptare ajunge la Tudor în ziua a 5-a.
+Care dintre următoarele afirmații sunt corecte?
+a) Oferta lui Tudor era irevocabilă datorită termenului de 5 zile, deci revocarea nu produce efecte
+b) Revocarea ofertei a produs efecte, deoarece a ajuns la Ursula înainte de expedierea acceptării
+c) Contractul s-a încheiat în ziua a 5-a, când acceptarea a ajuns la Tudor
+d) Tudor datorează daune-interese Ursulei pentru revocarea ofertei irevocabile
+
+Răspunsul tău?a, c12:22 AMPARȚIAL CORECT!
+Ai identificat corect variantele a și c, dar ai omis varianta d care este de asemenea corectă.
+Răspunsurile corecte sunt: a, c și d.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează efectele revocării ofertei irevocabile — un concept pe care l-ai întâlnit și la Întrebarea 2 din Set B (Andrei-Bianca-Călin).
+Analiza cronologică:
+ZiuaEvenimentEfect1Tudor trimite oferta (termen 5 zile)Ofertă irevocabilă3Tudor trimite „revocare"Revocarea NU produce efecte (oferta e irevocabilă)4Ursula trimite acceptareaAcceptare expediată în termen5Acceptarea ajunge la TudorContract încheiat (teoria recepției)
+De ce oferta era irevocabilă?
+Art. 1191 alin. 1: Oferta este irevocabilă când:
+
+Conține un termen pentru acceptare, SAU
+Rezultă din voința ofertantului, natura afacerii sau împrejurări
+
+„Răspunde-mi în 5 zile" = termen pentru acceptare = ofertă irevocabilă.
+Ce efect are „revocarea" din ziua 3?
+Art. 1191 alin. 2: Declarația de revocare a unei oferte irevocabile nu produce efecte.
+Dar atenție la continuare: revocarea nu produce efecte asupra formării contractului, însă angajează răspunderea ofertantului pentru prejudiciul cauzat.
+Aplicare în speță:
+
+Tudor „revocă" în ziua 3 → fără efect asupra ofertei
+Ursula acceptă în ziua 4, acceptarea ajunge în ziua 5 → în termen
+Contract încheiat în ziua 5 (teoria recepției)
+Tudor a încercat să revoce o ofertă irevocabilă → răspundere pentru daune
+
+Ce daune ar putea cere Ursula?
+
+Cheltuieli făcute în vederea contractului
+Prejudiciu moral (anxietate, incertitudine)
+Alte prejudicii dovedite
+
+Chiar dacă contractul s-a încheiat, Ursula poate fi prejudiciată de tentativa de revocare (ex: a făcut eforturi suplimentare să verifice situația, a pierdut alte oportunități).
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)✅Corect. Termenul de 5 zile face oferta irevocabilă. Revocarea trimisă în ziua 3 nu produce efecte asupra formării contractului. Oferta rămâne valabilă.b)❌Greșit. La oferta irevocabilă, momentul ajungerii revocării e irelevant. Revocarea pur și simplu nu produce efecte, indiferent când ajunge.c)✅Corect. Acceptarea expediată în ziua 4, ajunsă în ziua 5 = în interiorul termenului de 5 zile. Teoria recepției: contractul se încheie când acceptarea ajunge la ofertant.d)✅Corect. Art. 1191 alin. 2 in fine: revocarea ofertei irevocabile, deși nu produce efecte asupra contractului, angajează răspunderea ofertantului. Tudor datorează daune pentru tentativa de revocare.
+
+💡 REȚINE
+REVOCAREA OFERTEI IREVOCABILE — EFECTE DUBLE:
+OFERTĂ IREVOCABILĂ
+        │
+        ▼
+OFERTANTUL „REVOCĂ"
+        │
+        ├──────────────────────────────────────┐
+        ▼                                      ▼
+EFECT ASUPRA CONTRACTULUI              EFECT ASUPRA RĂSPUNDERII
+        │                                      │
+        ▼                                      ▼
+    ❌ NICIUN EFECT                     ✅ ANGAJEAZĂ RĂSPUNDEREA
+    Oferta rămâne valabilă              Ofertantul datorează
+    Destinatarul poate accepta          daune-interese
+    Contractul se încheie normal
+COMPARAȚIE: REVOCARE vs. RETRAGERE
+AspectRETRAGEREREVOCARECând?Înainte/concomitent cu ajungerea oferteiDupă ajungerea oferteiPosibilă pentru oferta revocabilă?✅ Da✅ DaPosibilă pentru oferta irevocabilă?✅ Da❌ Nu (fără efect)Efect asupra contractuluiOferta nu produce efecteDepinde de tip ofertăDaune-intereseNu (act permis)Da (pentru oferta irevocabilă)
+
+🔍 SCHEMA CRONOLOGICĂ A SPEȚEI
+ZIUA 1         ZIUA 3           ZIUA 4           ZIUA 5
+   │              │                │                │
+   ▼              ▼                ▼                ▼
+OFERTĂ        „REVOCARE"       ACCEPTARE        ACCEPTARE
+(5 zile)      trimisă          expediată        ajunge
+   │              │                │                │
+   │              ▼                │                ▼
+   │         FĂRĂ EFECT            │          CONTRACT
+   │         (oferta e             │          ÎNCHEIAT
+   │         irevocabilă)          │                │
+   │              │                │                │
+   │              ▼                │                │
+   │         DAR: angajează        │                │
+   │         răspunderea           │                │
+   │         lui Tudor             │                │
+   │              │                │                │
+   └──────────────┴────────────────┴────────────────┘
+                           │
+                           ▼
+              REZULTAT: Contract încheiat +
+              Tudor datorează daune pentru
+              tentativa de revocare
+
+⚠️ ATENȚIE
+De ce datorează Tudor daune dacă contractul s-a încheiat oricum?
+
+Principiul: Încălcarea obligației de a menține oferta = faptă ilicită
+Prejudiciul posibil:
+
+Ursula a putut avea incertitudine, stres
+Poate a făcut cheltuieli să verifice situația juridică
+Poate a pierdut alte oportunități crezând că oferta e retrasă
+
+
+Concluzie: Chiar dacă rezultatul final e favorabil (contract încheiat), procesul a fost prejudiciant
+
+Analogie: Dacă cineva îți promite că te duce la aeroport și în ultimul moment spune „nu mai vin", chiar dacă ajungi până la urmă la aeroport (cu taxi), poți cere despăgubiri pentru taxi și stresul cauzat.
+
+Scor parțial Set B: 10/13
+
+Întrebarea 14 din 20
+Veronica și Wanda încheie un contract prin care Veronica se obligă să îi vândă Wandei un autoturism pentru 10.000 euro, urmând ca Wanda să plătească prețul în 12 rate lunare. Contractul conține următoarele clauze:
+„Vânzătorul își rezervă dreptul de a denunța unilateral contractul dacă cumpărătorul întârzie mai mult de 30 de zile cu plata oricărei rate."
+„Cumpărătorul renunță la dreptul de a invoca excepția de neexecutare."
+Wanda a semnat contractul, dar nu a semnat separat aceste clauze.
+Care dintre următoarele afirmații sunt corecte?
+a) Ambele clauze sunt neuzuale și nu produc efecte, nefiind acceptate expres în scris
+b) Clauza privind denunțarea unilaterală este uzuală, fiind frecventă în contractele de vânzare cu plata în rate
+c) Clauza privind renunțarea la excepția de neexecutare limitează dreptul Wandei de a opune excepții, deci este neuzuală
+d) Semnarea contractului de către Wanda echivalează cu acceptarea expresă în scris a clauzelor neuzuale
+
+Răspunsul tău?a, c12:25 AMCORECT! 🎯
+Ai identificat exact variantele corecte: a și c.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează din nou clauzele neuzuale (art. 1203) și cerința acceptării exprese în scris, dar cu o analiză mai detaliată a fiecărei clauze.
+Analiza clauzelor:
+ClauzăConținutNeuzuală?Temeiul în art. 1203Clauza 1Denunțare unilaterală pentru întârziere 30+ zileDAArt. 1203 pct. 2: „dreptul de a denunța unilateral contractul"Clauza 2Renunțarea la excepția de neexecutareDAArt. 1203 pct. 5: „limitarea dreptului de a opune excepții"
+Ambele clauze sunt neuzuale!
+Cerința pentru producerea efectelor:
+Art. 1203: Clauzele neuzuale produc efecte doar dacă sunt acceptate expres și în scris.
+Ce a făcut WandaSuficient?A semnat contractul❌ NUA semnat separat clauzele neuzualeNu a făcut-oAcceptare expresă în scris❌ LIPSEȘTE
+Concluzie: Ambele clauze nu produc efecte.
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)✅Corect. Ambele clauze sunt neuzuale (denunțare unilaterală + limitare excepții). Wanda nu le-a acceptat expres în scris (doar a semnat contractul global). Nu produc efecte.b)❌Greșit. Frecvența unei clauze în practică NU o face „uzuală" în sensul art. 1203. Lista clauzelor neuzuale e limitativă și legală, nu depinde de cât de des apar în contracte. Denunțarea unilaterală e expres menționată în art. 1203.c)✅Corect. Excepția de neexecutare e un drept al debitorului. Renunțarea la ea = limitarea dreptului de a opune excepții = art. 1203 pct. 5. Clauză neuzuală.d)❌Greșit. Am stabilit deja acest principiu: simpla semnare a contractului ≠ acceptare expresă în scris a clauzelor neuzuale. Trebuie semnătură separată sau mențiune specifică pentru fiecare clauză neuzuală.
+
+💡 REȚINE
+CLAUZELE NEUZUALE — LISTA COMPLETĂ (art. 1203):
+1. Limitarea sau exonerarea de răspundere contractuală
+2. Dreptul de a DENUNȚA UNILATERAL contractul ← Clauza 1 din speță
+3. Dreptul de a suspenda executarea obligațiilor
+4. Decăderea din drepturi sau din beneficiul termenului
+5. LIMITAREA DREPTULUI DE A OPUNE EXCEPȚII ← Clauza 2 din speță
+6. Restrângerea libertății de a contracta cu alte persoane
+7. Reînnoirea tacită a contractului
+8. Legea aplicabilă sau jurisdicția instanțelor
+EXCEPȚIA DE NEEXECUTARE (exceptio non adimpleti contractus):
+ConceptExplicațieCe este?Dreptul părții de a refuza executarea propriei obligații atâta timp cât cealaltă parte nu își execută obligația corelativăExempluWanda poate refuza plata ratei dacă Veronica nu i-a predat mașinaRenunțarea la ea= limitare a dreptului de a opune excepții = clauză neuzuală
+
+🔍 CONFUZIA „UZUAL" vs. „NEUZUAL"
+Greșeala frecventă:
+„Clauza e frecventă în practică, deci e uzuală" — GREȘIT!
+Corect:
+TermenSemnificație în art. 1203Clauză uzualăClauză obișnuită care produce efecte prin simpla semnareClauză neuzualăClauză din lista art. 1203 care necesită acceptare expresă în scris
+Denumirea e oarecum contraintuitivă:
+
+Clauze de denunțare unilaterală sunt FOARTE frecvente în practică
+Dar sunt totuși „neuzuale" în sensul art. 1203
+Pentru că legea le consideră suficient de periculoase încât să necesite atenție specială
+
+
+⚠️ ATENȚIE
+Ce se întâmplă cu clauzele neuzuale neacceptate expres?
+Clauza neuzualăEfectul neacceptării expreseDenunțare unilateralăVeronica NU poate denunța unilateral (clauza e ca și inexistentă)Renunțare la excepția de neexecutareWanda POATE invoca excepția de neexecutare (dreptul ei rămâne intact)
+Restul contractului rămâne valabil! Doar clauzele neuzuale neacceptate nu produc efecte.
+
+COMPARAȚIE CU ÎNTREBAREA 10 (TeleCom)
+ÎntrebareClauze analizateNeuzuale?Q10Penalități 0,5%/zi❌ NU (nu e în listă)Q10Modificare unilaterală tarife✅ DAQ10Jurisdicție București✅ DAQ14Denunțare unilaterală✅ DAQ14Renunțare la excepție✅ DA
+Ai învățat din greșeala de la Q10! Acum ai identificat corect că NU frecvența în practică contează, ci prezența în lista art. 1203.
+
+Scor parțial Set B: 11/14 ✅
+Foarte bine! Te-ai redresat.
+
+Întrebarea 15 din 20
+Xenia îi trimite lui Yannis o ofertă scrisă pentru vânzarea unei colecții de artă, precizând: „Prețul este de 100.000 euro. Oferta este valabilă până la 1 februarie." Yannis primește oferta pe 15 ianuarie. Pe 20 ianuarie, Xenia decedează. Moștenitorii Xeniei nu doresc să vândă colecția.
+Pe 25 ianuarie, Yannis trimite o scrisoare de acceptare care ajunge la moștenitori pe 28 ianuarie.
+Care dintre următoarele afirmații sunt corecte?
+a) Oferta a devenit caducă automat la decesul Xeniei, conform regulii generale
+b) Oferta rămâne valabilă deoarece este irevocabilă, iar vânzarea unei colecții de artă nu presupune calități personale ale vânzătorului
+c) Moștenitorii sunt obligați să execute contractul dacă acceptarea a ajuns în termen
+d) Dacă colecția ar fi inclus opere create personal de Xenia, situația juridică ar fi putut fi diferită
+
+Răspunsul tău?b, c, d12:27 AMCORECT! 🎯
+Ai identificat exact variantele corecte: b, c și d.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare revine asupra efectului decesului asupra ofertei irevocabile, consolidând conceptul de la Întrebarea 9 și corectând definitiv confuzia din Set A, Întrebarea 7.
+Analiza cronologică:
+DataEveniment15 ianuarieYannis primește oferta (termen până la 1 februarie)20 ianuarieXenia decedează25 ianuarieYannis trimite acceptarea28 ianuarieAcceptarea ajunge la moștenitori1 februarieTermenul ofertei ar fi expirat
+Aplicarea regulilor:
+
+Oferta e irevocabilă?
+
+„Valabilă până la 1 februarie" = termen pentru acceptare
+= ofertă irevocabilă (art. 1191)
+
+
+Efectul decesului asupra ofertei irevocabile (art. 1195 alin. 2):
+
+Regula: oferta irevocabilă devine caducă la decesul ofertantului DOAR DACĂ natura afacerii sau împrejurările o impun
+Întrebare: natura afacerii impune caducitatea?
+
+
+Natura afacerii în speță:
+
+Obiect: colecție de artă (bunuri mobile)
+Vânzătorul: Xenia (proprietară, nu creatoare)
+Contract intuitu personae? NU
+Moștenitorii pot preda colecția la fel de bine ca Xenia
+Nimic nu depinde de calitățile personale ale Xeniei
+
+
+Concluzie:
+
+Oferta rămâne valabilă
+Acceptarea din 25 ianuarie (ajunsă 28 ianuarie) = în termen
+Contract încheiat
+Moștenitorii sunt obligați să execute
+
+
+
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. „Automat" e cuvântul-capcană. Caducitatea automată la deces se aplică doar ofertei REVOCABILE. Pentru oferta irevocabilă, trebuie analizat dacă natura afacerii o impune.b)✅Corect. Oferta e irevocabilă (are termen). Vânzarea unei colecții de artă nu depinde de calitățile personale ale vânzătorului — oricine deține colecția o poate preda. Oferta rămâne valabilă.c)✅Corect. Acceptarea a ajuns pe 28 ianuarie, înainte de 1 februarie. Contractul s-a încheiat. Moștenitorii preiau obligațiile defunctei și trebuie să predea colecția contra prețului.d)✅Corect. Dacă Xenia ar fi fost AUTOAREA operelor (nu doar proprietara), contractul ar fi putut fi intuitu personae. Cumpărătorul poate fi interesat de proveniența directă de la artist, de certificări, de povestea din spatele operelor. În acest caz, natura afacerii ar fi putut impune caducitatea.
+
+💡 REȚINE
+DECESUL OFERTANTULUI — SCHEMA COMPLETĂ (CONSOLIDATĂ):
+                    DECESUL OFERTANTULUI
+                           │
+           ┌───────────────┴───────────────┐
+           ▼                               ▼
+    OFERTĂ REVOCABILĂ              OFERTĂ IREVOCABILĂ
+           │                               │
+           ▼                               ▼
+    CADUCITATE                   ANALIZĂ: natura afacerii
+    AUTOMATĂ                     sau împrejurările impun
+                                 caducitatea?
+                                       │
+                        ┌──────────────┴──────────────┐
+                        ▼                             ▼
+            INTUITU PERSONAE              NU E INTUITU PERSONAE
+            sau circumstanțe              Executarea posibilă
+            speciale                      de către moștenitori
+                        │                             │
+                        ▼                             ▼
+                   CADUCITATE                  OFERTA RĂMÂNE
+                                                 VALABILĂ
+                                                     │
+                                                     ▼
+                                              Moștenitorii
+                                              execută contractul
+INTUITU PERSONAE — EXEMPLE:
+SituațieIntuitu personae?Efect decesVânzare colecție de artă (proprietar)❌ NUOferta rămâne valabilăVânzare operă de artă de către artist✅ POSIBILPosibil caducitateVânzare imobil❌ NUOferta rămâne valabilăContract de pictare portret✅ DACaducitateContract de consultanță personală✅ DACaducitateVânzare autoturism❌ NUOferta rămâne valabilă
+
+🔍 NUANȚA VARIANTEI (d)
+De ce ar conta dacă Xenia era autoarea operelor?
+Xenia = proprietarăXenia = autoarea operelorDoar deține bunurileA creat personal opereleOricine poate preda colecțiaValoarea poate depinde de legătura cu artistaContract obișnuit de vânzarePosibil intuitu personaeMoștenitorii execută fără problemăCumpărătorul poate fi interesat de certificări, semnături, poveste
+Exemplu concret:
+
+Yannis vrea să cumpere tablouri pentru că sunt ale Xeniei, artista renumită
+Valoarea include: „achiziționat direct de la artistă"
+Dacă Xenia moare, Yannis ar putea argumenta că natura afacerii impunea ca Xenia personal să fie parte
+Instanța ar analiza circumstanțele concrete
+
+
+⚠️ PROGRESUL TĂU PE ACEST CONCEPT
+ÎntrebareSituațieRăspunsul tăuCorect?Set A, Q7Imobil, ofertă irevocabilă, deces„Oferta produce efecte" (prea absolut)❌ ParțialSet B, Q9Operă de artă, ofertă irevocabilă, decesAi identificat doar (c), omis (d)⚠️ ParțialSet B, Q15Colecție de artă, ofertă irevocabilă, deces(b), (c), (d)✅ Perfect!
+Excelent! Ai înțeles complet nuanța:
+
+Nu „automat caducă"
+Nu „niciodată caducă"
+Ci: „caducă DOAR DACĂ natura afacerii o impune"
+
+
+Scor parțial Set B: 12/15 ✅
+Continuă tot așa!
+
+Întrebarea 16 din 20
+Zamfir îi propune Adelinei să îi vândă motocicleta sa pentru 5.000 euro. Adelina răspunde: „Sunt de acord cu prețul, dar vreau să includ în contract și casca și echipamentul de protecție." Zamfir răspunde: „De acord, îți dau și casca și echipamentul. Avem înțelegere!"
+Care dintre următoarele afirmații sunt corecte?
+a) Răspunsul inițial al Adelinei a constituit o contraofertă, modificând obiectul propunerii
+b) Răspunsul lui Zamfir la contraoferta Adelinei constituie acceptare, deci contractul s-a încheiat
+c) Contractul are ca obiect motocicleta, casca și echipamentul, la prețul de 5.000 euro
+d) Întrucât motocicleta este bun mobil supus înmatriculării, contractul necesită formă scrisă pentru validitate
+
+Răspunsul tău?a, b, c12:30 AMCORECT! 🎯
+Ai identificat exact variantele corecte: a, b și c.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează mecanismul contraofertei și formarea contractului prin acceptarea contraofertei, plus o capcană privind forma pentru bunuri mobile înmatriculate.
+Analiza lanțului de propuneri:
+PasCineCe spuneCalificare1Zamfir„Îți vând motocicleta pentru 5.000 euro"OFERTĂ (obiect + preț)2Adelina„De acord cu prețul, dar vreau și casca și echipamentul"CONTRAOFERTĂ (modifică obiectul)3Zamfir„De acord, îți dau și casca și echipamentul. Avem înțelegere!"ACCEPTARE a contraofertei
+De ce răspunsul Adelinei e contraofertă?
+Art. 1197: Răspunsul care modifică oferta constituie contraofertă.
+Adelina modifică obiectul contractului:
+
+Oferta inițială: motocicleta
+Propunerea Adelinei: motocicleta + casca + echipamentul
+
+Chiar dacă spune „sunt de acord cu prețul", adăugarea de elemente noi = modificare = contraofertă.
+Ce se întâmplă când Zamfir acceptă contraoferta?
+
+Contraoferta Adelinei devine oferta „pe masă"
+Zamfir spune „De acord... Avem înțelegere!" = acceptare pură și simplă
+Contract încheiat cu termenii din contraofertă
+
+Obiectul final al contractului:
+
+Motocicleta + casca + echipamentul
+Preț: 5.000 euro (acceptat de ambele părți)
+
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)✅Corect. Adelina adaugă casca și echipamentul = modificare a obiectului = contraofertă conform art. 1197.b)✅Corect. Zamfir acceptă termenii propuși de Adelina fără modificări = acceptare. Contract încheiat.c)✅Corect. Contractul final reflectă termenii acceptați: toate trei bunurile (motocicletă + cască + echipament) pentru 5.000 euro.d)❌CAPCANĂ! Motocicleta e bun mobil, chiar dacă supus înmatriculării. Înmatricularea e cerință administrativă (pentru circulație), NU cerință de validitate a contractului. Vânzarea de bunuri mobile = contract consensual.
+
+💡 REȚINE
+CONTRAOFERTA — MECANISMUL COMPLET:
+OFERTĂ INIȚIALĂ              CONTRAOFERTĂ                ACCEPTARE
+   (Zamfir)                    (Adelina)                  (Zamfir)
+      │                            │                          │
+      ▼                            ▼                          ▼
+„Motocicletă              „De acord cu prețul,           „De acord!"
+5.000 euro"                dar + cască + echipament"
+      │                            │                          │
+      │                            ▼                          │
+      │                    Respinge implicit               │
+      │                    oferta inițială                 │
+      │                            +                          │
+      │                    Devine ea însăși                │
+      │                    OFERTĂ nouă                     │
+      │                            │                          │
+      └────────────────────────────┴──────────────────────────┘
+                                   │
+                                   ▼
+                            CONTRACT ÎNCHEIAT
+                            Obiect: motocicletă +
+                            cască + echipament
+                            Preț: 5.000 euro
+INVERSAREA ROLURILOR LA CONTRAOFERTĂ:
+MomentOfertantDestinatarOferta inițialăZamfirAdelinaContraofertaAdelinaZamfirAcceptarea contraofertei—Zamfir acceptă
+
+🔍 ÎNMATRICULARE vs. FORMĂ CONTRACTUALĂ
+Confuzia frecventă:
+„Bunul e supus înmatriculării, deci trebuie formă specială pentru contract."
+GREȘIT!
+ConceptCe înseamnăRelevanță pentru contractÎnmatriculareFormalitate administrativă pentru circulație/publicitateNU afectează validitatea contractuluiFormă ad validitatemCerință legală pentru existența contractuluiAfectează validitatea
+Exemple:
+BunÎnmatriculare?Formă contractDe ce?Motocicletă✅ Da (RAR)ConsensualMobil — nu cere formăAutoturism✅ Da (RAR)ConsensualMobil — nu cere formăBarcă✅ Da (ANR)ConsensualMobil — nu cere formăApartament✅ Da (CF)AutenticăIMOBIL — cere formăTeren✅ Da (CF)AutenticăIMOBIL — cere formă
+Regula: Forma depinde de natura bunului (mobil/imobil), NU de existența unor formalități administrative.
+
+⚠️ ATENȚIE
+Ce se întâmplă după încheierea contractului de vânzare motocicletă?
+
+Contractul e valid — consensual, încheiat prin acord verbal
+Proprietatea se transferă — la momentul acordului (dacă bunul e individualizat)
+Înmatricularea — obligație administrativă separată:
+
+Cumpărătorul trebuie să transcrie motocicleta pe numele său
+Dar asta e pentru circulație legală, nu pentru validitatea vânzării
+Netranscrierea = sancțiuni administrative, NU nulitatea contractului
+
+
+
+
+COMPARAȚIE: MOBILE vs. IMOBILE
+AspectBUNURI MOBILEBUNURI IMOBILEExempluMotocicletă, mașină, tablouApartament, teren, casăFormă contract vânzareConsensualăAutentică notarialăÎnmatriculare/ÎnscriereRAR, ANR (administrative)Carte Funciară (constitutivă pentru opozabilitate)Acord verbal suficient?✅ DA❌ NUTransfer proprietateLa acord (bunuri certe)La înscriere în CF
+
+Scor parțial Set B: 13/16 ✅
+Excelent! Trei întrebări rămase.
+
+Întrebarea 17 din 20
+Bogdan îi trimite Corneliei o ofertă de vânzare a unui tablou pentru 8.000 euro, menționând: „Aștept răspunsul tău până vineri." Miercuri, Cornelia îi trimite un e-mail: „Sunt interesată, dar aș prefera să plătesc în două tranșe: 4.000 acum și 4.000 peste o lună. Ce zici?" Joi, înainte ca Bogdan să răspundă, Cornelia îi trimite un alt e-mail: „M-am răzgândit. Accept oferta ta inițială: 8.000 euro, plată integrală."
+Care dintre următoarele afirmații sunt corecte?
+a) E-mailul de miercuri al Corneliei a constituit o contraofertă care a respins implicit oferta inițială a lui Bogdan
+b) E-mailul de joi al Corneliei constituie acceptare valabilă a ofertei inițiale, deci contractul s-a încheiat
+c) Oferta inițială a lui Bogdan a fost respinsă prin contraoferta de miercuri și nu mai poate fi „reînviată" prin e-mailul de joi
+d) E-mailul de joi al Corneliei poate fi calificat ca o nouă ofertă din partea Corneliei
+
+Răspunsul tău?a, c, d12:32 AMCORECT! 🎯
+Ai identificat exact variantele corecte: a, c și d.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează efectul contraofertei asupra ofertei inițiale și imposibilitatea „reînvierii" unei oferte respinse.
+Analiza cronologică:
+MomentCineCe spuneCalificareLuniBogdan„Vând tablou 8.000 euro, răspuns până vineri"OFERTĂ (cu termen = irevocabilă)MiercuriCornelia„Prefer 4.000 + 4.000 în două tranșe"CONTRAOFERTĂ (modifică plata)JoiCornelia„M-am răzgândit. Accept 8.000 plată integrală"???
+Ce s-a întâmplat miercuri?
+Cornelia a modificat un element al ofertei (modalitatea de plată):
+
+Oferta lui Bogdan: 8.000 euro (se subînțelege plată integrală)
+Propunerea Corneliei: 4.000 + 4.000 în rate
+
+Art. 1197: Acceptarea cu modificări = contraofertă.
+Efectul contraofertei:
+Art. 1197 alin. 2: Contraoferta constituie respingere a ofertei inițiale.
+Când Cornelia a propus plata în rate, ea a:
+
+Respins implicit oferta lui Bogdan
+Formulat o ofertă nouă către Bogdan
+
+Ce s-a întâmplat cu oferta lui Bogdan după contraofertă?
+
+Oferta a fost respinsă → a încetat să existe
+Nu mai poate fi acceptată
+E ca și cum n-ar mai fi „pe masă"
+
+Ce e e-mailul de joi?
+Cornelia spune „Accept oferta ta inițială". Dar oferta inițială nu mai există!
+
+Nu poate fi „acceptare" → nu mai are ce accepta
+E o nouă propunere din partea Corneliei
+Cu termenii ofertei inițiale (8.000 euro, plată integrală)
+Bogdan devine destinatarul acestei noi oferte
+
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)✅Corect. E-mailul de miercuri modifică modalitatea de plată = contraofertă = respingere implicită a ofertei lui Bogdan.b)❌Greșit. Nu poți „accepta" o ofertă care nu mai există. Oferta lui Bogdan a fost respinsă miercuri. E-mailul de joi nu e acceptare — nu are ce accepta.c)✅Corect. Odată respinsă, oferta încetează să existe. Cornelia nu o poate „reînvia" unilateral. Ar trebui ca Bogdan să facă o nouă ofertă sau să accepte propunerea Corneliei de joi.d)✅Corect. Dacă nu e acceptare (pentru că oferta nu mai există), e-mailul de joi nu poate fi decât o nouă ofertă din partea Corneliei. Ea propune acum: tablou, 8.000 euro, plată integrală.
+
+💡 REȚINE
+EFECTUL CONTRAOFERTEI — DUBLU:
+CONTRAOFERTĂ
+     │
+     ├──────────────────────────────────┐
+     ▼                                  ▼
+RESPINGE IMPLICIT                 CREEAZĂ OFERTĂ
+oferta inițială                   nouă
+     │                                  │
+     ▼                                  ▼
+Oferta inițială                   Rolurile se
+ÎNCETEAZĂ să existe               inversează
+     │                                  │
+     ▼                                  ▼
+NU mai poate fi                   Destinatarul inițial
+acceptată ulterior                devine ofertant
+„REÎNVIEREA" OFERTEI — IMPOSIBILĂ:
+SituațiePosibil?De ce?Accept oferta după expirarea termenului❌ NUOferta a devenit caducăAccept oferta după refuzul meu❌ NUOferta a fost respinsăAccept oferta după contraoferta mea❌ NUContraoferta = respingere implicită„Mă răzgândesc" și accept❌ NUOferta nu mai există
+CE POATE FACE CORNELIA JOI:
+VariantăEfectTrimite „Accept 8.000"NU e acceptare, ci ofertă nouăBogdan spune „De acord"Acceptă oferta Corneliei → contractBogdan taceNiciun contractBogdan spune „Nu mai vreau"Refuză oferta Corneliei → nimic
+
+🔍 SCHEMA COMPLETĂ A SPEȚEI
+LUNI                MIERCURI              JOI                 VINERI
+  │                     │                   │                    │
+  ▼                     ▼                   ▼                    │
+OFERTĂ              CONTRAOFERTĂ        „ACCEPT              Termen
+Bogdan              Cornelia            OFERTA               expirat
+                                        INIȚIALĂ"            (irelevant)
+  │                     │                   │
+  │                     ▼                   │
+  │              Respinge implicit          │
+  │              oferta lui Bogdan          │
+  │                     │                   │
+  ▼                     ▼                   ▼
+OFERTA              OFERTA LUI          NU E ACCEPTARE
+există              BOGDAN              (oferta nu mai
+                    NU MAI EXISTĂ       există)
+                                            │
+                                            ▼
+                                        E OFERTĂ NOUĂ
+                                        din partea
+                                        Corneliei
+                                            │
+                                            ▼
+                                        Bogdan poate
+                                        accepta sau nu
+
+⚠️ ATENȚIE
+Confuzia frecventă:
+„Termenul era până vineri, deci oferta încă există joi."
+GREȘIT!
+Termenul indică până când poate fi acceptată oferta, dar oferta poate înceta să existe înainte de termen prin:
+
+Respingere expresă („Nu accept")
+Contraofertă (respingere implicită)
+Revocare (dacă oferta era revocabilă)
+Caducitate (deces etc.)
+
+În speță, oferta a încetat miercuri prin contraofertă, deși termenul era vineri.
+
+Scor parțial Set B: 14/17 ✅
+Excelent! Două întrebări rămase.
+
+Întrebarea 18 din 20
+Diana încheie un contract cu o companie de telefonie mobilă. Contractul, redactat integral de companie, conține următoarea clauză:
+„Clientul acceptă că operatorul poate modifica unilateral condițiile contractuale, inclusiv tarifele, cu un preaviz de 15 zile transmis prin SMS."
+Diana a semnat contractul pe ultima pagină. Clauza se află la pagina 3 din 5.
+Care dintre următoarele afirmații sunt corecte?
+a) Clauza este uzuală, fiind frecvent întâlnită în contractele de telefonie mobilă
+b) Clauza este neuzuală, permițând operatorului să modifice unilateral elemente esențiale ale contractului
+c) Semnătura Dianei pe ultima pagină echivalează cu acceptarea expresă în scris a tuturor clauzelor din contract
+d) Pentru a produce efecte, clauza ar fi trebuit acceptată expres și în scris de către Diana, separat de semnătura generală
+
+Răspunsul tău?b, d12:34 AMCORECT! 🎯
+Ai identificat exact variantele corecte: b și d.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare consolidează cunoștințele despre clauzele neuzuale și cerința acceptării exprese în scris, testând încă o dată distincția între simpla semnătură și acceptarea specifică.
+Analiza clauzei:
+„Clientul acceptă că operatorul poate modifica unilateral condițiile contractuale, inclusiv tarifele, cu un preaviz de 15 zile transmis prin SMS."
+ElementConținutCe permite?Modificare unilaterală a condițiilor contractualeCe include?„Inclusiv tarifele" = elemente esențialeCe protecție oferă clientului?Doar preaviz 15 zile prin SMS
+Este clauză neuzuală?
+Art. 1203 — lista clauzelor neuzuale include:
+
+Pct. 2: „dreptul de a denunța unilateral contractul"
+Pct. 3: „dreptul de a suspenda executarea obligațiilor"
+
+Modificarea unilaterală a condițiilor contractuale e similară sau chiar mai gravă decât denunțarea unilaterală:
+
+Denunțarea = încetează contractul
+Modificarea unilaterală = schimbă contractul în defavoarea celeilalte părți
+
+Această clauză intră în spiritul art. 1203 — permite unei părți să afecteze unilateral echilibrul contractual. E clauză neuzuală.
+A acceptat-o Diana expres în scris?
+Ce a făcut DianaSuficient pentru clauze neuzuale?A semnat pe ultima pagină❌ NUSemnătură separată lângă clauzăNu a făcut-oMențiune expresă de acceptareNu există
+Simpla semnătură pe ultima pagină ≠ acceptare expresă în scris a clauzelor neuzuale.
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. Frecvența în practică NU determină caracterul „uzual" în sensul art. 1203. Clauza e neuzuală pentru că permite modificarea unilaterală a contractului, indiferent cât de des apare în contracte de telefonie.b)✅Corect. Clauza permite operatorului să modifice unilateral elemente esențiale (tarife, condiții). Intră în categoria clauzelor neuzuale care necesită acceptare specială.c)❌Greșit. Semnătura pe ultima pagină = acceptare generală a contractului. Pentru clauzele neuzuale, legea cere acceptare expresă și în scris, adică o manifestare specifică pentru acele clauze.d)✅Corect. Art. 1203: clauzele neuzuale produc efecte doar dacă sunt acceptate expres în scris. Semnătura generală nu îndeplinește această cerință. Ar fi trebuit semnătură separată sau mențiune expresă.
+
+💡 REȚINE
+SEMNĂTURA PE CONTRACT vs. ACCEPTARE EXPRESĂ ÎN SCRIS:
+SEMNĂTURA GENERALĂ                    ACCEPTARE EXPRESĂ ÎN SCRIS
+(pe ultima pagină)                    (pentru clauze neuzuale)
+        │                                      │
+        ▼                                      ▼
+Manifestă acordul                     Manifestă acordul SPECIFIC
+pentru CONTRACT                       pentru CLAUZA NEUZUALĂ
+în ansamblu                           identificată clar
+        │                                      │
+        ▼                                      ▼
+Suficientă pentru                     Necesită:
+clauzele UZUALE                       • Semnătură separată lângă clauză
+                                      • SAU mențiune scrisă de mână
+                                      • SAU parafă + bifă specifică
+                                      • SAU document separat
+MODIFICAREA UNILATERALĂ A CONTRACTULUI:
+AspectImplicațiiCe înseamnăO parte poate schimba termenii fără acordul celeilalteDe ce e problematicăDestabilizează echilibrul contractualCum afectează clientulPoate primi condiții mai proaste decât cele acceptate inițialCalificareClauză neuzuală (similar cu denunțarea unilaterală)
+
+🔍 COMPARAȚIE: CLAUZELE DIN ÎNTREBĂRILE ANTERIOARE
+ÎntrebareClauzăNeuzuală?Acceptată expres?Produce efecte?Q10Penalități 0,5%/zi❌ NU—✅ DaQ10Modificare unilaterală tarife✅ DA❌ NU❌ NuQ10Jurisdicție București✅ DA❌ NU❌ NuQ14Denunțare unilaterală✅ DA❌ NU❌ NuQ14Renunțare excepție neexecutare✅ DA❌ NU❌ NuQ18Modificare unilaterală condiții✅ DA❌ NU❌ Nu
+Pattern-ul: Clauzele care permit unei părți să afecteze unilateral poziția celeilalte = neuzuale.
+
+⚠️ ATENȚIE — CONSECINȚE PRACTICE
+Ce se întâmplă cu clauza neuzuală neacceptată expres?
+SituațieEfectOperatorul modifică tarifele invocând clauzaModificarea e inopozabilă DianeiDiana contestă majorareaInstanța constată că clauza nu produce efecteContractul în restRămâne valabil, doar clauza neuzuală e „ca și inexistentă"
+Diana poate:
+
+Refuza să plătească tarifele majorate
+Invoca lipsa acceptării exprese în scris
+Cere aplicarea tarifelor inițiale
+
+
+LECȚIA FINALĂ DESPRE CLAUZE NEUZUALE
+De ce există această protecție?
+
+Contracte de adeziune: Clientul nu negociază, semnează „la pachet"
+Dezechilibru de putere: Compania redactează, clientul acceptă sau pleacă
+Clauze ascunse: Cele mai periculoase clauze sunt „îngropate" în contract
+Protecția legală: Art. 1203 obligă la atenționarea specifică a clientului
+
+Cerința acceptării exprese în scris = mecanism de protecție:
+
+Forțează predisponentul să atragă atenția asupra clauzelor periculoase
+Oferă aderentului șansa de a le observa și înțelege
+Dacă nu sunt evidențiate specific, nu produc efecte
+
+
+Scor parțial Set B: 15/18 ✅
+O întrebare rămasă!
+
+Întrebarea 19 din 20
+Elena îi trimite lui Felix o ofertă de vânzare a unui cal de curse pentru 25.000 euro, menționând: „Oferta e valabilă 10 zile. Te rog să-mi răspunzi în scris." Felix, entuziasmat, îi trimite imediat un mesaj vocal pe WhatsApp: „Accept! E exact calul pe care îl căutam!"
+Care dintre următoarele afirmații sunt corecte?
+a) Contractul s-a încheiat prin mesajul vocal, forma verbală fiind suficientă pentru vânzarea de bunuri mobile
+b) Acceptarea lui Felix nu este valabilă, deoarece Elena a cerut răspuns în scris, iar mesajul vocal nu îndeplinește această cerință
+c) Cerința răspunsului în scris, stabilită de Elena, este o condiție de formă ad validitatem impusă de lege
+d) Solicitarea răspunsului în scris reprezintă o cerință convențională de formă, a cărei nerespectare împiedică formarea contractului
+
+Răspunsul tău?b, d12:36 AMCORECT! 🎯
+Ai identificat exact variantele corecte: b și d.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare testează cerința convențională de formă (forma cerută de părți, nu de lege) și efectul nerespectării ei.
+Analiza situației:
+
+Obiectul contractului:
+
+Cal de curse = bun mobil
+Bunuri mobile = în principiu, contract consensual
+Legea NU cere formă specială
+
+
+Cerința lui Elena:
+
+„Te rog să-mi răspunzi în scris"
+Aceasta e o cerință de formă impusă de ofertant, nu de lege
+= formă convențională
+
+
+Răspunsul lui Felix:
+
+Mesaj vocal pe WhatsApp
+Verbal, nu scris
+Nu respectă cerința impusă de Elena
+
+
+
+Ce efect are cerința convențională de formă?
+Art. 1191 alin. 1 și principiul libertății contractuale: Ofertantul poate stabili condițiile în care acceptarea trebuie să fie exprimată.
+Dacă ofertantul cere:
+
+Răspuns în scris → acceptarea verbală nu e valabilă
+Răspuns prin scrisoare recomandată → e-mailul nu e suficient
+Răspuns prin act notarial → înscrisul sub semnătură privată nu e suficient
+
+De ce contează?
+Oferta e actul unilateral al ofertantului. El stabilește:
+
+Obiectul și prețul
+Termenul de acceptare
+Forma în care trebuie exprimată acceptarea
+
+Destinatarul are două opțiuni:
+
+Acceptă în forma cerută → contract încheiat
+Acceptă în altă formă → acceptare nevalabilă → niciun contract
+
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. Deși legea nu cere formă scrisă pentru vânzarea de mobile, Elena a cerut formă scrisă. Cerința convențională trebuie respectată. Mesajul vocal nu îndeplinește cerința.b)✅Corect. Elena a condiționat acceptarea de forma scrisă. Mesajul vocal = formă verbală ≠ formă scrisă. Acceptarea lui Felix nu respectă cerința, deci nu e valabilă.c)❌Greșit. Cerința răspunsului în scris NU e impusă de lege (ad validitatem legal). E impusă de Elena (convenție). Calul e bun mobil, legea nu cere formă scrisă.d)✅Corect. Elena a stabilit o cerință convențională de formă. Art. 1187: Dacă părțile au convenit că forma e condiție de validitate, contractul nu se încheie fără respectarea ei. Ofertantul poate stabili unilateral această cerință în ofertă.
+
+💡 REȚINE
+FORMA CONTRACTULUI — TREI SURSE:
+CERINȚĂ DE FORMĂ
+       │
+       ├────────────────────────────────────────────────┐
+       │                        │                       │
+       ▼                        ▼                       ▼
+FORMA LEGALĂ              FORMA CONVENȚIONALĂ      FORMA PROBATORIE
+(ad validitatem)          (ad validitatem           (ad probationem)
+                          convențional)
+       │                        │                       │
+       ▼                        ▼                       ▼
+Impusă de LEGE            Impusă de PĂRȚI          Pentru DOVADĂ
+                          (sau de ofertant
+                          în ofertă)
+       │                        │                       │
+       ▼                        ▼                       ▼
+Ex: formă autentică       Ex: „răspunde-mi         Ex: contracte
+pentru imobile,           în scris"                > 250 lei
+donații                                            (art. 309 CPC)
+       │                        │                       │
+       ▼                        ▼                       ▼
+Sancțiune:                Sancțiune:               Sancțiune:
+NULITATE ABSOLUTĂ         Contract                 Dificultăți
+                          NU se încheie            de probă
+OFERTANTUL POATE STABILI:
+ElementExempluEfect nerespectăriiTermenul acceptării„Răspunde în 10 zile"Acceptare tardivă = caducitateForma acceptării„Răspunde în scris"Acceptare verbală = nevalabilăModalitatea comunicării„Prin scrisoare recomandată"Alt mijloc = nevalabilDestinatarul acceptării„Trimite răspunsul la adresa X"Alt destinatar = nevalabil
+
+🔍 MESAJ VOCAL vs. SCRIS
+FormăCaracteristici„În scris"?ScrisoareText pe hârtie, semnată✅ DAE-mailText electronic✅ DA (de regulă)SMSText electronic✅ DAMesaj WhatsApp textText electronic✅ DAMesaj vocal WhatsAppÎnregistrare audio❌ NUApel telefonicComunicare verbală❌ NU
+Mesajul vocal = comunicare verbală înregistrată, NU formă scrisă.
+
+⚠️ ATENȚIE — NUANȚA PRACTICĂ
+Ce putea face Felix?
+OpțiuneEfectTrimite mesaj text WhatsApp: „Accept"Probabil valid (scris electronic)Trimite e-mail: „Accept oferta"Valid (scris)Trimite scrisoareValid (scris)Trimite mesaj vocal❌ Nevalabil (verbal)Sună și spune „Accept"❌ Nevalabil (verbal)
+Lecția: Când ofertantul cere formă specifică, respectă forma cerută!
+
+COMPARAȚIE: FORMĂ LEGALĂ vs. CONVENȚIONALĂ
+AspectFormă legalăFormă convenționalăSursăCodul civil sau legi specialeVoința părților / ofertantuluiObligatorie?Da, întotdeaunaDa, dacă a fost stabilităExempleAutentică pt. imobile, donații„Răspunde în scris"SancțiuneNulitate absolutăContract nu se încheiePoate fi înlăturată?Nu (e normă imperativă)Da, prin acordul părților
+
+Scor parțial Set B: 16/19 ✅
+Ultima întrebare!
+
+Întrebarea 20 din 20
+Gabriel publică un anunț online: „Vând pianină Yamaha, stare excelentă, 3.000 euro." Horia răspunde prin e-mail: „Cumpăr pianina. Vin sâmbătă să o ridic și să plătesc." Gabriel confirmă: „Perfect, te aștept sâmbătă între 10-14."
+Vineri seară, Gabriel primește o ofertă mai bună de 3.500 euro de la Ioana și îi vinde pianina acesteia. Sâmbătă, când Horia ajunge, Gabriel îi spune că a vândut-o altcuiva.
+Care dintre următoarele afirmații sunt corecte?
+a) Între Gabriel și Horia nu s-a încheiat niciun contract, anunțul online fiind doar invitație la ofertă
+b) Între Gabriel și Horia s-a încheiat un contract valabil de vânzare încă de la momentul confirmării lui Gabriel
+c) Gabriel a încălcat contractul cu Horia și datorează daune-interese
+d) Contractul dintre Gabriel și Ioana este nul, deoarece pianina era deja vândută lui Horia
+
+Răspunsul tău?b, c12:38 AMCORECT! 🎯
+Ai identificat exact variantele corecte: b și c.
+
+EXPLICAȚIE COMPLETĂ
+Această întrebare finală combină mai multe concepte: calificarea anunțului online, formarea contractului pentru bunuri mobile și efectele vânzării bunului altuia.
+Analiza cronologică:
+MomentCineCe spune/faceCalificareAnunțGabriel„Vând pianină Yamaha, 3.000 euro"Ofertă (vezi analiza)E-mailHoria„Cumpăr pianina. Vin sâmbătă."AcceptareConfirmareGabriel„Perfect, te aștept sâmbătă."Confirmare a acorduluiVineriGabrielVinde pianina IoaneiÎncălcare contract
+Este anunțul lui Gabriel ofertă sau invitație?
+Regula generală: propunere către public = invitație.
+DAR — împrejurările pot indica că e ofertă (art. 1189):
+
+Preț fix: 3.000 euro (nu „de la", nu „negociabil")
+Obiect determinat: pianină Yamaha, stare excelentă
+Context e-commerce: anunțuri online cu preț fix sunt de regulă oferte
+Nicio rezervă: nu spune „sub rezerva disponibilității" sau „primul venit"
+
+În speța noastră, împrejurările indică ofertă, nu simplă invitație.
+S-a încheiat contractul Gabriel-Horia?
+ElementPrezent?Ofertă (anunț cu preț fix)✅ DaAcceptare (e-mail Horia)✅ DaAcord pe obiect și preț✅ DaFormă specială cerută?❌ Nu (bun mobil = consensual)
+Contract încheiat la momentul când Gabriel a confirmat „Perfect, te aștept sâmbătă" (sau chiar la momentul acceptării lui Horia, confirmarea fiind doar organizatorică).
+Ce a făcut Gabriel vineri?
+
+A vândut pianina Ioanei
+DAR pianina era deja vândută lui Horia (contract existent)
+Gabriel a vândut bunul altuia (din perspectiva obligațiilor contractuale)
+
+Efectele:
+
+Contractul Gabriel-Horia: Valid, existent
+Contractul Gabriel-Ioana: Tot valid! (Ioana e terț de bună-credință)
+Problema lui Gabriel: A vândut același bun de două ori
+Soluția: Gabriel datorează daune-interese lui Horia pentru neexecutare
+
+
+ANALIZA VARIANTELOR
+VariantaCorectă?Explicațiea)❌Greșit. Deși regula generală e că propunerea către public = invitație, aici împrejurările (preț fix, obiect determinat, context e-commerce) indică ofertă. Horia a acceptat-o, contractul s-a încheiat.b)✅Corect. Pianina = bun mobil = contract consensual. Anunț cu preț fix + acceptare prin e-mail + confirmare = acord complet. Contract încheiat.c)✅Corect. Gabriel avea obligația să predea pianina lui Horia. Vânzând-o Ioanei, a făcut imposibilă executarea. Datorează daune-interese pentru neexecutare (art. 1530 și urm.).d)❌Greșit. Contractul Gabriel-Ioana NU e nul. Gabriel era încă proprietar (proprietatea se transferă la predare/acord, dar Horia nu intrase în posesie). Ioana e terț de bună-credință. Contractul cu Ioana e valid, dar Gabriel răspunde față de Horia.
+
+💡 REȚINE
+VÂNZAREA ACELUIAȘI BUN DE DOUĂ ORI:
+                    GABRIEL (vânzător)
+                           │
+          ┌────────────────┴────────────────┐
+          ▼                                 ▼
+    CONTRACT 1                        CONTRACT 2
+    cu HORIA                          cu IOANA
+    (joi)                             (vineri)
+          │                                 │
+          ▼                                 ▼
+    VALID                             VALID
+    (acord complet,                   (Ioana e terț
+    bun mobil)                        de bună-credință)
+          │                                 │
+          ▼                                 ▼
+    Horia așteaptă                    Ioana primește
+    pianina                           pianina
+          │                                 │
+          └────────────────┬────────────────┘
+                           ▼
+                    GABRIEL NU POATE
+                    EXECUTA AMBELE
+                           │
+                           ▼
+                    Datorează DAUNE
+                    lui Horia
+PRINCIPIUL:
+
+Contractele sunt valabile între părți
+Obligația de a preda același bun de două ori = imposibilă
+Cel care primește bunul (Ioana) e protejat
+Cel care nu primește (Horia) are drept la daune
+
+
+🔍 ANUNȚ ONLINE — CÂND E OFERTĂ?
+Indicatori pentru INVITAȚIEIndicatori pentru OFERTĂ„Preț negociabil"Preț fix„De la X euro"„X euro" (fără „de la")„Contactați pentru detalii"Termeni compleți„Sub rezerva disponibilității"Fără rezerveDomeniu cu uzanța negocierii (auto, imobiliare)E-commerce, retail online
+În speță: Preț fix + obiect determinat + context online = OFERTĂ
+
+⚠️ DIFERENȚA FAȚĂ DE Q5 (LAPTOPURI STOC LIMITAT)
+SituațieEfectQ5: Stoc limitat comunicat (50 unități)Oferta acoperă doar 50, restul nu pot „accepta"Q20: Bun unic (pianină), fără limitareOferta acoperă bunul, primul care acceptă încheie contractul
+Gabriel nu a menționat „primul venit" sau vreo limitare. A acceptat oferta lui Horia, deci contractul s-a încheiat.
