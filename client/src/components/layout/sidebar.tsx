@@ -247,6 +247,10 @@ export default function Sidebar() {
 
               {expandedSections['spete'] && (
                 <div className="pl-3 space-y-1">
+                  <Link href="/essay" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/essay') ? 'active' : ''}`} data-testid="nav-essay">
+                    <PenTool className="h-4 w-4" />
+                    <span>Rezolvă Speță</span>
+                  </Link>
                   <Link href="/spete-import" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/spete-import') ? 'active' : ''}`} data-testid="nav-spete-import">
                     <Plus className="h-4 w-4" />
                     <span>Import Spețe</span>
@@ -314,6 +318,11 @@ export default function Sidebar() {
           <Link href="/weak-points" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/weak-points') ? 'active' : ''}`} data-testid="nav-weak-points">
             <AlertTriangle className="h-5 w-5" />
             <span className="font-medium">Puncte Slabe</span>
+          </Link>
+
+          <Link href="/srs-review" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/srs-review') ? 'active' : ''}`} data-testid="nav-srs-review">
+            <Brain className="h-5 w-5" />
+            <span className="font-medium">Revizuire SRS</span>
           </Link>
 
           <Link href="/study-plan" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/study-plan') ? 'active' : ''}`} data-testid="nav-study-plan">

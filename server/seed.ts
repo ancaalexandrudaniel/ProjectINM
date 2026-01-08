@@ -617,9 +617,35 @@ async function seed() {
   console.log("🌱 Starting database seed...");
 
   try {
+    // ========================================================================
+    // DEMO USER SEEDING
+    // ========================================================================
+    const existingDemo = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, "demo@inm.ro"))
+      .limit(1);
+
+    if (existingDemo.length === 0) {
+      await db.insert(users).values({
+        username: "demo",
+        password: "demo123", // In production, use bcrypt
+        fullName: "Utilizator Demo",
+        email: "demo@inm.ro",
+        subscriptionTier: "premium",
+        isVerified: true,
+      });
+      console.log("✅ Created demo user: demo@inm.ro / demo123 (premium)");
+    } else {
+      console.log("ℹ️  Demo user already exists");
+    }
+
+    // ========================================================================
+    // QUESTIONS SEEDING
+    // ========================================================================
     // Check if questions already exist
     const existingQuestions = await db.select().from(questions).limit(1);
-    
+
     if (existingQuestions.length > 0) {
       console.log("⚠️  Database already contains questions. Skipping seed.");
       return;

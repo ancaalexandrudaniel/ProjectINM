@@ -1,11 +1,28 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertQuizSessionSchema, insertUserAnswerSchema, questionTopics } from "@shared/schema";
+import { insertQuizSessionSchema, insertUserAnswerSchema, questionTopics, essayPrompts, userEssaySubmissions } from "@shared/schema";
 import { z } from "zod";
 import { db } from "./db";
 import { users } from "@shared/schema";
 import { eq } from "drizzle-orm";
+import {
+  createSession,
+  validateSession,
+  invalidateSession,
+  verifyPassword,
+  type AuthenticatedUser
+} from "./auth";
+
+// Extend Express Request to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: AuthenticatedUser;
+      sessionToken?: string;
+    }
+  }
+}
 
 // Helper to get first user ID
 async function getDefaultUserId(): Promise<string> {
@@ -16,8 +33,469 @@ async function getDefaultUserId(): Promise<string> {
   return allUsers[0].id;
 }
 
+// ============================================================================
+// Authentication Middleware
+// ============================================================================
+async function authMiddleware(req: Request, res: Response, next: NextFunction) {
+  const sessionToken = req.headers.authorization?.replace("Bearer ", "") ||
+    req.cookies?.session_token;
+
+  if (!sessionToken) {
+    return res.status(401).json({ error: "Authentication required" });
+  }
+
+  const user = await validateSession(sessionToken);
+  if (!user) {
+    return res.status(401).json({ error: "Invalid or expired session" });
+  }
+
+  req.user = user;
+  req.sessionToken = sessionToken;
+  next();
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Get all questions
+
+  // ============================================================================
+  // AUTHENTICATION ROUTES
+  // ============================================================================
+
+  // POST /api/login - Authenticate user and create session
+  app.post("/api/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" });
+      }
+
+      // Find user by email
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
+
+      if (!user) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+
+      // Verify password (now async with bcrypt)
+      const isValidPassword = await verifyPassword(password, user.password);
+      if (!isValidPassword) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+
+      // Get client info for fingerprint
+      const userAgent = req.headers["user-agent"] || "unknown";
+      const ipAddress = req.ip || req.socket.remoteAddress || "unknown";
+
+      // Create session (with kick-old logic)
+      const sessionToken = await createSession({
+        userId: user.id,
+        userAgent,
+        ipAddress,
+        subscriptionTier: user.subscriptionTier || "free",
+      });
+
+      console.log(`[AUTH] User ${user.email} logged in successfully`);
+
+      res.json({
+        success: true,
+        sessionToken,
+        user: {
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+          subscriptionTier: user.subscriptionTier || "free",
+        },
+      });
+    } catch (error) {
+      console.error("[AUTH] Login error:", error);
+      res.status(500).json({ error: "Login failed" });
+    }
+  });
+
+  // POST /api/logout - Invalidate session
+  app.post("/api/logout", async (req, res) => {
+    try {
+      const sessionToken = req.headers.authorization?.replace("Bearer ", "");
+
+      if (sessionToken) {
+        await invalidateSession(sessionToken);
+        console.log("[AUTH] Session invalidated");
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("[AUTH] Logout error:", error);
+      res.status(500).json({ error: "Logout failed" });
+    }
+  });
+
+  // GET /api/me - Get current user
+  app.get("/api/me", async (req, res) => {
+    try {
+      const sessionToken = req.headers.authorization?.replace("Bearer ", "");
+
+      if (!sessionToken) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await validateSession(sessionToken);
+
+      if (!user) {
+        return res.status(401).json({ error: "Invalid or expired session" });
+      }
+
+      res.json({ user });
+    } catch (error) {
+      console.error("[AUTH] Me error:", error);
+      res.status(500).json({ error: "Failed to get user info" });
+    }
+  });
+
+  // Protected route example
+  app.get("/api/protected/profile", authMiddleware, async (req, res) => {
+    res.json({
+      message: "This is a protected route",
+      user: req.user,
+    });
+  });
+
+  // ============================================================================
+  // SRS (SPACED REPETITION) ROUTES
+  // ============================================================================
+
+  // GET /api/srs/due - Get cards due for review
+  app.get("/api/srs/due", async (req, res) => {
+    try {
+      const { getDueCards } = await import("./srs");
+      const userId = await getDefaultUserId();
+      const limit = parseInt(req.query.limit as string) || 20;
+
+      const dueCards = await getDueCards(userId, limit);
+
+      res.json({
+        cards: dueCards.map(({ card, question }) => ({
+          id: card.id,
+          questionId: card.questionId,
+          interval: card.interval,
+          easeFactor: card.easeFactor,
+          repetitionCount: card.repetitionCount,
+          consecutiveCorrect: card.consecutiveCorrect,
+          nextReviewAt: card.nextReviewAt,
+          question: {
+            id: question.id,
+            subject: question.subject,
+            chapter: question.chapter,
+            questionText: question.questionText,
+            options: question.options,
+            correctAnswer: question.correctAnswer,
+            explanation: question.explanation,
+            legalReferences: question.legalReferences,
+          },
+        })),
+        count: dueCards.length,
+      });
+    } catch (error) {
+      console.error("[SRS] Get due cards error:", error);
+      res.status(500).json({ error: "Failed to get due cards" });
+    }
+  });
+
+  // GET /api/srs/stats - Get SRS statistics
+  app.get("/api/srs/stats", async (req, res) => {
+    try {
+      const { getSrsStats } = await import("./srs");
+      const userId = await getDefaultUserId();
+
+      const stats = await getSrsStats(userId);
+
+      res.json(stats);
+    } catch (error) {
+      console.error("[SRS] Get stats error:", error);
+      res.status(500).json({ error: "Failed to get SRS stats" });
+    }
+  });
+
+  // POST /api/srs/review - Process a card review
+  app.post("/api/srs/review", async (req, res) => {
+    try {
+      const { processReview } = await import("./srs");
+      const userId = await getDefaultUserId();
+
+      const { cardId, grade } = req.body;
+
+      if (!cardId || grade === undefined) {
+        return res.status(400).json({ error: "cardId and grade are required" });
+      }
+
+      if (grade < 0 || grade > 5) {
+        return res.status(400).json({ error: "Grade must be between 0 and 5" });
+      }
+
+      const result = await processReview(userId, cardId, grade as 0 | 1 | 2 | 3 | 4 | 5);
+
+      res.json({
+        success: true,
+        nextReviewAt: result.nextReviewAt,
+        interval: result.interval,
+        easeFactor: result.easeFactor,
+      });
+    } catch (error) {
+      console.error("[SRS] Review error:", error);
+      res.status(500).json({ error: "Failed to process review" });
+    }
+  });
+
+  // POST /api/srs/card - Create an SRS card for a question
+  app.post("/api/srs/card", async (req, res) => {
+    try {
+      const { createSrsCard } = await import("./srs");
+      const userId = await getDefaultUserId();
+
+      const { questionId } = req.body;
+
+      if (!questionId) {
+        return res.status(400).json({ error: "questionId is required" });
+      }
+
+      await createSrsCard(userId, questionId);
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("[SRS] Create card error:", error);
+      res.status(500).json({ error: "Failed to create SRS card" });
+    }
+  });
+
+  // GET /api/srs/count - Get count of cards due today (for dashboard)
+  app.get("/api/srs/count", async (req, res) => {
+    try {
+      const { getDueCardCount } = await import("./srs");
+      const userId = await getDefaultUserId();
+
+      const count = await getDueCardCount(userId);
+
+      res.json({ dueCount: count });
+    } catch (error) {
+      console.error("[SRS] Get count error:", error);
+      res.status(500).json({ error: "Failed to get due count" });
+    }
+  });
+
+  // ============================================================================
+  // ESSAY (PROBE SCRISE) ROUTES
+  // ============================================================================
+
+  // GET /api/essays - List all essay prompts
+  app.get("/api/essays", async (req, res) => {
+    try {
+      const { subject, examDay, limit } = req.query;
+
+      let query = db.select().from(essayPrompts);
+
+      // Note: where clauses would need proper filtering - simplified for now
+      const prompts = await query.limit(parseInt(limit as string) || 50);
+
+      res.json({
+        prompts: prompts.map(p => ({
+          id: p.id,
+          subject: p.subject,
+          examDay: p.examDay,
+          title: p.title,
+          difficulty: p.difficulty,
+          estimatedTime: p.estimatedTime,
+          sourceType: p.sourceType,
+          createdAt: p.createdAt,
+        })),
+        count: prompts.length,
+      });
+    } catch (error) {
+      console.error("[ESSAY] List prompts error:", error);
+      res.status(500).json({ error: "Failed to get essay prompts" });
+    }
+  });
+
+  // GET /api/essays/:id - Get single essay prompt with full content
+  app.get("/api/essays/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const [prompt] = await db
+        .select()
+        .from(essayPrompts)
+        .where(eq(essayPrompts.id, id))
+        .limit(1);
+
+      if (!prompt) {
+        return res.status(404).json({ error: "Essay prompt not found" });
+      }
+
+      res.json({
+        id: prompt.id,
+        subject: prompt.subject,
+        examDay: prompt.examDay,
+        title: prompt.title,
+        prompt: prompt.prompt,
+        gradingRubric: prompt.gradingRubric,
+        sampleAnswer: prompt.sampleAnswer,
+        commonMistakes: prompt.commonMistakes,
+        difficulty: prompt.difficulty,
+        estimatedTime: prompt.estimatedTime,
+        sourceType: prompt.sourceType,
+      });
+    } catch (error) {
+      console.error("[ESSAY] Get prompt error:", error);
+      res.status(500).json({ error: "Failed to get essay prompt" });
+    }
+  });
+
+  // POST /api/essays/:id/submit - Submit essay answer
+  app.post("/api/essays/:id/submit", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { userAnswer, selfEvaluation, selfScore, timeSpent } = req.body;
+      const userId = await getDefaultUserId();
+
+      if (!userAnswer) {
+        return res.status(400).json({ error: "userAnswer is required" });
+      }
+
+      const [submission] = await db
+        .insert(userEssaySubmissions)
+        .values({
+          userId,
+          essayPromptId: id,
+          userAnswer,
+          selfEvaluation,
+          selfScore,
+          timeSpent,
+        })
+        .returning();
+
+      console.log(`[ESSAY] Submission created: ${submission.id}`);
+
+      res.json({
+        success: true,
+        submissionId: submission.id,
+        selfScore,
+      });
+    } catch (error) {
+      console.error("[ESSAY] Submit error:", error);
+      res.status(500).json({ error: "Failed to submit essay" });
+    }
+  });
+
+  // GET /api/essays/submissions/history - Get user's essay submission history
+  app.get("/api/essays/submissions/history", async (req, res) => {
+    try {
+      const userId = await getDefaultUserId();
+
+      const submissions = await db
+        .select({
+          submission: userEssaySubmissions,
+          prompt: essayPrompts,
+        })
+        .from(userEssaySubmissions)
+        .innerJoin(essayPrompts, eq(userEssaySubmissions.essayPromptId, essayPrompts.id))
+        .where(eq(userEssaySubmissions.userId, userId))
+        .orderBy(userEssaySubmissions.submittedAt)
+        .limit(50);
+
+      res.json({
+        submissions: submissions.map(({ submission, prompt }) => ({
+          id: submission.id,
+          essayTitle: prompt.title,
+          subject: prompt.subject,
+          selfScore: submission.selfScore,
+          aiScore: submission.aiScore,
+          timeSpent: submission.timeSpent,
+          submittedAt: submission.submittedAt,
+        })),
+        count: submissions.length,
+      });
+    } catch (error) {
+      console.error("[ESSAY] History error:", error);
+      res.status(500).json({ error: "Failed to get submission history" });
+    }
+  });
+
+  // POST /api/essays/submissions/:submissionId/ai-grade - Get AI grading for a submission
+  app.post("/api/essays/submissions/:submissionId/ai-grade", async (req, res) => {
+    try {
+      const { submissionId } = req.params;
+
+      // Get submission with essay prompt
+      const [submission] = await db
+        .select({
+          submission: userEssaySubmissions,
+          prompt: essayPrompts,
+        })
+        .from(userEssaySubmissions)
+        .innerJoin(essayPrompts, eq(userEssaySubmissions.essayPromptId, essayPrompts.id))
+        .where(eq(userEssaySubmissions.id, submissionId))
+        .limit(1);
+
+      if (!submission) {
+        return res.status(404).json({ error: "Submission not found" });
+      }
+
+      // Check if already graded
+      if (submission.submission.aiScore !== null) {
+        return res.json({
+          success: true,
+          cached: true,
+          aiScore: submission.submission.aiScore,
+          aiFeedback: submission.submission.aiFeedback,
+          aiRubricAnalysis: submission.submission.aiRubricAnalysis,
+        });
+      }
+
+      console.log(`[AI GRADING] Starting AI grading for submission ${submissionId}`);
+
+      // Call Gemini for grading
+      const { gradeCaseStudy } = await import("./gemini");
+      const gradeResult = await gradeCaseStudy({
+        caseScenario: submission.prompt.prompt,
+        sampleAnswer: submission.prompt.sampleAnswer || "Răspuns model nu este disponibil. Evaluează pe baza criteriilor genrale pentru INM.",
+        userAnswer: submission.submission.userAnswer,
+      });
+
+      // Convert grade string to number (e.g., "8.50" -> 85)
+      const aiScoreNumeric = Math.round(parseFloat(gradeResult.grade) * 10);
+
+      // Update submission with AI grading
+      await db
+        .update(userEssaySubmissions)
+        .set({
+          aiScore: aiScoreNumeric,
+          aiFeedback: gradeResult.feedback,
+          aiRubricAnalysis: gradeResult.evaluation,
+        })
+        .where(eq(userEssaySubmissions.id, submissionId));
+
+      console.log(`[AI GRADING] Completed: ${gradeResult.grade} for submission ${submissionId}`);
+
+      res.json({
+        success: true,
+        cached: false,
+        aiScore: aiScoreNumeric,
+        aiGrade: gradeResult.grade,
+        aiFeedback: gradeResult.feedback,
+        evaluation: gradeResult.evaluation,
+      });
+    } catch (error) {
+      console.error("[AI GRADING] Error:", error);
+      res.status(500).json({ error: "Failed to get AI grading" });
+    }
+  });
+
+  // ============================================================================
+  // EXISTING ROUTES
+  // ============================================================================
+
   // Get question topics
   app.get("/api/question-topics", async (req, res) => {
     try {
@@ -129,6 +607,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
             accuracy: answerData.isCorrect ? 100 : 0,
             lastPracticed: new Date()
           });
+        }
+
+        // SRS Integration: Create card for wrong answers
+        if (!answerData.isCorrect) {
+          try {
+            const { createSrsCard } = await import("./srs");
+            const userId = await getDefaultUserId();
+            await createSrsCard(userId, answerData.questionId);
+            console.log(`[SRS] Created review card for question ${answerData.questionId}`);
+          } catch (srsError) {
+            console.error("[SRS] Failed to create card:", srsError);
+            // Don't fail the request if SRS fails
+          }
         }
       }
 

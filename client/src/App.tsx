@@ -26,6 +26,9 @@ import LegalArticlesImport from "@/pages/legal-articles-import";
 import SolveCase from "@/pages/solve-case";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
+import Login from "@/pages/login";
+import SrsReview from "@/pages/srs-review";
+import Essay from "@/pages/essay";
 
 
 import Syllabus from "@/pages/syllabus";
@@ -33,14 +36,17 @@ import Syllabus from "@/pages/syllabus";
 function Router() {
   return (
     <Switch>
+      <Route path="/login" component={Login} />
       <Route path="/" component={Dashboard} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/syllabus" component={Syllabus} />
       <Route path="/quiz/:subject?" component={Quiz} />
       <Route path="/simulation" component={Simulation} />
       <Route path="/library" component={Library} />
+      <Route path="/essay" component={Essay} />
       <Route path="/performance" component={Performance} />
       <Route path="/weak-points" component={WeakPoints} />
+      <Route path="/srs-review" component={SrsReview} />
       <Route path="/wrong-answers" component={WrongAnswers} />
       <Route path="/documents" component={Documents} />
       <Route path="/exam-analysis" component={ExamAnalysis} />

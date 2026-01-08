@@ -1,20 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { 
-  Vote, 
-  CheckCircle, 
-  Clock, 
-  TrendingDown, 
-  Timer, 
-  BookOpen, 
-  AlertTriangle, 
-  Scale, 
-  FileText, 
-  Shield, 
+import {
+  Vote,
+  CheckCircle,
+  Clock,
+  TrendingDown,
+  Timer,
+  BookOpen,
+  AlertTriangle,
+  Scale,
+  FileText,
+  Shield,
   Gavel,
   TrendingUp,
   Calendar,
-  ArrowBigLeft
+  ArrowBigLeft,
+  Brain
 } from "lucide-react";
 import StatsCards from "@/components/dashboard/stats-cards";
 import ProgressChart from "@/components/dashboard/progress-chart";
@@ -33,7 +34,7 @@ export default function Dashboard() {
     const totalQuestions = progress.reduce((sum, p) => sum + p.totalQuestions, 0);
     const correctAnswers = progress.reduce((sum, p) => sum + p.correctAnswers, 0);
     const accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-    
+
     const completedSessions = sessions.filter(s => s.completedAt).length;
     const totalTime = sessions.reduce((sum, s) => sum + (s.timeSpent || 0), 0);
     const weeklyTime = Math.round(totalTime / 3600); // Convert to hours
@@ -60,7 +61,7 @@ export default function Dashboard() {
     const totalQuestions = subjectProgress.reduce((sum, p) => sum + p.totalQuestions, 0);
     const correctAnswers = subjectProgress.reduce((sum, p) => sum + p.correctAnswers, 0);
     const accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-    
+
     const lastSession = subjectProgress
       .filter(p => p.lastPracticed)
       .sort((a, b) => new Date(b.lastPracticed!).getTime() - new Date(a.lastPracticed!).getTime())[0];
@@ -85,7 +86,7 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Cards */}
-      <StatsCards 
+      <StatsCards
         totalTests={stats.totalTests}
         accuracy={stats.accuracy}
         studyTime={stats.studyTime}
@@ -104,12 +105,12 @@ export default function Dashboard() {
               <option>Tot timpul</option>
             </select>
           </div>
-          
+
           <div className="space-y-6">
             {subjects.map((subject) => {
               const Icon = subject.icon;
               const subjectStats = getSubjectStats(subject.id);
-              
+
               return (
                 <div key={subject.id}>
                   <div className="flex items-center justify-between mb-2">
@@ -121,18 +122,16 @@ export default function Dashboard() {
                       <span className="text-sm text-muted-foreground">
                         {subjectStats.totalQuestions} întrebări
                       </span>
-                      <span className={`text-sm font-semibold ${
-                        subjectStats.accuracy >= 70 ? 'text-success' : 'text-primary'
-                      }`}>
+                      <span className={`text-sm font-semibold ${subjectStats.accuracy >= 70 ? 'text-success' : 'text-primary'
+                        }`}>
                         {subjectStats.accuracy}%
                       </span>
                     </div>
                   </div>
                   <div className="h-2.5 bg-secondary rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full rounded-full transition-all duration-300 ${
-                        subjectStats.accuracy >= 70 ? 'bg-success' : 'bg-primary'
-                      }`}
+                    <div
+                      className={`h-full rounded-full transition-all duration-300 ${subjectStats.accuracy >= 70 ? 'bg-success' : 'bg-primary'
+                        }`}
                       style={{ width: `${subjectStats.accuracy}%` }}
                     />
                   </div>
@@ -147,7 +146,7 @@ export default function Dashboard() {
                     </div>
                     <span className="text-xs text-muted-foreground">
                       Ultima sesiune: {
-                        subjectStats.lastSession 
+                        subjectStats.lastSession
                           ? new Date(subjectStats.lastSession).toLocaleDateString('ro-RO')
                           : 'Niciodată'
                       }
@@ -158,31 +157,31 @@ export default function Dashboard() {
             })}
           </div>
         </div>
-        
+
         {/* Overall Score Circle */}
         <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
           <h3 className="text-xl font-semibold mb-6">Scor General</h3>
           <div className="flex flex-col items-center justify-center py-8">
             <div className="relative w-48 h-48">
               <svg className="w-full h-full" viewBox="0 0 100 100">
-                <circle 
-                  cx="50" 
-                  cy="50" 
-                  r="45" 
-                  fill="none" 
-                  stroke="hsl(var(--secondary))" 
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="45"
+                  fill="none"
+                  stroke="hsl(var(--secondary))"
                   strokeWidth="8"
                 />
-                <circle 
-                  cx="50" 
-                  cy="50" 
-                  r="45" 
-                  fill="none" 
-                  stroke="hsl(var(--primary))" 
-                  strokeWidth="8" 
-                  strokeDasharray="282.7" 
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="45"
+                  fill="none"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth="8"
+                  strokeDasharray="282.7"
                   strokeDashoffset={282.7 - (282.7 * stats.accuracy / 100)}
-                  className="progress-ring" 
+                  className="progress-ring"
                   strokeLinecap="round"
                 />
               </svg>
@@ -207,7 +206,7 @@ export default function Dashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <div className="bg-gradient-to-br from-primary to-accent rounded-lg p-6 text-primary-foreground shadow-lg">
           <div className="flex items-center gap-3 mb-4">
             <Timer className="h-8 w-8" />
@@ -222,7 +221,7 @@ export default function Dashboard() {
             </button>
           </Link>
         </div>
-        
+
         <div className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center gap-3 mb-4">
             <BookOpen className="h-8 w-8 text-success" />
@@ -237,7 +236,7 @@ export default function Dashboard() {
             </button>
           </Link>
         </div>
-        
+
         <div className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center gap-3 mb-4">
             <AlertTriangle className="h-8 w-8 text-destructive" />
@@ -249,6 +248,21 @@ export default function Dashboard() {
           <Link href="/weak-points">
             <button className="bg-secondary text-foreground px-6 py-2.5 rounded-lg font-medium hover:bg-secondary/80 transition-colors w-full" data-testid="analyze-weak-points-button">
               Analizează Puncte Slabe
+            </button>
+          </Link>
+        </div>
+
+        <div className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3 mb-4">
+            <Brain className="h-8 w-8 text-purple-500" />
+            <h3 className="text-xl font-semibold">Revizuire SRS</h3>
+          </div>
+          <p className="mb-6 text-muted-foreground">
+            Consolidează cunoștințele cu repetarea spațiată a întrebărilor dificile
+          </p>
+          <Link href="/srs-review">
+            <button className="bg-purple-500 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-purple-600 transition-colors w-full" data-testid="start-srs-review-button">
+              Începe Revizuirea
             </button>
           </Link>
         </div>
@@ -265,7 +279,7 @@ export default function Dashboard() {
               </button>
             </Link>
           </div>
-          
+
           <div className="space-y-4">
             {weakPoints.map((point) => (
               <div key={`${point.subject}-${point.chapter}`} className="bg-destructive/5 border border-destructive/20 rounded-lg p-4">
