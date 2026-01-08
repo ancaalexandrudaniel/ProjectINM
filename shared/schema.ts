@@ -216,6 +216,17 @@ export const legalArticleChunks = pgTable("legal_article_chunks", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const userCaseStudySubmissions = pgTable("user_case_study_submissions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  caseStudyId: varchar("case_study_id").references(() => caseStudies.id).notNull(),
+  userAnswer: text("user_answer").notNull(),
+  aiGrade: text("ai_grade"), // stored as string "8.50"
+  aiFeedback: text("ai_feedback"),
+  submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+  timeSpent: integer("time_spent"), // seconds
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -302,6 +313,11 @@ export const insertLegalArticleChunkSchema = createInsertSchema(legalArticleChun
   createdAt: true,
 });
 
+export const insertUserCaseStudySubmissionSchema = createInsertSchema(userCaseStudySubmissions).omit({
+  id: true,
+  submittedAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -353,3 +369,6 @@ export type InsertLegalArticleBatch = z.infer<typeof insertLegalArticleBatchSche
 
 export type LegalArticleChunk = typeof legalArticleChunks.$inferSelect;
 export type InsertLegalArticleChunk = z.infer<typeof insertLegalArticleChunkSchema>;
+
+export type UserCaseStudySubmission = typeof userCaseStudySubmissions.$inferSelect;
+export type InsertUserCaseStudySubmission = z.infer<typeof insertUserCaseStudySubmissionSchema>;

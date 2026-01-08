@@ -375,14 +375,14 @@ Răspunde în format JSON:
 
   const rawJson = result.text;
   console.log("[analyzeExamPatterns] Gemini response:", rawJson);
-  
+
   if (!rawJson) {
     throw new Error("Gemini returned empty response");
   }
-  
+
   // Try to extract JSON from response
   let jsonText = rawJson.trim();
-  
+
   // Try to find JSON code block (```json ... ``` or ``` ... ```)
   const codeBlockMatch = jsonText.match(/```(?:json)?\s*\n([\s\S]*?)\n```/);
   if (codeBlockMatch) {
@@ -396,14 +396,14 @@ Răspunde în format JSON:
     }
     jsonText = lines.join('\n').trim();
   }
-  
+
   // Try to parse the cleaned JSON
   try {
     return JSON.parse(jsonText);
   } catch (parseError) {
     console.error("[analyzeExamPatterns] JSON parse failed:", parseError);
     console.error("[analyzeExamPatterns] Attempted to parse:", jsonText.substring(0, 500));
-    
+
     // Final fallback
     return {
       topChapters: [],
@@ -418,15 +418,15 @@ Răspunde în format JSON:
  */
 export async function extractTextFromPDF(pdfPath: string): Promise<string> {
   const dataBuffer = fs.readFileSync(pdfPath);
-  
+
   // Check if it's a valid PDF (starts with %PDF-)
   const isPDF = dataBuffer.toString('utf8', 0, 5) === '%PDF-';
-  
+
   if (!isPDF) {
     // Fallback for testing: if not PDF, treat as plain text
     return dataBuffer.toString('utf8');
   }
-  
+
   // Try to parse PDF, fallback to plain text if parsing fails
   try {
     const pdfParse = (await import("pdf-parse")).default;
@@ -453,7 +453,7 @@ export async function analyzeLegalDocument(params: {
   const systemPrompt = `Ești un asistent juridic expert care analizează documente pentru pregătirea examenului INM.`;
 
   let userPrompt = "";
-  
+
   if (params.documentType === "tematica") {
     userPrompt = `Analizează această tematică de examen INM și extrage:
 
@@ -504,11 +504,11 @@ Răspunde în format JSON:
 
   const rawJson = result.text;
   console.log("[analyzeLegalDocument] Gemini response:", rawJson);
-  
+
   if (!rawJson) {
     throw new Error("Gemini returned empty response");
   }
-  
+
   // Check if response looks like JSON
   const trimmed = rawJson.trim();
   if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
@@ -518,7 +518,7 @@ Răspunde în format JSON:
       console.error("[analyzeLegalDocument] JSON parse failed for valid-looking JSON:", trimmed);
     }
   }
-  
+
   // Fallback for non-JSON responses
   console.warn("[analyzeLegalDocument] Gemini returned non-JSON response, using fallback summary");
   return {
@@ -547,7 +547,7 @@ IMPORTANT:
 ${params.context ? `\n\nCONTEXT din documente:\n${params.context}` : ""}`;
 
   const contents = [];
-  
+
   if (params.conversationHistory && params.conversationHistory.length > 0) {
     for (const msg of params.conversationHistory) {
       contents.push({
@@ -601,7 +601,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
  */
 export async function batchGenerateEmbeddings(texts: string[]): Promise<number[][]> {
   const embeddings: number[][] = [];
-  
+
   // Process in batches to avoid rate limits
   const batchSize = 10;
   for (let i = 0; i < texts.length; i += batchSize) {
@@ -610,7 +610,7 @@ export async function batchGenerateEmbeddings(texts: string[]): Promise<number[]
     const batchResults = await Promise.all(batchPromises);
     embeddings.push(...batchResults);
   }
-  
+
   return embeddings;
 }
 
@@ -661,4 +661,93 @@ export function findTopSimilarChunks(
   return similarities
     .sort((a, b) => b.similarity - a.similarity)
     .slice(0, topK);
+}
+
+/**
+ * Grades a written case study solution acting as an INM examiner
+ */
+export async function gradeCaseStudy(params: {
+  caseScenario: string;
+  sampleAnswer: string;
+  userAnswer: string;
+}): Promise<{
+  grade: string; // "8.50"
+  feedback: string;
+  evaluation: {
+    strengths: string[];
+    weaknesses: string[];
+    missingPoints: string[];
+  };
+}> {
+  const systemPrompt = `Ești un examinator corector la Institutul Național al Magistraturii (INM).
+Evaluezi lucrări scrise (rezolvare de spețe) la proba scrisă.
+
+Rolul tău:
+1. Să notezi lucrarea obiectiv, de la 1.00 la 10.00.
+2. Să identifici ce a atins candidatul din barem și ce a omis.
+3. Să oferi un feedback constructiv dar exigent, specific examenului INM.
+
+Criterii de notare:
+- Identificarea corectă a instituțiilor juridice (30%)
+- Aplicarea corectă a legii la situația de fapt (40%)
+- Raționament logic și argumentare juridică (20%)
+- Limbaj juridic și structură (10%)`;
+
+  const userPrompt = `Te rog să notezi următoarea lucrare:
+
+=== SPEȚA ===
+${params.caseScenario}
+
+=== BAREM / RĂSPUNS MODEL ===
+${params.sampleAnswer}
+
+=== RĂSPUNS CANDIDAT ===
+${params.userAnswer}
+
+Răspunde STRICT în format JSON:
+{
+  "grade": "8.50" (nota cu 2 zecimale, între 1.00 și 10.00),
+  "feedback": "paragraf de concluzie generală (max 100 cuvinte)",
+  "evaluation": {
+    "strengths": ["punct tare 1", "punct tare 2"],
+    "weaknesses": ["punct slab 1", "punct slab 2"],
+    "missingPoints": ["element din barem omis 1", "element omis 2"]
+  }
+}`;
+
+  const result = await ai.models.generateContent({
+    model: "gemini-2.0-flash",
+    systemInstruction: systemPrompt,
+    generationConfig: {
+      responseMimeType: "application/json"
+    },
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: userPrompt }]
+      }
+    ]
+  });
+
+  const rawJson = result.text;
+
+  if (!rawJson) {
+    throw new Error("Gemini returned empty response for grading");
+  }
+
+  try {
+    const jsonText = rawJson.replace(/```json|```/g, "").trim();
+    return JSON.parse(jsonText);
+  } catch (e) {
+    console.error("Failed to parse grading JSON", rawJson);
+    return {
+      grade: "5.00",
+      feedback: "Eroare la procesarea notei. Vă rugăm retrimiteți.",
+      evaluation: {
+        strengths: [],
+        weaknesses: [],
+        missingPoints: []
+      }
+    };
+  }
 }

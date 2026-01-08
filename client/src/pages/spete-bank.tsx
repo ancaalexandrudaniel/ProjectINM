@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { 
-  ArrowLeft, 
+import {
+  ArrowLeft,
   Search,
   Filter,
   FileText,
@@ -47,7 +47,7 @@ const difficultyLabels: Record<string, string> = {
 export default function SpeteBank() {
   const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
   const initialExamDay = searchParams.get('examDay') || '';
-  
+
   const [subject, setSubject] = useState<string>('');
   const [examDay, setExamDay] = useState<string>(initialExamDay);
   const [difficulty, setDifficulty] = useState<string>('');
@@ -199,7 +199,7 @@ export default function SpeteBank() {
             Rezultate ({caseStudies.length} spețe)
           </h2>
         </div>
-        
+
         {isLoading ? (
           <p className="text-muted-foreground">Se caută...</p>
         ) : caseStudies.length === 0 ? (
@@ -228,10 +228,10 @@ export default function SpeteBank() {
                               {examDayLabels[cs.examDay]}
                             </Badge>
                           )}
-                          <Badge 
+                          <Badge
                             variant={
                               cs.difficulty === 'easy' ? 'default' :
-                              cs.difficulty === 'hard' ? 'destructive' : 'secondary'
+                                cs.difficulty === 'hard' ? 'destructive' : 'secondary'
                             }
                           >
                             {difficultyLabels[cs.difficulty] || cs.difficulty}
@@ -261,6 +261,12 @@ export default function SpeteBank() {
                           <ChevronDown className="h-4 w-4" />
                         )}
                       </Button>
+                      <Link href={`/solve-case/${cs.id}`}>
+                        <Button size="sm" className="ml-2 gap-1 bg-primary/90 hover:bg-primary">
+                          <PenTool className="h-3 w-3" />
+                          Rezolvă
+                        </Button>
+                      </Link>
                     </div>
 
                     {expandedCaseStudy === cs.id && (
