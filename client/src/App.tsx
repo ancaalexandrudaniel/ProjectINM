@@ -27,11 +27,15 @@ import SolveCase from "@/pages/solve-case";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 
+
+import Syllabus from "@/pages/syllabus";
+
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/syllabus" component={Syllabus} />
       <Route path="/quiz/:subject?" component={Quiz} />
       <Route path="/simulation" component={Simulation} />
       <Route path="/library" component={Library} />

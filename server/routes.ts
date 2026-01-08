@@ -1,10 +1,11 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertQuizSessionSchema, insertUserAnswerSchema } from "@shared/schema";
+import { insertQuizSessionSchema, insertUserAnswerSchema, questionTopics } from "@shared/schema";
 import { z } from "zod";
 import { db } from "./db";
 import { users } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 // Helper to get first user ID
 async function getDefaultUserId(): Promise<string> {
@@ -17,6 +18,28 @@ async function getDefaultUserId(): Promise<string> {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get all questions
+  // Get question topics
+  app.get("/api/question-topics", async (req, res) => {
+    try {
+      const topics = await db.select().from(questionTopics);
+      res.json(topics);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Failed to fetch question topics" });
+    }
+  });
+
+  // Get question topics by subject
+  app.get("/api/question-topics/:subject", async (req, res) => {
+    try {
+      const topics = await db.select().from(questionTopics).where(eq(questionTopics.subject, req.params.subject));
+      res.json(topics);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Failed to fetch question topics by subject" });
+    }
+  });
+
   app.get("/api/questions", async (req, res) => {
     try {
       const questions = await storage.getAllQuestions();

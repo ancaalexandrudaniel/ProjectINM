@@ -1,0 +1,1929 @@
+[
+  {
+    "id": "disc-0",
+    "title": "DREPT CIVIL",
+    "children": [
+      {
+        "id": "disc-0-I",
+        "title": "I. Constituția României, republicată în Monitorul Oficial nr. 767/2003:",
+        "children": [
+          {
+            "id": "sub-5coxt",
+            "title": "- art. 30 - libertatea de exprimare;"
+          },
+          {
+            "id": "sub-70zrn",
+            "title": "- art. 44 - dreptul de proprietate privată;"
+          },
+          {
+            "id": "sub-g4ckz",
+            "title": "- art. 46 - dreptul la moștenire; art. 48 - familia;"
+          },
+          {
+            "id": "sub-cnwz1",
+            "title": "- art. 136 - proprietatea."
+          }
+        ]
+      },
+      {
+        "id": "disc-0-II",
+        "title": "II. Legea nr. 287/2009 privind Codul civil, republicată, cu modificările și completările",
+        "children": [
+          {
+            "id": "cont-kh947",
+            "title": "ulterioare"
+          },
+          {
+            "id": "disc-0-II-1",
+            "title": "1. Titlul preliminar. Despre legea civilă:",
+            "children": [
+              {
+                "id": "sub-fme3z",
+                "title": "- dispoziții generale;"
+              },
+              {
+                "id": "sub-j29g0",
+                "title": "- aplicarea legii civile;"
+              },
+              {
+                "id": "sub-f8poz",
+                "title": "- interpretarea și efectele legii civile;"
+              },
+              {
+                "id": "sub-c7rrz",
+                "title": "- publicitatea drepturilor, a actelor și a faptelor juridice."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2",
+            "title": "2. Despre persoane:",
+            "children": [
+              {
+                "id": "sub-cyvpj",
+                "title": "- dispoziții generale;"
+              },
+              {
+                "id": "sub-pyuaf",
+                "title": "- persoana fizică; capacitatea civilă a persoanei fizice (capacitatea de folosință, capacitatea de exercițiu); identificarea persoanei fizice (numele, domiciliul și reședința);"
+              },
+              {
+                "id": "sub-q0qxq",
+                "title": "- apărarea drepturilor nepatrimoniale."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3",
+            "title": "3. Căsătoria:",
+            "children": [
+              {
+                "id": "sub-mg70h",
+                "title": "- regimul comunității legale;"
+              },
+              {
+                "id": "sub-d0w73",
+                "title": "- desfacerea căsătoriei (cazurile de divorț; efectele divorțului)."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4",
+            "title": "4. Rudenia:",
+            "children": [
+              {
+                "id": "sub-pq7xd",
+                "title": "- dispoziții generale;"
+              },
+              {
+                "id": "sub-zkwzr",
+                "title": "- filiația (stabilirea filiației; situația legală a copilului)."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5",
+            "title": "5. Autoritatea părintească:",
+            "children": [
+              {
+                "id": "sub-fibex",
+                "title": "- dispoziții generale;"
+              },
+              {
+                "id": "sub-kk8uu",
+                "title": "- drepturile și îndatoririle părintești;"
+              },
+              {
+                "id": "sub-8zv6y",
+                "title": "- exercitarea autorității părintești;"
+              },
+              {
+                "id": "sub-q3fs7",
+                "title": "- decăderea din exercițiul drepturilor părintești."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6",
+            "title": "6. Obligația de întreținere:",
+            "children": [
+              {
+                "id": "sub-syfgl",
+                "title": "- dispoziții generale; Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34"
+              },
+              {
+                "id": "sub-1sxpm",
+                "title": "- persoanele între care există obligația de întreținere și ordinea în care aceasta se datorează;"
+              },
+              {
+                "id": "sub-n7sxl",
+                "title": "- condițiile obligației de întreținere;"
+              },
+              {
+                "id": "sub-8uk6y",
+                "title": "- stabilirea și executarea obligației de întreținere."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7",
+            "title": "7. Bunurile și drepturile reale în general:",
+            "children": [
+              {
+                "id": "sub-9t5r7",
+                "title": "- despre bunuri în general (despre distincția bunurilor, produsele bunurilor);"
+              },
+              {
+                "id": "sub-mcgzw",
+                "title": "- drepturile reale în general."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8",
+            "title": "8. Proprietatea privată:",
+            "children": [
+              {
+                "id": "sub-ddgrv",
+                "title": "- dispoziții generale (conținutul, întinderea și stingerea dreptului de proprietate privată; apărarea dreptului de proprietate privată);"
+              },
+              {
+                "id": "sub-vo99r",
+                "title": "- accesiunea (dispoziții generale; accesiunea imobiliară artificială);"
+              },
+              {
+                "id": "sub-e8yay",
+                "title": "- limitele juridice ale dreptului de proprietate privată (limite legale; limite convenționale; limite judiciare);"
+              },
+              {
+                "id": "sub-ncxtn",
+                "title": "- proprietatea comună (dispoziții generale; coproprietatea obișnuită; coproprietatea forțată, proprietatea comună în devălmășie; partajul);"
+              },
+              {
+                "id": "sub-ju5v6",
+                "title": "- proprietatea periodică."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9",
+            "title": "9. Dezmembrămintele dreptului de proprietate privată:",
+            "children": [
+              {
+                "id": "sub-2p477",
+                "title": "- superficia;"
+              },
+              {
+                "id": "sub-mw89u",
+                "title": "- uzufructul (dispoziții generale; drepturile și obligațiile uzufructuarului și ale nudului proprietar; stingerea uzufructului);"
+              },
+              {
+                "id": "sub-k2hxc",
+                "title": "- uzul și abitația;"
+              },
+              {
+                "id": "sub-vk3ht",
+                "title": "- servituțile (dispoziții generale; drepturile și obligațiile proprietarilor; stingerea servituților)."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10",
+            "title": "10. Proprietatea publică:",
+            "children": [
+              {
+                "id": "sub-3q4gj",
+                "title": "- dispoziții generale;"
+              },
+              {
+                "id": "sub-cwetd",
+                "title": "- drepturile reale corespunzătoare proprietății publice (dispoziții generale; dreptul de administrare; dreptul de concesiune; dreptul de folosință cu titlu gratuit)."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11",
+            "title": "11. Cartea funciară:",
+            "children": [
+              {
+                "id": "sub-ygh16",
+                "title": "- dispoziții generale;"
+              },
+              {
+                "id": "sub-sipv9",
+                "title": "- înscrierea drepturilor tabulare;"
+              },
+              {
+                "id": "sub-umt0s",
+                "title": "- notarea unor drepturi, fapte și raporturi juridice;"
+              },
+              {
+                "id": "sub-vq2es",
+                "title": "- rectificarea înscrierilor de carte funciară."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12",
+            "title": "12. Posesia:",
+            "children": [
+              {
+                "id": "sub-osars",
+                "title": "- dispoziții generale;"
+              },
+              {
+                "id": "sub-0bjiq",
+                "title": "- viciile posesiei;"
+              },
+              {
+                "id": "sub-1fpvq",
+                "title": "- efectele posesiei (dispoziții generale; dobândirea proprietății mobiliare prin posesie de bună-credință; ocupațiunea; dobândirea fructelor prin posesie de bună-credință);"
+              },
+              {
+                "id": "sub-yr9r0",
+                "title": "- acțiunile posesorii."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12-13",
+            "title": "13. Dispoziții referitoare la moștenire în general:",
+            "children": [
+              {
+                "id": "sub-ing05",
+                "title": "- dispoziții generale;"
+              },
+              {
+                "id": "sub-vyouw",
+                "title": "- condițiile generale ale dreptului de a moșteni. Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34"
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12-13-14",
+            "title": "14. Moștenirea legală:",
+            "children": [
+              {
+                "id": "sub-ek88o",
+                "title": "- dispoziții generale;"
+              },
+              {
+                "id": "sub-97x0i",
+                "title": "- reprezentarea succesorală;"
+              },
+              {
+                "id": "sub-0rhot",
+                "title": "- moștenitorii legali (soțul supraviețuitor; descendenții defunctului; ascendenții privilegiați și colateralii privilegiați; ascendenții ordinari; colateralii ordinari)."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15",
+            "title": "15. Liberalitățile:",
+            "children": [
+              {
+                "id": "sub-8wefu",
+                "title": "- dispoziții comune (dispoziții preliminare; capacitatea în materie de liberalități; substituțiile fideicomisare; liberalitățile reziduale; revizuirea condițiilor și a sarcinilor; dispoziții speciale);"
+              },
+              {
+                "id": "sub-i2f1a",
+                "title": "- donația (încheierea contractului; efectele donației; revocarea donației; donațiile făcute viitorilor soți în vederea căsătoriei și donațiile între soți)."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16",
+            "title": "16. Transmisiunea și partajul moștenirii:",
+            "children": [
+              {
+                "id": "sub-0jd4u",
+                "title": "- trasmisiunea moștenirii (dispozițiii generale; acceptarea moștenirii; renunțarea la moștenire; sezina; petiția de ereditate; certificatul de moștenitor);"
+              },
+              {
+                "id": "sub-ccjzz",
+                "title": "- partajul succesoral și raportul (dispoziții generale referitoare la partajul succesoral)."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17",
+            "title": "17. Izvoarele obligațiilor:",
+            "children": [
+              {
+                "id": "sub-vf7yu",
+                "title": "- contractul (dispoziții generale; diferite categorii de contracte; încheierea contractului; nulitatea contractului; interpretarea contractului; efectele contractului; reprezentarea; încetarea contractului);"
+              },
+              {
+                "id": "sub-xd4z7",
+                "title": "- actul juridic unilateral (dispoziții generale, actul unilateral ca izvor de obligații);"
+              },
+              {
+                "id": "sub-sb79z",
+                "title": "- răspunderea civilă (dispoziții generale; cauze exoneratoare de răspundere; răspunderea pentru fapta proprie; răspunderea pentru fapta altuia; răspunderea pentru prejudiciul cauzat de animale sau de lucruri; repararea prejudiciului în cazul răspunderii civile delictuale)."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18",
+            "title": "18. Modalitățile obligațiilor:",
+            "children": [
+              {
+                "id": "sub-90840",
+                "title": "- dispoziții generale;"
+              },
+              {
+                "id": "sub-5ac8k",
+                "title": "- condiția;"
+              },
+              {
+                "id": "sub-1sfen",
+                "title": "- termenul."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19",
+            "title": "19. Obligațiile complexe:",
+            "children": [
+              {
+                "id": "sub-twxcd",
+                "title": "- obligațiile divizibile și obligațiile indivizibile;"
+              },
+              {
+                "id": "sub-7u0d7",
+                "title": "- obligațiile solidare (obligațiile solidare între creditori; obligațiile solidare între debitori)."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20",
+            "title": "20. Executarea obligațiilor:",
+            "children": [
+              {
+                "id": "sub-cyu65",
+                "title": "- plata (dispoziții generale; subiectele plății; condițiile plății; dovada plății; imputația plății; punerea în întârziere a creditorului);"
+              },
+              {
+                "id": "sub-ghjx8",
+                "title": "- executarea silită a obligațiilor (dispoziții generale; punerea în întârziere a debitorului; executarea silită în natură; executarea prin echivalent; rezoluțiunea, rezilierea și reducerea prestațiilor; cauze justificate de neexecutare a obligațiilor contractuale);"
+              },
+              {
+                "id": "sub-rh6qz",
+                "title": "- mijloacele de protecție a drepturilor creditorului (măsurile conservatorii; acțiunea oblică; acțiunea revocatorie)."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20-21",
+            "title": "21. Transmisiunea și transformarea obligațiilor:",
+            "children": [
+              {
+                "id": "cont-eutbg",
+                "title": "Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34"
+              },
+              {
+                "id": "sub-vzmam",
+                "title": "- cesiunea de creanță (cesiunea de creanță în general; cesiunea unei creanțe constatate printr-un titlu nominativ, la ordin sau la purtător);"
+              },
+              {
+                "id": "sub-js4zc",
+                "title": "- subrogația;"
+              },
+              {
+                "id": "sub-kr4av",
+                "title": "- preluarea datoriei (dispoziții generale; preluarea datoriei prin contract încheiat cu debitorul);"
+              },
+              {
+                "id": "sub-trfq3",
+                "title": "- novația."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20-21-22",
+            "title": "22. Stingerea obligațiilor:",
+            "children": [
+              {
+                "id": "sub-jf9sp",
+                "title": "- dispoziții generale;"
+              },
+              {
+                "id": "sub-27xpp",
+                "title": "- compensația;"
+              },
+              {
+                "id": "sub-vqwd3",
+                "title": "- confuziunea;"
+              },
+              {
+                "id": "sub-zqmcp",
+                "title": "- remiterea de datorie;"
+              },
+              {
+                "id": "sub-qdajc",
+                "title": "- imposibilitatea fortuită de executare."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20-21-22-23",
+            "title": "23. Restituirea prestațiilor:",
+            "children": [
+              {
+                "id": "sub-ho5l4",
+                "title": "- dispoziții generale;"
+              },
+              {
+                "id": "sub-rw2g9",
+                "title": "- modalitățile de restituire;"
+              },
+              {
+                "id": "sub-jy7lv",
+                "title": "- efectele restituirii față de terți."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20-21-22-23-24",
+            "title": "24. Diferite contracte speciale:",
+            "children": [
+              {
+                "id": "sub-8ozcd",
+                "title": "- contractul de vânzare (dispoziții generale; vânzarea bunurilor imobile; vânzarea moștenirii; alte varietăți de vânzare);"
+              },
+              {
+                "id": "sub-vf0rq",
+                "title": "- contractul de locațiune (dispoziții generale; reguli particulare în materia închirierii locuințelor; reguli particulare în materia arendării);"
+              },
+              {
+                "id": "sub-trcag",
+                "title": "- contractul de mandat [dispoziții comune; mandatul cu reprezentare; mandatul fără reprezentare (dispoziții generale)];"
+              },
+              {
+                "id": "sub-er0ma",
+                "title": "- contractul de împrumut (dispoziții generale, împrumutul de folosință, împrumutul de consumație);"
+              },
+              {
+                "id": "sub-t8eof",
+                "title": "- contractul de întreținere."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20-21-22-23-24-25",
+            "title": "25. Prescripția extinctivă:",
+            "children": [
+              {
+                "id": "sub-fsidk",
+                "title": "- dispoziții generale;"
+              },
+              {
+                "id": "sub-lu9kc",
+                "title": "- termenul prescripției extinctive;"
+              },
+              {
+                "id": "sub-dg1f9",
+                "title": "- cursul prescripției extinctive (începutul prescripției extinctive; suspendarea prescripției extinctive; întreruperea prescripției extinctive);"
+              },
+              {
+                "id": "sub-me7ib",
+                "title": "- împlinirea prescripției."
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20-21-22-23-24-25-26",
+            "title": "26. Regimul general al termenelor de decădere",
+            "children": []
+          },
+          {
+            "id": "disc-0-II-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20-21-22-23-24-25-26-27",
+            "title": "27. Calculul termenelor",
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "disc-0-III",
+        "title": "III. Legea nr. 71/2011 pentru punerea în aplicare a Legii nr. 287/2009 privind Codul",
+        "children": [
+          {
+            "id": "cont-yor5z",
+            "title": "civil, cu modificările și completările ulterioare:"
+          },
+          {
+            "id": "sub-ez81l",
+            "title": "- Capitolul I - Dispoziții generale;"
+          },
+          {
+            "id": "sub-pmaay",
+            "title": "- Capitolul II - Dispoziții cu privire la titlul preliminar al Codului civil și cu privire la unele legi (Secțiunea 1);"
+          },
+          {
+            "id": "sub-n7a69",
+            "title": "- Capitolul IV - Dispoziții cu privire la cartea a II-a \"Despre familie\" a Codului civil și cu privire la unele legi (Secțiunea 1: art. 33 -36; art. 39-47 și art. 50 - 51); Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34"
+          },
+          {
+            "id": "sub-xnhl2",
+            "title": "- Capitolul V - Dispoziții cu privire la cartea a III-a \"Despre bunuri\" a Codului civil și cu privire la unele legi (Secțiunea 1: art. 55 - 81);"
+          },
+          {
+            "id": "sub-jdbn8",
+            "title": "- Capitolul VI - Dispoziții cu privire la cartea a IV-a \"Despre moștenire și liberalități\" a Codului civil și cu privire la unele legi (Secțiunea 1: art. 91 - 96);"
+          },
+          {
+            "id": "sub-3vcfz",
+            "title": "- Capitolul VII - Dispoziții cu privire la cartea a V-a \"Despre obligații\" a Codului civil și cu privire la unele legi (Secțiunea 1: art. 102 - 103, art. 105 - 109, art. 110 indice 1 - 125, art. 128 - 136, art. 142);"
+          },
+          {
+            "id": "sub-tvtm7",
+            "title": "- Capitolul VIII - Dispoziții cu privire la cartea a VI-a \"Despre prescripția extinctivă, decăderea și calculul termenelor\" a Codului civil (Secțiunea 1)."
+          }
+        ]
+      },
+      {
+        "id": "disc-0-IV",
+        "title": "IV. Legea nr. 7/1996 a cadastrului și publicității imobiliare, republicată, cu modificările",
+        "children": [
+          {
+            "id": "cont-60abj",
+            "title": "și completările ulterioare:"
+          },
+          {
+            "id": "sub-3wf6u",
+            "title": "- Titlul II: art. 21 - 37."
+          }
+        ]
+      },
+      {
+        "id": "disc-0-V",
+        "title": "V. Legea nr. 272/2004 privind protecția și promovarea drepturilor copilului,",
+        "children": [
+          {
+            "id": "cont-ag0hq",
+            "title": "republicată, cu modificările și completările ulterioare:"
+          },
+          {
+            "id": "sub-jrbc4",
+            "title": "- Capitolul 1 și Capitolul II (art. 1 - 53)."
+          }
+        ]
+      },
+      {
+        "id": "disc-0-VI",
+        "title": "VI. Jurisprudență:",
+        "children": [
+          {
+            "id": "sub-dvjgi",
+            "title": "- deciziile de admitere ale ├Änaltei Curți de Casație și Justiție pronunțate în recurs în interesul legii și în procedura pronunțării unei hotărâri prealabile pentru dezlegarea unor chestiuni de drept care se referă la obiectul tematicii, raportat la actele normative din bibliografie, publicate în Monitorul Oficial până la data anunțării examenului;"
+          },
+          {
+            "id": "sub-ge7x9",
+            "title": "- deciziile Curții Constituționale de admitere a excepțiilor de neconstituționalitate a unor dispoziții ale actelor normative din bibliografie, care se referă la obiectul tematicii, raportat la actele normative din bibliografie, publicate în Monitorul Oficial până la data anunțării examenului. NOTă: Prezenta tematică este organizată prin raportare la structura actelor normative ce intră în alcătuirea sa. Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34 BIBLIOGRAFIE pentru susținerea examenului de absolvire a Institutului Național al Magistraturii iulie-septembrie 2025"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "disc-0",
+    "title": "DREPT CIVIL",
+    "children": [
+      {
+        "id": "cont-rrnmz",
+        "title": "├Än vederea pregătirii pentru examen, candidații pot consulta lucrări de specialitate juridică relevante în raport de tematica stabilită. LEGISLA╚ÜIE ╚ÿI JURISPRUDEN╚Üă"
+      },
+      {
+        "id": "disc-0-I",
+        "title": "I. LEGISLA╚ÜIE:",
+        "children": [
+          {
+            "id": "disc-0-I-1",
+            "title": "1. Constituția României, republicată în Monitorul Oficial nr. 767/2003;",
+            "children": []
+          },
+          {
+            "id": "disc-0-I-1-2",
+            "title": "2. Legea nr. 287/2009 privind Codul civil, republicată, cu modificările și completările",
+            "children": [
+              {
+                "id": "cont-bqvba",
+                "title": "ulterioare;"
+              }
+            ]
+          },
+          {
+            "id": "disc-0-I-1-2-3",
+            "title": "3. Legea nr. 71/2011 pentru punerea în aplicare a Legii nr. 287/2009 privind Codul civil, cu",
+            "children": [
+              {
+                "id": "cont-aoaob",
+                "title": "modificările și completările ulterioare;"
+              }
+            ]
+          },
+          {
+            "id": "disc-0-I-1-2-3-4",
+            "title": "4. Legea nr. 7/1996 a cadastrului și publicității imobiliare, republicată, cu modificările și",
+            "children": [
+              {
+                "id": "cont-tttg6",
+                "title": "completările ulterioare;"
+              }
+            ]
+          },
+          {
+            "id": "disc-0-I-1-2-3-4-5",
+            "title": "5. Legea nr. 272/2004 privind protecția și promovarea drepturilor copilului, republicată, cu",
+            "children": [
+              {
+                "id": "cont-xmraa",
+                "title": "modificările și completările ulterioare."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "disc-0-II",
+        "title": "II. JURISPRUDEN╚Üă:",
+        "children": [
+          {
+            "id": "disc-0-II-1",
+            "title": "1. Deciziile de admitere ale ├Änaltei Curți de Casație și Justiție pronunțate în recurs în",
+            "children": [
+              {
+                "id": "cont-y0iva",
+                "title": "interesul legii și în procedura pronunțării unei hotărâri prealabile pentru dezlegarea unor chestiuni de drept care se referă la obiectul tematicii, raportat la actele normative din bibliografie, publicate în Monitorul Oficial până la data anunțării examenului;"
+              }
+            ]
+          },
+          {
+            "id": "disc-0-II-1-2",
+            "title": "2. Deciziile Curții Constituționale de admitere a excepțiilor de neconstituționalitate care se",
+            "children": [
+              {
+                "id": "cont-g5l8l",
+                "title": "referă la obiectul tematicii, raportat la actele normative din bibliografie, publicate în Monitorul Oficial până la data anunțării examenului. NOTă: Candidații pot deține, în timpul examenului:"
+              },
+              {
+                "id": "sub-kt1ib",
+                "title": "- legislația menționată în bibliografie, cu modificările și completările intrate în vigoare până la data anunțării examenului, în forma publicată în Monitorul Oficial al României;"
+              },
+              {
+                "id": "sub-k161f",
+                "title": "- jurisprudența menționată în bibliografie. NU este permisă deținerea, în timpul examenului, de către candidați a:"
+              },
+              {
+                "id": "sub-v064h",
+                "title": "- legislației și jurisprudenței menționate în bibliografie în formă comentată sau adnotată;"
+              },
+              {
+                "id": "sub-5s1hs",
+                "title": "- culegerilor de practică judiciară cuprinzând hotărâri judecătorești pronunțate în diverse spețe de către instanțele judecătorești;"
+              },
+              {
+                "id": "sub-t1kgl",
+                "title": "- oricăror altor lucrări de specialitate juridică. Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34 Este permis candidaților ca, în timpul examenului, să dețină legislația menționată în bibliografie în ediții (acte normative, inclusiv coduri, tipărite de o editură). Aceste ediții, permise a fi deținute în timpul examenului, pot conține:"
+              },
+              {
+                "id": "sub-mivgj",
+                "title": "- trimiteri, inclusiv prin redarea textelor legale, la legile de punere în aplicare a noilor coduri;"
+              },
+              {
+                "id": "sub-u61a8",
+                "title": "- deciziile obligatorii ale ├Änaltei Curți de Casație și Justiție și ale Curții Constituționale, precum și hotărârile C.E.D.O. și C.J.U.E.;"
+              },
+              {
+                "id": "sub-ymeis",
+                "title": "- în anexe și alte acte normative decât cele specificate în bibliografie. De asemenea, în cuprinsul legislației și jurisprudenței permise a fi deținute în timpul examenului, sunt permise exclusiv sublinierile, iar nu semnele de carte sau altele asemenea. Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34 TEMATICă pentru susținerea examenului de absolvire a Institutului Național al Magistraturii iulie-septembrie 2025"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "disc-1",
+    "title": "DREPT PROCESUAL CIVIL",
+    "children": [
+      {
+        "id": "disc-1-I",
+        "title": "I. Constituția României, republicată în Monitorul Oficial nr. 767/2003:",
+        "children": [
+          {
+            "id": "sub-8d7fi",
+            "title": "- art. 21 - accesul liber la justiție;"
+          },
+          {
+            "id": "sub-drv1j",
+            "title": "- art. 24 - dreptul la apărare;"
+          },
+          {
+            "id": "sub-abg6d",
+            "title": "- art. 127 - caracterul public al dezbaterilor;"
+          },
+          {
+            "id": "sub-75oza",
+            "title": "- art. 128 - folosirea limbii materne și a interpretului în justiție."
+          }
+        ]
+      },
+      {
+        "id": "disc-1-II",
+        "title": "II. Legea nr. 134/2010 privind Codul de procedură civilă, republicată, cu modificările",
+        "children": [
+          {
+            "id": "cont-r6kfy",
+            "title": "și completările ulterioare:"
+          },
+          {
+            "id": "disc-1-II-1",
+            "title": "1. Principiile fundamentale ale procesului civil",
+            "children": []
+          },
+          {
+            "id": "disc-1-II-1-2",
+            "title": "2. Aplicarea legii de procedură civilă:",
+            "children": [
+              {
+                "id": "sub-3n8tf",
+                "title": "- legea aplicabilă proceselor noi;"
+              },
+              {
+                "id": "sub-u1vjt",
+                "title": "- legea aplicabilă proceselor în curs;"
+              },
+              {
+                "id": "sub-lfqax",
+                "title": "- legea aplicabilă mijloacelor de probă;"
+              },
+              {
+                "id": "sub-pe12g",
+                "title": "- legea aplicabilă hotărârilor."
+              }
+            ]
+          },
+          {
+            "id": "disc-1-II-1-2-3",
+            "title": "3. Acțiunea civilă",
+            "children": []
+          },
+          {
+            "id": "disc-1-II-1-2-3-4",
+            "title": "4. Participanții la procesul civil:",
+            "children": [
+              {
+                "id": "sub-2renk",
+                "title": "- judecătorul. incompatibilitatea;"
+              },
+              {
+                "id": "sub-t5jsu",
+                "title": "- părțile (folosința și exercițiul drepturilor procedurale; persoanele care sunt împreună reclamante sau pârâte; alte persoane care pot lua parte la judecată; reprezentarea părților în judecată; asistența judiciară);"
+              },
+              {
+                "id": "sub-dgnuy",
+                "title": "- participarea Ministerul Public în procesul civil."
+              }
+            ]
+          },
+          {
+            "id": "disc-1-II-1-2-3-4-5",
+            "title": "5. Competența:",
+            "children": [
+              {
+                "id": "sub-xsyct",
+                "title": "- competența materială (competența după materie și valoare; determinarea competenței după valoarea obiectului cererii introductive de instanță);"
+              },
+              {
+                "id": "sub-ie143",
+                "title": "- competența teritorială;"
+              },
+              {
+                "id": "sub-9o7b7",
+                "title": "- dispoziții speciale;"
+              },
+              {
+                "id": "sub-pm0t8",
+                "title": "- incidente procedurale privitoare la competența instanței (necompetența și conflictele de competență, litispendența și conexitatea; strămutarea și delegarea instanței)."
+              }
+            ]
+          },
+          {
+            "id": "disc-1-II-1-2-3-4-5-6",
+            "title": "6. Actele de procedură:",
+            "children": [
+              {
+                "id": "sub-5hc5t",
+                "title": "- forma cererilor;"
+              },
+              {
+                "id": "sub-shkwz",
+                "title": "- citarea și comunicarea actelor de procedură;"
+              },
+              {
+                "id": "sub-0qdbx",
+                "title": "- nulitatea actelor de procedură."
+              }
+            ]
+          },
+          {
+            "id": "disc-1-II-1-2-3-4-5-6-7",
+            "title": "7. Termenele procedurale",
+            "children": [
+              {
+                "id": "cont-1gxpb",
+                "title": "Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34"
+              }
+            ]
+          },
+          {
+            "id": "disc-1-II-1-2-3-4-5-6-7-8",
+            "title": "8. Procedura în fața primei instanțe:",
+            "children": [
+              {
+                "id": "sub-lxpx2",
+                "title": "- sesizarea instanței de judecată (dispoziții generale; cererea de chemare în judecată; întâmpinarea; cererea reconvențională);"
+              },
+              {
+                "id": "sub-vdzcs",
+                "title": "- judecata [dispoziții generale; cercetarea procesului (dispoziții comune, excepțiile procesuale și probele, cu excepția subsecțiunii a 4-a \"Administrarea probelor de către avocați sau consilieri juridici\"); dezbaterea în fond a procesului; deliberarea și pronunțarea hotărârii];"
+              },
+              {
+                "id": "sub-a5r88",
+                "title": "- unele incidente procedurale (renunțarea la judecată; renunțarea la dreptul pretins; suspendarea procesului; perimarea cererii);"
+              },
+              {
+                "id": "sub-f9vjy",
+                "title": "- hotărârile judecătorești (dispoziții generale; hotărârile date în baza recunoașterii pretențiilor; hotărârea prin care se încuviințează învoiala părților; îndreptarea, lămurirea și completarea hotărârii; executarea provizorie; cheltuielile de judecată)."
+              }
+            ]
+          },
+          {
+            "id": "disc-1-II-1-2-3-4-5-6-7-8-9",
+            "title": "9. Căile de atac:",
+            "children": [
+              {
+                "id": "sub-90qm5",
+                "title": "- dispoziții generale;"
+              },
+              {
+                "id": "sub-20yxh",
+                "title": "- apelul (obiectul apelului principal; situațiile în care partea nu poate face apel principal; termenul de apel; întreruperea termenului de apel; rejudecarea după anularea cu trimitere; neînrăutățirea situației în propria cale de atac);"
+              },
+              {
+                "id": "sub-v9szq",
+                "title": "- căile extraordinare de atac: recursul (obiectul recursului; termenul de recurs; judecata în fond după casarea cu trimitere; neînrăutățirea situației în propria cale de atac); contestația în anulare; revizuirea."
+              }
+            ]
+          },
+          {
+            "id": "disc-1-II-1-2-3-4-5-6-7-8-9-10",
+            "title": "10. Procedura necontencioasă judiciară:",
+            "children": [
+              {
+                "id": "sub-q74no",
+                "title": "- dispoziții generale;"
+              },
+              {
+                "id": "sub-q1lrp",
+                "title": "- dispoziții speciale."
+              }
+            ]
+          },
+          {
+            "id": "disc-1-II-1-2-3-4-5-6-7-8-9-10-11",
+            "title": "11. Executarea silită:",
+            "children": [
+              {
+                "id": "sub-5nugs",
+                "title": "- titlul executoriu;"
+              },
+              {
+                "id": "sub-tblm9",
+                "title": "- participanții la executarea silită;"
+              },
+              {
+                "id": "sub-9g81n",
+                "title": "- efectuarea executării silite [sesizarea organului de executare (creanța certă, lichidă și exigibilă; cererea de executare silită; înregistrarea cererii de executare; încuviințarea executării silite; înștiințarea debitorului; somația; excepții de la comunicare; cheltuielile de executare); perimarea executării silite];"
+              },
+              {
+                "id": "sub-aqbgg",
+                "title": "- prescripția dreptului de a obține executarea silită;"
+              },
+              {
+                "id": "sub-k5psi",
+                "title": "- contestația la executare;"
+              },
+              {
+                "id": "sub-1gfw0",
+                "title": "- întoarcerea executării;"
+              },
+              {
+                "id": "sub-ajm49",
+                "title": "- urmărirea mobiliară (poprirea)."
+              }
+            ]
+          },
+          {
+            "id": "disc-1-II-1-2-3-4-5-6-7-8-9-10-11-12",
+            "title": "12. Procedurile speciale:",
+            "children": [
+              {
+                "id": "sub-q9cwu",
+                "title": "- procedura divorțului [dispoziții comune; divorțul remediu (divorțul prin acordul părților; divorțul din motive de sănătate); divorțul din culpa soților];"
+              },
+              {
+                "id": "sub-nbs8l",
+                "title": "- măsuri asigurătorii și provizorii [sechestrul asigurător (dispoziții generale); poprirea asigurătorie; sechestrul judiciar];"
+              },
+              {
+                "id": "sub-suaan",
+                "title": "- procedura partajului judiciar;"
+              },
+              {
+                "id": "sub-rmgkd",
+                "title": "- procedura ordonanței președințiale;"
+              },
+              {
+                "id": "sub-mo24s",
+                "title": "- procedura ordonanței de plată;"
+              },
+              {
+                "id": "sub-69mz2",
+                "title": "- procedura cu privire la cererile de valoare redusă;"
+              },
+              {
+                "id": "sub-bivc7",
+                "title": "- evacuarea din imobilele folosite sau ocupate fără drept. Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "disc-1-III",
+        "title": "III. Legea nr. 76/2012 pentru punerea în aplicare a Legii nr. 134/2010 privind Codul de",
+        "children": [
+          {
+            "id": "cont-0xfod",
+            "title": "procedură civilă, cu modificările și completările ulterioare:"
+          },
+          {
+            "id": "sub-o2ecf",
+            "title": "- Titlul I;"
+          },
+          {
+            "id": "sub-fvwy5",
+            "title": "- Titlul II;"
+          },
+          {
+            "id": "sub-1ukh9",
+            "title": "- Titlul III: art. 14 alin. (2);"
+          },
+          {
+            "id": "sub-q8kw9",
+            "title": "- Titlul V: art. 76; art. 83 lit. k)."
+          }
+        ]
+      },
+      {
+        "id": "disc-1-IV",
+        "title": "IV. Legea nr. 2/2013 privind unele măsuri pentru degrevarea instanțelor judecătorești,",
+        "children": [
+          {
+            "id": "cont-chdmg",
+            "title": "precum și pentru pregătirea punerii în aplicare a Legii nr. 134/2010 privind Codul de procedură civilă, cu modificările ulterioare:"
+          },
+          {
+            "id": "sub-t7g2r",
+            "title": "- Capitolul II, secțiunea a 2-a: art. XII, art. XIII, art. XIV și art. XVIII."
+          }
+        ]
+      },
+      {
+        "id": "disc-1-V",
+        "title": "V. Legea nr. 310/2018 pentru modificarea și completarea Legii nr. 134/2010 privind",
+        "children": [
+          {
+            "id": "cont-mn701",
+            "title": "Codul de procedură civilă, precum și pentru modificarea și completarea altor acte normative:"
+          },
+          {
+            "id": "sub-74m6d",
+            "title": "- art. III și art. IV."
+          }
+        ]
+      },
+      {
+        "id": "disc-1-VI",
+        "title": "VI. O.U.G. nr. 51/2008 privind ajutorul public judiciar in materie civilă, cu",
+        "children": [
+          {
+            "id": "cont-85ek0",
+            "title": "modificările și completările ulterioare;"
+          }
+        ]
+      },
+      {
+        "id": "disc-1-VII",
+        "title": "VII. O.U.G. nr. 80/2013 privind taxele judiciare de timbru, cu modificările și",
+        "children": [
+          {
+            "id": "cont-kc6ak",
+            "title": "completările ulterioare."
+          }
+        ]
+      },
+      {
+        "id": "disc-1-VIII",
+        "title": "VIII. Jurisprudență:",
+        "children": [
+          {
+            "id": "disc-1-VIII-1",
+            "title": "1. deciziile de admitere ale ├Änaltei Curți de Casație și Justiție pronunțate în recurs în",
+            "children": [
+              {
+                "id": "cont-bdyd1",
+                "title": "interesul legii și în procedura pronunțării unei hotărâri prealabile pentru dezlegarea unor chestiuni de drept care se referă la obiectul tematicii, raportat la actele normative din bibliografie, publicate în Monitorul Oficial până la data anunțării examenului;"
+              }
+            ]
+          },
+          {
+            "id": "disc-1-VIII-1-2",
+            "title": "2. deciziile Curții Constituționale de admitere a excepțiilor de neconstituționalitate care se",
+            "children": [
+              {
+                "id": "cont-ne5tw",
+                "title": "referă la obiectul tematicii, raportat la actele normative din bibliografie, publicate în Monitorul Oficial până la data anunțării examenului. NOTă: Prezenta tematică este organizată prin raportare la structura actelor normative ce intră în alcătuirea sa. Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34 BIBLIOGRAFIE pentru susținerea examenului de absolvire a Institutului Național al Magistraturii iulie-septembrie 2025"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "disc-1",
+    "title": "DREPT PROCESUAL CIVIL",
+    "children": [
+      {
+        "id": "cont-d4t08",
+        "title": "├Än vederea pregătirii pentru examen, candidații pot consulta lucrări de specialitate juridică relevante în raport de tematica stabilită. LEGISLA╚ÜIE ╚ÿI JURISPRUDEN╚Üă"
+      },
+      {
+        "id": "disc-1-I",
+        "title": "I. LEGISLA╚ÜIE:",
+        "children": [
+          {
+            "id": "disc-1-I-1",
+            "title": "1. Constituția României, republicată în Monitorul Oficial nr. 767/2003;",
+            "children": []
+          },
+          {
+            "id": "disc-1-I-1-2",
+            "title": "2. Legea nr. 134/2010 privind Codul de procedură civilă, republicată, cu modificările și",
+            "children": [
+              {
+                "id": "cont-myhuz",
+                "title": "completările ulterioare;"
+              }
+            ]
+          },
+          {
+            "id": "disc-1-I-1-2-3",
+            "title": "3. Legea nr. 76/2012 pentru punerea în aplicare a Legii nr. 134/2010 privind Codul de",
+            "children": [
+              {
+                "id": "cont-4h155",
+                "title": "procedură civilă, cu modificările și completările ulterioare;"
+              }
+            ]
+          },
+          {
+            "id": "disc-1-I-1-2-3-4",
+            "title": "4. Legea nr. 2/2013 privind unele măsuri pentru degrevarea instanțelor judecătorești,",
+            "children": [
+              {
+                "id": "cont-62kyt",
+                "title": "precum și pentru pregătirea punerii în aplicare a Legii nr. 134/2010 privind Codul de procedură civilă, cu modificările ulterioare;"
+              }
+            ]
+          },
+          {
+            "id": "disc-1-I-1-2-3-4-5",
+            "title": "5. Legea nr. 310/2018 pentru modificarea și completarea Legii nr. 134/2010 privind Codul",
+            "children": [
+              {
+                "id": "cont-0cv2g",
+                "title": "de procedură civilă, precum și pentru modificarea și completarea altor acte normative;"
+              }
+            ]
+          },
+          {
+            "id": "disc-1-I-1-2-3-4-5-6",
+            "title": "6. O.U.G. nr. 51/2008 privind ajutorul public judiciar in materie civilă, cu modificările și",
+            "children": [
+              {
+                "id": "cont-r119h",
+                "title": "completările ulterioare;"
+              }
+            ]
+          },
+          {
+            "id": "disc-1-I-1-2-3-4-5-6-7",
+            "title": "7. O.U.G. nr. 80/2013 privind taxele judiciare de timbru, cu modificările și completările",
+            "children": [
+              {
+                "id": "cont-kcbq4",
+                "title": "ulterioare."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "disc-1-II",
+        "title": "II. JURISPRUDEN╚Üă:",
+        "children": [
+          {
+            "id": "disc-1-II-1",
+            "title": "1. deciziile de admitere ale ├Änaltei Curți de Casație și Justiție pronunțate în recurs în",
+            "children": [
+              {
+                "id": "cont-ol3ir",
+                "title": "interesul legii și în procedura pronunțării unei hotărâri prealabile pentru dezlegarea unor chestiuni de drept care se referă la obiectul tematicii, raportat la actele normative din bibliografie, publicate în Monitorul Oficial până la data anunțării examenului;"
+              }
+            ]
+          },
+          {
+            "id": "disc-1-II-1-2",
+            "title": "2. deciziile Curții Constituționale de admitere a excepțiilor de neconstituționalitate care se",
+            "children": [
+              {
+                "id": "cont-gqort",
+                "title": "referă la obiectul tematicii, raportat la actele normative din bibliografie, publicate în Monitorul Oficial până la data anunțării examenului. NOTă: Candidații pot deține, în timpul examenului:"
+              },
+              {
+                "id": "sub-4wn5e",
+                "title": "- legislația menționată în bibliografie, cu modificările și completările intrate în vigoare până la data anunțării examenului, în forma publicată în Monitorul Oficial al României;"
+              },
+              {
+                "id": "sub-pp5m3",
+                "title": "- jurisprudența menționată în bibliografie. Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34 NU este permisă deținerea, în timpul examenului, de către candidați a:"
+              },
+              {
+                "id": "sub-ktel0",
+                "title": "- legislației și jurisprudenței menționate în bibliografie în formă comentată sau adnotată;"
+              },
+              {
+                "id": "sub-5idjk",
+                "title": "- culegerilor de practică judiciară cuprinzând hotărâri judecătorești pronunțate în diverse spețe de către instanțele judecătorești;"
+              },
+              {
+                "id": "sub-htmp1",
+                "title": "- oricăror altor lucrări de specialitate juridică. Este permis candidaților ca, în timpul examenului, să dețină legislația menționată în bibliografie în ediții (acte normative, inclusiv coduri, tipărite de o editură). Aceste ediții, permise a fi deținute în timpul examenului, pot conține:"
+              },
+              {
+                "id": "sub-07n5n",
+                "title": "- trimiteri, inclusiv prin redarea textelor legale, la legile de punere în aplicare a noilor coduri;"
+              },
+              {
+                "id": "sub-alpdz",
+                "title": "- deciziile obligatorii ale ├Änaltei Curți de Casație și Justiție și ale Curții Constituționale, precum și hotărârile C.E.D.O. și C.J.U.E.;"
+              },
+              {
+                "id": "sub-iwxsb",
+                "title": "- în anexe și alte acte normative decât cele specificate în bibliografie. De asemenea, în cuprinsul legislației și jurisprudenței permise a fi deținute în timpul examenului, sunt permise exclusiv sublinierile, iar nu semnele de carte sau altele asemenea. Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34 TEMATICA pentru susținerea examenului de absolvire a Institutului Național al Magistraturii iulie-septembrie 2025"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "disc-2",
+    "title": "DREPT PENAL",
+    "children": [
+      {
+        "id": "disc-2-I",
+        "title": "I. PARTEA GENERALă",
+        "children": [
+          {
+            "id": "disc-2-I-1",
+            "title": "1. Legea penală și limitele ei de aplicare",
+            "children": [
+              {
+                "id": "cont-hjt2o",
+                "title": "1.1. Principii generale; 1.2. Aplicarea legii penale în timp; 1.3. Aplicarea legii penale în spațiu;"
+              }
+            ]
+          },
+          {
+            "id": "disc-2-I-1-2",
+            "title": "2. Infracțiunea",
+            "children": [
+              {
+                "id": "cont-njq6m",
+                "title": "2.1. Dispoziții generale; 2.2. Cauzele justificative; 2.3. Cauzele de neimputabilitate; 2.4. Tentativa; 2.5. Unitatea și pluralitatea de infracțiuni; 2.6. Autorul și participanții;"
+              }
+            ]
+          },
+          {
+            "id": "disc-2-I-1-2-3",
+            "title": "3. Pedepsele",
+            "children": [
+              {
+                "id": "cont-6ftou",
+                "title": "3.1.Categoriile pedepselor; 3.2. Pedepsele principale; 3.3. Pedeapsa accesorie și pedepsele complementare; 3.4. Calculul duratei pedepselor; 3.5. Individualizarea pedepselor; 3.5.1 Dispoziții generale 3.5.2 Circumstanțele atenuante și circumstanțele agravante; 3.5.3 Renunțarea la aplicarea pedepsei; 3.5.4 Amânarea aplicării pedepsei; 3.5.5 Suspendarea executării pedepsei sub supraveghere; 3.5.6 Liberarea condiționată; 4 . Măsurile de siguranță;"
+              }
+            ]
+          },
+          {
+            "id": "disc-2-I-1-2-3-5",
+            "title": "5. Minoritatea",
+            "children": []
+          },
+          {
+            "id": "disc-2-I-1-2-3-5-6",
+            "title": "6. Răspunderea penală a persoanei juridice",
+            "children": []
+          },
+          {
+            "id": "disc-2-I-1-2-3-5-6-7",
+            "title": "7. Cauzele care înlătură răspunderea penală",
+            "children": []
+          },
+          {
+            "id": "disc-2-I-1-2-3-5-6-7-8",
+            "title": "8. Cauzele care înlătură sau modifică executarea pedepsei",
+            "children": []
+          },
+          {
+            "id": "disc-2-I-1-2-3-5-6-7-8-9",
+            "title": "9. Cauzele care înlătură consecințele condamnării",
+            "children": []
+          },
+          {
+            "id": "disc-2-I-1-2-3-5-6-7-8-9-10",
+            "title": "10. ├Änțelesul unor termeni sau expresii în legea penală",
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "disc-2-II",
+        "title": "II. PARTEA SPECIALă",
+        "children": [
+          {
+            "id": "disc-2-II-1",
+            "title": "1. Infracțiuni contra vieții - art.188-192;",
+            "children": []
+          },
+          {
+            "id": "disc-2-II-1-2",
+            "title": "2. Infracțiuni contra integrității corporale sau sănătății - art.193-198;",
+            "children": []
+          },
+          {
+            "id": "disc-2-II-1-2-3",
+            "title": "3. Infracțiuni săvârșite asupra unui membru de familie - art.199-200;",
+            "children": [
+              {
+                "id": "cont-et5ox",
+                "title": "Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34"
+              }
+            ]
+          },
+          {
+            "id": "disc-2-II-1-2-3-4",
+            "title": "4. Infracțiuni contra libertății persoanei - art.205-208;",
+            "children": []
+          },
+          {
+            "id": "disc-2-II-1-2-3-4-5",
+            "title": "5. Infracțiuni contra libertății și integrității sexuale - art.218-223;",
+            "children": []
+          },
+          {
+            "id": "disc-2-II-1-2-3-4-5-6",
+            "title": "6. Infracțiuni ce aduc atingere domiciliului și vieții private - art.224-225;",
+            "children": []
+          },
+          {
+            "id": "disc-2-II-1-2-3-4-5-6-7",
+            "title": "7. Infracțiuni contra patrimoniului - art.228-234, art.236-238, art.242-244, art.248 și art.253-",
+            "children": [
+              {
+                "id": "cont-03pps",
+                "title": "2561;"
+              }
+            ]
+          },
+          {
+            "id": "disc-2-II-1-2-3-4-5-6-7-8",
+            "title": "8. Infracțiuni contra autorității - art.257-259;",
+            "children": []
+          },
+          {
+            "id": "disc-2-II-1-2-3-4-5-6-7-8-9",
+            "title": "9. Infracțiuni contra înfăptuirii justiției - art.266-273, art. 275, art.279-281, art.283-288;",
+            "children": []
+          },
+          {
+            "id": "disc-2-II-1-2-3-4-5-6-7-8-9-10",
+            "title": "10. Infracțiuni de corupție și de serviciu - art.289-292, art.295-298, art.308; art.309;",
+            "children": []
+          },
+          {
+            "id": "disc-2-II-1-2-3-4-5-6-7-8-9-10-11",
+            "title": "11. Infracțiuni de fals - art.310-311, art.313-316, art.320-323, art.326-327;",
+            "children": []
+          },
+          {
+            "id": "disc-2-II-1-2-3-4-5-6-7-8-9-10-11-12",
+            "title": "12. Infracțiuni contra siguranței circulației pe drumurile publice - art.334-338;",
+            "children": []
+          },
+          {
+            "id": "disc-2-II-1-2-3-4-5-6-7-8-9-10-11-12-13",
+            "title": "13. Infracțiuni contra ordinii și liniștii publice - art.371, art.372 și art.375;",
+            "children": []
+          },
+          {
+            "id": "disc-2-II-1-2-3-4-5-6-7-8-9-10-11-12-13-14",
+            "title": "14. Infracțiuni contra familiei - art.377-379.",
+            "children": [
+              {
+                "id": "cont-zetbq",
+                "title": "Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34 BIBLIOGRAFIE pentru susținerea examenului de absolvire a Institutului Național al Magistraturii iulie-septembrie 2025"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "disc-2",
+    "title": "DREPT PENAL",
+    "children": [
+      {
+        "id": "cont-36tde",
+        "title": "├Än vederea pregătirii pentru examen, candidații vor putea consulta lucrări de specialitate juridică relevante în raport de tematica stabilită. LEGISLA┼óIE ╚ÿI JURISPRUDEN╚Üă RELEVANTE"
+      },
+      {
+        "id": "sub-1l97g",
+        "title": "- Constituția României, republicată în Monitorul Oficial nr. 767/2003;"
+      },
+      {
+        "id": "sub-iecni",
+        "title": "- Codul penal din 2009 și Legea nr. 187/2012 pentru punerea în aplicare a Legii nr. 286/2009 privind Codul penal, cu modificările și completările ulterioare;"
+      },
+      {
+        "id": "sub-r0wvz",
+        "title": "- Convenția Europeană a Drepturilor Omului. NOTă: Se vor avea în vedere, de asemenea, toate deciziile de admitere R.I.L. și HP, cu referire la actele normative din bibliografie, raportat la obiectul tematicii, precum și deciziile C.C.R. de admitere a excepțiilor de neconstituționalitate a unor dispoziții ale actelor normative din bibliografie, raportat la obiectul tematicii, publicate în Monitorul Oficial până la data anunțării examenului. Candidații pot deține, în timpul examenului:"
+      },
+      {
+        "id": "sub-o62hs",
+        "title": "- legislația menționată în bibliografie, cu modificările și completările intrate în vigoare până la data anunțării examenului, în forma publicată în Monitorul Oficial al României;"
+      },
+      {
+        "id": "sub-ijkll",
+        "title": "- jurisprudența menționată în bibliografie. NU este permisă deținerea, în timpul examenului, de către candidați a:"
+      },
+      {
+        "id": "sub-rfqkd",
+        "title": "- legislației și jurisprudenței menționate în bibliografie în formă comentată sau adnotată;"
+      },
+      {
+        "id": "sub-v4dle",
+        "title": "- culegerilor de practică judiciară cuprinzând hotărâri judecătorești pronunțate în diverse spețe de către instanțele judecătorești;"
+      },
+      {
+        "id": "sub-z58wf",
+        "title": "- oricăror altor lucrări de specialitate juridică. Este permis candidaților ca, în timpul examenului, să dețină legislația menționată în bibliografie în ediții (acte normative, inclusiv coduri, tipărite de o editură). Aceste ediții, permise a fi deținute în timpul examenului, pot conține:"
+      },
+      {
+        "id": "sub-vyqpm",
+        "title": "- trimiteri, inclusiv prin redarea textelor legale, la legile de punere în aplicare a noilor coduri;"
+      },
+      {
+        "id": "sub-jl1oa",
+        "title": "- deciziile obligatorii ale ├Änaltei Curți de Casație și Justiție și ale Curții Constituționale, precum și hotărârile C.E.D.O. și C.J.U.E.;"
+      },
+      {
+        "id": "sub-aah9k",
+        "title": "- în anexe și alte acte normative decât cele specificate în bibliografie. De asemenea, în cuprinsul legislației și jurisprudenței permise a fi deținute în timpul examenului, sunt permise exclusiv sublinierile, iar nu semnele de carte sau altele asemenea. Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34 TEMATICA pentru susținerea examenului de absolvire a Institutului Național al Magistraturii iulie-septembrie 2025"
+      }
+    ]
+  },
+  {
+    "id": "disc-3",
+    "title": "DREPT PROCESUAL PENAL",
+    "children": [
+      {
+        "id": "disc-3-I",
+        "title": "I. Partea generală",
+        "children": [
+          {
+            "id": "disc-3-I-1",
+            "title": "1. Principiile și limitele aplicării legii procesuale penale",
+            "children": []
+          },
+          {
+            "id": "disc-3-I-1-2",
+            "title": "2. Acțiunea penală și acțiunea civilă în procesul penal",
+            "children": []
+          },
+          {
+            "id": "disc-3-I-1-2-3",
+            "title": "3. Participanții în procesul penal",
+            "children": [
+              {
+                "id": "sub-c7pnn",
+                "title": "- Dispoziții generale;"
+              },
+              {
+                "id": "sub-m0joe",
+                "title": "- Competența organelor judiciare;"
+              },
+              {
+                "id": "sub-xgwfg",
+                "title": "- Subiecții procesuali principali și drepturile acestora;"
+              },
+              {
+                "id": "sub-i5isn",
+                "title": "- Inculpatul și drepturile acestuia;"
+              },
+              {
+                "id": "sub-g6a7d",
+                "title": "- Partea civilă și drepturile acesteia;"
+              },
+              {
+                "id": "sub-ifwxr",
+                "title": "- Partea responsabilă civilmente și drepturile acesteia;"
+              },
+              {
+                "id": "sub-cd8qy",
+                "title": "- Avocatul. Asistența juridică și reprezentarea."
+              }
+            ]
+          },
+          {
+            "id": "disc-3-I-1-2-3-4",
+            "title": "4. Probele și mijloacele de probă",
+            "children": [
+              {
+                "id": "sub-ks2hq",
+                "title": "- Reguli generale;"
+              },
+              {
+                "id": "sub-77ugf",
+                "title": "- Audierea persoanelor;"
+              },
+              {
+                "id": "sub-osi1e",
+                "title": "- Identificarea persoanelor și a obiectelor;"
+              },
+              {
+                "id": "sub-c6npd",
+                "title": "- Metode speciale de supraveghere sau cercetare;"
+              },
+              {
+                "id": "sub-d3gdh",
+                "title": "- Conservarea datelor informatice;"
+              },
+              {
+                "id": "sub-10d5r",
+                "title": "- Percheziția și ridicarea de obiecte și înscrisuri;"
+              },
+              {
+                "id": "sub-rjqcr",
+                "title": "- Expertiza și constatarea;"
+              },
+              {
+                "id": "sub-c7qia",
+                "title": "- Cercetarea locului faptei și reconstituirea;"
+              },
+              {
+                "id": "sub-6w2mj",
+                "title": "- Fotografierea și luarea amprentelor suspectului, inculpatului sau a altor persoane;"
+              },
+              {
+                "id": "sub-tm1d7",
+                "title": "- Mijloacele materiale de probă;"
+              },
+              {
+                "id": "sub-oyhjl",
+                "title": "- ├Änscrisurile."
+              }
+            ]
+          },
+          {
+            "id": "disc-3-I-1-2-3-4-5",
+            "title": "5. Măsurile preventive și alte măsuri procesuale:",
+            "children": [
+              {
+                "id": "sub-oxhyn",
+                "title": "- Măsuri preventive;"
+              },
+              {
+                "id": "sub-hx8v9",
+                "title": "- Aplicarea provizorie a măsurilor de siguranță cu caracter medical;"
+              },
+              {
+                "id": "sub-kjxb1",
+                "title": "- Măsurile asigurătorii, restituirea lucrurilor și restabilirea situației anterioare săvârșirii infracțiunii;"
+              }
+            ]
+          },
+          {
+            "id": "disc-3-I-1-2-3-4-5-6",
+            "title": "6. Acte procesuale și procedurale comune.",
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "disc-3-II",
+        "title": "II. Partea specială",
+        "children": [
+          {
+            "id": "disc-3-II-1",
+            "title": "1. Urmărirea penală",
+            "children": [
+              {
+                "id": "sub-zo0jh",
+                "title": "- Dispoziții generale;"
+              },
+              {
+                "id": "sub-pqm1f",
+                "title": "- Sesizarea organelor de urmărire penală;"
+              },
+              {
+                "id": "sub-aw3mj",
+                "title": "- Conducerea și supravegherea activității organelor de cercetare penală de către procuror;"
+              },
+              {
+                "id": "sub-rmwax",
+                "title": "- Efectuarea urmăririi penale;"
+              },
+              {
+                "id": "sub-7w8wt",
+                "title": "- Rezolvarea cauzelor și sesizarea instanței;"
+              },
+              {
+                "id": "sub-43yn9",
+                "title": "- Reluarea urmăririi penale;"
+              },
+              {
+                "id": "sub-rr8qs",
+                "title": "- Plângerea împotriva măsurilor și actelor de urmărire penală."
+              }
+            ]
+          },
+          {
+            "id": "disc-3-II-1-2",
+            "title": "2. Camera preliminară",
+            "children": []
+          },
+          {
+            "id": "disc-3-II-1-2-3",
+            "title": "3. Judecata",
+            "children": [
+              {
+                "id": "cont-bg57y",
+                "title": "Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34"
+              },
+              {
+                "id": "sub-5jowf",
+                "title": "- Dispoziții generale;"
+              },
+              {
+                "id": "sub-ff3nt",
+                "title": "- Judecata în primă instanță;"
+              },
+              {
+                "id": "sub-apkil",
+                "title": "- Apelul (doar art. 408- 419);"
+              },
+              {
+                "id": "sub-9700p",
+                "title": "- Contestația;"
+              },
+              {
+                "id": "sub-0oku4",
+                "title": "- Revizuirea (cu excepția revizuirii în cazul hotărârilor Curții Europene a Drepturilor Omului);"
+              },
+              {
+                "id": "sub-ydjxp",
+                "title": "- Redeschiderea procesului penal în cazul judecării în lipsa persoanei condamnate."
+              }
+            ]
+          },
+          {
+            "id": "disc-3-II-1-2-3-4",
+            "title": "4. Proceduri speciale",
+            "children": [
+              {
+                "id": "sub-blana",
+                "title": "- Acordul de recunoaștere a vinovăției;"
+              },
+              {
+                "id": "sub-89rgy",
+                "title": "- Contestația privind durata procesului penal;"
+              },
+              {
+                "id": "sub-va0an",
+                "title": "- Procedura în cauzele cu infractori minori;"
+              },
+              {
+                "id": "sub-gci45",
+                "title": "- Procedura reabilitării;"
+              },
+              {
+                "id": "sub-p61kt",
+                "title": "- Procedura de confiscare sau desființare a unui înscris în cazul clasării."
+              }
+            ]
+          },
+          {
+            "id": "disc-3-II-1-2-3-4-5",
+            "title": "5. Executarea hotărârilor penale",
+            "children": [
+              {
+                "id": "sub-w8xvl",
+                "title": "- Dispoziții generale (art. 550- art. 554);"
+              },
+              {
+                "id": "sub-vfshv",
+                "title": "- Alte dispoziții privind executarea (art. 5811- art. 596);"
+              },
+              {
+                "id": "sub-gbpsx",
+                "title": "- Dispoziții comune (art. 597- art. 6011). Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34 BIBLIOGRAFIE pentru susținerea examenului de absolvire a Institutului Național al Magistraturii iulie-septembrie 2025"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "disc-3",
+    "title": "DREPT PROCESUAL PENAL",
+    "children": [
+      {
+        "id": "cont-9cm58",
+        "title": "├Än vederea pregătirii pentru examen, candidații vor putea consulta lucrări de specialitate juridică relevante în raport de tematica stabilită. LEGISLA┼óIE ╚ÿI JURISPRUDEN╚Üă RELEVANTE"
+      },
+      {
+        "id": "sub-b0vjt",
+        "title": "- Constituția României, republicată în Monitorul Oficial nr. 767/2003;"
+      },
+      {
+        "id": "sub-tq5u2",
+        "title": "- Codul de procedură penală din 2010 și Legea nr. 255/2013 pentru punerea în aplicare a Legii nr. 135/2010 privind Codul de procedură penală și pentru modificarea și completarea unor acte normative care cuprind dispoziții procesual penale, cu modificările și completările ulterioare;"
+      },
+      {
+        "id": "sub-uscg5",
+        "title": "- Noul Cod civil (art.1349-1395), cu modificările și completările ulterioare;"
+      },
+      {
+        "id": "sub-qqlqe",
+        "title": "- Noul Cod de procedură civilă (art. 438-441), republicat;"
+      },
+      {
+        "id": "sub-k55q6",
+        "title": "- Convenția Europeană a Drepturilor Omului. NOTă: Se vor avea în vedere, de asemenea, toate deciziile de admitere R.I.L. și HP, cu referire la actele normative din bibliografie, raportat la obiectul tematicii, precum și deciziile C.C.R. de admitere a excepțiilor de neconstituționalitate a unor dispoziții ale actelor normative din bibliografie, raportat la obiectul tematicii, publicate în Monitorul Oficial până la data anunțării examenului. Candidații pot deține, în timpul examenului:"
+      },
+      {
+        "id": "sub-shmr2",
+        "title": "- legislația menționată în bibliografie, cu modificările și completările intrate în vigoare până la data anunțării examenului, în forma publicată în Monitorul Oficial al României;"
+      },
+      {
+        "id": "sub-qwihg",
+        "title": "- jurisprudența menționată în bibliografie. NU este permisă deținerea, în timpul examenului, de către candidați a:"
+      },
+      {
+        "id": "sub-65ibu",
+        "title": "- legislației și jurisprudenței menționate în bibliografie în formă comentată sau adnotată;"
+      },
+      {
+        "id": "sub-i3ser",
+        "title": "- culegerilor de practică judiciară cuprinzând hotărâri judecătorești pronunțate în diverse spețe de către instanțele judecătorești;"
+      },
+      {
+        "id": "sub-k7tcw",
+        "title": "- oricăror altor lucrări de specialitate juridică. Este permis candidaților ca, în timpul examenului, să dețină legislația menționată în bibliografie în ediții (acte normative, inclusiv coduri, tipărite de o editură). Aceste ediții, permise a fi deținute în timpul examenului, pot conține:"
+      },
+      {
+        "id": "sub-o7ob2",
+        "title": "- trimiteri, inclusiv prin redarea textelor legale, la legile de punere în aplicare a noilor coduri;"
+      },
+      {
+        "id": "sub-2tras",
+        "title": "- deciziile obligatorii ale ├Änaltei Curți de Casație și Justiție și ale Curții Constituționale, precum și hotărârile C.E.D.O. și C.J.U.E.;"
+      },
+      {
+        "id": "sub-m5vca",
+        "title": "- în anexe și alte acte normative decât cele specificate în bibliografie. De asemenea, în cuprinsul legislației și jurisprudenței permise a fi deținute în timpul examenului, sunt permise exclusiv sublinierile, iar nu semnele de carte sau altele asemenea. Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34 TEMATICA pentru susținerea examenului de absolvire a Institutului Național al Magistraturii iulie-septembrie 2025 ETICă ╚ÿI ORGANIZARE JUDICIARă JUDECăTORI 1) Independența și imparțialitatea judecătorului; 2) Incompatibilități și interdicții privind judecătorii; 3) Onoarea și demnitatea profesiei de judecător; 4) ├Ändatoririle profesionale ale judecătorilor si procurorilor; 5) Principiile organizării judiciare; 6) Judecătoriile:"
+      },
+      {
+        "id": "sub-0gi3m",
+        "title": "a) organizare;"
+      },
+      {
+        "id": "sub-n5i1e",
+        "title": "b) conducere;"
+      },
+      {
+        "id": "sub-7dy19",
+        "title": "c) Colegiul de conducere;"
+      },
+      {
+        "id": "sub-6eu7k",
+        "title": "d) Adunarea generală;"
+      },
+      {
+        "id": "sub-pz5kg",
+        "title": "e) completele de judecată;"
+      },
+      {
+        "id": "sub-6pi5k",
+        "title": "f) compartimentele auxiliare;"
+      },
+      {
+        "id": "sub-u2qu4",
+        "title": "g) desfășurarea activității administrativ judiciare;"
+      },
+      {
+        "id": "sub-p509j",
+        "title": "h) atribuțiile judecătorilor. 7) Competența judecătorilor stagiari în soluționarea cauzelor civile sau penale; 8) Drepturile și îndatoririle judecătorilor; 9) Formarea profesională continuă a judecătorilor; 10) Evaluarea activității profesionale a judecătorilor; 11) Delegarea, detașarea și transferul judecătorilor; 12) Suspendarea din funcție și încetarea funcției de judecător; 13) Răspunderea judecătorilor (civilă, penală, disciplinară și deontologică); 14) Procedura răspunderii disciplinare a judecătorilor. Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34 BIBLIOGRAFIE pentru susținerea examenului de absolvire a Institutului Național al Magistraturii iulie-septembrie 2025 ETICă ╚ÿI ORGANIZARE JUDICIARă JUDECăTORI ├Än vederea pregătirii pentru examen, candidații vor putea consulta lucrări de specialitate juridică relevante în raport de tematica stabilită. LEGISLA┼óIE ┼₧I JURISPRUDEN┼óă RELEVANTă"
+      },
+      {
+        "id": "sub-gq8gb",
+        "title": "- Capitolul VI din Constituția României, republicată în Monitorul Oficial nr. 767/2003;"
+      },
+      {
+        "id": "sub-maljg",
+        "title": "- Legea nr. 161/2003 privind unele măsuri pentru asigurarea transparenței în exercitarea demnităților publice, a funcțiilor publice, și în mediul de afaceri, prevenirea și sancționarea corupției, publicată în Monitorul Oficial nr. 279/21 aprilie 2003, cu modificările și completările ulterioare - art.101-109, art. 111, art.114;"
+      },
+      {
+        "id": "sub-xn2eg",
+        "title": "- Legea nr. 367/2022 a dialogului social, publicată în Monitorul Oficial Partea I, nr. 1238/22 decembrie 2022 - art. 4 și art. 170;"
+      },
+      {
+        "id": "sub-p6qok",
+        "title": "- Legea nr. 303/2022 privind statutul judecătorilor și procurorilor, publicată în Monitorul Oficial nr. 1102/16 noiembrie 2022, cu modificările ulterioare;"
+      },
+      {
+        "id": "sub-4c6a4",
+        "title": "- Legea nr. 304/2022 privind organizarea judiciară, publicată în Monitorul Oficial nr. 1104/16 noiembrie 2022, cu modificările ulterioare;"
+      },
+      {
+        "id": "sub-b4ww7",
+        "title": "- Legea nr. 305/2022 privind Consiliul Superior al Magistraturii, publicată în Monitorul Oficial nr. 1105/16 noiembrie 2022;"
+      },
+      {
+        "id": "sub-67mf6",
+        "title": "- Legea nr. 176/2010 privind integritatea în exercitarea funcțiilor și demnităților publice, pentru modificarea și completarea Legii nr. 144/2007 privind înființarea, organizarea și funcționarea Agenției Naționale pentru Integritate precum și pentru modificarea și completarea altor acte normative, publicată în Monitorul Oficial nr. 621/2 septembrie 2010, cu modificările și completările ulterioare - Capitolul I (art. 1 alin.1 pct. 6-8, alin.2, alin.3, art. 2, art. 3 alin.1- 3, art. 4);"
+      },
+      {
+        "id": "sub-u78is",
+        "title": "- Codul deontologic al judecătorilor și procurorilor, adoptat prin Hotărârea CSM nr. 328/24.08.2005, publicată în Monitorul Oficial Partea I, nr. 815/8.09.2005;"
+      },
+      {
+        "id": "sub-vtvte",
+        "title": "- Regulament de ordine interioară al instanțelor judecătorești adoptat prin Hotărârea Secției pentru judecători a Consiliului Superior al Magistraturii nr.3243/2022, publicată în Monitorul Oficial Partea I, nr. 1254 și 1254 bis/27.12.2022, cu modificările ulterioare;"
+      },
+      {
+        "id": "sub-smytl",
+        "title": "- Codul de procedură civilă - art. 41-54 (incompatibilități, abținerea și recuzarea), art. 425- 426 (conținutul hotărârii, redactarea și semnarea hotărârii); Tel.: +4 (021) 310.21.10 Fax: +4 (021) 311.02.34"
+      },
+      {
+        "id": "sub-9cfv9",
+        "title": "- Codul de procedură penală - art. 64-70 (incompatibilități, abținerea și recuzarea), art. 401- 404 (cuprinsul hotărârii), art. 406 (redactarea și semnarea hotărârii);"
+      },
+      {
+        "id": "sub-h0bpu",
+        "title": "- Aplicarea dispozițiilor Convenției Europene a Drepturilor Omului și a Protocoalelor adiționale la Convenție în următoarele hotărâri CEDO:"
+      },
+      {
+        "id": "disc-3-1",
+        "title": "1. Hotărârea Micallef împotriva Maltei din 15 octombrie 2009 (cu referire la pretinsa",
+        "children": [
+          {
+            "id": "cont-qrrau",
+            "title": "încălcare a art. 6 din Convenție - privind imparțialitatea instanței);"
+          },
+          {
+            "id": "disc-3-1-2",
+            "title": "2. Hotărârea Kyprianou împotriva Ciprului din 15.12.2005 (cu referire la pretinsa",
+            "children": [
+              {
+                "id": "cont-b6nqh",
+                "title": "încălcare a art. 6 din Convenție - privind imparțialitatea instanței);"
+              }
+            ]
+          },
+          {
+            "id": "disc-3-1-2-3",
+            "title": "3. Hotărârea Tocono și Profesorii Prometeiști împotriva Moldovei din 26 iunie 2007;",
+            "children": []
+          },
+          {
+            "id": "disc-3-1-2-3-4",
+            "title": "4. Hotărârea Ozpinar împotriva Turciei din data de 19 octombrie 2010;",
+            "children": []
+          },
+          {
+            "id": "disc-3-1-2-3-4-5",
+            "title": "5. Hotărârea Fodor împotriva României din 16 septembrie 2014;",
+            "children": []
+          },
+          {
+            "id": "disc-3-1-2-3-4-5-6",
+            "title": "6. Hotărârea Albina împotriva României din 28 aprilie 2005;",
+            "children": []
+          },
+          {
+            "id": "disc-3-1-2-3-4-5-6-7",
+            "title": "7. Hotărârea Bako împotriva Ungariei din 23 iunie 2016;",
+            "children": [
+              {
+                "id": "sub-6ai7n",
+                "title": "- Jurisprudența Curții de Justiție a Uniunii Europene:"
+              }
+            ]
+          },
+          {
+            "id": "disc-3-1-2-3-4-5-6-7-1",
+            "title": "1. Hotărârea (dată de Marea Cameră) Asociația Sindicală a Judecătorilor Portughezi",
+            "children": [
+              {
+                "id": "cont-z18yx",
+                "title": "împotriva Curții de Conturi, Portugalia din 27 februarie 2018 (Tratatul privind Uniunea Europeană, art. 19 alin. 1 și Carta Drepturilor Fundamentale a UE, art. 47). Candidații pot deține, în timpul examenului:"
+              },
+              {
+                "id": "sub-7p84t",
+                "title": "- legislația menționată în bibliografie, cu modificările și completările intrate în vigoare până la data anunțării examenului, în forma publicată în Monitorul Oficial al României;"
+              },
+              {
+                "id": "sub-srgbc",
+                "title": "- jurisprudența menționată în bibliografie. NU este permisă deținerea, în timpul examenului, de către candidați a:"
+              },
+              {
+                "id": "sub-5jk49",
+                "title": "- legislației și jurisprudenței menționate în bibliografie în formă comentată sau adnotată;"
+              },
+              {
+                "id": "sub-713ij",
+                "title": "- culegerilor de practică judiciară cuprinzând hotărâri judecătorești pronunțate în diverse spețe de către instanțele judecătorești;"
+              },
+              {
+                "id": "sub-86htb",
+                "title": "- oricăror altor lucrări de specialitate juridică. Este permis candidaților ca, în timpul examenului, să dețină legislația menționată în bibliografie în ediții (acte normative, inclusiv coduri, tipărite de o editură). Aceste ediții, permise a fi deținute în timpul examenului, pot conține:"
+              },
+              {
+                "id": "sub-l22zf",
+                "title": "- trimiteri, inclusiv prin redarea textelor legale, la legile de punere în aplicare a noilor coduri;"
+              },
+              {
+                "id": "sub-510xb",
+                "title": "- deciziile obligatorii ale ├Änaltei Curți de Casație și Justiție și ale Curții Constituționale, precum și hotărârile C.E.D.O. și C.J.U.E.;"
+              },
+              {
+                "id": "sub-9bz1w",
+                "title": "- în anexe și alte acte normative decât cele specificate în bibliografie. De asemenea, în cuprinsul legislației și jurisprudenței permise a fi deținute în timpul examenului, sunt permise exclusiv sublinierile, iar nu semnele de carte sau altele asemenea."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,7 +1,19 @@
-const pdf = require('pdf-parse');
+const { PDFParse } = require('pdf-parse');
 const fs = require('fs');
 
 const buffer = fs.readFileSync('attached_assets/Tematica si bibliografia concurs INM 2025_1760210868749.pdf');
-pdf(buffer).then(data => {
-    console.log(data.text);
-}).catch(err => console.error(err));
+
+// Create parser instance with data option
+const parser = new PDFParse({ data: buffer });
+
+// Load and extract text
+parser.load().then(() => {
+    return parser.getText();
+}).then(data => {
+    // Output just the text for redirection
+    const text = typeof data === 'string' ? data : data.text;
+    console.log(text);
+}).catch(err => {
+    console.error('Error during extraction:', err);
+    process.exit(1);
+});

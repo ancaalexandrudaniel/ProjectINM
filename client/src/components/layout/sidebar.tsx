@@ -1,12 +1,12 @@
 import { Link, useLocation } from "wouter";
-import { 
-  LayoutDashboard, 
-  Scale, 
-  FileText, 
-  Shield, 
-  Gavel, 
-  Timer, 
-  TrendingUp, 
+import {
+  LayoutDashboard,
+  Scale,
+  FileText,
+  Shield,
+  Gavel,
+  Timer,
+  TrendingUp,
   AlertTriangle,
   BarChart3,
   Calendar,
@@ -57,10 +57,10 @@ export default function Sidebar() {
   const getSubjectProgress = (subjectId: string) => {
     const subjectProgress = progress.filter(p => p.subject === subjectId);
     if (subjectProgress.length === 0) return 0;
-    
+
     const totalQuestions = subjectProgress.reduce((sum, p) => sum + p.totalQuestions, 0);
     const correctAnswers = subjectProgress.reduce((sum, p) => sum + p.correctAnswers, 0);
-    
+
     return totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
   };
 
@@ -82,10 +82,15 @@ export default function Sidebar() {
             <LayoutDashboard className="h-5 w-5" />
             <span className="font-medium">Dashboard</span>
           </Link>
-          
+
+          <Link href="/syllabus" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/syllabus') ? 'active' : ''}`} data-testid="nav-syllabus">
+            <BookOpen className="h-5 w-5" />
+            <span className="font-medium">Tematică & Bibliografie</span>
+          </Link>
+
           {/* SECTION 1: Raw Data */}
           <div className="pt-4">
-            <button 
+            <button
               onClick={() => toggleSection('raw')}
               className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors"
               data-testid="section-toggle-raw"
@@ -97,7 +102,7 @@ export default function Sidebar() {
               {expandedSections['raw'] ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
             </button>
           </div>
-          
+
           {expandedSections['raw'] && (
             <div className="pl-2 space-y-1">
               <Link href="/legal-articles-import" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/legal-articles-import') ? 'active' : ''}`} data-testid="nav-legal-articles-import">
@@ -117,7 +122,7 @@ export default function Sidebar() {
 
           {/* SECTION 2: Historical Data */}
           <div className="pt-4">
-            <button 
+            <button
               onClick={() => toggleSection('historical')}
               className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors"
               data-testid="section-toggle-historical"
@@ -129,7 +134,7 @@ export default function Sidebar() {
               {expandedSections['historical'] ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
             </button>
           </div>
-          
+
           {expandedSections['historical'] && (
             <div className="pl-2 space-y-1">
               <Link href="/documents" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/documents') ? 'active' : ''}`} data-testid="nav-documents">
@@ -145,7 +150,7 @@ export default function Sidebar() {
 
           {/* SECTION 3: ETAPA I - Probe Scrise */}
           <div className="pt-4">
-            <button 
+            <button
               onClick={() => toggleSection('etapa1')}
               className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-cyan-400 uppercase tracking-wider hover:text-cyan-300 transition-colors"
               data-testid="section-toggle-etapa1"
@@ -157,11 +162,11 @@ export default function Sidebar() {
               {expandedSections['etapa1'] ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
             </button>
           </div>
-          
+
           {expandedSections['etapa1'] && (
             <div className="pl-2 space-y-1">
               {/* Sub-section: Grile */}
-              <button 
+              <button
                 onClick={() => toggleSection('grile')}
                 className="w-full flex items-center justify-between px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
                 data-testid="section-toggle-grile"
@@ -172,7 +177,7 @@ export default function Sidebar() {
                 </span>
                 {expandedSections['grile'] ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
               </button>
-              
+
               {expandedSections['grile'] && (
                 <div className="pl-3 space-y-1">
                   <Link href="/bulk-import" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/bulk-import') ? 'active' : ''}`} data-testid="nav-bulk-import">
@@ -183,24 +188,24 @@ export default function Sidebar() {
                     <Search className="h-4 w-4" />
                     <span>Bancă de Întrebări</span>
                   </Link>
-                  
+
                   <div className="py-1 px-4">
                     <span className="text-xs text-muted-foreground">Moduri de test:</span>
                   </div>
-                  
+
                   <Link href="/quiz-select" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/quiz-select') ? 'active' : ''}`} data-testid="nav-quiz-select">
                     <Target className="h-4 w-4" />
                     <span>Alege Modul</span>
                   </Link>
-                  
+
                   <div className="py-1 px-4">
                     <span className="text-xs text-muted-foreground">Practică pe materii:</span>
                   </div>
-                  
+
                   {subjects.map((subject) => {
                     const Icon = subject.icon;
                     const progressPercent = getSubjectProgress(subject.id);
-                    
+
                     return (
                       <Link key={subject.id} href={subject.href} className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive(subject.href) ? 'active' : ''}`} data-testid={`nav-${subject.id}`}>
                         <Icon className="h-4 w-4" />
@@ -208,8 +213,8 @@ export default function Sidebar() {
                           <span className="text-xs">{subject.name}</span>
                           <div className="flex items-center gap-2 mt-0.5">
                             <div className="flex-1 h-1 bg-secondary rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-primary rounded-full transition-all duration-300" 
+                              <div
+                                className="h-full bg-primary rounded-full transition-all duration-300"
                                 style={{ width: `${progressPercent}%` }}
                               />
                             </div>
@@ -219,7 +224,7 @@ export default function Sidebar() {
                       </Link>
                     );
                   })}
-                  
+
                   <Link href="/simulation" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/simulation') ? 'active' : ''}`} data-testid="nav-simulation">
                     <Timer className="h-4 w-4" />
                     <span>Simulare 100 Grile</span>
@@ -228,7 +233,7 @@ export default function Sidebar() {
               )}
 
               {/* Sub-section: Spețe */}
-              <button 
+              <button
                 onClick={() => toggleSection('spete')}
                 className="w-full flex items-center justify-between px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
                 data-testid="section-toggle-spete"
@@ -239,7 +244,7 @@ export default function Sidebar() {
                 </span>
                 {expandedSections['spete'] ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
               </button>
-              
+
               {expandedSections['spete'] && (
                 <div className="pl-3 space-y-1">
                   <Link href="/spete-import" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/spete-import') ? 'active' : ''}`} data-testid="nav-spete-import">
@@ -268,7 +273,7 @@ export default function Sidebar() {
 
           {/* SECTION 4: ETAPA II - Psihologic & Interviu */}
           <div className="pt-4">
-            <button 
+            <button
               onClick={() => toggleSection('etapa2')}
               className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-orange-400 uppercase tracking-wider hover:text-orange-300 transition-colors"
               data-testid="section-toggle-etapa2"
@@ -280,7 +285,7 @@ export default function Sidebar() {
               {expandedSections['etapa2'] ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
             </button>
           </div>
-          
+
           {expandedSections['etapa2'] && (
             <div className="pl-2 space-y-1">
               <Link href="/psihologic" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/psihologic') ? 'active' : ''}`} data-testid="nav-psihologic">
@@ -293,24 +298,24 @@ export default function Sidebar() {
               </Link>
             </div>
           )}
-          
+
           {/* Progress & Analytics */}
           <div className="pt-4 pb-2">
             <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Progres & Analiză
             </p>
           </div>
-          
+
           <Link href="/performance" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/performance') ? 'active' : ''}`} data-testid="nav-performance">
             <TrendingUp className="h-5 w-5" />
             <span className="font-medium">Istoric Performanță</span>
           </Link>
-          
+
           <Link href="/weak-points" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/weak-points') ? 'active' : ''}`} data-testid="nav-weak-points">
             <AlertTriangle className="h-5 w-5" />
             <span className="font-medium">Puncte Slabe</span>
           </Link>
-          
+
           <Link href="/study-plan" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/study-plan') ? 'active' : ''}`} data-testid="nav-study-plan">
             <Calendar className="h-5 w-5" />
             <span className="font-medium">Plan de Studiu</span>
