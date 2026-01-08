@@ -10,6 +10,15 @@ export const users = pgTable("users", {
   fullName: text("full_name").notNull(),
   email: text("email").notNull().unique(),
   createdAt: timestamp("created_at").defaultNow(),
+
+  // [PILON 1] Monetizare
+  subscriptionTier: text("subscription_tier").default("free"), // 'free', 'pro', 'premium'
+  subscriptionValidUntil: timestamp("subscription_valid_until"),
+  stripeCustomerId: text("stripe_customer_id"),
+
+  // [PILON 1] Securitate
+  isVerified: boolean("is_verified").default(false),
+  lastLoginAt: timestamp("last_login_at"),
 });
 
 export const questions = pgTable("questions", {
@@ -227,6 +236,152 @@ export const userCaseStudySubmissions = pgTable("user_case_study_submissions", {
   timeSpent: integer("time_spent"), // seconds
 });
 
+// ============================================================================
+// [PILON 1] SECURITATE & MONETIZARE - Active Sessions
+// ============================================================================
+export const activeSessions = pgTable("active_sessions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+
+  // Device Fingerprint
+  deviceFingerprint: text("device_fingerprint").notNull(),
+  userAgent: text("user_agent"),
+  ipAddress: text("ip_address"),
+
+  // Session Management
+  sessionToken: text("session_token").notNull().unique(),
+  isActive: boolean("is_active").default(true),
+
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow(),
+  lastActivityAt: timestamp("last_activity_at").defaultNow(),
+  expiresAt: timestamp("expires_at").notNull(),
+});
+
+// ============================================================================
+// [PILON 2] LEARNING ENGINE SRS - Spaced Repetition Cards
+// ============================================================================
+export const userSrsCards = pgTable("user_srs_cards", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  questionId: varchar("question_id").references(() => questions.id).notNull(),
+
+  // SuperMemo-2 Parameters
+  interval: integer("interval").default(1), // days until next review
+  easeFactor: integer("ease_factor").default(250), // 250 = 2.5 (stored *100)
+  repetitionCount: integer("repetition_count").default(0),
+
+  // Scheduling
+  nextReviewAt: timestamp("next_review_at").notNull(),
+  lastReviewedAt: timestamp("last_reviewed_at"),
+
+  // Performance
+  consecutiveCorrect: integer("consecutive_correct").default(0),
+  totalReviews: integer("total_reviews").default(0),
+
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// ============================================================================
+// [PILON 2] LEARNING ENGINE SRS - Analytics Snapshots
+// ============================================================================
+export const analyticsSnapshots = pgTable("analytics_snapshots", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+
+  // Snapshot Data
+  snapshotDate: timestamp("snapshot_date").notNull(),
+  subject: text("subject"), // null = all subjects
+
+  // Metrics
+  totalQuestionsSolved: integer("total_questions_solved").default(0),
+  accuracy: integer("accuracy").default(0), // percent 0-100
+  averageTimePerQuestion: integer("avg_time_per_question"), // seconds
+  streakDays: integer("streak_days").default(0),
+
+  // SRS Metrics
+  cardsReviewedToday: integer("cards_reviewed_today").default(0),
+  cardsDueToday: integer("cards_due_today").default(0),
+  retentionRate: integer("retention_rate"), // percent 0-100
+
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// ============================================================================
+// [PILON 3] INTEGRITATE CONȚINUT - Content Reports
+// ============================================================================
+export const contentReports = pgTable("content_reports", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  reporterId: varchar("reporter_id").references(() => users.id).notNull(),
+
+  // Content Reference
+  contentType: text("content_type").notNull(), // 'question', 'case_study', 'legal_article'
+  contentId: varchar("content_id").notNull(),
+
+  // Report Details
+  reportType: text("report_type").notNull(), // 'error', 'outdated', 'unclear', 'duplicate'
+  description: text("description").notNull(),
+  suggestedCorrection: text("suggested_correction"),
+
+  // Status
+  status: text("status").default("pending"), // 'pending', 'reviewed', 'fixed', 'rejected'
+  reviewedBy: varchar("reviewed_by").references(() => users.id),
+  reviewedAt: timestamp("reviewed_at"),
+  reviewNotes: text("review_notes"),
+
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// ============================================================================
+// [PILON 4] MODULE COMPLEXE - Essay Prompts with JSONB Rubric
+// ============================================================================
+export const essayPrompts = pgTable("essay_prompts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  createdBy: varchar("created_by").references(() => users.id).notNull(),
+
+  // Content
+  subject: text("subject").notNull(),
+  examDay: text("exam_day"), // 'day1', 'day2'
+  title: text("title").notNull(),
+  prompt: text("prompt").notNull(),
+
+  // Grading Rubric (JSONB)
+  gradingRubric: jsonb("grading_rubric").notNull(),
+
+  // Sample Answer
+  sampleAnswer: text("sample_answer"),
+  commonMistakes: jsonb("common_mistakes"),
+
+  // Metadata
+  difficulty: text("difficulty").notNull(),
+  estimatedTime: integer("estimated_time"), // minutes
+  sourceType: text("source_type"), // 'past_exam', 'ai_generated', 'manual'
+
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// ============================================================================
+// [PILON 4] MODULE COMPLEXE - User Essay Submissions
+// ============================================================================
+export const userEssaySubmissions = pgTable("user_essay_submissions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  essayPromptId: varchar("essay_prompt_id").references(() => essayPrompts.id).notNull(),
+
+  // User Response
+  userAnswer: text("user_answer").notNull(),
+  selfEvaluation: jsonb("self_evaluation"), // checklist completed by user
+  selfScore: integer("self_score"),
+
+  // AI Evaluation (optional)
+  aiScore: integer("ai_score"),
+  aiFeedback: text("ai_feedback"),
+  aiRubricAnalysis: jsonb("ai_rubric_analysis"),
+
+  timeSpent: integer("time_spent"), // seconds
+  submittedAt: timestamp("submitted_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -372,3 +527,57 @@ export type InsertLegalArticleChunk = z.infer<typeof insertLegalArticleChunkSche
 
 export type UserCaseStudySubmission = typeof userCaseStudySubmissions.$inferSelect;
 export type InsertUserCaseStudySubmission = z.infer<typeof insertUserCaseStudySubmissionSchema>;
+
+// ============================================================================
+// [NEW] Insert Schemas for SaaS Upgrade Tables
+// ============================================================================
+export const insertActiveSessionSchema = createInsertSchema(activeSessions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertUserSrsCardSchema = createInsertSchema(userSrsCards).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertAnalyticsSnapshotSchema = createInsertSchema(analyticsSnapshots).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertContentReportSchema = createInsertSchema(contentReports).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertEssayPromptSchema = createInsertSchema(essayPrompts).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertUserEssaySubmissionSchema = createInsertSchema(userEssaySubmissions).omit({
+  id: true,
+  submittedAt: true,
+});
+
+// ============================================================================
+// [NEW] Types for SaaS Upgrade Tables
+// ============================================================================
+export type ActiveSession = typeof activeSessions.$inferSelect;
+export type InsertActiveSession = z.infer<typeof insertActiveSessionSchema>;
+
+export type UserSrsCard = typeof userSrsCards.$inferSelect;
+export type InsertUserSrsCard = z.infer<typeof insertUserSrsCardSchema>;
+
+export type AnalyticsSnapshot = typeof analyticsSnapshots.$inferSelect;
+export type InsertAnalyticsSnapshot = z.infer<typeof insertAnalyticsSnapshotSchema>;
+
+export type ContentReport = typeof contentReports.$inferSelect;
+export type InsertContentReport = z.infer<typeof insertContentReportSchema>;
+
+export type EssayPrompt = typeof essayPrompts.$inferSelect;
+export type InsertEssayPrompt = z.infer<typeof insertEssayPromptSchema>;
+
+export type UserEssaySubmission = typeof userEssaySubmissions.$inferSelect;
+export type InsertUserEssaySubmission = z.infer<typeof insertUserEssaySubmissionSchema>;
