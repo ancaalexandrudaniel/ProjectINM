@@ -237,6 +237,61 @@ export const userCaseStudySubmissions = pgTable("user_case_study_submissions", {
 });
 
 // ============================================================================
+// [NEW] LEGISLATIVE DATA INGESTION - Official Acts & Change Tracking
+// ============================================================================
+
+export const legislativeActs = pgTable("legislative_acts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+
+  // Identificare oficială
+  actType: text("act_type").notNull(), // 'cod_civil', 'cod_penal', 'lege_speciala'
+  actNumber: text("act_number").notNull(), // '287/2009', '71/2011' 
+  actTitle: text("act_title").notNull(),
+
+  // Conținut
+  fullText: text("full_text").notNull(), // Text consolidat oficial
+  htmlText: text("html_text"), // Versiune formatată HTML
+
+  // Metadate oficiale
+  publishedInMO: text("published_in_mo"), // 'MO nr. 511/2011'
+  effectiveDate: timestamp("effective_date"),
+  lastModifiedDate: timestamp("last_modified_date"),
+
+  // Sursa oficială
+  sourceUrl: text("source_url").notNull(), // Link către legislatie.just.ro
+  apiSourceId: text("api_source_id"), // ID-ul din API-ul legislativ
+  fetchedAt: timestamp("fetched_at").defaultNow(),
+
+  // Versioning pentru detectare modificări
+  contentHash: text("content_hash").notNull(), // SHA-256 hash of fullText
+
+  // Status
+  isCurrentVersion: boolean("is_current_version").default(true),
+  needsReview: boolean("needs_review").default(false), // Set when change detected
+
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const legislativeChangeLog = pgTable("legislative_change_log", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  actId: varchar("act_id").references(() => legislativeActs.id).notNull(),
+
+  changeType: text("change_type").notNull(), // 'amendment', 'new_version', 'abrogation'
+  changeDescription: text("change_description"),
+
+  oldContentHash: text("old_content_hash"),
+  newContentHash: text("new_content_hash"),
+
+  affectedArticles: jsonb("affected_articles"), // Array de articole modificate
+
+  detectedAt: timestamp("detected_at").defaultNow(),
+  verifiedByUser: boolean("verified_by_user").default(false),
+  verifiedAt: timestamp("verified_at"),
+  verificationNotes: text("verification_notes"),
+});
+
+// ============================================================================
 // [PILON 1] SECURITATE & MONETIZARE - Active Sessions
 // ============================================================================
 export const activeSessions = pgTable("active_sessions", {
@@ -581,3 +636,23 @@ export type InsertEssayPrompt = z.infer<typeof insertEssayPromptSchema>;
 
 export type UserEssaySubmission = typeof userEssaySubmissions.$inferSelect;
 export type InsertUserEssaySubmission = z.infer<typeof insertUserEssaySubmissionSchema>;
+
+// ============================================================================
+// [NEW] Legislative Acts Insert Schemas & Types
+// ============================================================================
+export const insertLegislativeActSchema = createInsertSchema(legislativeActs).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertLegislativeChangeLogSchema = createInsertSchema(legislativeChangeLog).omit({
+  id: true,
+  detectedAt: true,
+});
+
+export type LegislativeAct = typeof legislativeActs.$inferSelect;
+export type InsertLegislativeAct = z.infer<typeof insertLegislativeActSchema>;
+
+export type LegislativeChangeLog = typeof legislativeChangeLog.$inferSelect;
+export type InsertLegislativeChangeLog = z.infer<typeof insertLegislativeChangeLogSchema>;

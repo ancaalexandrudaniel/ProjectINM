@@ -2450,6 +2450,34 @@ ${context}`;
     }
   });
 
+  // ============================================================================
+  // [NEW] LEGISLATIVE API TEST ROUTES
+  // ============================================================================
+
+  const { registerLegislativeTestRoutes } = await import("./services/legislative-test-routes");
+  registerLegislativeTestRoutes(app);
+
+  // ============================================================================
+  // [NEW] PORTAL JUST API TEST ROUTES
+  // ============================================================================
+
+  const { registerPortalJustTestRoutes } = await import("./services/portal-just-test-routes");
+  registerPortalJustTestRoutes(app);
+
+  // ============================================================================
+  // [NEW] RAW LEGISLATIVE API TEST ROUTES (Direct HTTP SOAP)
+  // ============================================================================
+
+  const { registerRawLegislativeTestRoutes } = await import("./services/raw-legislative-api");
+  registerRawLegislativeTestRoutes(app);
+
+  // ============================================================================
+  // [NEW] LEGISLATIVE SCRAPER TEST ROUTES (Puppeteer fallback)
+  // ============================================================================
+
+  const { registerScraperTestRoutes } = await import("./services/scraper-test-routes");
+  registerScraperTestRoutes(app);
+
   const httpServer = createServer(app);
   return httpServer;
 }
