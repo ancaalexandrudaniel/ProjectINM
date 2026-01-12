@@ -292,7 +292,34 @@ export const legislativeChangeLog = pgTable("legislative_change_log", {
 });
 
 // ============================================================================
+// [CLEAN ROOM] AI Compliance Audit Logs
+// ============================================================================
+export const cleanRoomAuditLogs = pgTable("clean_room_audit_logs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id),
+
+  // Generation metadata
+  generationType: text("generation_type").notNull(), // 'legal_concept_explanation', 'question_explanation', etc.
+  inputQuery: text("input_query").notNull(),
+  modelUsed: text("model_used").notNull(),
+
+  // The 3 required audit trail elements (Section 5.2 of Clean Room Protocol)
+  systemPromptUsed: text("system_prompt_used").notNull(),
+  contextProvided: text("context_provided").notNull(),  // Sanitized legal sources only
+  outputGenerated: text("output_generated").notNull(),
+
+  // Context source tracking
+  contextSources: jsonb("context_sources"), // Array of {actName, articleNumber}
+
+  // Optional plagiarism check result
+  similarityScore: integer("similarity_score"), // 0-100 percentage
+
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// ============================================================================
 // [PILON 1] SECURITATE & MONETIZARE - Active Sessions
+
 // ============================================================================
 export const activeSessions = pgTable("active_sessions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -656,3 +683,14 @@ export type InsertLegislativeAct = z.infer<typeof insertLegislativeActSchema>;
 
 export type LegislativeChangeLog = typeof legislativeChangeLog.$inferSelect;
 export type InsertLegislativeChangeLog = z.infer<typeof insertLegislativeChangeLogSchema>;
+
+// ============================================================================
+// [CLEAN ROOM] Audit Logs Insert Schema & Types
+// ============================================================================
+export const insertCleanRoomAuditLogSchema = createInsertSchema(cleanRoomAuditLogs).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type CleanRoomAuditLog = typeof cleanRoomAuditLogs.$inferSelect;
+export type InsertCleanRoomAuditLog = z.infer<typeof insertCleanRoomAuditLogSchema>;

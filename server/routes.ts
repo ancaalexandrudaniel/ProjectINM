@@ -2485,6 +2485,14 @@ ${context}`;
   const { registerLegalActsRoutes } = await import("./services/legal-acts-routes");
   registerLegalActsRoutes(app);
 
+  // ============================================================================
+  // [CLEAN ROOM] AI Content Generation Routes
+  // ============================================================================
+
+  const { cleanRoomRoutes } = await import("./services/clean-room/routes");
+  app.use("/api/clean-room", cleanRoomRoutes);
+  console.log("[ROUTES] Clean Room routes registered at /api/clean-room");
+
   const httpServer = createServer(app);
   return httpServer;
 }
