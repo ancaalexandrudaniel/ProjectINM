@@ -2478,6 +2478,13 @@ ${context}`;
   const { registerScraperTestRoutes } = await import("./services/scraper-test-routes");
   registerScraperTestRoutes(app);
 
+  // ============================================================================
+  // [NEW] LEGAL ACTS API ROUTES (Browse/Search legislative acts from DB)
+  // ============================================================================
+
+  const { registerLegalActsRoutes } = await import("./services/legal-acts-routes");
+  registerLegalActsRoutes(app);
+
   const httpServer = createServer(app);
   return httpServer;
 }

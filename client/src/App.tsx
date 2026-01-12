@@ -29,8 +29,7 @@ import Sidebar from "@/components/layout/sidebar";
 import Login from "@/pages/login";
 import SrsReview from "@/pages/srs-review";
 import Essay from "@/pages/essay";
-
-
+import LegalActs from "@/pages/legal-acts";
 import Syllabus from "@/pages/syllabus";
 
 function Router() {
@@ -61,6 +60,7 @@ function Router() {
       <Route path="/quiz-select" component={QuizModeSelect} />
       <Route path="/quiz-god-mode" component={QuizGodMode} />
       <Route path="/legal-articles-import" component={LegalArticlesImport} />
+      <Route path="/legal-acts" component={LegalActs} />
       <Route path="/psihologic">{() => <Etapa2Placeholder type="psihologic" />}</Route>
       <Route path="/interviu">{() => <Etapa2Placeholder type="interviu" />}</Route>
       <Route component={NotFound} />
