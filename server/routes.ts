@@ -1139,12 +1139,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // RAG: Ask legal question with document retrieval
+  // RAG: Ask legal question with document retrieval (Clean Room Integration)
   app.post("/api/legal-assistant/ask", async (req, res) => {
     try {
       const { documentChunks } = await import("@shared/schema");
       const { isNotNull } = await import("drizzle-orm");
       const { generateEmbedding, calculateCosineSimilarity } = await import("./gemini");
+      const { generateWithSanitizedContext } = await import("./services/clean-room/generator");
+      const userId = await getDefaultUserId();
 
       const { question, topK = 5 } = req.body;
 
@@ -1152,13 +1154,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Question is required" });
       }
 
-      console.log(`[RAG] Question: "${question}"`);
+      console.log(`[RAG-CLEAN] Question: "${question}"`);
 
-      // Generate embedding for question
+      // 1. Generate embedding for question
       const questionEmbedding = await generateEmbedding(question);
-      console.log(`[RAG] Generated question embedding (${questionEmbedding.length}D)`);
 
-      // Get all chunks with embeddings
+      // 2. Get all chunks with embeddings (filtering for Clean Room content if possible, but currently all chunks are Clean Room)
       const chunks = await db
         .select()
         .from(documentChunks)
@@ -1166,13 +1167,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (chunks.length === 0) {
         return res.status(404).json({
-          error: "No document embeddings found. Please generate embeddings first."
+          error: "Baza de date legislativă este goală sau neindexată. Vă rugăm să contactați administratorul."
         });
       }
 
-      console.log(`[RAG] Searching through ${chunks.length} chunks...`);
-
-      // Calculate similarities and find top-K
+      // 3. Vector Search (Cosine Similarity)
       const similarities = chunks
         .map(chunk => ({
           ...chunk,
@@ -1184,49 +1183,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .sort((a, b) => b.similarity - a.similarity)
         .slice(0, topK);
 
-      console.log(`[RAG] Top ${topK} similarities:`,
-        similarities.map(s => s.similarity.toFixed(4)));
+      console.log(`[RAG-CLEAN] Found ${similarities.length} relevant chunks`);
 
-      // Build context from top chunks
-      const context = similarities
-        .map((s, i) => `[${i + 1}] ${s.chunkText}`)
-        .join('\n\n');
+      // 4. Prepare Context for Clean Room
+      const sanitizedContext = similarities.map(s => ({
+        actName: (s.metadata as any)?.actName || "Act Normativ",
+        actNumber: (s.metadata as any)?.actNumber || "",
+        rawOfficialText: s.chunkText,
+        sourceUrl: "legislatie.just.ro",
+        sanitizedAt: new Date(),
+        contentHash: "vector-retrieved",
+        articleNumber: "" // Can be parsed from text if needed
+      }));
 
-      // Generate answer using Gemini with RAG context
-      const { GoogleGenAI } = await import("@google/genai");
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+      // 5. Generate Answer using Clean Room Generator
+      // We use 'legal_synthesis' as it provides a structured summary suitable for general questions
+      const result = await generateWithSanitizedContext(
+        question,
+        sanitizedContext,
+        'legal_synthesis',
+        userId
+      );
 
-      const systemPrompt = `Ești un asistent juridic expert pentru pregătirea examenului INM.
-Răspunzi la întrebări despre concepte juridice în limba română, bazându-te pe documentele furnizate.
+      if (!result.success || !result.data) {
+        throw new Error(result.error || "Failed to generate content");
+      }
 
-REGULI IMPORTANTE:
-- Răspunde STRICT bazat pe contextul furnizat din documente
-- Citează articole și legi când răspunzi
-- Dacă informația nu există în context, spune clar "Nu găsesc această informație în documentele disponibile"
-- Răspunsuri concise (max 250 cuvinte)
-- Limbaj simplu, fără termeni complicați
-- Exemplifică cu cazuri practice când este relevant
+      // 6. Format response for UI
+      // The UI expects { answer, citations, ... }
+      // We map the structured 'LegalSynthesisOutput' to this format
+      const data = result.data as any; // Cast to access properties
 
-CONTEXT din documente:
-${context}`;
+      const answer = `**${data.topic || "Răspuns"}**\n\n${data.summary}\n\n**Concepte relaționate:** ${data.related_concepts?.join(", ")}`;
 
-      const result = await ai.models.generateContent({
-        model: "gemini-2.0-flash-exp",
-        systemInstruction: systemPrompt,
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: question }]
-          }
-        ]
-      });
-
-      const answer = result.text || "Nu am putut genera un răspuns.";
-
-      // Prepare citations
       const citations = similarities.map(s => ({
         chunkId: s.id,
-        text: s.chunkText.substring(0, 200) + (s.chunkText.length > 200 ? "..." : ""),
+        text: s.chunkText,
         similarity: s.similarity,
         metadata: s.metadata
       }));
@@ -1234,9 +1226,12 @@ ${context}`;
       res.json({
         question,
         answer,
-        citations,
-        chunksRetrieved: topK
+        citations, // Legacy format for UI to show sources
+        chunksRetrieved: topK,
+        auditLogId: result.auditLogId,
+        cleanRoomData: data // Full structured data if UI wants to use it
       });
+
     } catch (error) {
       console.error("Legal assistant error:", error);
       res.status(500).json({ error: "Failed to answer question" });
