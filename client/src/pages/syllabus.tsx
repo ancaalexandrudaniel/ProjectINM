@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
     Loader2,
     Scale,
@@ -20,7 +21,8 @@ import {
     ArrowLeft,
     BookMarked,
     FileQuestion,
-    GraduationCap
+    GraduationCap,
+    Sparkles
 } from "lucide-react";
 
 interface SyllabusTopic {
@@ -144,8 +146,40 @@ export default function Syllabus() {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center min-h-[50vh]">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="container mx-auto p-6 space-y-6">
+                {/* Animated loading skeleton */}
+                <div className="flex flex-col gap-2 animate-pulse">
+                    <Skeleton className="h-9 w-96" />
+                    <Skeleton className="h-5 w-80" />
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {[1, 2, 3, 4].map((i) => (
+                        <Card key={i} className="animate-pulse">
+                            <CardContent className="py-4">
+                                <div className="flex items-center gap-3">
+                                    <Skeleton className="h-5 w-5 rounded-full" />
+                                    <div className="space-y-2">
+                                        <Skeleton className="h-4 w-24" />
+                                        <Skeleton className="h-3 w-16" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+                <Card>
+                    <CardHeader>
+                        <Skeleton className="h-6 w-48" />
+                        <Skeleton className="h-4 w-72" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-3">
+                            {[1, 2, 3, 4, 5].map((i) => (
+                                <Skeleton key={i} className="h-10 w-full" style={{ animationDelay: `${i * 100}ms` }} />
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         );
     }
@@ -154,17 +188,17 @@ export default function Syllabus() {
     const { rootTopics, getChildren } = buildTree(topics);
     const SubjectIcon = subjectConfig[selectedSubject as keyof typeof subjectConfig]?.icon || Scale;
 
-    // Topic Tree Node Component
+    // Topic Tree Node Component with animations
     const TopicNode = ({ topic, level = 0 }: { topic: SyllabusTopic; level?: number }) => {
         const children = getChildren(topic.syllabusId);
         const hasChildren = children.length > 0;
         const progressColor = topic.progressPercent >= 70 ? "bg-green-500" : topic.progressPercent >= 30 ? "bg-yellow-500" : "bg-red-400";
 
         return (
-            <AccordionItem value={topic.syllabusId} className="border-none">
-                <div className="flex items-center gap-2">
+            <AccordionItem value={topic.syllabusId} className="border-none transition-all duration-200">
+                <div className="flex items-center gap-2 group">
                     <AccordionTrigger
-                        className={`flex-1 text-left text-sm hover:no-underline hover:bg-muted/50 px-2 py-2 rounded-sm ${level === 0 ? 'font-semibold' : ''
+                        className={`flex-1 text-left text-sm hover:no-underline hover:bg-gradient-to-r hover:from-muted/80 hover:to-transparent px-3 py-2.5 rounded-lg transition-all duration-200 ${level === 0 ? 'font-semibold text-base' : ''
                             }`}
                         onClick={(e) => {
                             if (!hasChildren) {
@@ -389,7 +423,7 @@ export default function Syllabus() {
                     return (
                         <Card
                             key={key}
-                            className={`cursor-pointer transition-all hover:shadow-md ${isActive ? 'ring-2 ring-primary' : ''}`}
+                            className={`cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] hover:-translate-y-0.5 ${isActive ? 'ring-2 ring-primary shadow-lg shadow-primary/20' : 'hover:ring-1 hover:ring-muted-foreground/20'}`}
                             onClick={() => {
                                 setSelectedSubject(key);
                                 setViewMode("overview");

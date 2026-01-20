@@ -830,6 +830,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Don't fail the request if SRS fails
           }
         }
+
+        // Syllabus Progress Integration: Update progress for matching syllabus topics
+        try {
+          const { syllabusTopicMappings, userSyllabusProgress } = await import("@shared/schema");
+          const { ilike } = await import("drizzle-orm");
+          const userId = await getDefaultUserId();
+
+          // Find syllabus topics that match this question's chapter via chapterPatterns
+          const allTopics = await db.select().from(syllabusTopicMappings)
+            .where(eq(syllabusTopicMappings.subject, question.subject));
+
+          const matchingTopics = allTopics.filter(topic => {
+            const patterns = topic.chapterPatterns as string[] | null;
+            if (!patterns || patterns.length === 0) return false;
+            const chapterLower = question.chapter.toLowerCase();
+            return patterns.some(p => chapterLower.includes(p.toLowerCase()));
+          });
+
+          // Update progress for each matching topic
+          for (const topic of matchingTopics) {
+            const [existingProgress] = await db.select().from(userSyllabusProgress)
+              .where(
+                and(
+                  eq(userSyllabusProgress.userId, userId),
+                  eq(userSyllabusProgress.syllabusTopicId, topic.id)
+                )
+              )
+              .limit(1);
+
+            if (existingProgress) {
+              // Update existing progress
+              const newAnswered = (existingProgress.questionsAnswered || 0) + 1;
+              const newCorrect = (existingProgress.questionsCorrect || 0) + (answerData.isCorrect ? 1 : 0);
+              const newProgress = Math.round((newCorrect / Math.max(newAnswered, 1)) * 100);
+
+              await db.update(userSyllabusProgress)
+                .set({
+                  questionsAnswered: newAnswered,
+                  questionsCorrect: newCorrect,
+                  progressPercent: newProgress,
+                  updatedAt: new Date()
+                })
+                .where(eq(userSyllabusProgress.id, existingProgress.id));
+            } else {
+              // Create new progress entry
+              await db.insert(userSyllabusProgress).values({
+                userId,
+                syllabusTopicId: topic.id,
+                questionsAnswered: 1,
+                questionsCorrect: answerData.isCorrect ? 1 : 0,
+                articlesRead: 0,
+                progressPercent: answerData.isCorrect ? 100 : 0,
+              });
+            }
+          }
+
+          if (matchingTopics.length > 0) {
+            console.log(`[Syllabus] Updated progress for ${matchingTopics.length} topics`);
+          }
+        } catch (syllabusError) {
+          console.error("[Syllabus] Failed to update syllabus progress:", syllabusError);
+          // Don't fail the request if syllabus progress fails
+        }
       }
 
       res.json(answer);
