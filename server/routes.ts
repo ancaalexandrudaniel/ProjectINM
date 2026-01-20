@@ -518,6 +518,215 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ============================================================================
+  // SYLLABUS TOPIC ROUTES - Tematica & Bibliografie Integration
+  // ============================================================================
+
+  // GET /api/syllabus-topics - Get all syllabus topics with hierarchy and progress
+  app.get("/api/syllabus-topics", async (req, res) => {
+    try {
+      const { syllabusTopicMappings, userSyllabusProgress, legalArticles, questions } = await import("@shared/schema");
+      const { and, isNull, sql, count } = await import("drizzle-orm");
+
+      const subject = req.query.subject as string | undefined;
+      const parentId = req.query.parentId as string | undefined;
+
+      // Build query
+      let topicsQuery = db.select().from(syllabusTopicMappings);
+
+      if (subject) {
+        topicsQuery = topicsQuery.where(eq(syllabusTopicMappings.subject, subject)) as any;
+      }
+
+      const topics = await topicsQuery.orderBy(syllabusTopicMappings.sortOrder);
+
+      // Get user progress if authenticated (optional)
+      let userProgressMap: Map<string, number> = new Map();
+      try {
+        const userId = await getDefaultUserId();
+        const progressData = await db.select().from(userSyllabusProgress)
+          .where(eq(userSyllabusProgress.userId, userId));
+        progressData.forEach(p => {
+          userProgressMap.set(p.syllabusTopicId, p.progressPercent || 0);
+        });
+      } catch (e) {
+        // No user, no progress data
+      }
+
+      // Count articles per subject for stats
+      const articleCounts = await db
+        .select({
+          subject: legalArticles.subject,
+          count: sql<number>`count(*)::int`
+        })
+        .from(legalArticles)
+        .groupBy(legalArticles.subject);
+
+      const articleCountMap: Record<string, number> = {};
+      articleCounts.forEach(ac => {
+        articleCountMap[ac.subject] = ac.count;
+      });
+
+      // Enrich topics with progress and stats
+      const enrichedTopics = topics.map(topic => ({
+        ...topic,
+        progressPercent: userProgressMap.get(topic.id) || 0,
+        hasArticles: (topic.articleRangeStart !== null),
+        availableArticles: articleCountMap[topic.subject] || 0,
+      }));
+
+      // Build hierarchy for frontend
+      const rootTopics = enrichedTopics.filter(t => t.parentId === null || parentId === t.parentId);
+
+      res.json({
+        topics: enrichedTopics,
+        rootTopics: rootTopics.map(t => t.syllabusId),
+        stats: {
+          totalTopics: topics.length,
+          bySubject: {
+            civil: topics.filter(t => t.subject === 'civil').length,
+            'civil-procedural': topics.filter(t => t.subject === 'civil-procedural').length,
+            penal: topics.filter(t => t.subject === 'penal').length,
+            'penal-procedural': topics.filter(t => t.subject === 'penal-procedural').length,
+          }
+        }
+      });
+    } catch (error) {
+      console.error("[SYLLABUS] Error fetching topics:", error);
+      res.status(500).json({ error: "Failed to fetch syllabus topics" });
+    }
+  });
+
+  // GET /api/syllabus-topics/:syllabusId - Get single topic with children
+  app.get("/api/syllabus-topics/:syllabusId", async (req, res) => {
+    try {
+      const { syllabusTopicMappings } = await import("@shared/schema");
+      const { syllabusId } = req.params;
+
+      // Get the topic
+      const [topic] = await db.select().from(syllabusTopicMappings)
+        .where(eq(syllabusTopicMappings.syllabusId, syllabusId))
+        .limit(1);
+
+      if (!topic) {
+        return res.status(404).json({ error: "Topic not found" });
+      }
+
+      // Get children
+      const children = await db.select().from(syllabusTopicMappings)
+        .where(eq(syllabusTopicMappings.parentId, syllabusId))
+        .orderBy(syllabusTopicMappings.sortOrder);
+
+      // Get parent path (breadcrumb)
+      const breadcrumb: { id: string; title: string }[] = [];
+      let currentParentId = topic.parentId;
+      while (currentParentId) {
+        const [parent] = await db.select().from(syllabusTopicMappings)
+          .where(eq(syllabusTopicMappings.syllabusId, currentParentId))
+          .limit(1);
+        if (parent) {
+          breadcrumb.unshift({ id: parent.syllabusId, title: parent.topicTitle });
+          currentParentId = parent.parentId;
+        } else {
+          break;
+        }
+      }
+
+      res.json({
+        topic,
+        children,
+        breadcrumb,
+        hasChildren: children.length > 0,
+      });
+    } catch (error) {
+      console.error("[SYLLABUS] Error fetching topic:", error);
+      res.status(500).json({ error: "Failed to fetch topic details" });
+    }
+  });
+
+  // GET /api/syllabus-topics/:syllabusId/content - Get legal content for a topic
+  app.get("/api/syllabus-topics/:syllabusId/content", async (req, res) => {
+    try {
+      const { syllabusTopicMappings, legalArticles, questions } = await import("@shared/schema");
+      const { and, gte, lte, or, ilike } = await import("drizzle-orm");
+      const { syllabusId } = req.params;
+
+      // Get the topic
+      const [topic] = await db.select().from(syllabusTopicMappings)
+        .where(eq(syllabusTopicMappings.syllabusId, syllabusId))
+        .limit(1);
+
+      if (!topic) {
+        return res.status(404).json({ error: "Topic not found" });
+      }
+
+      // Find matching legal articles by article range
+      let matchingArticles: any[] = [];
+      if (topic.articleRangeStart && topic.articleRangeEnd) {
+        matchingArticles = await db.select().from(legalArticles)
+          .where(
+            and(
+              eq(legalArticles.subject, topic.subject),
+              gte(legalArticles.articleNumber, topic.articleRangeStart),
+              lte(legalArticles.articleNumber, topic.articleRangeEnd)
+            )
+          )
+          .orderBy(legalArticles.articleNumber)
+          .limit(50);
+      }
+
+      // Find matching questions by chapter pattern
+      let matchingQuestions: any[] = [];
+      const patterns = topic.chapterPatterns as string[] | null;
+      if (patterns && patterns.length > 0) {
+        // Search for questions matching any of the patterns
+        try {
+          const allQuestions = await db.select().from(questions)
+            .where(eq(questions.subject, topic.subject))
+            .limit(100);
+
+          matchingQuestions = allQuestions.filter(q => {
+            const chapterLower = q.chapter.toLowerCase();
+            return patterns.some(p => chapterLower.includes(p.toLowerCase()));
+          }).slice(0, 20);
+        } catch (e) {
+          console.log("[SYLLABUS] No matching questions found");
+        }
+      }
+
+      res.json({
+        topic: {
+          id: topic.id,
+          syllabusId: topic.syllabusId,
+          title: topic.topicTitle,
+          subject: topic.subject,
+          articleRefs: topic.articleRefs,
+        },
+        content: {
+          articles: matchingArticles.map(a => ({
+            id: a.id,
+            articleNumber: a.articleNumber,
+            title: a.title,
+            segments: a.segments, // All 7 segment types
+            lawSource: a.lawSource,
+          })),
+          articlesCount: matchingArticles.length,
+          questions: matchingQuestions.map(q => ({
+            id: q.id,
+            questionText: q.questionText.substring(0, 200) + (q.questionText.length > 200 ? '...' : ''),
+            chapter: q.chapter,
+            difficulty: q.difficulty,
+          })),
+          questionsCount: matchingQuestions.length,
+        },
+        segmentTypes: ['official', 'trad', 'puncte', 'juris', 'radar', 'logica', 'conex'],
+      });
+    } catch (error) {
+      console.error("[SYLLABUS] Error fetching topic content:", error);
+      res.status(500).json({ error: "Failed to fetch topic content" });
+    }
+  });
+
   app.get("/api/questions", async (req, res) => {
     try {
       const questions = await storage.getAllQuestions();
@@ -2487,6 +2696,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { cleanRoomRoutes } = await import("./services/clean-room/routes");
   app.use("/api/clean-room", cleanRoomRoutes);
   console.log("[ROUTES] Clean Room routes registered at /api/clean-room");
+
+  // ============================================================================
+  // [NEW] BULLETIN BOARD - Legislative Changes Tracking
+  // ============================================================================
+
+  const { registerBulletinBoardRoutes } = await import("./services/bulletin-board-routes");
+  registerBulletinBoardRoutes(app);
 
   const httpServer = createServer(app);
   return httpServer;

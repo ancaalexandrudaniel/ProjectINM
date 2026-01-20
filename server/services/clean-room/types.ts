@@ -99,6 +99,26 @@ export const LegalSynthesisOutputSchema = z.object({
 
 export type LegalSynthesisOutput = z.infer<typeof LegalSynthesisOutputSchema>;
 
+/**
+ * Schema for article breakdown output (for legalArticles table segments)
+ * Used to generate educational content for each article from official text
+ */
+export const ArticleBreakdownOutputSchema = z.object({
+    article_number: z.number().describe('The article number'),
+    title: z.string().describe('Title or heading of the article'),
+    segments: z.object({
+        official: z.string().describe('The exact official text of the article from the legislative act'),
+        trad: z.string().describe('A simplified, student-friendly translation/explanation of the article in plain Romanian'),
+        puncte: z.string().describe('Key points, common exam traps, and gotchas for this article'),
+        juris: z.string().optional().describe('Relevant case law or jurisprudence citations if available'),
+        radar: z.string().describe('What specifically appears in exams about this article, likely exam questions'),
+        logica: z.string().describe('The underlying logic and rationale of the article'),
+        conex: z.string().optional().describe('Connections to other related articles or legal concepts'),
+    }),
+});
+
+export type ArticleBreakdownOutput = z.infer<typeof ArticleBreakdownOutputSchema>;
+
 // ============================================================================
 // AGENT CONFIGURATION TYPES
 // ============================================================================
@@ -110,7 +130,8 @@ export type CleanRoomGenerationType =
     | 'legal_concept_explanation'
     | 'question_explanation'
     | 'legal_synthesis'
-    | 'exam_question_generation';
+    | 'exam_question_generation'
+    | 'article_breakdown';
 
 /**
  * Parameters for Clean Room content generation

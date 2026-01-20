@@ -64,7 +64,7 @@ CONSTRÂNGERI CRITICE - TREBUIE RESPECTATE ÎNTOTDEAUNA
  */
 export const GENERATION_TYPE_PROMPTS: Record<CleanRoomGenerationType, string> = {
 
-    legal_concept_explanation: `
+  legal_concept_explanation: `
 TASK: Explică un concept juridic pentru pregătirea examenului INM.
 
 INSTRUCȚIUNI SPECIFICE:
@@ -86,7 +86,7 @@ FORMAT RĂSPUNS (JSON):
   "potential_traps": ["Capcan/confuzie 1", "Capcan/confuzie 2"]
 }`,
 
-    question_explanation: `
+  question_explanation: `
 TASK: Explică de ce un răspuns la o întrebare grilă este corect sau greșit.
 
 INSTRUCȚIUNI SPECIFICE:
@@ -109,7 +109,7 @@ FORMAT RĂSPUNS (JSON):
   "memory_tip": "Optional: truc de memorare"
 }`,
 
-    legal_synthesis: `
+  legal_synthesis: `
 TASK: Sintetizează informații despre o temă juridică pentru studiu.
 
 INSTRUCȚIUNI SPECIFICE:
@@ -129,7 +129,7 @@ FORMAT RĂSPUNS (JSON):
   "study_notes": ["Notă de studiu 1", "Notă de studiu 2"]
 }`,
 
-    exam_question_generation: `
+  exam_question_generation: `
 TASK: Generează o întrebare grilă pentru examenul INM.
 
 INSTRUCȚIUNI SPECIFICE:
@@ -151,6 +151,32 @@ FORMAT RĂSPUNS (JSON):
   },
   "difficulty": "easy|medium|hard"
 }`,
+
+  article_breakdown: `
+TASK: Generează un breakdown educațional complet pentru un articol de lege.
+
+INSTRUCȚIUNI SPECIFICE:
+1. Extrage textul EXACT oficial al articolului din context.
+2. Creează o explicație simplificată pentru studenți (fără jargon excesiv).
+3. Identifică punctele-cheie și capcanele frecvente la examen.
+4. Notează ce apare frecvent la examen despre acest articol.
+5. Explică logica și rațiunea din spatele articolului.
+6. Identifică conexiuni cu alte articole menționate în context.
+
+FORMAT RĂSPUNS (JSON):
+{
+  "article_number": NUMĂR_ARTICOL_CA_INTEGER,
+  "title": "Titlu scurt descriptiv al articolului",
+  "segments": {
+    "official": "Textul EXACT oficial al articolului - copiat fără modificări din context",
+    "trad": "Explicație simplificată pe înțelesul studentului, în română clară",
+    "puncte": "Puncte-cheie și capcane grilă pentru acest articol (ce se greșește frecvent)",
+    "juris": "Jurisprudență relevantă dacă este menționată în context, altfel null",
+    "radar": "Ce apare la examen: tipuri de întrebări, formulări frecvente",
+    "logica": "Logica articolului: de ce există, ce problemă rezolvă",
+    "conex": "Conexiuni cu alte articole sau instituții juridice din context"
+  }
+}`,
 };
 
 // ============================================================================
@@ -162,35 +188,35 @@ FORMAT RĂSPUNS (JSON):
  * Can be serialized and stored for audit purposes
  */
 export const CLEAN_ROOM_AGENT_CONFIG = {
-    agent_configuration: {
-        role: "Legal_Analyst_Clean_Room",
-        objective: "Generate educational content for INM admission based STRICTLY on provided official legal texts.",
-        version: "1.0.0",
-        constraints: {
-            knowledge_boundary: "STRICT_CONTEXT_ONLY",
-            external_knowledge_use: "FORBIDDEN",
-            hallucination_prevention: "HIGH",
-            tone: "Formal, Academic, Neutral",
-            citation_format: "Official Article Reference Only (e.g., 'Art. X din Legea Y')",
-            language: "Romanian",
-            forbidden_content: [
-                "Doctrinal commentary from external treatises",
-                "Citations from university courses or legal manuals",
-                "References to commercial legal databases (Lege5, Sintact, Juridice.ro)",
-                "Personal opinions or subjective interpretations",
-                "Unofficial or commented jurisprudence",
-                "Elaborate analogies or literary metaphors"
-            ],
-        },
-        instructions: [
-            "Always respond in structured JSON format as specified",
-            "Only cite official legal texts provided in context",
-            "If information is not in context, respond: 'Informația nu se regăsește în sursele oficiale furnizate.'",
-            "Use precise legal terminology in Romanian",
-            "Focus on practical exam preparation",
-            "Never invent or extrapolate beyond the provided context"
-        ],
-    }
+  agent_configuration: {
+    role: "Legal_Analyst_Clean_Room",
+    objective: "Generate educational content for INM admission based STRICTLY on provided official legal texts.",
+    version: "1.0.0",
+    constraints: {
+      knowledge_boundary: "STRICT_CONTEXT_ONLY",
+      external_knowledge_use: "FORBIDDEN",
+      hallucination_prevention: "HIGH",
+      tone: "Formal, Academic, Neutral",
+      citation_format: "Official Article Reference Only (e.g., 'Art. X din Legea Y')",
+      language: "Romanian",
+      forbidden_content: [
+        "Doctrinal commentary from external treatises",
+        "Citations from university courses or legal manuals",
+        "References to commercial legal databases (Lege5, Sintact, Juridice.ro)",
+        "Personal opinions or subjective interpretations",
+        "Unofficial or commented jurisprudence",
+        "Elaborate analogies or literary metaphors"
+      ],
+    },
+    instructions: [
+      "Always respond in structured JSON format as specified",
+      "Only cite official legal texts provided in context",
+      "If information is not in context, respond: 'Informația nu se regăsește în sursele oficiale furnizate.'",
+      "Use precise legal terminology in Romanian",
+      "Focus on practical exam preparation",
+      "Never invent or extrapolate beyond the provided context"
+    ],
+  }
 } as const;
 
 // ============================================================================
@@ -201,40 +227,40 @@ export const CLEAN_ROOM_AGENT_CONFIG = {
  * Build the complete system prompt for a specific generation type
  */
 export function buildSystemPrompt(generationType: CleanRoomGenerationType): string {
-    const typePrompt = GENERATION_TYPE_PROMPTS[generationType];
-    return `${CLEAN_ROOM_SYSTEM_PROMPT}\n${typePrompt}`;
+  const typePrompt = GENERATION_TYPE_PROMPTS[generationType];
+  return `${CLEAN_ROOM_SYSTEM_PROMPT}\n${typePrompt}`;
 }
 
 /**
  * Build the context section with sanitized legal texts
  */
 export function buildContextSection(texts: Array<{ actName: string; articleNumber?: string; rawOfficialText: string }>): string {
-    if (texts.length === 0) {
-        return '[CONTEXT LEGAL OFICIAL]\nNu au fost furnizate texte legale în context.';
-    }
+  if (texts.length === 0) {
+    return '[CONTEXT LEGAL OFICIAL]\nNu au fost furnizate texte legale în context.';
+  }
 
-    const contextParts = texts.map((text, index) => {
-        const header = text.articleNumber
-            ? `[${index + 1}] ${text.actName} - ${text.articleNumber}`
-            : `[${index + 1}] ${text.actName}`;
-        return `${header}\n${'─'.repeat(60)}\n${text.rawOfficialText}`;
-    });
+  const contextParts = texts.map((text, index) => {
+    const header = text.articleNumber
+      ? `[${index + 1}] ${text.actName} - ${text.articleNumber}`
+      : `[${index + 1}] ${text.actName}`;
+    return `${header}\n${'─'.repeat(60)}\n${text.rawOfficialText}`;
+  });
 
-    return `[CONTEXT LEGAL OFICIAL]\nMai jos sunt textele legale oficiale pe care le poți folosi.\nFolosește DOAR aceste texte pentru a răspunde.\n\n${contextParts.join('\n\n')}`;
+  return `[CONTEXT LEGAL OFICIAL]\nMai jos sunt textele legale oficiale pe care le poți folosi.\nFolosește DOAR aceste texte pentru a răspunde.\n\n${contextParts.join('\n\n')}`;
 }
 
 /**
  * Build complete prompt with context and user query
  */
 export function buildCompletePrompt(
-    generationType: CleanRoomGenerationType,
-    context: Array<{ actName: string; articleNumber?: string; rawOfficialText: string }>,
-    userQuery: string
+  generationType: CleanRoomGenerationType,
+  context: Array<{ actName: string; articleNumber?: string; rawOfficialText: string }>,
+  userQuery: string
 ): { systemPrompt: string; userPrompt: string } {
-    const systemPrompt = buildSystemPrompt(generationType);
-    const contextSection = buildContextSection(context);
+  const systemPrompt = buildSystemPrompt(generationType);
+  const contextSection = buildContextSection(context);
 
-    const userPrompt = `${contextSection}
+  const userPrompt = `${contextSection}
 
 ═══════════════════════════════════════════════════════════════════════════════
 [ÎNTREBARE UTILIZATOR]
@@ -243,5 +269,5 @@ ${userQuery}
 
 Răspunde în formatul JSON specificat mai sus.`;
 
-    return { systemPrompt, userPrompt };
+  return { systemPrompt, userPrompt };
 }

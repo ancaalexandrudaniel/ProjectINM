@@ -121,6 +121,10 @@ export default function Sidebar() {
                 <Brain className="h-4 w-4" />
                 <span>Asistent AI (RAG)</span>
               </Link>
+              <Link href="/bulletin-board" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/bulletin-board') ? 'active' : ''}`} data-testid="nav-bulletin-board">
+                <AlertTriangle className="h-4 w-4 text-amber-500" />
+                <span>Buletin Legislativ</span>
+              </Link>
             </div>
           )}
 

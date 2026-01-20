@@ -5,7 +5,6 @@
  * Use this as the main entry point for Clean Room operations.
  */
 
-// Core types and schemas
 export {
     // Types
     type SanitizedLegalText,
@@ -13,6 +12,7 @@ export {
     type LegalConceptOutput,
     type QuestionExplanationOutput,
     type LegalSynthesisOutput,
+    type ArticleBreakdownOutput,
     type CleanRoomGenerationType,
     type CleanRoomGenerationParams,
     type CleanRoomGenerationResult,
@@ -23,6 +23,7 @@ export {
     LegalConceptOutputSchema,
     QuestionExplanationOutputSchema,
     LegalSynthesisOutputSchema,
+    ArticleBreakdownOutputSchema,
     OfficialSourceSchema,
 
     // Constants
@@ -88,6 +89,7 @@ export {
     explainLegalConcept,
     explainQuestion,
     synthesizeLegalTopic,
+    generateArticleBreakdown,
     generateWithSanitizedContext,
     getAgentConfiguration,
     isCleanRoomReady,

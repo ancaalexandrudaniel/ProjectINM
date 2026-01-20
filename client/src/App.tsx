@@ -31,6 +31,7 @@ import SrsReview from "@/pages/srs-review";
 import Essay from "@/pages/essay";
 import LegalActs from "@/pages/legal-acts";
 import Syllabus from "@/pages/syllabus";
+import BulletinBoard from "@/pages/bulletin-board";
 
 function Router() {
   return (
@@ -61,6 +62,7 @@ function Router() {
       <Route path="/quiz-god-mode" component={QuizGodMode} />
       <Route path="/legal-articles-import" component={LegalArticlesImport} />
       <Route path="/legal-acts" component={LegalActs} />
+      <Route path="/bulletin-board" component={BulletinBoard} />
       <Route path="/psihologic">{() => <Etapa2Placeholder type="psihologic" />}</Route>
       <Route path="/interviu">{() => <Etapa2Placeholder type="interviu" />}</Route>
       <Route component={NotFound} />

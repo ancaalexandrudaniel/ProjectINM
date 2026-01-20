@@ -42,6 +42,8 @@ export const questions = pgTable("questions", {
   sourceType: text("source_type"), // 'llm-session', 'manual', 'exam-past'
   sourceLLM: text("source_llm"), // 'chatgpt', 'claude', 'gemini'
   batchId: varchar("batch_id"), // reference to question batch
+  needsLegalReview: boolean("needs_legal_review").default(false), // flagged when referenced law changes
+  affectedByChange: varchar("affected_by_change"), // FK to legislative_change_log.id
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -173,6 +175,8 @@ export const caseStudies = pgTable("case_studies", {
   batchId: varchar("batch_id"), // reference to case study batch
   difficulty: text("difficulty").notNull(),
   estimatedTime: integer("estimated_time"), // minutes to solve
+  needsLegalReview: boolean("needs_legal_review").default(false), // flagged when referenced law changes
+  affectedByChange: varchar("affected_by_change"), // FK to legislative_change_log.id
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -234,6 +238,58 @@ export const userCaseStudySubmissions = pgTable("user_case_study_submissions", {
   aiFeedback: text("ai_feedback"),
   submittedAt: timestamp("submitted_at").defaultNow().notNull(),
   timeSpent: integer("time_spent"), // seconds
+});
+
+// ============================================================================
+// [NEW] SYLLABUS TOPIC MAPPINGS - Links tematica to legal content
+// ============================================================================
+export const syllabusTopicMappings = pgTable("syllabus_topic_mappings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+
+  // Referință la syllabus.json
+  syllabusId: text("syllabus_id").notNull().unique(), // ID din syllabus.json, ex: "disc-0-II-1"
+  subject: text("subject").notNull(), // 'civil', 'civil-procedural', 'penal', 'penal-procedural'
+
+  // Metadate
+  topicTitle: text("topic_title").notNull(), // Titlul exact din syllabus
+  parentId: text("parent_id"), // Pentru ierarhie (syllabus_id al părintelui)
+  depth: integer("depth").default(0), // Nivel în ierarhie (0=disciplină, 1=capitol, etc.)
+  sortOrder: integer("sort_order").default(0), // Pentru menținerea ordinii originale
+
+  // Mapping spre conținut juridic
+  articleRefs: jsonb("article_refs"), // Array: ["Art. 1166", "Art. 1167-1170"]
+  articleRangeStart: integer("article_range_start"), // Pentru query, ex: 1166
+  articleRangeEnd: integer("article_range_end"), // Pentru query, ex: 1170
+  chapterPatterns: jsonb("chapter_patterns"), // Array pattern-uri pentru matching questions.chapter
+  lawSources: jsonb("law_sources"), // Array: ["Codul civil", "Legea 287/2009"]
+
+  // Stats cachate (actualizate pe baza userProgress)
+  totalQuestions: integer("total_questions").default(0),
+  totalArticles: integer("total_articles").default(0),
+
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// ============================================================================
+// [NEW] USER SYLLABUS PROGRESS - Track progress per topic per user
+// ============================================================================
+export const userSyllabusProgress = pgTable("user_syllabus_progress", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  syllabusTopicId: varchar("syllabus_topic_id").references(() => syllabusTopicMappings.id).notNull(),
+
+  // Progress stats
+  questionsAnswered: integer("questions_answered").default(0),
+  questionsCorrect: integer("questions_correct").default(0),
+  articlesRead: integer("articles_read").default(0), // Tracking ce a citit
+
+  // Calculated
+  progressPercent: integer("progress_percent").default(0), // 0-100
+
+  lastActivityAt: timestamp("last_activity_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 // ============================================================================
@@ -694,3 +750,24 @@ export const insertCleanRoomAuditLogSchema = createInsertSchema(cleanRoomAuditLo
 
 export type CleanRoomAuditLog = typeof cleanRoomAuditLogs.$inferSelect;
 export type InsertCleanRoomAuditLog = z.infer<typeof insertCleanRoomAuditLogSchema>;
+
+// ============================================================================
+// [NEW] Syllabus Topic Mappings Insert Schemas & Types
+// ============================================================================
+export const insertSyllabusTopicMappingSchema = createInsertSchema(syllabusTopicMappings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertUserSyllabusProgressSchema = createInsertSchema(userSyllabusProgress).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type SyllabusTopicMapping = typeof syllabusTopicMappings.$inferSelect;
+export type InsertSyllabusTopicMapping = z.infer<typeof insertSyllabusTopicMappingSchema>;
+
+export type UserSyllabusProgress = typeof userSyllabusProgress.$inferSelect;
+export type InsertUserSyllabusProgress = z.infer<typeof insertUserSyllabusProgressSchema>;

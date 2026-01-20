@@ -28,11 +28,13 @@ import {
     LegalConceptOutputSchema,
     QuestionExplanationOutputSchema,
     LegalSynthesisOutputSchema,
+    ArticleBreakdownOutputSchema,
     type CleanRoomGenerationParams,
     type CleanRoomGenerationResult,
     type LegalConceptOutput,
     type QuestionExplanationOutput,
     type LegalSynthesisOutput,
+    type ArticleBreakdownOutput,
     type SanitizedLegalText,
     type CleanRoomGenerationType,
 } from './types';
@@ -87,19 +89,16 @@ export async function generateCleanRoomContent<T = LegalConceptOutput>(
         );
 
         // Step 4: Call Gemini with structured output
+        // Combine system prompt with user message as the SDK requires
+        const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
+
         const result = await ai.models.generateContent({
             model: CLEAN_ROOM_MODEL,
-            systemInstruction: systemPrompt,
-            generationConfig: {
+            config: {
                 responseMimeType: "application/json",
                 temperature: 0.3, // Lower temperature for more consistent, factual responses
             },
-            contents: [
-                {
-                    role: "user",
-                    parts: [{ text: userPrompt }]
-                }
-            ]
+            contents: fullPrompt,
         });
 
         const rawOutput = result.text;
@@ -285,12 +284,52 @@ function parseAndValidateOutput<T>(
             return QuestionExplanationOutputSchema.parse(parsed) as T;
         case 'legal_synthesis':
             return LegalSynthesisOutputSchema.parse(parsed) as T;
+        case 'article_breakdown':
+            return ArticleBreakdownOutputSchema.parse(parsed) as T;
         case 'exam_question_generation':
             // For now, return as-is (schema can be added later)
             return parsed as T;
         default:
             return parsed as T;
     }
+}
+
+// ============================================================================
+// ARTICLE BREAKDOWN GENERATION (for legalArticles table)
+// ============================================================================
+
+/**
+ * Generate article breakdown with 7 segments for legalArticles table
+ * Takes raw legislative text and produces educational content
+ */
+export async function generateArticleBreakdown(
+    articleNumber: number,
+    articleText: string,
+    actName: string,
+    userId?: string
+): Promise<CleanRoomGenerationResult<ArticleBreakdownOutput>> {
+    // Create sanitized text structure
+    const sanitizedText: SanitizedLegalText = {
+        actName,
+        actNumber: '',
+        articleNumber: `Art. ${articleNumber}`,
+        rawOfficialText: articleText,
+        sourceUrl: 'legislatie.just.ro',
+        sanitizedAt: new Date(),
+        contentHash: '', // Not needed for this flow
+    };
+
+    const query = `Generează un breakdown complet pentru Articolul ${articleNumber} din ${actName}. 
+    Textul articolului este furnizat în context. 
+    Returnează toate cele 7 segmente (official, trad, puncte, juris, radar, logica, conex).`;
+
+    return generateCleanRoomContent<ArticleBreakdownOutput>({
+        query,
+        legislativeContext: [sanitizedText],
+        generationType: 'article_breakdown',
+        userId,
+        enableAuditLog: true,
+    });
 }
 
 // ============================================================================
@@ -310,3 +349,4 @@ export function getAgentConfiguration() {
 export function isCleanRoomReady(): boolean {
     return !!(process.env.GEMINI_API_KEY);
 }
+

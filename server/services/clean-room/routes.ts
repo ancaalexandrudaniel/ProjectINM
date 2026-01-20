@@ -213,7 +213,71 @@ router.post('/synthesize', async (req: Request, res: Response) => {
     }
 });
 
+/**
+ * POST /api/clean-room/generate-article-breakdown
+ * Generate educational breakdown for a legal article with 7 segments
+ * Used to populate legalArticles table
+ */
+router.post('/generate-article-breakdown', async (req: Request, res: Response) => {
+    try {
+        const GenerateBreakdownRequestSchema = z.object({
+            articleNumber: z.number().int().positive(),
+            articleText: z.string().min(10, 'Article text is required'),
+            actName: z.string().min(1, 'Act name is required (e.g., "Codul Civil")'),
+            subject: z.enum(['civil', 'civil-procedural', 'penal', 'penal-procedural']),
+        });
+
+        const parseResult = GenerateBreakdownRequestSchema.safeParse(req.body);
+        if (!parseResult.success) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid request',
+                details: parseResult.error.errors,
+            });
+        }
+
+        const { articleNumber, articleText, actName, subject } = parseResult.data;
+        const userId = (req as any).session?.userId;
+
+        // Import the function
+        const { generateArticleBreakdown } = await import('./index');
+
+        const result = await generateArticleBreakdown(
+            articleNumber,
+            articleText,
+            actName,
+            userId
+        );
+
+        if (!result.success) {
+            return res.status(500).json({
+                success: false,
+                error: result.error,
+            });
+        }
+
+        // The result.data contains the full breakdown with segments
+        return res.json({
+            success: true,
+            data: result.data,
+            subject, // Pass through for storage
+            metadata: {
+                auditLogId: result.auditLogId,
+                contextSourcesUsed: result.contextSourcesUsed,
+            },
+        });
+
+    } catch (error) {
+        console.error('[CleanRoom API] Error in generate-article-breakdown:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'Internal server error',
+        });
+    }
+});
+
 export default router;
 
 // Export for use in main routes file
 export { router as cleanRoomRoutes };
+
