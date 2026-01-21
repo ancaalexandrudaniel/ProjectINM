@@ -110,10 +110,10 @@ export const ArticleBreakdownOutputSchema = z.object({
         official: z.string().describe('The exact official text of the article from the legislative act'),
         trad: z.string().describe('A simplified, student-friendly translation/explanation of the article in plain Romanian'),
         puncte: z.string().describe('Key points, common exam traps, and gotchas for this article'),
-        juris: z.string().optional().describe('Relevant case law or jurisprudence citations if available'),
+        juris: z.string().nullish().describe('Relevant case law or jurisprudence citations if available'),
         radar: z.string().describe('What specifically appears in exams about this article, likely exam questions'),
         logica: z.string().describe('The underlying logic and rationale of the article'),
-        conex: z.string().optional().describe('Connections to other related articles or legal concepts'),
+        conex: z.string().nullish().describe('Connections to other related articles or legal concepts'),
     }),
 });
 

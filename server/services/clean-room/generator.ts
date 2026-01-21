@@ -92,6 +92,7 @@ export async function generateCleanRoomContent<T = LegalConceptOutput>(
         // Combine system prompt with user message as the SDK requires
         const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
 
+        console.log('[CleanRoom] Calling Gemini API...');
         const result = await ai.models.generateContent({
             model: CLEAN_ROOM_MODEL,
             config: {
@@ -101,9 +102,22 @@ export async function generateCleanRoomContent<T = LegalConceptOutput>(
             contents: fullPrompt,
         });
 
-        const rawOutput = result.text;
+        console.log('[CleanRoom] Gemini response received');
+
+        // Handle different response formats from the SDK
+        let rawOutput: string | undefined;
+        if (typeof result.text === 'string') {
+            rawOutput = result.text;
+        } else if (result.candidates && result.candidates[0]?.content?.parts?.[0]?.text) {
+            rawOutput = result.candidates[0].content.parts[0].text;
+        } else if (typeof result === 'object' && 'text' in result) {
+            rawOutput = String(result.text);
+        }
+
+        console.log('[CleanRoom] Raw output length:', rawOutput?.length || 0);
 
         if (!rawOutput) {
+            console.error('[CleanRoom] No output - response structure:', JSON.stringify(result, null, 2).substring(0, 500));
             throw new Error("Gemini returned empty response");
         }
 
@@ -147,10 +161,12 @@ export async function generateCleanRoomContent<T = LegalConceptOutput>(
         };
 
     } catch (error) {
-        console.error('[CleanRoom] Generation failed:', error);
+        // Safely log error without crashing on complex error objects
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error('[CleanRoom] Generation failed:', errorMessage);
         return {
             success: false,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: errorMessage,
             contextSourcesUsed: [],
         };
     }
