@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
     PenTool,
     Clock,
@@ -26,7 +28,10 @@ import {
     Loader2,
     ThumbsUp,
     ThumbsDown,
-    AlertCircle
+    AlertCircle,
+    Timer,
+    Zap,
+    Save
 } from "lucide-react";
 
 interface EssayPrompt {
@@ -62,6 +67,13 @@ export default function Essay() {
     const [timeSpent, setTimeSpent] = useState(0);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const [submissionId, setSubmissionId] = useState<string | null>(null);
+
+    // NEW: Enhanced timer states
+    const [isStrictMode, setIsStrictMode] = useState(false);
+    const [timeLimit, setTimeLimit] = useState(14400); // 4 hours in seconds
+    const [lastSaved, setLastSaved] = useState<Date | null>(null);
+    const [showTimeWarning, setShowTimeWarning] = useState(false);
+
     const [aiGrading, setAiGrading] = useState<{
         aiScore: number;
         aiGrade: string;
@@ -73,22 +85,54 @@ export default function Essay() {
         };
     } | null>(null);
 
+    // Calculate remaining time for countdown mode
+    const remainingTime = Math.max(0, timeLimit - timeSpent);
+    const isTimeUp = remainingTime === 0 && isStrictMode;
+    const isLowTime = remainingTime <= 3600 && remainingTime > 600; // Last hour
+    const isCriticalTime = remainingTime <= 600 && remainingTime > 0; // Last 10 min
+
     // Fetch essay prompts list
     const { data: promptsData, isLoading } = useQuery<{ prompts: any[]; count: number }>({
         queryKey: ["/api/essays"],
         enabled: pageState === "list",
     });
 
-    // Timer effect
+    // Timer effect with countdown support
     useEffect(() => {
-        let interval: NodeJS.Timeout;
-        if (isTimerRunning) {
+        let interval: ReturnType<typeof setInterval>;
+        if (isTimerRunning && !isTimeUp) {
             interval = setInterval(() => {
                 setTimeSpent(prev => prev + 1);
             }, 1000);
         }
         return () => clearInterval(interval);
-    }, [isTimerRunning]);
+    }, [isTimerRunning, isTimeUp]);
+
+    // Auto-save effect (every 30 seconds)
+    useEffect(() => {
+        if (pageState === "writing" && userAnswer.length > 50) {
+            const saveInterval = setInterval(() => {
+                setLastSaved(new Date());
+                // In production, this would save to server
+                localStorage.setItem(`essay-draft-${selectedPrompt?.id}`, userAnswer);
+            }, 30000);
+            return () => clearInterval(saveInterval);
+        }
+    }, [pageState, userAnswer, selectedPrompt]);
+
+    // Time warning effect
+    useEffect(() => {
+        if (isCriticalTime && !showTimeWarning) {
+            setShowTimeWarning(true);
+        }
+    }, [isCriticalTime, showTimeWarning]);
+
+    // Force submit when time is up in strict mode
+    useEffect(() => {
+        if (isTimeUp && pageState === "writing") {
+            handleFinishWriting();
+        }
+    }, [isTimeUp, pageState]);
 
     // Submit mutation
     const submitMutation = useMutation({
@@ -130,6 +174,19 @@ export default function Essay() {
         return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
+    // Get timer color based on remaining time
+    const getTimerColor = () => {
+        if (isCriticalTime) return "text-red-500 animate-pulse";
+        if (isLowTime) return "text-yellow-500";
+        return "text-foreground";
+    };
+
+    const getTimerBg = () => {
+        if (isCriticalTime) return "bg-red-500/20 border-red-500";
+        if (isLowTime) return "bg-yellow-500/20 border-yellow-500";
+        return "bg-card border-border";
+    };
+
     const getSubjectColor = (subject: string) => {
         if (subject.includes("civil")) return "bg-blue-500/20 text-blue-400 border-blue-500/30";
         if (subject.includes("penal")) return "bg-red-500/20 text-red-400 border-red-500/30";
@@ -157,11 +214,15 @@ export default function Essay() {
         return score;
     };
 
-    const handleStartWriting = (prompt: EssayPrompt) => {
+    const handleStartWriting = (prompt: EssayPrompt, strictMode: boolean = false) => {
         setSelectedPrompt(prompt);
         setUserAnswer("");
         setSelfEvaluation({});
         setTimeSpent(0);
+        setIsStrictMode(strictMode);
+        setTimeLimit(prompt.estimatedTime * 60); // Convert minutes to seconds
+        setShowTimeWarning(false);
+        setLastSaved(null);
         setPageState("writing");
         setIsTimerRunning(true);
     };
@@ -346,13 +407,14 @@ export default function Essay() {
                                     </span>
                                 </div>
                             </div>
-                            <Button
-                                onClick={() => handleStartWriting({
-                                    id: "demo-1",
-                                    subject: "civil",
-                                    examDay: "day1",
-                                    title: "Rezoluțiunea contractului de vânzare",
-                                    prompt: `A.B. a încheiat un contract de vânzare cu C.D. pentru un apartament în valoare de 150.000 EUR, cu plata prețului în rate lunare. După plata a 3 rate, C.D. a întârziat plata a 5 rate consecutive. A.B. dorește să obțină rezoluțiunea contractului.
+                            <div className="flex flex-col gap-2">
+                                <Button
+                                    onClick={() => handleStartWriting({
+                                        id: "demo-1",
+                                        subject: "civil",
+                                        examDay: "day1",
+                                        title: "Rezoluțiunea contractului de vânzare",
+                                        prompt: `A.B. a încheiat un contract de vânzare cu C.D. pentru un apartament în valoare de 150.000 EUR, cu plata prețului în rate lunare. După plata a 3 rate, C.D. a întârziat plata a 5 rate consecutive. A.B. dorește să obțină rezoluțiunea contractului.
 
 Întrebări:
 1. Care sunt condițiile legale pentru rezoluțiunea contractului?
@@ -360,16 +422,42 @@ export default function Essay() {
 3. În ce condiții poate C.D. să se opună rezoluțiunii?
 4. Care ar fi efectele rezoluțiunii asupra ratelor deja plătite?
 5. Dacă A.B. optează pentru executarea silită în loc de rezoluțiune, care ar fi procedura aplicabilă?`,
-                                    gradingRubric: demoRubric,
-                                    difficulty: "hard",
-                                    estimatedTime: 120,
-                                    sourceType: "manual",
-                                })}
-                                className="bg-primary"
-                            >
-                                Începe
-                                <ArrowRight className="ml-2 h-4 w-4" />
-                            </Button>
+                                        gradingRubric: demoRubric,
+                                        difficulty: "hard",
+                                        estimatedTime: 120,
+                                        sourceType: "manual",
+                                    }, false)}
+                                    variant="outline"
+                                    className="w-full"
+                                >
+                                    <Play className="mr-2 h-4 w-4" />
+                                    Antrenament
+                                </Button>
+                                <Button
+                                    onClick={() => handleStartWriting({
+                                        id: "demo-1",
+                                        subject: "civil",
+                                        examDay: "day1",
+                                        title: "Rezoluțiunea contractului de vânzare",
+                                        prompt: `A.B. a încheiat un contract de vânzare cu C.D. pentru un apartament în valoare de 150.000 EUR, cu plata prețului în rate lunare. După plata a 3 rate, C.D. a întârziat plata a 5 rate consecutive. A.B. dorește să obțină rezoluțiunea contractului.
+
+Întrebări:
+1. Care sunt condițiile legale pentru rezoluțiunea contractului?
+2. Ce remedii are disponibile A.B. conform Codului Civil?
+3. În ce condiții poate C.D. să se opună rezoluțiunii?
+4. Care ar fi efectele rezoluțiunii asupra ratelor deja plătite?
+5. Dacă A.B. optează pentru executarea silită în loc de rezoluțiune, care ar fi procedura aplicabilă?`,
+                                        gradingRubric: demoRubric,
+                                        difficulty: "hard",
+                                        estimatedTime: 120,
+                                        sourceType: "manual",
+                                    }, true)}
+                                    className="bg-orange-600 hover:bg-orange-700 w-full"
+                                >
+                                    <Zap className="mr-2 h-4 w-4" />
+                                    Simulare (2h, fără pauză)
+                                </Button>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
@@ -391,33 +479,76 @@ export default function Essay() {
     if (pageState === "writing" && selectedPrompt) {
         return (
             <div className="container mx-auto max-w-6xl py-6 px-4">
-                {/* Header with timer */}
-                <div className="flex items-center justify-between mb-6 bg-card border rounded-lg p-4">
+                {/* Time Warning Modal */}
+                {showTimeWarning && isCriticalTime && (
+                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                        <Card className="max-w-md border-red-500 bg-red-500/10">
+                            <CardContent className="pt-6 text-center">
+                                <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+                                <h3 className="text-xl font-bold text-red-400 mb-2">⏰ Mai ai doar 10 minute!</h3>
+                                <p className="text-muted-foreground mb-4">
+                                    Finalizează răspunsul și trimite-l cât mai curând.
+                                </p>
+                                <Button onClick={() => setShowTimeWarning(false)} variant="outline">
+                                    Am înțeles, continuu
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
+
+                {/* Header with enhanced timer */}
+                <div className={`flex items-center justify-between mb-6 border rounded-lg p-4 ${getTimerBg()}`}>
                     <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="sm" onClick={() => setPageState("list")}>
+                        <Button variant="ghost" size="sm" onClick={() => setPageState("list")} disabled={isStrictMode}>
                             <ChevronLeft className="h-4 w-4 mr-1" />
-                            Înapoi
+                            {isStrictMode ? "Blocat" : "Înapoi"}
                         </Button>
                         <div>
                             <h2 className="font-semibold">{selectedPrompt.title}</h2>
-                            <Badge variant="outline" className={getSubjectColor(selectedPrompt.subject)}>
-                                {getSubjectName(selectedPrompt.subject)}
-                            </Badge>
+                            <div className="flex items-center gap-2">
+                                <Badge variant="outline" className={getSubjectColor(selectedPrompt.subject)}>
+                                    {getSubjectName(selectedPrompt.subject)}
+                                </Badge>
+                                {isStrictMode && (
+                                    <Badge variant="outline" className="bg-orange-500/20 text-orange-400 border-orange-500/30">
+                                        <Zap className="h-3 w-3 mr-1" />
+                                        Mod Simulare
+                                    </Badge>
+                                )}
+                            </div>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-6">
+                        {/* Auto-save indicator */}
+                        {lastSaved && (
+                            <div className="text-xs text-muted-foreground flex items-center gap-1">
+                                <Save className="h-3 w-3" />
+                                Salvat {lastSaved.toLocaleTimeString('ro-RO')}
+                            </div>
+                        )}
+
+                        {/* Timer display */}
                         <div className="text-right">
-                            <p className="text-xs text-muted-foreground">Timp scurs</p>
-                            <p className="text-2xl font-mono font-bold">{formatTime(timeSpent)}</p>
+                            <p className="text-xs text-muted-foreground">
+                                {isStrictMode ? "Timp rămas" : "Timp scurs"}
+                            </p>
+                            <p className={`text-2xl font-mono font-bold ${getTimerColor()}`}>
+                                {isStrictMode ? formatTime(remainingTime) : formatTime(timeSpent)}
+                            </p>
                         </div>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => setIsTimerRunning(!isTimerRunning)}
-                        >
-                            {isTimerRunning ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                        </Button>
+
+                        {/* Timer controls */}
+                        {!isStrictMode && (
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => setIsTimerRunning(!isTimerRunning)}
+                            >
+                                {isTimerRunning ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                            </Button>
+                        )}
                     </div>
                 </div>
 

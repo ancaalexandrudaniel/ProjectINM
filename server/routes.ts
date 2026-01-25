@@ -1,11 +1,11 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertQuizSessionSchema, insertUserAnswerSchema, questionTopics, essayPrompts, userEssaySubmissions } from "@shared/schema";
+import { insertQuizSessionSchema, insertUserAnswerSchema, questionTopics, essayPrompts, userEssaySubmissions, questions } from "../shared/schema";
 import { z } from "zod";
 import { db } from "./db";
-import { users } from "@shared/schema";
-import { eq } from "drizzle-orm";
+import { users } from "../shared/schema";
+import { eq, and } from "drizzle-orm";
 import {
   createSession,
   validateSession,
@@ -13,6 +13,23 @@ import {
   verifyPassword,
   type AuthenticatedUser
 } from "./auth";
+import multer from "multer";
+import { parsePDFBuffer, cleanPDFText, detectExamPaperType } from "./services/pdf-parser";
+
+// Configure multer for file uploads (memory storage for PDF processing)
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === 'application/pdf') {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PDF files are allowed'));
+    }
+  },
+});
 
 // Extend Express Request to include user
 declare global {
@@ -286,6 +303,645 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ============================================================================
+  // EXAM PAPERS (SUBIECTE + BAREME) ROUTES
+  // ============================================================================
+
+  // DELETE /api/exam-papers/cleanup - Delete exam questions by year (for re-import)
+  app.delete("/api/exam-papers/cleanup", async (req, res) => {
+    try {
+      const { questions } = await import("../shared/schema");
+      const { like } = await import("drizzle-orm");
+
+      const year = req.query.year as string;
+      if (!year) {
+        return res.status(400).json({ error: "Year parameter required" });
+      }
+
+      const result = await db
+        .delete(questions)
+        .where(like(questions.chapter, `%Examen ${year}%`))
+        .returning({ id: questions.id });
+
+      console.log(`[EXAM CLEANUP] Deleted ${result.length} questions from year ${year}`);
+
+      res.json({
+        success: true,
+        deleted: result.length,
+        year,
+        message: `Deleted ${result.length} questions from Examen ${year}`
+      });
+    } catch (error) {
+      console.error("[EXAM CLEANUP] Error:", error);
+      res.status(500).json({ error: "Failed to cleanup exam questions" });
+    }
+  });
+
+  // GET /api/exam-papers - Get exam papers by year/subject
+  app.get("/api/exam-papers", async (req, res) => {
+    try {
+      const { questions } = await import("../shared/schema");
+      const { and, eq: eqOp, ilike } = await import("drizzle-orm");
+
+      const year = req.query.year as string | undefined;
+      const subject = req.query.subject as string | undefined;
+
+      // Query questions that have sourceType = 'exam-past'
+      let query = db.select().from(questions);
+
+      const results = await query.where(
+        eqOp(questions.sourceType, 'exam-past')
+      ).limit(100);
+
+      // Filter by year tag if specified
+      const filtered = year
+        ? results.filter(q => (q.tags as string[] || []).includes(`year:${year}`))
+        : results;
+
+      res.json(filtered.map(q => ({
+        id: q.id,
+        year: (q.tags as string[] || []).find(t => t.startsWith('year:'))?.replace('year:', '') || 'unknown',
+        subject: q.subject,
+        type: 'grila',
+        content: q.questionText,
+        correctAnswer: q.correctAnswer,
+        createdAt: q.createdAt,
+      })));
+    } catch (error) {
+      console.error("[EXAM] List papers error:", error);
+      res.status(500).json({ error: "Failed to get exam papers" });
+    }
+  });
+
+  // POST /api/exam-papers/import - Import exam papers from parsed questions
+  app.post("/api/exam-papers/import", async (req, res) => {
+    try {
+      const { questions: questionsTable } = await import("../shared/schema");
+      const userId = await getDefaultUserId();
+
+      const { year, subject, type, questions: parsedQuestions } = req.body;
+
+      if (!year || !subject || !parsedQuestions || !Array.isArray(parsedQuestions)) {
+        return res.status(400).json({ error: "year, subject, and questions are required" });
+      }
+
+      console.log(`[EXAM] Importing ${parsedQuestions.length} questions from ${year} ${subject}`);
+
+      const inserted = [];
+      for (const q of parsedQuestions) {
+        const [insertedQ] = await db.insert(questionsTable).values({
+          subject,
+          chapter: `Examen ${year}`,
+          topic: `Subiecte ${year}`,
+          difficulty: 'medium',
+          setType: 'A', // Standard single answer
+          questionText: q.questionText,
+          options: q.options.map((text: string, idx: number) => ({ text, id: idx })),
+          correctAnswer: q.correctAnswer || 0,
+          explanation: `Întrebare din examenul INM ${year}. Răspunsul corect conform baremului oficial.`,
+          sourceType: 'exam-past',
+          tags: [`year:${year}`, `source:inm-official`],
+        }).returning();
+
+        inserted.push(insertedQ);
+      }
+
+      console.log(`[EXAM] Successfully imported ${inserted.length} questions`);
+
+      res.json({
+        success: true,
+        imported: inserted.length,
+        year,
+        subject,
+      });
+    } catch (error) {
+      console.error("[EXAM] Import error:", error);
+      res.status(500).json({ error: "Failed to import exam papers" });
+    }
+  });
+
+  // POST /api/exam-papers/import-json - Import exam papers from direct JSON input
+  // This is the preferred method for importing questions (bypasses PDF parsing)
+  app.post("/api/exam-papers/import-json", async (req, res) => {
+    try {
+      const { questions: questionsTable } = await import("../shared/schema");
+      const userId = await getDefaultUserId();
+
+      // Validate input schema
+      const importSchema = z.object({
+        year: z.number().min(2010).max(2030),
+        examType: z.enum(["grile", "spete"]),
+        subject: z.enum([
+          "civil", "civil-procedural", "penal", "penal-procedural",
+          "civil-combined", "penal-combined"
+        ]),
+        questions: z.array(z.object({
+          number: z.number().optional(),
+          text: z.string().min(5),
+          options: z.array(z.string()).min(2).max(4),
+          correctAnswer: z.union([
+            z.enum(["A", "B", "C", "D"]),
+            z.number().min(1).max(4)
+          ])
+        })).min(1)
+      });
+
+      const parsed = importSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({
+          error: "Invalid JSON format",
+          details: parsed.error.format()
+        });
+      }
+
+      const { year, examType, subject, questions: jsonQuestions } = parsed.data;
+
+      console.log(`[EXAM-JSON] Importing ${jsonQuestions.length} questions: ${year} ${examType} ${subject}`);
+
+      // Determine actual subject(s) for combined types
+      let actualSubject = subject;
+      if (subject === "civil-combined") actualSubject = "civil"; // Store as civil for now
+      if (subject === "penal-combined") actualSubject = "penal";
+
+      const inserted = [];
+      for (const q of jsonQuestions) {
+        // Convert correctAnswer to index (1-based)
+        let correctIdx: number;
+        if (typeof q.correctAnswer === 'string') {
+          correctIdx = q.correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
+        } else {
+          correctIdx = q.correctAnswer;
+        }
+
+        const [insertedQ] = await db.insert(questionsTable).values({
+          subject: actualSubject,
+          chapter: `Examen ${year} - ${examType === 'grile' ? 'Grilă' : 'Speță'}`,
+          topic: `${examType === 'grile' ? 'Proba I' : 'Proba II'} ${year}`,
+          difficulty: 'medium',
+          setType: 'A', // Standard single answer for grile
+          questionText: q.text,
+          options: q.options.map((text: string, idx: number) => ({ text, id: idx })),
+          correctAnswer: correctIdx,
+          explanation: `Întrebare din examenul oficial INM ${year}. Răspunsul corect: ${typeof q.correctAnswer === 'string' ? q.correctAnswer : String.fromCharCode(64 + q.correctAnswer)}.`,
+          sourceType: 'exam-past',
+          tags: [`year:${year}`, `source:inm-official`, `type:${examType}`, `subject:${subject}`],
+        }).returning();
+
+        inserted.push(insertedQ);
+      }
+
+      console.log(`[EXAM-JSON] Successfully imported ${inserted.length} questions`);
+
+      res.json({
+        success: true,
+        imported: inserted.length,
+        year,
+        examType,
+        subject,
+        message: `Imported ${inserted.length} ${examType} questions for ${subject} (${year})`
+      });
+    } catch (error) {
+      console.error("[EXAM-JSON] Import error:", error);
+      res.status(500).json({ error: "Failed to import JSON exam data" });
+    }
+  });
+  app.post("/api/exam-papers/upload-pdf", upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+
+      console.log(`[PDF UPLOAD] Processing file: ${req.file.originalname} (${req.file.size} bytes)`);
+
+      // Parse the PDF
+      const parseResult = await parsePDFBuffer(req.file.buffer);
+
+      if (!parseResult.success) {
+        return res.status(400).json({
+          error: "Failed to parse PDF",
+          details: parseResult.error
+        });
+      }
+
+      // Clean the extracted text
+      const cleanedText = cleanPDFText(parseResult.text);
+
+      // Auto-detect exam paper type
+      const detectedType = detectExamPaperType(cleanedText);
+
+      console.log(`[PDF UPLOAD] Parsed ${parseResult.numPages} pages, detected:`, detectedType);
+
+      res.json({
+        success: true,
+        filename: req.file.originalname,
+        numPages: parseResult.numPages,
+        textLength: cleanedText.length,
+        textPreview: cleanedText.substring(0, 1000) + (cleanedText.length > 1000 ? '...' : ''),
+        fullText: cleanedText,
+        detectedType,
+        info: parseResult.info,
+      });
+    } catch (error) {
+      console.error("[PDF UPLOAD] Error:", error);
+      res.status(500).json({ error: "Failed to process PDF upload" });
+    }
+  });
+
+  // ============================================================================
+  // EXAM ESSAYS (PROBE SCRISE / SPEȚE) IMPORT ROUTES
+  // ============================================================================
+
+  // POST /api/exam-essays/import-json - Import structured essay exam from JSON
+  app.post("/api/exam-essays/import-json", async (req, res) => {
+    try {
+      const { examEssays } = await import("../shared/schema");
+
+      // Validate input schema
+      const subjectSchema = z.object({
+        id: z.string(),
+        area: z.string(),
+        title: z.string(),
+        scenario: z.string().nullable().optional(),
+        requirements: z.array(z.object({
+          id: z.string(),
+          text: z.string(),
+          points: z.union([z.number(), z.string()]),
+          time: z.number().optional(),
+          solution: z.string(),
+          legalRefs: z.array(z.string()).optional(),
+          rubric: z.array(z.object({
+            criterion: z.string(),
+            points: z.union([z.number(), z.string()])
+          }))
+        }))
+      });
+
+      const importSchema = z.object({
+        year: z.number().min(2010).max(2030),
+        variant: z.number().default(1),
+        discipline: z.enum(["civil-combined", "penal-combined"]),
+        subjects: z.array(subjectSchema).min(1),
+        totalPoints: z.number().optional(),
+        totalTime: z.number().optional()
+      });
+
+      const parsed = importSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({
+          error: "Invalid JSON format",
+          details: parsed.error.format()
+        });
+      }
+
+      const { year, variant, discipline, subjects } = parsed.data;
+
+      console.log(`[EXAM-ESSAYS] Importing ${subjects.length} subjects for ${year} V${variant} ${discipline}`);
+
+      const inserted = [];
+      for (const subject of subjects) {
+        for (const req of subject.requirements) {
+          const [insertedReq] = await db.insert(examEssays).values({
+            year,
+            variant,
+            discipline,
+            subjectId: subject.id,
+            subjectTitle: subject.title,
+            subjectArea: subject.area,
+            scenario: subject.scenario || null,
+            requirementId: req.id,
+            requirementText: req.text,
+            points: String(req.points),
+            recommendedTime: req.time || null,
+            solution: req.solution,
+            legalRefs: req.legalRefs || [],
+            rubric: req.rubric.map(r => ({
+              criterion: r.criterion,
+              points: String(r.points)
+            })),
+            sourceType: 'official',
+          }).returning();
+
+          inserted.push(insertedReq);
+        }
+      }
+
+      console.log(`[EXAM-ESSAYS] Successfully imported ${inserted.length} requirements`);
+
+      res.json({
+        success: true,
+        imported: inserted.length,
+        year,
+        variant,
+        discipline,
+        subjects: subjects.length,
+        message: `Imported ${inserted.length} requirements from ${subjects.length} subjects (${year} V${variant})`
+      });
+    } catch (error) {
+      console.error("[EXAM-ESSAYS] Import error:", error);
+      res.status(500).json({ error: "Failed to import exam essays" });
+    }
+  });
+
+  // GET /api/exam-essays - List exam essays by year/discipline
+  app.get("/api/exam-essays", async (req, res) => {
+    try {
+      const { examEssays } = await import("../shared/schema");
+      const { eq: eqOp, and } = await import("drizzle-orm");
+
+      const year = req.query.year ? parseInt(req.query.year as string) : undefined;
+      const discipline = req.query.discipline as string | undefined;
+
+      let results;
+      if (year && discipline) {
+        results = await db.select().from(examEssays).where(
+          and(eqOp(examEssays.year, year), eqOp(examEssays.discipline, discipline))
+        );
+      } else if (year) {
+        results = await db.select().from(examEssays).where(eqOp(examEssays.year, year));
+      } else {
+        results = await db.select().from(examEssays).limit(100);
+      }
+
+      res.json({
+        essays: results,
+        count: results.length
+      });
+    } catch (error) {
+      console.error("[EXAM-ESSAYS] List error:", error);
+      res.status(500).json({ error: "Failed to list exam essays" });
+    }
+  });
+
+  // DELETE /api/exam-essays/cleanup - Delete exam essays by year (for re-import)
+  app.delete("/api/exam-essays/cleanup", async (req, res) => {
+    try {
+      const { examEssays } = await import("../shared/schema");
+      const { eq: eqOp, and } = await import("drizzle-orm");
+
+      const year = parseInt(req.query.year as string);
+      const discipline = req.query.discipline as string | undefined;
+
+      if (!year) {
+        return res.status(400).json({ error: "Year parameter required" });
+      }
+
+      let result;
+      if (discipline) {
+        result = await db.delete(examEssays).where(
+          and(eqOp(examEssays.year, year), eqOp(examEssays.discipline, discipline))
+        ).returning({ id: examEssays.id });
+      } else {
+        result = await db.delete(examEssays).where(eqOp(examEssays.year, year)).returning({ id: examEssays.id });
+      }
+
+      console.log(`[EXAM-ESSAYS CLEANUP] Deleted ${result.length} requirements from ${year}`);
+
+      res.json({
+        success: true,
+        deleted: result.length,
+        year,
+        discipline,
+        message: `Deleted ${result.length} essay requirements from ${year}`
+      });
+    } catch (error) {
+      console.error("[EXAM-ESSAYS CLEANUP] Error:", error);
+      res.status(500).json({ error: "Failed to cleanup exam essays" });
+    }
+  });
+
+  // POST /api/questions/fix-penal-subjects - Fix penal questions by splitting into penal + penal-procedural
+  app.post("/api/questions/fix-penal-subjects", async (req, res) => {
+    try {
+      const { questions: questionsTable } = await import("../shared/schema");
+      const { eq } = await import("drizzle-orm");
+
+      // Get all penal questions, ordered by creation date
+      const penalQuestions = await db.select()
+        .from(questionsTable)
+        .where(eq(questionsTable.subject, "penal"));
+
+      console.log(`[FIX-PENAL] Found ${penalQuestions.length} penal questions`);
+
+      if (penalQuestions.length !== 50) {
+        return res.json({
+          success: false,
+          message: `Expected 50 penal questions, found ${penalQuestions.length}. Manual intervention needed.`
+        });
+      }
+
+      // Sort by createdAt to get consistent order
+      penalQuestions.sort((a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+
+      // Update the second half (questions 26-50) to penal-procedural
+      const procedural = penalQuestions.slice(25, 50);
+      let updated = 0;
+
+      for (const q of procedural) {
+        await db.update(questionsTable)
+          .set({
+            subject: "penal-procedural",
+            tags: [...(q.tags || []).filter(t => !t.startsWith('subject:')), 'subject:penal-procedural']
+          })
+          .where(eq(questionsTable.id, q.id));
+        updated++;
+      }
+
+      console.log(`[FIX-PENAL] Updated ${updated} questions to penal-procedural`);
+
+      res.json({
+        success: true,
+        updated,
+        message: `Successfully updated ${updated} questions from penal to penal-procedural`
+      });
+    } catch (error) {
+      console.error("[FIX-PENAL] Error:", error);
+      res.status(500).json({ error: "Failed to fix penal subjects" });
+    }
+  });
+
+  // POST /api/exam-sessions/submit - Grade Proba I and save results
+  app.post("/api/exam-sessions/submit", async (req, res) => {
+    try {
+      const { examResults } = await import("../shared/schema");
+      const { eq, and, sql } = await import("drizzle-orm");
+
+      // 1. Parse Input
+      const schema = z.object({
+        year: z.number(),
+        answers: z.record(z.string()), // questionId -> answer (A/B/C)
+        timeSpent: z.number().optional()
+      });
+
+      const parsed = schema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ error: "Invalid data", details: parsed.error });
+      }
+
+      const { year, answers, timeSpent } = parsed.data;
+      const userId = await getDefaultUserId();
+
+      // 2. Fetch Questions (explicitly fetch questions for the exam year)
+      // 2. Fetch Questions (explicitly fetch questions for the exam year)
+      // Removed local import to avoid shadowing
+
+      const allQuestions = await db.select().from(questions);
+
+      // Filter by tag "Examen {year}" OR matching year mechanism if we had one
+      // Since we rely on tags for now:
+      const examQuestions = allQuestions.filter(q =>
+        q.tags?.includes(`Examen ${year}`) ||
+        q.tags?.includes(`examen-${year}`) ||
+        // Also include if no specific exam tag but subject matches standard pool? 
+        // No, strict exam simulation needs exact questions.
+        // Fallback: if we imported them recently, maybe they don't have tags?
+        // Let's assume tags are present from import.
+        // For our specific 2024 import, let's verify tags.
+        // If 0 questions found, we might want to panic.
+        true // FOR DEV: Allow all questions to match for testing if tags missing
+      ); // TODO: Refine filter logic for production
+
+      // Filter logic refinement:
+      // Real exam questions MUST have the year tag or property
+      const relevantQuestions = examQuestions.filter(q => true); // Placeholder
+
+      // 3. Grade
+      const breakdown = {
+        civil: { correct: 0, total: 0 },
+        "civil-procedural": { correct: 0, total: 0 },
+        penal: { correct: 0, total: 0 },
+        "penal-procedural": { correct: 0, total: 0 }
+      };
+
+      let totalScore = 0;
+
+
+      // Iterate over user answers to calculate score based on WHAT WAS ANSWERED
+      // But we need to know the Total Questions count per section to verify 100 total.
+      // Better: Iterate over ALL exam questions for that year to establish the denominator.
+
+      // Let's assume we use the questions from the DB that match the criteria.
+      // If we can't reliably filter by year yet, we'll try to match by IDs sent?
+      // No, for security we trust the DB.
+
+      // IMPROVED LOGIC:
+      // The frontend sends `answers`. We need to score them.
+      // We will iterate through keys of `answers` and check against DB.
+      // AND we need to count total questions for the denominator.
+
+      // For now, let's look up each answered question. The Breakdown 'total' might be distinct from 'answered'.
+
+      // Actually, to get a proper score (X/100), we need the full set of 100 questions.
+      // Since we don't have a reliable "Exam Definition" object yet, we might have to rely on the
+      // questions having the correct tags.
+
+      // Temporary: Use matching questions from DB that have tags 'Examen' and '2024'.
+
+      // 2. Identify the Target Question Set
+      // Try to find questions for this year
+      let allDbQuestions = await db.select().from(questions);
+      let targetQuestions = allDbQuestions.filter(q => q.chapter.includes(`Examen ${year}`) || (q.tags && q.tags.includes(`year:${year}`)));
+
+      // FALLBACK: If no questions found for year (e.g. they are mock questions), 
+      // fetch the questions that were answered to at least give a partial score.
+      // Ideally we would want the full set of 100.
+      if (targetQuestions.length === 0) {
+        console.log(`[SUBMIT] No questions found for year ${year}. Using answered questions as set.`);
+        const answerIds = Object.keys(answers);
+        if (answerIds.length > 0) {
+          // Fetch explicitly answered questions
+          // We can't use 'inArray' with huge list efficiently usually, but for 100 it's fine.
+          // Logic: fetch all questions and filter? Or just rely on what we have.
+          // We already have allQuestions from the initial fetch, so filter that.
+          targetQuestions = allQuestions.filter(q => answerIds.includes(q.id));
+        }
+      }
+
+      const questionsMap = new Map(targetQuestions.map(q => [q.id, q]));
+      const processingSet = targetQuestions;
+
+      for (const qId of Object.keys(answers)) {
+        // If question not in map (maybe answered but not in year set?), try to fetch it
+        let q = questionsMap.get(qId);
+        if (!q) {
+          const [fetched] = await db.select().from(questions).where(eq(questions.id, qId));
+          if (fetched) {
+            q = fetched;
+            questionsMap.set(qId, q);
+            processingSet.push(q);
+          }
+        }
+
+        if (!q) continue;
+
+        let subjKey = q.subject || "general";
+        // Normalize
+        if (subjKey === 'civil-combined') subjKey = 'civil';
+        if (subjKey === 'penal-combined') subjKey = 'penal';
+        if (subjKey === 'procedura-civila') subjKey = 'civil-procedural';
+        if (subjKey === 'procedura-penala') subjKey = 'penal-procedural';
+
+        // Ensure breakdown init
+        if (!breakdown[subjKey]) breakdown[subjKey] = { correct: 0, total: 0 };
+
+
+        const userAnswer = answers[qId];
+        const correctIndex = q.correctAnswer;
+        const correctLetter = correctIndex !== null ? ["A", "B", "C", "D"][correctIndex] : null;
+
+        if (userAnswer === correctLetter) {
+          breakdown[subjKey].correct++;
+          totalScore++;
+        }
+      }
+
+      // Recalculate Totals based on the Target Set (Standard 100)
+      if (processingSet.length > 0) {
+        for (const q of processingSet) {
+          let s = q.subject;
+          // Normalize subject keys to match frontend expectations
+          if (s === 'civil-combined') s = 'civil';
+          if (s === 'penal-combined') s = 'penal';
+          if (s === 'procedura-civila') s = 'civil-procedural'; // Db might have this
+          if (s === 'procedura-penala') s = 'penal-procedural'; // Db might have this
+
+          if (!breakdown[s]) breakdown[s] = { correct: 0, total: 0 };
+          breakdown[s].total++;
+        }
+      } else {
+        // Fallback totals from answers (inaccurate if skipped)
+        // For now, just trust the client knows there are 100? No.
+        // Let's manually set totals to 25 if we can't find them, or dynamic.
+      }
+
+      // 4. Save
+      const isPassed = totalScore >= 60;
+
+      const [result] = await db.insert(examResults).values({
+        userId,
+        examYear: year,
+        examType: "grile-proba-1",
+        totalScore,
+        isPassed,
+        breakdown,
+        timeSpent: timeSpent || 0
+      }).returning();
+
+      res.json({
+        success: true,
+        resultId: result.id,
+        score: totalScore,
+        isPassed,
+        breakdown
+      });
+
+    } catch (error) {
+      console.error("[EXAM-SUBMIT] Error:", error);
+      res.status(500).json({ error: "Failed to process submission" });
+    }
+  });
+
+  // ============================================================================
   // ESSAY (PROBE SCRISE) ROUTES
   // ============================================================================
 
@@ -525,7 +1181,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // GET /api/syllabus-topics - Get all syllabus topics with hierarchy and progress
   app.get("/api/syllabus-topics", async (req, res) => {
     try {
-      const { syllabusTopicMappings, userSyllabusProgress, legalArticles, questions } = await import("@shared/schema");
+      const { syllabusTopicMappings, userSyllabusProgress, legalArticles, questions } = await import("../shared/schema");
       const { and, isNull, sql, count } = await import("drizzle-orm");
 
       const subject = req.query.subject as string | undefined;
@@ -600,7 +1256,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // GET /api/syllabus-topics/:syllabusId - Get single topic with children
   app.get("/api/syllabus-topics/:syllabusId", async (req, res) => {
     try {
-      const { syllabusTopicMappings } = await import("@shared/schema");
+      const { syllabusTopicMappings } = await import("../shared/schema");
       const { syllabusId } = req.params;
 
       // Get the topic
@@ -647,7 +1303,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // GET /api/syllabus-topics/:syllabusId/content - Get legal content for a topic
   app.get("/api/syllabus-topics/:syllabusId/content", async (req, res) => {
     try {
-      const { syllabusTopicMappings, legalArticles, questions } = await import("@shared/schema");
+      const { syllabusTopicMappings, legalArticles, questions } = await import("../shared/schema");
       const { and, gte, lte, or, ilike } = await import("drizzle-orm");
       const { syllabusId } = req.params;
 
@@ -833,7 +1489,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         // Syllabus Progress Integration: Update progress for matching syllabus topics
         try {
-          const { syllabusTopicMappings, userSyllabusProgress } = await import("@shared/schema");
+          const { syllabusTopicMappings, userSyllabusProgress } = await import("../shared/schema");
           const { ilike } = await import("drizzle-orm");
           const userId = await getDefaultUserId();
 
@@ -993,7 +1649,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/ai/explain-wrong-answer", async (req, res) => {
     try {
       const { explainWrongAnswer } = await import("./gemini");
-      const { aiExplanations, questions } = await import("@shared/schema");
+      const { aiExplanations, questions } = await import("../shared/schema");
       const { eq } = await import("drizzle-orm");
 
       const { questionId, userAnswerId } = req.body;
@@ -1013,43 +1669,105 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Extract option texts
+      // CRITICAL: DB stores correctAnswer as 1-indexed (1=A, 2=B, 3=C)
+      const correctAnswerFromDB = question.correctAnswer as number;
+      const correctIndex = correctAnswerFromDB - 1; // Convert to 0-indexed for array
+      const correctLetter = String.fromCharCode(64 + correctAnswerFromDB); // 64+1='A'
+
       const options = question.options as any[];
-      const correctOptionText = options[question.correctAnswer]?.text || "";
+      const correctOptionText = options[correctIndex]?.text || options[correctIndex] || "";
       const userSelectedText = userAnswer.selectedAnswer !== null
-        ? options[userAnswer.selectedAnswer]?.text || ""
+        ? (options[userAnswer.selectedAnswer]?.text || options[userAnswer.selectedAnswer] || "")
         : "";
 
+      const userSelectedLetter = userAnswer.selectedAnswer !== null
+        ? String.fromCharCode(65 + userAnswer.selectedAnswer)
+        : "?";
+
       // Generate AI explanation
+      // Note: We might want to pass stored legal references if available, but for now we let AI infer from text
       const explanation = await explainWrongAnswer({
         questionText: question.questionText,
         correctOptionText,
+        correctLetter,
         userSelectedText,
-        explanation: question.explanation,
-        legalReferences: (question.legalReferences as string[]) || [],
-        subject: question.subject
-      });
-
-      // Save explanation to database
-      await db.insert(aiExplanations).values({
-        userId,
-        questionId,
-        userAnswerId,
-        explanation
+        userSelectedLetter,
+        explanation: question.explanation || "Nu există explicație detaliată.",
+        legalReferences: [],
+        subject: question.subject || "Drept"
       });
 
       res.json({ explanation });
+
     } catch (error) {
-      console.error("AI explanation error:", error);
-      res.status(500).json({ error: "Failed to generate AI explanation" });
+      console.error("[AI-EXPLAIN] Error:", error);
+      res.status(500).json({ error: "Failed to generate explanation" });
     }
   });
+
+  // [NEW] Direct explanation without user answer ID key constraint (for simulation)
+  app.post("/api/ai/explain-answer-direct", async (req, res) => {
+    try {
+      const { explainWrongAnswer } = await import("./gemini");
+      const { questions } = await import("../shared/schema");
+      const { eq } = await import("drizzle-orm");
+
+      const { questionId, selectedAnswer } = req.body; // selectedAnswer is 'A', 'B', etc.
+
+      const [question] = await db.select().from(questions).where(eq(questions.id, questionId));
+      if (!question) {
+        return res.status(404).json({ error: "Question not found" });
+      }
+
+      const options = question.options as any[];
+
+      // CRITICAL: DB stores correctAnswer as 1-indexed (1=A, 2=B, 3=C)
+      // Convert to 0-indexed for array access
+      const correctAnswerFromDB = question.correctAnswer as number;
+      const correctIndex = correctAnswerFromDB - 1; // 1->0, 2->1, 3->2
+      const correctLetter = String.fromCharCode(64 + correctAnswerFromDB); // 64+1='A', 64+2='B'
+      const correctOptionText = options[correctIndex]?.text || options[correctIndex] || "";
+
+      // Convert user's letter to 0-indexed
+      const letterToIndex: Record<string, number> = { "A": 0, "B": 1, "C": 2, "D": 3 };
+      const selectedIndex = letterToIndex[selectedAnswer?.toUpperCase()];
+      const userSelectedText = selectedIndex !== undefined
+        ? (options[selectedIndex]?.text || options[selectedIndex] || "Niciun răspuns")
+        : "Niciun răspuns";
+
+      console.log(`[AI-EXPLAIN] Q: ${questionId}, correctAnswer DB: ${correctAnswerFromDB}, correctIndex: ${correctIndex}, correctLetter: ${correctLetter}, userSelected: ${selectedAnswer}`);
+
+      // Check if user actually answered correctly
+      if (correctIndex === selectedIndex) {
+        return res.json({ explanation: "✅ **Ai răspuns CORECT!** Bravo! Continuă tot așa!" });
+      }
+
+      const explanation = await explainWrongAnswer({
+        questionText: question.questionText,
+        correctOptionText,
+        correctLetter,
+        userSelectedText: userSelectedText || "Răspuns invalid",
+        userSelectedLetter: selectedAnswer,
+        explanation: question.explanation || "Nicio explicație stocată.",
+        legalReferences: [],
+        subject: question.subject || "General"
+      });
+
+      res.json({ explanation });
+
+    } catch (error) {
+      console.error("[AI-EXPLAIN-DIRECT] Error:", error);
+      res.status(500).json({ error: "Failed to generate explanation" });
+    }
+  });
+
 
   // AI: Upload and process document (simplified - base64 upload)
   app.post("/api/documents/upload", async (req, res) => {
     try {
       console.log("[UPLOAD] Starting document upload...");
       const { extractTextFromPDF, analyzeLegalDocument } = await import("./gemini");
-      const { uploadedDocuments } = await import("@shared/schema");
+      const { uploadedDocuments } = await import("../shared/schema");
       const userId = await getDefaultUserId();
       const fs = await import("fs");
 
@@ -1125,7 +1843,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI: Get all uploaded documents
   app.get("/api/documents", async (req, res) => {
     try {
-      const { uploadedDocuments } = await import("@shared/schema");
+      const { uploadedDocuments } = await import("../shared/schema");
       const { eq } = await import("drizzle-orm");
       const userId = await getDefaultUserId();
 
@@ -1146,7 +1864,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { ObjectStorageService } = await import("./objectStorage");
       const { extractTextFromPDF, analyzeLegalDocument } = await import("./gemini");
-      const { uploadedDocuments } = await import("@shared/schema");
+      const { uploadedDocuments } = await import("../shared/schema");
       const storageService = new ObjectStorageService();
       const userId = await getDefaultUserId();
 
@@ -1193,7 +1911,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/documents/analyze-patterns", async (req, res) => {
     try {
       const { analyzeExamPatterns } = await import("./gemini");
-      const { uploadedDocuments } = await import("@shared/schema");
+      const { uploadedDocuments } = await import("../shared/schema");
       const { eq, and, inArray } = await import("drizzle-orm");
       const userId = await getDefaultUserId();
 
@@ -1244,7 +1962,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI: Delete document
   app.delete("/api/documents/:id", async (req, res) => {
     try {
-      const { uploadedDocuments } = await import("@shared/schema");
+      const { uploadedDocuments } = await import("../shared/schema");
       const { eq, and } = await import("drizzle-orm");
       const userId = await getDefaultUserId();
       const documentId = req.params.id;
@@ -1268,7 +1986,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // RAG: Process document into chunks
   app.post("/api/documents/:id/process-chunks", async (req, res) => {
     try {
-      const { uploadedDocuments, documentChunks } = await import("@shared/schema");
+      const { uploadedDocuments, documentChunks } = await import("../shared/schema");
       const { eq, and } = await import("drizzle-orm");
       const { chunkText } = await import("./utils/chunking");
 
@@ -1343,7 +2061,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // RAG: Get document chunks
   app.get("/api/documents/:id/chunks", async (req, res) => {
     try {
-      const { documentChunks } = await import("@shared/schema");
+      const { documentChunks } = await import("../shared/schema");
       const { eq, asc } = await import("drizzle-orm");
 
       const documentId = req.params.id;
@@ -1364,7 +2082,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // RAG: Generate embeddings for document chunks
   app.post("/api/documents/:id/generate-embeddings", async (req, res) => {
     try {
-      const { documentChunks } = await import("@shared/schema");
+      const { documentChunks } = await import("../shared/schema");
       const { eq, isNull } = await import("drizzle-orm");
       const { batchGenerateEmbeddings } = await import("./gemini");
 
@@ -1414,7 +2132,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // RAG: Ask legal question with document retrieval (Clean Room Integration)
   app.post("/api/legal-assistant/ask", async (req, res) => {
     try {
-      const { documentChunks } = await import("@shared/schema");
+      const { documentChunks } = await import("../shared/schema");
       const { isNotNull } = await import("drizzle-orm");
       const { generateEmbedding, calculateCosineSimilarity } = await import("./gemini");
       const { generateWithSanitizedContext } = await import("./services/clean-room/generator");
@@ -1514,7 +2232,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/study-plan/generate", async (req, res) => {
     try {
       const { generatePersonalizedStudyPlan } = await import("./gemini");
-      const { studyPlans, insertStudyPlanSchema } = await import("@shared/schema");
+      const { studyPlans, insertStudyPlanSchema } = await import("../shared/schema");
 
       const userId = await getDefaultUserId();
       const { daysUntilExam, hoursPerDay } = req.body;
@@ -1566,7 +2284,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get latest study plan
   app.get("/api/study-plan/latest", async (req, res) => {
     try {
-      const { studyPlans } = await import("@shared/schema");
+      const { studyPlans } = await import("../shared/schema");
       const { desc, eq } = await import("drizzle-orm");
 
       const userId = await getDefaultUserId();
@@ -1602,7 +2320,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all question batches
   app.get("/api/question-batches", async (req, res) => {
     try {
-      const { questionBatches } = await import("@shared/schema");
+      const { questionBatches } = await import("../shared/schema");
       const { eq, desc } = await import("drizzle-orm");
       const userId = await getDefaultUserId();
 
@@ -1622,7 +2340,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Bulk import questions from LLM session
   app.post("/api/questions/bulk-import", async (req, res) => {
     try {
-      const { questions, questionBatches } = await import("@shared/schema");
+      const { questions, questionBatches } = await import("../shared/schema");
       const { z } = await import("zod");
       const userId = await getDefaultUserId();
 
@@ -1803,7 +2521,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Bulk import questions from LLM session with rich feedback format
   app.post("/api/questions/bulk-import-session", async (req, res) => {
     try {
-      const { questions, questionBatches } = await import("@shared/schema");
+      const { questions, questionBatches } = await import("../shared/schema");
       const { z } = await import("zod");
       const userId = await getDefaultUserId();
 
@@ -2010,7 +2728,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Search questions with filters
   app.get("/api/questions/search", async (req, res) => {
     try {
-      const { questions } = await import("@shared/schema");
+      const { questions } = await import("../shared/schema");
       const { eq, ilike, and, or, desc } = await import("drizzle-orm");
 
       const { subject, chapter, topic, difficulty, keyword, sourceType, limit: limitStr } = req.query;
@@ -2062,7 +2780,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get question topics
   app.get("/api/question-topics", async (req, res) => {
     try {
-      const { questionTopics } = await import("@shared/schema");
+      const { questionTopics } = await import("../shared/schema");
       const { eq } = await import("drizzle-orm");
 
       const { subject } = req.query;
@@ -2084,7 +2802,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create question topic
   app.post("/api/question-topics", async (req, res) => {
     try {
-      const { questionTopics } = await import("@shared/schema");
+      const { questionTopics } = await import("../shared/schema");
 
       const { subject, topicName, description, articleReferences } = req.body;
 
@@ -2109,7 +2827,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get unique chapters/topics for a subject (for filters)
   app.get("/api/questions/filters/:subject", async (req, res) => {
     try {
-      const { questions } = await import("@shared/schema");
+      const { questions } = await import("../shared/schema");
       const { eq, sql } = await import("drizzle-orm");
 
       const { subject } = req.params;
@@ -2141,7 +2859,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all case study batches
   app.get("/api/case-study-batches", async (req, res) => {
     try {
-      const { caseStudyBatches } = await import("@shared/schema");
+      const { caseStudyBatches } = await import("../shared/schema");
       const { eq, desc } = await import("drizzle-orm");
       const userId = await getDefaultUserId();
 
@@ -2161,7 +2879,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Bulk import case studies from LLM session
   app.post("/api/case-studies/bulk-import", async (req, res) => {
     try {
-      const { caseStudies, caseStudyBatches } = await import("@shared/schema");
+      const { caseStudies, caseStudyBatches } = await import("../shared/schema");
       const { z } = await import("zod");
       const userId = await getDefaultUserId();
 
@@ -2249,7 +2967,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Search case studies with filters
   app.get("/api/case-studies/search", async (req, res) => {
     try {
-      const { caseStudies } = await import("@shared/schema");
+      const { caseStudies } = await import("../shared/schema");
       const { eq, ilike, and, or, desc } = await import("drizzle-orm");
 
       const { subject, examDay, difficulty, keyword, limit: limitStr } = req.query;
@@ -2292,7 +3010,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get single case study by ID
   app.get("/api/case-studies/:id", async (req, res) => {
     try {
-      const { caseStudies } = await import("@shared/schema");
+      const { caseStudies } = await import("../shared/schema");
       const { eq } = await import("drizzle-orm");
 
       const [caseStudy] = await db
@@ -2316,7 +3034,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Bulk import legal articles from structured JSON
   app.post("/api/legal-articles/bulk-import", async (req, res) => {
     try {
-      const { legalArticles, legalArticleBatches } = await import("@shared/schema");
+      const { legalArticles, legalArticleBatches } = await import("../shared/schema");
       const userId = await getDefaultUserId();
 
       const {
@@ -2410,7 +3128,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all legal article batches
   app.get("/api/legal-article-batches", async (req, res) => {
     try {
-      const { legalArticleBatches } = await import("@shared/schema");
+      const { legalArticleBatches } = await import("../shared/schema");
       const { eq, desc } = await import("drizzle-orm");
       const userId = await getDefaultUserId();
 
@@ -2430,7 +3148,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all legal articles with optional filters
   app.get("/api/legal-articles", async (req, res) => {
     try {
-      const { legalArticles } = await import("@shared/schema");
+      const { legalArticles } = await import("../shared/schema");
       const { eq, and, gte, lte, ilike, desc, asc } = await import("drizzle-orm");
       const userId = await getDefaultUserId();
 
@@ -2473,7 +3191,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get single legal article by ID
   app.get("/api/legal-articles/:id", async (req, res) => {
     try {
-      const { legalArticles } = await import("@shared/schema");
+      const { legalArticles } = await import("../shared/schema");
       const { eq } = await import("drizzle-orm");
 
       const [article] = await db
@@ -2495,7 +3213,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Delete legal article batch (and its articles)
   app.delete("/api/legal-article-batches/:id", async (req, res) => {
     try {
-      const { legalArticles, legalArticleBatches } = await import("@shared/schema");
+      const { legalArticles, legalArticleBatches } = await import("../shared/schema");
       const { eq, and } = await import("drizzle-orm");
       const userId = await getDefaultUserId();
       const batchId = req.params.id;
@@ -2521,7 +3239,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Process legal articles for RAG (chunk segments and generate embeddings)
   app.post("/api/legal-articles/:id/process-rag", async (req, res) => {
     try {
-      const { legalArticles, legalArticleChunks } = await import("@shared/schema");
+      const { legalArticles, legalArticleChunks } = await import("../shared/schema");
       const { eq } = await import("drizzle-orm");
       const { chunkText } = await import("./utils/chunking");
       const { batchGenerateEmbeddings } = await import("./gemini");
@@ -2617,7 +3335,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get statistics for legal articles
   app.get("/api/legal-articles/stats", async (req, res) => {
     try {
-      const { legalArticles, legalArticleBatches } = await import("@shared/schema");
+      const { legalArticles, legalArticleBatches } = await import("../shared/schema");
       const { eq, count } = await import("drizzle-orm");
       const userId = await getDefaultUserId();
 
@@ -2650,7 +3368,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Submit case study solution for grading
   app.post("/api/case-studies/:id/submit", async (req, res) => {
     try {
-      const { userCaseStudySubmissions, caseStudies } = await import("@shared/schema");
+      const { userCaseStudySubmissions, caseStudies } = await import("../shared/schema");
       const { eq } = await import("drizzle-orm");
       const { gradeCaseStudy } = await import("./gemini");
 
@@ -2693,7 +3411,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user submissions for a case study
   app.get("/api/case-studies/:id/submissions", async (req, res) => {
     try {
-      const { userCaseStudySubmissions } = await import("@shared/schema");
+      const { userCaseStudySubmissions } = await import("../shared/schema");
       const { eq, and, desc } = await import("drizzle-orm");
 
       const userId = await getDefaultUserId();
@@ -2766,6 +3484,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const { registerBulletinBoardRoutes } = await import("./services/bulletin-board-routes");
   registerBulletinBoardRoutes(app);
+
+  // ============================================================================
+  // [ADMIN] Database Purge Endpoint
+  // ============================================================================
+
+  app.post("/api/admin/purge-questions", async (req: Request, res: Response) => {
+    try {
+      console.log("[ADMIN] Purging all questions from database...");
+      await db.delete(questions);
+      console.log("[ADMIN] Questions purged successfully.");
+      res.json({ success: true, message: "All questions deleted successfully." });
+    } catch (error) {
+      console.error("[ADMIN] Purge failed:", error);
+      res.status(500).json({ success: false, error: "Failed to purge questions" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

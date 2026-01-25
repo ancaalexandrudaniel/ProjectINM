@@ -55,7 +55,15 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  const server = await registerRoutes(app);
+  let server;
+  try {
+    console.log("[DEBUG] About to register routes...");
+    server = await registerRoutes(app);
+    console.log("[DEBUG] Routes registered successfully.");
+  } catch (err) {
+    console.log('[FATAL] Failed to register routes:', err);
+    process.exit(1);
+  }
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

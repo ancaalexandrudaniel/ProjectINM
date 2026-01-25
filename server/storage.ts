@@ -1,10 +1,10 @@
-import { 
+import {
   users,
   questions,
   quizSessions,
   userAnswers,
   userProgress,
-  type User, 
+  type User,
   type InsertUser,
   type Question,
   type InsertQuestion,
@@ -14,7 +14,7 @@ import {
   type InsertUserAnswer,
   type UserProgress,
   type InsertUserProgress
-} from "@shared/schema";
+} from "../shared/schema";
 import { db } from "./db";
 import { eq, and, sql as drizzleSql } from "drizzle-orm";
 
@@ -93,19 +93,19 @@ export class DatabaseStorage implements IStorage {
 
   async getRandomQuestions(subject?: string, count = 20, setType?: string): Promise<Question[]> {
     let conditions = [];
-    
+
     if (subject) {
       conditions.push(eq(questions.subject, subject));
     }
-    
+
     if (setType) {
       conditions.push(eq(questions.setType, setType));
     }
-    
+
     const query = conditions.length > 0
       ? db.select().from(questions).where(and(...conditions)).orderBy(drizzleSql`RANDOM()`).limit(count)
       : db.select().from(questions).orderBy(drizzleSql`RANDOM()`).limit(count);
-    
+
     return await query;
   }
 
@@ -134,17 +134,17 @@ export class DatabaseStorage implements IStorage {
   async updateQuizSession(id: string, updates: Partial<QuizSession>): Promise<QuizSession | undefined> {
     // Only update fields that are actually provided in updates
     const allowedUpdates: Partial<QuizSession> = {};
-    
+
     if (updates.completedAt !== undefined) allowedUpdates.completedAt = updates.completedAt;
     if (updates.correctAnswers !== undefined) allowedUpdates.correctAnswers = updates.correctAnswers;
     if (updates.timeSpent !== undefined) allowedUpdates.timeSpent = updates.timeSpent;
     if (updates.subject !== undefined) allowedUpdates.subject = updates.subject;
-    
+
     // Guard against empty update payloads
     if (Object.keys(allowedUpdates).length === 0) {
       return await this.getQuizSession(id);
     }
-    
+
     const [session] = await db
       .update(quizSessions)
       .set(allowedUpdates)
@@ -188,9 +188,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUserProgress(
-    userId: string, 
-    subject: string, 
-    chapter: string, 
+    userId: string,
+    subject: string,
+    chapter: string,
     updates: Partial<UserProgress>
   ): Promise<UserProgress> {
     // Check if progress record exists

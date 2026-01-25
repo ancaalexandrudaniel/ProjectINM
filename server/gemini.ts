@@ -11,41 +11,52 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 export async function explainWrongAnswer(params: {
   questionText: string;
   correctOptionText: string;
+  correctLetter?: string;
   userSelectedText: string;
+  userSelectedLetter?: string;
   explanation: string;
   legalReferences: string[];
   subject: string;
 }): Promise<string> {
-  const systemPrompt = `Ești un profesor de drept expert pentru pregătirea examenului INM (Institutul Național al Magistraturii).
-Misiunea ta este să explici candidaților DE CE au greșit la o întrebare, folosind un ton prietenos și exemple practice.
+  const systemPrompt = `Ești un mentor prietenos și empatic pentru pregătirea examenului INM (Institutul Național al Magistraturii).
+Vorbești direct cu studentul, la persoana a 2-a (tu/ți-ai/te), într-un ton cald și încurajator.
+NU folosești niciodată cuvântul "candidat" sau formulări la persoana a 3-a.
 
-IMPORTANT:
-- Explică în ROMÂNĂ, limbaj simplu, fără termeni complicați
-- Folosește analogii și exemple din viața reală
-- Evidențiază diferența dintre răspunsul corect și cel greșit
-- Subliniază conceptul juridic cheie care a dus la greșeală
-- Oferă un sfat practic pentru a evita greșeala în viitor`;
+STRUCTURA OBLIGATORIE a răspunsului (folosește EXACT aceste titluri):
 
-  const userPrompt = `Candidatul a greșit la următoarea întrebare:
+## 🔴 Răspunsul tău
+[Explică de ce răspunsul ales e greșit - ton empatic, fără a judeca. Identifică confuzia conceptuală.]
 
-**Întrebare:** ${params.questionText}
+## ✅ Răspuns corect: {litera}. {text}
+[Explică de ce acest răspuns e corect, cu un exemplu practic din viața reală. Menționează clar litera și textul răspunsului corect.]
 
-**Răspunsul CORECT:** ${params.correctOptionText}
-**Răspunsul ales de candidat:** ${params.userSelectedText}
+## 💡 Easy Logic
+[Oferă un truc de memorare, o regulă simplă sau o analogie care ajută să reții conceptul pentru viitor.]
 
-**Explicație tehnică:** ${params.explanation}
-**Referințe legale:** ${params.legalReferences.join(", ")}
+REGULI CRITICE:
+- NU ÎNCEPE NICIODATĂ cu "Ok", "Am înțeles", "Voi genera", "Sigur" sau alte confirmări
+- ÎNCEPE DIRECT cu "## 🔴 Răspunsul tău"
+- Limbaj simplu, fără jargon juridic excesiv
+- Fii empatic și încurajator ("E o confuzie frecventă...", "Nu-ți face griji...")
+- Maximum 200 cuvinte total
+- NU încheia cu formule de politețe sau încurajări generice`;
 
-Te rog să explici:
-1. De ce răspunsul ales este GREȘIT (ce concept a confundat?)
-2. De ce răspunsul corect este CORECT (cu exemplu practic)
-3. Un TRUC de memorare sau regula practică pentru a nu mai greși
+  const userPrompt = `Întrebarea:
+"${params.questionText}"
 
-Răspunde în maximum 150 cuvinte, ton prietenos, fără formule de încheiere.`;
+Răspunsul tău: ${params.userSelectedLetter || '?'}. ${params.userSelectedText}
+Răspunsul corect: ${params.correctLetter || '?'}. ${params.correctOptionText}
+
+Context tehnic (pentru tine, nu repeta literal): ${params.explanation}
+Materie: ${params.subject}
+
+Generează explicația structurată conform instrucțiunilor.`;
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    systemInstruction: systemPrompt,
+    model: "gemini-3-flash-preview",
+    config: {
+      systemInstruction: systemPrompt,
+    },
     contents: [
       {
         role: "user",
@@ -88,9 +99,9 @@ Răspunde în format JSON cu următoarea structură:
 }`;
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    systemInstruction: systemPrompt,
-    generationConfig: {
+    model: "gemini-3-flash-preview",
+    config: {
+      systemInstruction: systemPrompt,
       responseMimeType: "application/json"
     },
     contents: [
@@ -159,9 +170,9 @@ Răspunde în format JSON:
 }`;
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    systemInstruction: systemPrompt,
-    generationConfig: {
+    model: "gemini-3-flash-preview",
+    config: {
+      systemInstruction: systemPrompt,
       responseMimeType: "application/json"
     },
     contents: [
@@ -260,9 +271,9 @@ Răspunde în format JSON (limba română pentru text):
 }`;
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    systemInstruction: systemPrompt,
-    generationConfig: {
+    model: "gemini-3-flash-preview",
+    config: {
+      systemInstruction: systemPrompt,
       responseMimeType: "application/json"
     },
     contents: [
@@ -360,9 +371,9 @@ Răspunde în format JSON:
 }`;
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    systemInstruction: systemPrompt,
-    generationConfig: {
+    model: "gemini-3-flash-preview",
+    config: {
+      systemInstruction: systemPrompt,
       responseMimeType: "application/json"
     },
     contents: [
@@ -489,9 +500,9 @@ Răspunde în format JSON:
   }
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    systemInstruction: systemPrompt,
-    generationConfig: {
+    model: "gemini-3-flash-preview",
+    config: {
+      systemInstruction: systemPrompt,
       responseMimeType: "application/json"
     },
     contents: [
@@ -563,8 +574,10 @@ ${params.context ? `\n\nCONTEXT din documente:\n${params.context}` : ""}`;
   });
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    systemInstruction: systemPrompt,
+    model: "gemini-3-flash-preview",
+    config: {
+      systemInstruction: systemPrompt,
+    },
     contents: contents
   });
 
@@ -716,9 +729,9 @@ Răspunde STRICT în format JSON:
 }`;
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    systemInstruction: systemPrompt,
-    generationConfig: {
+    model: "gemini-3-flash-preview",
+    config: {
+      systemInstruction: systemPrompt,
       responseMimeType: "application/json"
     },
     contents: [

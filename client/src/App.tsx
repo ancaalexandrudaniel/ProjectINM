@@ -32,6 +32,12 @@ import Essay from "@/pages/essay";
 import LegalActs from "@/pages/legal-acts";
 import Syllabus from "@/pages/syllabus";
 import BulletinBoard from "@/pages/bulletin-board";
+import ExamPapersImport from "@/pages/exam-papers-import";
+import ExamEssaysImport from "@/pages/exam-essays-import";
+import EssayPractice from "@/pages/essay-practice";
+import TimeMachine from "@/pages/time-machine";
+import TimeMachineProba1 from "@/pages/time-machine-proba1";
+import ImportManagement from "@/pages/import-management";
 
 function Router() {
   return (
@@ -63,6 +69,12 @@ function Router() {
       <Route path="/legal-articles-import" component={LegalArticlesImport} />
       <Route path="/legal-acts" component={LegalActs} />
       <Route path="/bulletin-board" component={BulletinBoard} />
+      <Route path="/exam-papers-import" component={ExamPapersImport} />
+      <Route path="/exam-essays-import" component={ExamEssaysImport} />
+      <Route path="/essay-practice" component={EssayPractice} />
+      <Route path="/time-machine" component={TimeMachine} />
+      <Route path="/time-machine/:year/proba-1" component={TimeMachineProba1} />
+      <Route path="/import-management" component={ImportManagement} />
       <Route path="/psihologic">{() => <Etapa2Placeholder type="psihologic" />}</Route>
       <Route path="/interviu">{() => <Etapa2Placeholder type="interviu" />}</Route>
       <Route component={NotFound} />

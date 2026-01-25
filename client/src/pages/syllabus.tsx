@@ -22,7 +22,10 @@ import {
     BookMarked,
     FileQuestion,
     GraduationCap,
-    Sparkles
+    Sparkles,
+    Zap,
+    ShieldCheck,
+    History
 } from "lucide-react";
 
 interface SyllabusTopic {
@@ -309,22 +312,47 @@ export default function Syllabus() {
 
                     <TabsContent value="articles" className="mt-4">
                         {content.articles.length === 0 ? (
-                            <Card>
-                                <CardContent className="py-12 text-center text-muted-foreground">
-                                    <GraduationCap className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                                    <p>Nu există articole încărcate în baza de date pentru acest topic.</p>
-                                    <p className="text-sm mt-2">Folosește tool-ul de scraping sau importă articole manual.</p>
+                            <Card className="border-dashed border-2">
+                                <CardContent className="py-12 text-center">
+                                    <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                                        <Zap className="h-8 w-8 text-primary" />
+                                    </div>
+                                    <h3 className="font-semibold text-lg mb-2">Conținut Disponibil pentru Generare</h3>
+                                    <p className="text-muted-foreground mb-4">
+                                        Articolele pentru acest topic pot fi generate automat din surse oficiale.
+                                    </p>
+                                    <div className="flex flex-col gap-2 items-center">
+                                        <Button className="gap-2">
+                                            <Sparkles className="h-4 w-4" />
+                                            Generează Conținut Clean Room
+                                        </Button>
+                                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                            <ShieldCheck className="h-3 w-3" />
+                                            Generat 100% din surse oficiale (legislatie.just.ro)
+                                        </p>
+                                    </div>
                                 </CardContent>
                             </Card>
                         ) : (
                             <div className="space-y-4">
                                 {content.articles.map(article => (
-                                    <Card key={article.id}>
+                                    <Card key={article.id} className="overflow-hidden">
                                         <CardHeader className="pb-2">
-                                            <CardTitle className="text-lg flex items-center gap-2">
-                                                Art. {article.articleNumber}
-                                                <span className="font-normal text-muted-foreground">- {article.title}</span>
-                                            </CardTitle>
+                                            <div className="flex items-start justify-between">
+                                                <CardTitle className="text-lg flex items-center gap-2">
+                                                    Art. {article.articleNumber}
+                                                    <span className="font-normal text-muted-foreground">- {article.title}</span>
+                                                </CardTitle>
+                                                <div className="flex items-center gap-2">
+                                                    <Badge variant="outline" className="text-xs flex items-center gap-1 bg-green-50 text-green-700 border-green-200">
+                                                        <ShieldCheck className="h-3 w-3" />
+                                                        Clean Room
+                                                    </Badge>
+                                                    <Button variant="ghost" size="icon" className="h-7 w-7" title="Istoricul versiunilor">
+                                                        <History className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            </div>
                                             {article.lawSource && (
                                                 <CardDescription>{article.lawSource}</CardDescription>
                                             )}

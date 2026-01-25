@@ -83,6 +83,21 @@ export default function Sidebar() {
             <span className="font-medium">Dashboard</span>
           </Link>
 
+          <Link href="/import-management" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/import-management') ? 'active' : ''}`} data-testid="nav-import-management">
+            <Upload className="h-5 w-5" />
+            <span className="font-medium">Import Centralizat</span>
+          </Link>
+
+          {/* Time Machine - Featured */}
+          <Link
+            href="/time-machine"
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors bg-gradient-to-r from-purple-500/10 to-blue-500/10 hover:from-purple-500/20 hover:to-blue-500/20 border border-purple-500/30 ${isActive('/time-machine') ? 'active ring-2 ring-purple-500' : ''}`}
+            data-testid="nav-time-machine"
+          >
+            <Timer className="h-5 w-5 text-purple-400" />
+            <span className="font-medium bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Exam Time Machine</span>
+          </Link>
+
           <Link href="/syllabus" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/syllabus') ? 'active' : ''}`} data-testid="nav-syllabus">
             <BookOpen className="h-5 w-5" />
             <span className="font-medium">Tematică & Bibliografie</span>

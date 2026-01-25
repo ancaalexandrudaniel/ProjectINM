@@ -241,6 +241,100 @@ export const userCaseStudySubmissions = pgTable("user_case_study_submissions", {
 });
 
 // ============================================================================
+// [NEW] ESSAY SUBJECTS - Official INM exam subjects and custom practice essays
+// ============================================================================
+export const essaySubjects = pgTable("essay_subjects", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+
+  // Metadata
+  year: integer("year").notNull(), // 2024, 2023, etc.
+  examDay: text("exam_day").notNull(), // 'day1' (Civil) sau 'day2' (Penal)
+  subject: text("subject").notNull(), // 'civil', 'penal'
+  title: text("title").notNull(), // Titlu scurt
+
+  // Conținut
+  prompt: text("prompt").notNull(), // Textul complet al speței
+  sections: jsonb("sections"), // Array: [{id, title, prompt, points, estimatedMinutes}]
+
+  // Barem oficial
+  rubric: jsonb("rubric").notNull(), // Baremul de corectare structurat
+  sampleAnswer: text("sample_answer"), // Rezolvare model
+  commonMistakes: jsonb("common_mistakes"), // Array de greșeli frecvente
+
+  // Metadate
+  difficulty: text("difficulty").default("hard"), // 'medium', 'hard', 'expert'
+  estimatedTime: integer("estimated_time").default(240), // minute (4h = 240)
+  maxScore: integer("max_score").default(10), // Nota maximă
+  sourceType: text("source_type").default("official"), // 'official', 'manual', 'ai-generated'
+  sourceUrl: text("source_url"), // Link către sursa oficială
+
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const essaySubmissions = pgTable("essay_submissions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  essaySubjectId: varchar("essay_subject_id").references(() => essaySubjects.id),
+
+  // Răspunsul utilizatorului
+  userAnswer: text("user_answer").notNull(),
+  sectionAnswers: jsonb("section_answers"), // {sectionId: answer} pentru secțiuni multiple
+
+  // Timp și mod
+  timeSpent: integer("time_spent"), // secunde
+  timeLimit: integer("time_limit"), // secunde (null = fără limită)
+  isStrictMode: boolean("is_strict_mode").default(false), // Mod simulare strictă
+  completedWithinTime: boolean("completed_within_time"),
+
+  // Auto-evaluare
+  selfEvaluation: jsonb("self_evaluation"), // Checkbox-uri din barem
+  selfScore: integer("self_score"),
+
+  // Evaluare AI
+  aiScore: text("ai_score"), // Nota AI (string pentru format "8.50")
+  aiGrade: text("ai_grade"), // Calificativ
+  aiFeedback: text("ai_feedback"), // Feedback general
+  aiEvaluation: jsonb("ai_evaluation"), // {strengths, weaknesses, missingPoints, iracAnalysis}
+
+  submittedAt: timestamp("submitted_at").defaultNow(),
+});
+
+// ============================================================================
+// [NEW] EXAM ESSAYS - INM Written Exam Requirements (Probe Scrise/Spețe)
+// Each requirement is stored as a separate row for granular tracking
+// ============================================================================
+export const examEssays = pgTable("exam_essays", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+
+  // Exam metadata
+  year: integer("year").notNull(), // 2024, 2023, etc.
+  variant: integer("variant").default(1), // Varianta 1, 2, etc.
+  discipline: text("discipline").notNull(), // 'civil-combined' | 'penal-combined'
+
+  // Subject structure
+  subjectId: text("subject_id").notNull(), // 'civil-1', 'civil-2', 'proc-1'
+  subjectTitle: text("subject_title").notNull(), // 'Subiectul 1'
+  subjectArea: text("subject_area").notNull(), // 'Drept Civil' | 'Drept Procesual Civil'
+  scenario: text("scenario"), // Full scenario text for case-based subjects
+
+  // Specific requirement
+  requirementId: text("requirement_id").notNull(), // '1.1', '1.2', '2.1'
+  requirementText: text("requirement_text").notNull(), // Full requirement text
+  points: text("points").notNull(), // '0.50', '0.75', '1.00' (stored as string for precision)
+  recommendedTime: integer("recommended_time"), // minutes
+
+  // Solution and rubric
+  solution: text("solution").notNull(), // Model answer from official rubric
+  legalRefs: jsonb("legal_refs"), // ["art. 1380 C. civ."]
+  rubric: jsonb("rubric").notNull(), // [{criterion: string, points: string}]
+
+  // Metadata
+  sourceType: text("source_type").default("official"), // 'official' | 'practice'
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// ============================================================================
 // [NEW] SYLLABUS TOPIC MAPPINGS - Links tematica to legal content
 // ============================================================================
 export const syllabusTopicMappings = pgTable("syllabus_topic_mappings", {
@@ -520,6 +614,37 @@ export const userEssaySubmissions = pgTable("user_essay_submissions", {
   submittedAt: timestamp("submitted_at").defaultNow(),
 });
 
+// ============================================================================
+// [NEW] EXAM SIMULATION RESULTS
+// Stores comprehensive results for full exam simulations (Proba I)
+// ============================================================================
+export const examResults = pgTable("exam_results", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+
+  examYear: integer("exam_year").notNull(),
+  examType: text("exam_type").notNull(), // 'grile-proba-1', 'spete-proba-2'
+
+  // Scoring
+  totalScore: integer("total_score").notNull(), // 0-100
+  isPassed: boolean("is_passed").notNull(),
+
+  // Detailed Breakdown
+  breakdown: jsonb("breakdown").notNull(), // { civil: {correct, total}, ... }
+
+  // Metadata
+  timeSpent: integer("time_spent"), // seconds
+  completedAt: timestamp("completed_at").defaultNow(),
+});
+
+export const insertExamResultSchema = createInsertSchema(examResults).omit({
+  id: true,
+  completedAt: true,
+});
+
+export type ExamResult = typeof examResults.$inferSelect;
+export type InsertExamResult = z.infer<typeof insertExamResultSchema>;
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -771,3 +896,14 @@ export type InsertSyllabusTopicMapping = z.infer<typeof insertSyllabusTopicMappi
 
 export type UserSyllabusProgress = typeof userSyllabusProgress.$inferSelect;
 export type InsertUserSyllabusProgress = z.infer<typeof insertUserSyllabusProgressSchema>;
+
+// ============================================================================
+// [NEW] Exam Essays Insert Schemas & Types
+// ============================================================================
+export const insertExamEssaySchema = createInsertSchema(examEssays).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type ExamEssay = typeof examEssays.$inferSelect;
+export type InsertExamEssay = z.infer<typeof insertExamEssaySchema>;

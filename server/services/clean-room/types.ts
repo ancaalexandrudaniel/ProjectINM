@@ -175,6 +175,41 @@ export interface CleanRoomAuditEntry {
 }
 
 /**
+ * Complete audit record for each piece of generated content
+ * Used for compliance documentation and litigation defense
+ * @see docs/compliance_audit.md
+ */
+export interface ContentAuditRecord {
+    // Identification
+    contentId: string;              // UUID unique identifier
+    generatedAt: Date;              // Generation timestamp
+
+    // Source Information
+    sourceActId: string;            // e.g., "ncc-287-2009"
+    sourceActName: string;          // e.g., "Codul Civil"
+    sourceArticleNumber?: string;   // e.g., "Art. 1166"
+    sourceUrl: string;              // Official portal URL
+    sourceContentHash: string;      // SHA-256 of source text
+
+    // Generation Details
+    modelVersion: string;           // e.g., "gemini-1.5-pro-002"
+    promptTemplateHash: string;     // Hash of prompt used
+    generationType: CleanRoomGenerationType;
+
+    // Validation Results
+    similarityScore: number;        // 0-100, target < 10%
+    forbiddenPatternsFound: string[];
+    validationPassed: boolean;
+}
+
+/**
+ * Extended generation result with full audit trail
+ */
+export interface AuditedGenerationResult<T> extends CleanRoomGenerationResult<T> {
+    auditRecord: ContentAuditRecord;
+}
+
+/**
  * Forbidden content patterns to check against
  */
 export const FORBIDDEN_CONTENT_PATTERNS = [

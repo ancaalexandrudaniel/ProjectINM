@@ -4,7 +4,7 @@
  */
 
 import { db } from "./db";
-import { users, activeSessions } from "@shared/schema";
+import { users, activeSessions } from "../shared/schema";
 import { eq, and } from "drizzle-orm";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
