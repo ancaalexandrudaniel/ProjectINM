@@ -51,6 +51,7 @@ interface ExamSection {
     icon: typeof Scale;
     color: string;
     bgColor: string;
+    progressColor: string;
     questions: Question[];
 }
 
@@ -104,10 +105,10 @@ const getCorrectLetter = (correctAnswer: number | string): string => {
 };
 
 const SECTION_CONFIG = [
-    { id: "civil", name: "Drept Civil", shortName: "Civil", icon: Scale, color: "text-blue-200", bgColor: "bg-blue-900 border-blue-700" },
-    { id: "civil-procedural", name: "Drept Procesual Civil", shortName: "Proc.Civil", icon: FileText, color: "text-cyan-200", bgColor: "bg-cyan-900 border-cyan-700" },
-    { id: "penal", name: "Drept Penal", shortName: "Penal", icon: Shield, color: "text-red-200", bgColor: "bg-red-900 border-red-700" },
-    { id: "penal-procedural", name: "Drept Procesual Penal", shortName: "Proc.Penal", icon: Gavel, color: "text-fuchsia-200", bgColor: "bg-fuchsia-900 border-fuchsia-700" },
+    { id: "civil", name: "Drept Civil", shortName: "Civil", icon: Scale, color: "text-indigo-300", bgColor: "bg-indigo-900/50 border-indigo-600", progressColor: "bg-indigo-500" },
+    { id: "civil-procedural", name: "Drept Procesual Civil", shortName: "Proc.Civil", icon: FileText, color: "text-emerald-300", bgColor: "bg-emerald-900/50 border-emerald-600", progressColor: "bg-emerald-500" },
+    { id: "penal", name: "Drept Penal", shortName: "Penal", icon: Shield, color: "text-amber-300", bgColor: "bg-amber-900/50 border-amber-600", progressColor: "bg-amber-500" },
+    { id: "penal-procedural", name: "Drept Procesual Penal", shortName: "Proc.Penal", icon: Gavel, color: "text-fuchsia-300", bgColor: "bg-fuchsia-900/50 border-fuchsia-600", progressColor: "bg-fuchsia-500" },
 ];
 
 const EXAM_DURATION = 4 * 60 * 60; // 4 hours in seconds
@@ -774,7 +775,9 @@ export default function TimeMachineProba1() {
                                                             {correct}/{total} ({pct}%)
                                                         </Badge>
                                                     </div>
-                                                    <Progress value={pct} className={`h-1 w-24 ${section.bgColor.replace('bg-', 'bg-')}`} />
+                                                    <div className={`h-1 w-24 rounded-full bg-muted overflow-hidden`}>
+                                                        <div className={`h-full ${section.progressColor} transition-all`} style={{ width: `${pct}%` }} />
+                                                    </div>
                                                 </TabsTrigger>
                                             );
                                         })}

@@ -37,6 +37,7 @@ import ExamEssaysImport from "@/pages/exam-essays-import";
 import EssayPractice from "@/pages/essay-practice";
 import TimeMachine from "@/pages/time-machine";
 import TimeMachineProba1 from "@/pages/time-machine-proba1";
+import TimeMachineProba2 from "@/pages/time-machine-proba2";
 import ImportManagement from "@/pages/import-management";
 
 function Router() {
@@ -74,6 +75,7 @@ function Router() {
       <Route path="/essay-practice" component={EssayPractice} />
       <Route path="/time-machine" component={TimeMachine} />
       <Route path="/time-machine/:year/proba-1" component={TimeMachineProba1} />
+      <Route path="/time-machine/:year/proba-2" component={TimeMachineProba2} />
       <Route path="/import-management" component={ImportManagement} />
       <Route path="/psihologic">{() => <Etapa2Placeholder type="psihologic" />}</Route>
       <Route path="/interviu">{() => <Etapa2Placeholder type="interviu" />}</Route>

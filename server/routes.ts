@@ -708,6 +708,268 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // GET /api/exam-essays/:year/:discipline - Get structured exam data for Time Machine Proba II
+  app.get("/api/exam-essays/:year/:discipline", async (req, res) => {
+    try {
+      const { examEssays } = await import("../shared/schema");
+      const { eq: eqOp, and } = await import("drizzle-orm");
+
+      const year = parseInt(req.params.year);
+      const discipline = req.params.discipline;
+
+      if (isNaN(year) || !discipline) {
+        return res.status(400).json({ error: "Year and discipline are required" });
+      }
+
+      console.log(`[EXAM-ESSAYS] Fetching exam data for ${year} ${discipline}`);
+
+      // Fetch all requirements for this year/discipline
+      const requirements = await db.select().from(examEssays).where(
+        and(eqOp(examEssays.year, year), eqOp(examEssays.discipline, discipline))
+      );
+
+      if (requirements.length === 0) {
+        return res.status(404).json({ error: "No exam data found for this year/discipline" });
+      }
+
+      // Group by subjectId to build nested structure
+      const subjectsMap = new Map<string, {
+        subjectId: string;
+        subjectTitle: string;
+        subjectArea: string;
+        scenario: string | null;
+        requirements: Array<{
+          id: string;
+          requirementId: string;
+          requirementText: string;
+          points: string;
+          recommendedTime: number | null;
+          solution: string;
+          rubric: Array<{ criterion: string; points: string }>;
+        }>;
+      }>();
+
+      for (const req of requirements) {
+        if (!subjectsMap.has(req.subjectId)) {
+          subjectsMap.set(req.subjectId, {
+            subjectId: req.subjectId,
+            subjectTitle: req.subjectTitle,
+            subjectArea: req.subjectArea,
+            scenario: req.scenario,
+            requirements: []
+          });
+        }
+
+        subjectsMap.get(req.subjectId)!.requirements.push({
+          id: req.id,
+          requirementId: req.requirementId,
+          requirementText: req.requirementText,
+          points: req.points,
+          recommendedTime: req.recommendedTime,
+          solution: req.solution,
+          rubric: req.rubric as Array<{ criterion: string; points: string }>
+        });
+      }
+
+      // Sort requirements within each subject by requirementId
+      for (const subject of subjectsMap.values()) {
+        subject.requirements.sort((a, b) => a.requirementId.localeCompare(b.requirementId));
+      }
+
+      // Build final structure matching ExamData interface
+      const subjects = Array.from(subjectsMap.values());
+      const totalPoints = subjects.reduce((sum, s) =>
+        sum + s.requirements.reduce((rSum, r) => rSum + parseFloat(r.points), 0), 0
+      );
+
+      console.log(`[EXAM-ESSAYS] Returning ${subjects.length} subjects with ${requirements.length} total requirements`);
+
+      res.json({
+        year,
+        discipline,
+        subjects,
+        totalPoints
+      });
+    } catch (error) {
+      console.error("[EXAM-ESSAYS] Fetch by year/discipline error:", error);
+      res.status(500).json({ error: "Failed to fetch exam essays" });
+    }
+  });
+
+  // POST /api/ai/grade-essay - AI-powered grading for Proba II essays
+  app.post("/api/ai/grade-essay", async (req, res) => {
+    try {
+      const { examEssays } = await import("../shared/schema");
+      const { eq: eqOp, and } = await import("drizzle-orm");
+      const { GoogleGenAI } = await import("@google/genai");
+
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+
+      // Parse request
+      const schema = z.object({
+        year: z.number(),
+        discipline: z.string(),
+        answers: z.record(z.string()), // requirementId -> userAnswer
+        timeSpent: z.number().optional()
+      });
+
+      const parsed = schema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ error: "Invalid data", details: parsed.error });
+      }
+
+      const { year, discipline, answers, timeSpent } = parsed.data;
+
+      console.log(`[GRADE-ESSAY] Grading ${Object.keys(answers).length} answers for ${year} ${discipline}`);
+
+      // Fetch official requirements/rubrics from DB
+      const requirements = await db.select().from(examEssays).where(
+        and(eqOp(examEssays.year, year), eqOp(examEssays.discipline, discipline))
+      );
+
+      if (requirements.length === 0) {
+        return res.status(404).json({ error: "No exam data found for grading" });
+      }
+
+      // Build requirements map for quick lookup
+      const reqMap = new Map(requirements.map(r => [r.id, r]));
+
+      // Grade each answered requirement
+      const feedback: Array<{
+        requirementId: string;
+        score: number;
+        maxScore: number;
+        feedback: string;
+        strengths: string[];
+        improvements: string[];
+      }> = [];
+
+      let totalScore = 0;
+      let maxScore = 0;
+      const bySubject: Record<string, { score: number; max: number }> = {};
+
+      for (const [reqId, userAnswer] of Object.entries(answers)) {
+        const req = reqMap.get(reqId);
+        if (!req || !userAnswer.trim()) continue;
+
+        const maxPoints = parseFloat(req.points);
+        maxScore += maxPoints;
+
+        // Initialize bySubject tracking
+        if (!bySubject[req.subjectId]) {
+          bySubject[req.subjectId] = { score: 0, max: 0 };
+        }
+        bySubject[req.subjectId].max += maxPoints;
+
+        // Build AI grading prompt using "Warm Mentor" protocol
+        const systemPrompt = `Ești un mentor prietenos și exigent pentru pregătirea examenului INM (Institutul Național al Magistraturii).
+Te adresezi direct studentului la persoana a 2-a (tu/ți-ai/te), cu un ton cald dar constructiv.
+
+Rolul tău este să evaluezi răspunsul studentului pentru o cerință specifică din Proba II (probe scrise).
+Notezi obiectiv pe baza baremului oficial și oferi feedback util pentru îmbunătățire.
+
+Răspunde STRICT în format JSON:
+{
+  "score": număr_cu_2_zecimale_între_0_și_maxim,
+  "feedback": "paragraf scurt de evaluare generală (max 50 cuvinte)",
+  "strengths": ["punct tare 1", "punct tare 2"],
+  "improvements": ["aspect de îmbunătățit 1", "aspect 2"]
+}`;
+
+        const rubricText = (req.rubric as Array<{ criterion: string; points: string }>)
+          .map(r => `- ${r.criterion}: ${r.points}p`)
+          .join("\n");
+
+        const userPrompt = `Evaluează răspunsul pentru cerința ${req.requirementId}:
+
+=== CERINȚA (${req.points} puncte) ===
+${req.requirementText}
+
+=== BAREM OFICIAL ===
+${rubricText}
+
+=== SOLUȚIE MODEL ===
+${req.solution}
+
+=== RĂSPUNSUL STUDENTULUI ===
+${userAnswer}
+
+Punctaj maxim posibil: ${req.points}
+Notează obiectiv pe baza baremului.`;
+
+        try {
+          const result = await ai.models.generateContent({
+            model: "gemini-2.0-flash-001",
+            config: {
+              systemInstruction: systemPrompt,
+              responseMimeType: "application/json"
+            },
+            contents: [{ role: "user", parts: [{ text: userPrompt }] }]
+          });
+
+          const rawJson = result.text?.replace(/```json|```/g, "").trim();
+          if (rawJson) {
+            const gradeResult = JSON.parse(rawJson);
+            const earnedScore = Math.min(Math.max(0, gradeResult.score), maxPoints);
+
+            totalScore += earnedScore;
+            bySubject[req.subjectId].score += earnedScore;
+
+            feedback.push({
+              requirementId: req.requirementId,
+              score: earnedScore,
+              maxScore: maxPoints,
+              feedback: gradeResult.feedback || "",
+              strengths: gradeResult.strengths || [],
+              improvements: gradeResult.improvements || []
+            });
+          }
+        } catch (aiError) {
+          console.error(`[GRADE-ESSAY] AI grading failed for ${req.requirementId}:`, aiError);
+          // Fallback: give partial credit
+          const partialScore = maxPoints * 0.5;
+          totalScore += partialScore;
+          bySubject[req.subjectId].score += partialScore;
+
+          feedback.push({
+            requirementId: req.requirementId,
+            score: partialScore,
+            maxScore: maxPoints,
+            feedback: "Evaluare automată indisponibilă - punctaj parțial acordat.",
+            strengths: [],
+            improvements: ["Retrimiteți pentru evaluare detaliată"]
+          });
+        }
+      }
+
+      // Calculate overall stats
+      const percentage = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
+      const passed = percentage >= 50; // 50% minimum for written exams
+
+      // Expression score (0.50 bonus for clarity - simplified calculation)
+      const avgAnswerLength = Object.values(answers).reduce((sum, a) => sum + a.length, 0) / Math.max(Object.keys(answers).length, 1);
+      const expressionScore = avgAnswerLength > 200 ? 0.45 : avgAnswerLength > 100 ? 0.35 : 0.25;
+
+      console.log(`[GRADE-ESSAY] Grading complete: ${totalScore.toFixed(2)}/${maxScore} (${percentage}%)`);
+
+      res.json({
+        totalScore: totalScore + expressionScore,
+        maxScore,
+        percentage,
+        passed,
+        bySubject,
+        feedback,
+        overallFeedback: passed
+          ? "Felicitări! Ai demonstrat o înțelegere solidă a materiei. Continuă să exersezi pentru a-ți perfecționa argumentarea juridică."
+          : "Mai ai de lucrat la fundamentarea juridică. Concentrează-te pe îmbunătățirea structurii IRAC și pe citarea precisă a articolelor de lege.",
+        expressionScore
+      });
+    } catch (error) {
+      console.error("[GRADE-ESSAY] Error:", error);
+      res.status(500).json({ error: "Failed to grade essay" });
+    }
+  });
+
   // POST /api/questions/fix-penal-subjects - Fix penal questions by splitting into penal + penal-procedural
   app.post("/api/questions/fix-penal-subjects", async (req, res) => {
     try {

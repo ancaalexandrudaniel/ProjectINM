@@ -42,6 +42,7 @@ export default function TimeMachine() {
     const [selectedYear, setSelectedYear] = useState<number | null>(null);
     const [isPortalOpen, setIsPortalOpen] = useState(false);
     const [isLaunching, setIsLaunching] = useState(false);
+    const [selectedProba, setSelectedProba] = useState<1 | 2>(1);
 
     // Open portal for year confirmation
     const openPortal = (year: number) => {
@@ -49,13 +50,14 @@ export default function TimeMachine() {
         setIsPortalOpen(true);
     };
 
-    // Launch exam
-    const launchExam = () => {
+    // Launch exam with selected proba
+    const launchExam = (proba: 1 | 2) => {
+        setSelectedProba(proba);
         setIsLaunching(true);
 
         // Simulate temporal jump animation
         setTimeout(() => {
-            setLocation(`/time-machine/${selectedYear}/proba-1`);
+            setLocation(`/time-machine/${selectedYear}/proba-${proba}`);
         }, 1500);
     };
 
@@ -90,59 +92,61 @@ export default function TimeMachine() {
                 </div>
 
                 {/* Year Selection Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-[1600px] w-full px-8 mx-auto">
                     {EXAM_YEARS.map((exam) => (
                         <Card
                             key={exam.year}
-                            className={`relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 ${exam.available
-                                ? 'border-purple-500/50 hover:border-purple-500 hover:shadow-lg hover:shadow-purple-500/20'
-                                : 'opacity-50 cursor-not-allowed'
-                                } ${exam.isNew ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-background' : ''}`}
+                            className={`group relative overflow-hidden cursor-pointer transition-all duration-500 ease-out h-full ${exam.available
+                                ? 'border-purple-500/30 hover:border-purple-400 hover:scale-110 hover:-translate-y-4 hover:shadow-[0_20px_60px_-15px_rgba(168,85,247,0.5)] hover:bg-purple-500/5 z-0 hover:z-10'
+                                : 'opacity-50 cursor-not-allowed grayscale hover:grayscale-0 hover:opacity-75'
+                                } ${exam.isNew ? 'ring-2 ring-purple-500 ring-offset-4 ring-offset-background' : ''}`}
                             onClick={() => exam.available && openPortal(exam.year)}
                         >
                             {/* Decorative background effect */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                             {exam.isNew && (
-                                <Badge className="absolute top-2 right-2 bg-gradient-to-r from-purple-500 to-blue-500">
+                                <Badge className="absolute top-3 right-3 bg-gradient-to-r from-purple-500 to-blue-500 text-sm py-1">
                                     <Sparkles className="h-3 w-3 mr-1" /> NOU
                                 </Badge>
                             )}
 
                             {!exam.available && (
-                                <Badge variant="outline" className="absolute top-2 right-2">
+                                <Badge variant="outline" className="absolute top-3 right-3">
                                     🔒 În curând
                                 </Badge>
                             )}
 
-                            <CardHeader className="text-center pb-2">
-                                <div className="mx-auto mb-2 h-16 w-16 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center">
-                                    <CalendarDays className="h-8 w-8 text-purple-400" />
+                            <CardHeader className="text-center pb-4 pt-8">
+                                <div className="mx-auto mb-4 h-24 w-24 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center">
+                                    <CalendarDays className="h-12 w-12 text-purple-400" />
                                 </div>
-                                <CardTitle className="text-3xl font-bold">{exam.year}</CardTitle>
+                                <CardTitle className="text-4xl font-bold">{exam.year}</CardTitle>
                             </CardHeader>
 
-                            <CardContent className="text-center space-y-2">
-                                <div className="flex justify-center gap-4 text-sm text-muted-foreground">
-                                    <span className="flex items-center gap-1">
-                                        <FileText className="h-4 w-4" /> {exam.grileCount} grile
-                                    </span>
-                                </div>
-                                <div className="text-sm text-muted-foreground">
-                                    <span className="flex justify-center items-center gap-1">
-                                        <Scale className="h-4 w-4" /> {exam.speteCount} cerințe
-                                    </span>
+                            <CardContent className="text-center space-y-4 pb-8">
+                                <div className="space-y-2">
+                                    <div className="flex justify-center gap-4 text-base text-muted-foreground font-medium">
+                                        <span className="flex items-center gap-2">
+                                            <FileText className="h-5 w-5" /> {exam.grileCount} grile
+                                        </span>
+                                    </div>
+                                    <div className="text-base text-muted-foreground font-medium">
+                                        <span className="flex justify-center items-center gap-2">
+                                            <Scale className="h-5 w-5" /> {exam.speteCount} cerințe
+                                        </span>
+                                    </div>
                                 </div>
 
                                 {exam.available && (
                                     <Button
                                         variant="ghost"
-                                        size="sm"
-                                        className="mt-2 text-purple-400 hover:text-purple-300"
+                                        size="lg"
+                                        className="mt-4 text-purple-400 hover:text-purple-300 w-full hover:bg-purple-500/10 text-lg"
                                     >
-                                        <Zap className="h-4 w-4 mr-1" />
+                                        <Zap className="h-5 w-5 mr-2" />
                                         Călătorește
-                                        <ChevronRight className="h-4 w-4 ml-1" />
+                                        <ChevronRight className="h-5 w-5 ml-1" />
                                     </Button>
                                 )}
                             </CardContent>
@@ -151,7 +155,7 @@ export default function TimeMachine() {
                 </div>
 
                 {/* Info Section */}
-                <div className="max-w-3xl mx-auto">
+                <div className="max-w-5xl mx-auto px-4">
                     <Card className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 border-purple-500/30">
                         <CardContent className="pt-6">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
@@ -178,7 +182,7 @@ export default function TimeMachine() {
 
             {/* Portal Confirmation Dialog */}
             <Dialog open={isPortalOpen} onOpenChange={(open) => !isLaunching && setIsPortalOpen(open)}>
-                <DialogContent className="max-w-lg overflow-hidden">
+                <DialogContent className="max-w-4xl overflow-hidden border-purple-500/20 shadow-2xl shadow-purple-900/20">
                     {!isLaunching && (
                         <DialogHeader>
                             <DialogTitle className="text-center text-2xl flex items-center justify-center gap-2">
@@ -201,28 +205,50 @@ export default function TimeMachine() {
                                 <p className="text-sm text-muted-foreground mt-1">București, România</p>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 border rounded-lg">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <CheckCircle2 className="h-5 w-5 text-green-500" />
-                                        <p className="font-semibold">Proba I - Grile</p>
+                            <div className="grid grid-cols-2 gap-6">
+                                {/* Proba I Card */}
+                                <div className="p-6 border rounded-xl bg-purple-500/5 hover:bg-purple-500/10 transition-colors">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="p-2 rounded-full bg-green-500/20 text-green-400">
+                                            <CheckCircle2 className="h-6 w-6" />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-2xl">Proba I - Grile</p>
+                                            <p className="text-base text-muted-foreground">100 întrebări • 4 ore</p>
+                                        </div>
                                     </div>
-                                    <p className="text-sm text-muted-foreground">100 întrebări • 4 ore</p>
-                                    <div className="flex gap-2 mt-2">
-                                        <Badge variant="outline" className="text-xs">Civil</Badge>
-                                        <Badge variant="outline" className="text-xs">Penal</Badge>
+
+                                    <div className="flex flex-wrap gap-2 mt-4">
+                                        <Badge variant="outline" className="text-sm py-1 border-indigo-500/30 text-indigo-300">Drept Civil</Badge>
+                                        <Badge variant="outline" className="text-sm py-1 border-emerald-500/30 text-emerald-300">Drept Procesual Civil</Badge>
+                                        <Badge variant="outline" className="text-sm py-1 border-amber-500/30 text-amber-300">Drept Penal</Badge>
+                                        <Badge variant="outline" className="text-sm py-1 border-fuchsia-500/30 text-fuchsia-300">Drept Procesual Penal</Badge>
                                     </div>
                                 </div>
 
-                                <div className="p-4 border rounded-lg">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <CheckCircle2 className="h-5 w-5 text-green-500" />
-                                        <p className="font-semibold">Proba II - Spețe</p>
+                                {/* Proba II Card */}
+                                <div className="p-6 border rounded-xl bg-blue-500/5 hover:bg-blue-500/10 transition-colors">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="p-2 rounded-full bg-green-500/20 text-green-400">
+                                            <CheckCircle2 className="h-6 w-6" />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-2xl">Proba II - Spețe</p>
+                                            <p className="text-base text-muted-foreground">{selectedExam.speteCount} cerințe • 4 ore</p>
+                                        </div>
                                     </div>
-                                    <p className="text-sm text-muted-foreground">{selectedExam.speteCount} cerințe • 4 ore</p>
-                                    <div className="flex gap-2 mt-2">
-                                        <Badge variant="outline" className="text-xs">Civil</Badge>
-                                        <Badge variant="outline" className="text-xs">Penal</Badge>
+
+                                    <div className="space-y-2 mt-4">
+                                        <div className="flex items-center gap-2">
+                                            <Badge variant="secondary" className="text-sm py-1 w-full justify-center bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                                                Drept Civil + Drept Procesual Civil
+                                            </Badge>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Badge variant="secondary" className="text-sm py-1 w-full justify-center bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                                                Drept Penal + Drept Procesual Penal
+                                            </Badge>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -266,18 +292,45 @@ export default function TimeMachine() {
                     )}
 
                     {!isLaunching && (
-                        <DialogFooter className="flex-col sm:flex-row gap-2">
-                            <Button variant="outline" onClick={() => setIsPortalOpen(false)}>
-                                ← Anulează
-                            </Button>
+                        <div className="mt-6 flex flex-col gap-3">
+                            {/* Main option: Full Experience */}
                             <Button
-                                onClick={launchExam}
-                                className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+                                onClick={() => launchExam(1)}
+                                className="w-full bg-gradient-to-r from-purple-500 via-blue-500 to-purple-600 hover:from-purple-600 hover:via-blue-600 hover:to-purple-700 py-6 text-lg shadow-lg shadow-purple-500/20"
                             >
-                                <Rocket className="h-4 w-4 mr-2" />
-                                Pornește Călătoria
+                                <Rocket className="h-5 w-5 mr-2" />
+                                Examen Complet (Proba I → Proba II)
                             </Button>
-                        </DialogFooter>
+
+                            {/* Secondary: Selective options */}
+                            <div className="grid grid-cols-3 gap-2 w-full">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => launchExam(1)}
+                                    className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
+                                >
+                                    Doar Proba I
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => launchExam(2)}
+                                    className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+                                >
+                                    Doar Proba II
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => setIsPortalOpen(false)}
+                                    className="text-muted-foreground hover:bg-muted"
+                                >
+                                    Anulează
+                                </Button>
+                            </div>
+
+                            <p className="text-xs text-center text-muted-foreground mt-2">
+                                💡 Examenul complet curge automat de la Proba I la Proba II
+                            </p>
+                        </div>
                     )}
                 </DialogContent>
             </Dialog>
