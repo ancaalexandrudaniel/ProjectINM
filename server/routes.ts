@@ -5,7 +5,7 @@ import { insertQuizSessionSchema, insertUserAnswerSchema, questionTopics, essayP
 import { z } from "zod";
 import { db } from "./db";
 import { users } from "../shared/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import {
   createSession,
   validateSession,
@@ -1767,40 +1767,54 @@ Notează obiectiv pe baza baremului.`;
           });
 
           // Update progress for each matching topic
-          for (const topic of matchingTopics) {
-            const [existingProgress] = await db.select().from(userSyllabusProgress)
+          if (matchingTopics.length > 0) {
+            const topicIds = matchingTopics.map(t => t.id);
+
+            // Batch select existing progress
+            const existingProgresses = await db.select().from(userSyllabusProgress)
               .where(
                 and(
                   eq(userSyllabusProgress.userId, userId),
-                  eq(userSyllabusProgress.syllabusTopicId, topic.id)
+                  inArray(userSyllabusProgress.syllabusTopicId, topicIds)
                 )
-              )
-              .limit(1);
+              );
 
-            if (existingProgress) {
-              // Update existing progress
-              const newAnswered = (existingProgress.questionsAnswered || 0) + 1;
-              const newCorrect = (existingProgress.questionsCorrect || 0) + (answerData.isCorrect ? 1 : 0);
-              const newProgress = Math.round((newCorrect / Math.max(newAnswered, 1)) * 100);
+            const progressMap = new Map(existingProgresses.map(p => [p.syllabusTopicId, p]));
+            const toInsert: typeof userSyllabusProgress.$inferInsert[] = [];
 
-              await db.update(userSyllabusProgress)
-                .set({
-                  questionsAnswered: newAnswered,
-                  questionsCorrect: newCorrect,
-                  progressPercent: newProgress,
-                  updatedAt: new Date()
-                })
-                .where(eq(userSyllabusProgress.id, existingProgress.id));
-            } else {
-              // Create new progress entry
-              await db.insert(userSyllabusProgress).values({
-                userId,
-                syllabusTopicId: topic.id,
-                questionsAnswered: 1,
-                questionsCorrect: answerData.isCorrect ? 1 : 0,
-                articlesRead: 0,
-                progressPercent: answerData.isCorrect ? 100 : 0,
-              });
+            for (const topic of matchingTopics) {
+              const existingProgress = progressMap.get(topic.id);
+
+              if (existingProgress) {
+                // Update existing progress
+                const newAnswered = (existingProgress.questionsAnswered || 0) + 1;
+                const newCorrect = (existingProgress.questionsCorrect || 0) + (answerData.isCorrect ? 1 : 0);
+                const newProgress = Math.round((newCorrect / Math.max(newAnswered, 1)) * 100);
+
+                await db.update(userSyllabusProgress)
+                  .set({
+                    questionsAnswered: newAnswered,
+                    questionsCorrect: newCorrect,
+                    progressPercent: newProgress,
+                    updatedAt: new Date()
+                  })
+                  .where(eq(userSyllabusProgress.id, existingProgress.id));
+              } else {
+                // Create new progress entry
+                toInsert.push({
+                  userId,
+                  syllabusTopicId: topic.id,
+                  questionsAnswered: 1,
+                  questionsCorrect: answerData.isCorrect ? 1 : 0,
+                  articlesRead: 0,
+                  progressPercent: answerData.isCorrect ? 100 : 0,
+                });
+              }
+            }
+
+            // Batch insert new progress
+            if (toInsert.length > 0) {
+              await db.insert(userSyllabusProgress).values(toInsert);
             }
           }
 
