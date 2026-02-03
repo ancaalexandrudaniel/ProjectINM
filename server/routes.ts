@@ -13,6 +13,7 @@ import {
   verifyPassword,
   type AuthenticatedUser
 } from "./auth";
+import { authMiddleware } from "./auth-middleware";
 import multer from "multer";
 import { parsePDFBuffer, cleanPDFText, detectExamPaperType } from "./services/pdf-parser";
 
@@ -31,16 +32,6 @@ const upload = multer({
   },
 });
 
-// Extend Express Request to include user
-declare global {
-  namespace Express {
-    interface Request {
-      user?: AuthenticatedUser;
-      sessionToken?: string;
-    }
-  }
-}
-
 // Helper to get first user ID
 async function getDefaultUserId(): Promise<string> {
   const allUsers = await db.select().from(users).limit(1);
@@ -48,27 +39,6 @@ async function getDefaultUserId(): Promise<string> {
     throw new Error("No users found in database");
   }
   return allUsers[0].id;
-}
-
-// ============================================================================
-// Authentication Middleware
-// ============================================================================
-async function authMiddleware(req: Request, res: Response, next: NextFunction) {
-  const sessionToken = req.headers.authorization?.replace("Bearer ", "") ||
-    req.cookies?.session_token;
-
-  if (!sessionToken) {
-    return res.status(401).json({ error: "Authentication required" });
-  }
-
-  const user = await validateSession(sessionToken);
-  if (!user) {
-    return res.status(401).json({ error: "Invalid or expired session" });
-  }
-
-  req.user = user;
-  req.sessionToken = sessionToken;
-  next();
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
