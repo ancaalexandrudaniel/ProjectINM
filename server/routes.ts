@@ -3343,34 +3343,44 @@ Notează obiectiv pe baza baremului.`;
       }).returning();
 
       // Insert validated articles only
-      const insertedArticles = [];
+      let insertedArticles = [];
       const errors: { index: number; error: string }[] = [];
 
-      for (let i = 0; i < validArticles.length; i++) {
-        const art = validArticles[i];
-        try {
+      // Prepare all values for insertion
+      const allValues = validArticles.map((art: any) => {
+        const rawContent = Object.entries(art.segments || {})
+          .map(([key, value]) => `[${key.toUpperCase()}]\n${value}`)
+          .join('\n\n');
 
-          // Build raw content from all segments
-          const rawContent = Object.entries(art.segments || {})
-            .map(([key, value]) => `[${key.toUpperCase()}]\n${value}`)
-            .join('\n\n');
+        return {
+          userId,
+          articleNumber: art.article,
+          title: art.title,
+          subject,
+          lawSource: lawSource || meta?.source || null,
+          segments: art.segments,
+          rawContent: art.raw || rawContent,
+          batchId: batch.id,
+          isProcessedForRag: false
+        };
+      });
 
-          const [inserted] = await db.insert(legalArticles).values({
-            userId,
-            articleNumber: art.article,
-            title: art.title,
-            subject,
-            lawSource: lawSource || meta?.source || null,
-            segments: art.segments,
-            rawContent: art.raw || rawContent,
-            batchId: batch.id,
-            isProcessedForRag: false
-          }).returning();
+      try {
+        // Optimization: Try batch insert first
+        insertedArticles = await db.insert(legalArticles).values(allValues).returning();
+      } catch (batchErr) {
+        console.warn("Batch insert failed, falling back to sequential insert:", batchErr);
 
-          insertedArticles.push(inserted);
-        } catch (artErr: any) {
-          console.warn(`Failed to insert article ${art.article}:`, artErr.message);
-          errors.push({ index: i, error: artErr.message });
+        // Fallback: Sequential insert to handle individual errors
+        for (let i = 0; i < validArticles.length; i++) {
+          const art = validArticles[i];
+          try {
+            const [inserted] = await db.insert(legalArticles).values(allValues[i]).returning();
+            insertedArticles.push(inserted);
+          } catch (artErr: any) {
+            console.warn(`Failed to insert article ${art.article}:`, artErr.message);
+            errors.push({ index: i, error: artErr.message });
+          }
         }
       }
 
