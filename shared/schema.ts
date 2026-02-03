@@ -433,6 +433,7 @@ export const legislativeChangeLog = pgTable("legislative_change_log", {
   oldContentHash: text("old_content_hash"),
   newContentHash: text("new_content_hash"),
 
+  diffSummary: text("diff_summary"),
   affectedArticles: jsonb("affected_articles"), // Array de articole modificate
 
   detectedAt: timestamp("detected_at").defaultNow(),
