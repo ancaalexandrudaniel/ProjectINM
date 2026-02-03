@@ -3555,25 +3555,26 @@ Notează obiectiv pe baza baremului.`;
       const embeddings = await batchGenerateEmbeddings(texts);
 
       // Save chunks with embeddings
-      const savedChunks = [];
-      for (let i = 0; i < allChunks.length; i++) {
-        const [saved] = await db
+      const chunksToInsert = allChunks.map((chunk, i) => ({
+        articleId,
+        segmentType: chunk.segmentType,
+        chunkText: chunk.text,
+        chunkIndex: chunk.index,
+        embedding: embeddings[i],
+        metadata: {
+          articleNumber: article.articleNumber,
+          title: article.title,
+          subject: article.subject,
+          segmentType: chunk.segmentType,
+        },
+      }));
+
+      let savedChunks: any[] = [];
+      if (chunksToInsert.length > 0) {
+        savedChunks = await db
           .insert(legalArticleChunks)
-          .values({
-            articleId,
-            segmentType: allChunks[i].segmentType,
-            chunkText: allChunks[i].text,
-            chunkIndex: allChunks[i].index,
-            embedding: embeddings[i],
-            metadata: {
-              articleNumber: article.articleNumber,
-              title: article.title,
-              subject: article.subject,
-              segmentType: allChunks[i].segmentType
-            }
-          })
+          .values(chunksToInsert)
           .returning();
-        savedChunks.push(saved);
       }
 
       // Mark article as processed
