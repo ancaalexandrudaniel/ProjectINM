@@ -3187,30 +3187,59 @@ Notează obiectiv pe baza baremului.`;
       const insertedCaseStudies = [];
       const errors: Array<{ index: number; error: string }> = [];
 
-      for (let i = 0; i < caseStudiesData.length; i++) {
-        const cs = caseStudiesData[i];
-        try {
-          const [inserted] = await db.insert(caseStudies).values({
-            userId,
-            subject,
-            examDay: examDay || null,
-            title: cs.title,
-            scenario: cs.scenario,
-            questions: cs.questions,
-            referenceArticles: cs.referenceArticles,
-            sampleAnswer: cs.sampleAnswer,
-            modelEvaluation: cs.modelEvaluation,
-            aiFeedback: cs.aiFeedback,
-            sourceType,
-            sourceLLM: sourceLLM || null,
-            batchId: batch.id,
-            difficulty: cs.difficulty,
-            estimatedTime: cs.estimatedTime
-          }).returning();
-          insertedCaseStudies.push(inserted);
-        } catch (csErr: any) {
-          console.warn(`Failed to insert case study ${i}:`, csErr.message);
-          errors.push({ index: i, error: csErr.message });
+      // Optimization: Batch insert first
+      // Map all data to schema structure
+      const caseStudiesToInsert = caseStudiesData.map(cs => ({
+        userId,
+        subject,
+        examDay: examDay || null,
+        title: cs.title,
+        scenario: cs.scenario,
+        questions: cs.questions,
+        referenceArticles: cs.referenceArticles,
+        sampleAnswer: cs.sampleAnswer,
+        modelEvaluation: cs.modelEvaluation,
+        aiFeedback: cs.aiFeedback,
+        sourceType,
+        sourceLLM: sourceLLM || null,
+        batchId: batch.id,
+        difficulty: cs.difficulty,
+        estimatedTime: cs.estimatedTime
+      }));
+
+      try {
+        if (caseStudiesToInsert.length > 0) {
+          const batchInserted = await db.insert(caseStudies).values(caseStudiesToInsert).returning();
+          insertedCaseStudies.push(...batchInserted);
+        }
+      } catch (batchError) {
+        console.warn("Batch insert failed, falling back to sequential insert:", batchError);
+        // Fallback: Sequential insert to isolate errors
+        for (let i = 0; i < caseStudiesData.length; i++) {
+          const cs = caseStudiesData[i];
+          try {
+            const [inserted] = await db.insert(caseStudies).values({
+              userId,
+              subject,
+              examDay: examDay || null,
+              title: cs.title,
+              scenario: cs.scenario,
+              questions: cs.questions,
+              referenceArticles: cs.referenceArticles,
+              sampleAnswer: cs.sampleAnswer,
+              modelEvaluation: cs.modelEvaluation,
+              aiFeedback: cs.aiFeedback,
+              sourceType,
+              sourceLLM: sourceLLM || null,
+              batchId: batch.id,
+              difficulty: cs.difficulty,
+              estimatedTime: cs.estimatedTime
+            }).returning();
+            insertedCaseStudies.push(inserted);
+          } catch (csErr: any) {
+            console.warn(`Failed to insert case study ${i}:`, csErr.message);
+            errors.push({ index: i, error: csErr.message });
+          }
         }
       }
 
