@@ -2991,7 +2991,7 @@ Notează obiectiv pe baza baremului.`;
   app.get("/api/questions/search", async (req, res) => {
     try {
       const { questions } = await import("../shared/schema");
-      const { eq, ilike, and, or, desc } = await import("drizzle-orm");
+      const { eq, ilike, and, or, desc, sql } = await import("drizzle-orm");
 
       const { subject, chapter, topic, difficulty, keyword, sourceType, limit: limitStr } = req.query;
       const limit = parseInt(limitStr as string) || 50;
@@ -3016,10 +3016,7 @@ Notează obiectiv pe baza baremului.`;
       }
       if (keyword && keyword !== '') {
         conditions.push(
-          or(
-            ilike(questions.questionText, `%${keyword}%`),
-            ilike(questions.explanation, `%${keyword}%`)
-          )
+          sql`to_tsvector('romanian', ${questions.questionText} || ' ' || ${questions.explanation}) @@ plainto_tsquery('romanian', ${keyword})`
         );
       }
 

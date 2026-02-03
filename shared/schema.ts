@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, boolean, timestamp, jsonb, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -45,6 +45,10 @@ export const questions = pgTable("questions", {
   needsLegalReview: boolean("needs_legal_review").default(false), // flagged when referenced law changes
   affectedByChange: varchar("affected_by_change"), // FK to legislative_change_log.id
   createdAt: timestamp("created_at").defaultNow(),
+}, (table) => {
+  return {
+    searchIdx: index("search_idx").using("gin", sql`to_tsvector('romanian', ${table.questionText} || ' ' || ${table.explanation})`),
+  }
 });
 
 export const quizSessions = pgTable("quiz_sessions", {
