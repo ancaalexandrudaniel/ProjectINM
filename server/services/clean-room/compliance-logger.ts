@@ -146,6 +146,7 @@ export async function generateComplianceSummary(
             question_explanation: 0,
             legal_synthesis: 0,
             exam_question_generation: 0,
+            article_breakdown: 0,
         },
         averageSimilarityScore: null,
         highSimilarityFlags: 0,

@@ -364,7 +364,7 @@ class LegislativeScraper {
     /**
      * Save scraped act to database
      */
-    async saveToDatabase(act: ScrapedAct): Promise<number> {
+    async saveToDatabase(act: ScrapedAct): Promise<string> {
         const contentHash = crypto
             .createHash('sha256')
             .update(act.fullText)
