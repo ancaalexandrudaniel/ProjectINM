@@ -637,6 +637,55 @@ export const examResults = pgTable("exam_results", {
   completedAt: timestamp("completed_at").defaultNow(),
 });
 
+// ============================================================================
+// [NEW] ROADMAP & GAMIFICATION
+// ============================================================================
+
+export const userGamification = pgTable("user_gamification", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull().unique(),
+
+  currentXp: integer("current_xp").default(0),
+  currentLevel: integer("current_level").default(1),
+  currentStreak: integer("current_streak").default(0),
+  longestStreak: integer("longest_streak").default(0),
+  lastActivityDate: timestamp("last_activity_date").defaultNow(),
+
+  // Inventory/Skills
+  coins: integer("coins").default(0),
+  unlockedBadges: jsonb("unlocked_badges"), // Array of badge IDs
+
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const roadmapNodes = pgTable("roadmap_nodes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  syllabusId: text("syllabus_id"), // Ref to syllabusTopicMappings.syllabusId if applicable
+
+  title: text("title").notNull(),
+  description: text("description"),
+
+  xpReward: integer("xp_reward").default(100),
+  orderIndex: integer("order_index").notNull(), // For linear progression
+  parentNodeId: varchar("parent_node_id"), // For tree hierarchy visualization
+
+  milestoneType: text("milestone_type").default("topic"), // 'chapter', 'topic', 'assessment', 'milestone'
+
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const userNodeProgress = pgTable("user_node_progress", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  nodeId: varchar("node_id").references(() => roadmapNodes.id).notNull(),
+
+  status: text("status").notNull().default("LOCKED"), // 'LOCKED', 'AVAILABLE', 'COMPLETED', 'MASTERED'
+  score: integer("score").default(0), // 0-100
+
+  completedAt: timestamp("completed_at"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const insertExamResultSchema = createInsertSchema(examResults).omit({
   id: true,
   completedAt: true,
@@ -907,3 +956,31 @@ export const insertExamEssaySchema = createInsertSchema(examEssays).omit({
 
 export type ExamEssay = typeof examEssays.$inferSelect;
 export type InsertExamEssay = z.infer<typeof insertExamEssaySchema>;
+
+// ============================================================================
+// [NEW] Gamification & Roadmap Insert Schemas & Types
+// ============================================================================
+export const insertUserGamificationSchema = createInsertSchema(userGamification).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export const insertRoadmapNodeSchema = createInsertSchema(roadmapNodes).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertUserNodeProgressSchema = createInsertSchema(userNodeProgress).omit({
+  id: true,
+  completedAt: true,
+  updatedAt: true,
+});
+
+export type UserGamification = typeof userGamification.$inferSelect;
+export type InsertUserGamification = z.infer<typeof insertUserGamificationSchema>;
+
+export type RoadmapNode = typeof roadmapNodes.$inferSelect;
+export type InsertRoadmapNode = z.infer<typeof insertRoadmapNodeSchema>;
+
+export type UserNodeProgress = typeof userNodeProgress.$inferSelect;
+export type InsertUserNodeProgress = z.infer<typeof insertUserNodeProgressSchema>;
