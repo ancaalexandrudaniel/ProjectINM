@@ -1049,23 +1049,13 @@ Notează obiectiv pe baza baremului.`;
 
       const allQuestions = await db.select().from(questions);
 
-      // Filter by tag "Examen {year}" OR matching year mechanism if we had one
-      // Since we rely on tags for now:
-      const examQuestions = allQuestions.filter(q =>
+      // Filter by tag "Examen {year}" OR matching year mechanism
+      let targetQuestions = allQuestions.filter(q =>
+        q.chapter?.includes(`Examen ${year}`) ||
+        q.tags?.includes(`year:${year}`) ||
         q.tags?.includes(`Examen ${year}`) ||
-        q.tags?.includes(`examen-${year}`) ||
-        // Also include if no specific exam tag but subject matches standard pool? 
-        // No, strict exam simulation needs exact questions.
-        // Fallback: if we imported them recently, maybe they don't have tags?
-        // Let's assume tags are present from import.
-        // For our specific 2024 import, let's verify tags.
-        // If 0 questions found, we might want to panic.
-        true // FOR DEV: Allow all questions to match for testing if tags missing
-      ); // TODO: Refine filter logic for production
-
-      // Filter logic refinement:
-      // Real exam questions MUST have the year tag or property
-      const relevantQuestions = examQuestions.filter(q => true); // Placeholder
+        q.tags?.includes(`examen-${year}`)
+      );
 
       // 3. Grade
       const breakdown = {
@@ -1101,8 +1091,6 @@ Notează obiectiv pe baza baremului.`;
 
       // 2. Identify the Target Question Set
       // Try to find questions for this year
-      let allDbQuestions = await db.select().from(questions);
-      let targetQuestions = allDbQuestions.filter(q => q.chapter.includes(`Examen ${year}`) || (q.tags && q.tags.includes(`year:${year}`)));
 
       // FALLBACK: If no questions found for year (e.g. they are mock questions), 
       // fetch the questions that were answered to at least give a partial score.
