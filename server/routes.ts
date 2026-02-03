@@ -5,7 +5,7 @@ import { insertQuizSessionSchema, insertUserAnswerSchema, questionTopics, essayP
 import { z } from "zod";
 import { db } from "./db";
 import { users } from "../shared/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql, inArray } from "drizzle-orm";
 import {
   createSession,
   validateSession,
@@ -999,14 +999,15 @@ Notează obiectiv pe baza baremului.`;
       const procedural = penalQuestions.slice(25, 50);
       let updated = 0;
 
-      for (const q of procedural) {
+      const ids = procedural.map(q => q.id);
+      if (ids.length > 0) {
         await db.update(questionsTable)
           .set({
             subject: "penal-procedural",
-            tags: [...(q.tags || []).filter(t => !t.startsWith('subject:')), 'subject:penal-procedural']
+            tags: sql`COALESCE((SELECT array_agg(elem) FROM unnest(${questionsTable.tags}) AS elem WHERE elem NOT LIKE 'subject:%'), ARRAY[]::text[]) || ARRAY['subject:penal-procedural']`
           })
-          .where(eq(questionsTable.id, q.id));
-        updated++;
+          .where(inArray(questionsTable.id, ids));
+        updated = ids.length;
       }
 
       console.log(`[FIX-PENAL] Updated ${updated} questions to penal-procedural`);
