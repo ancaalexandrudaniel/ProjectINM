@@ -74,6 +74,13 @@ async function authMiddleware(req: Request, res: Response, next: NextFunction) {
 export async function registerRoutes(app: Express): Promise<Server> {
 
   // ============================================================================
+  // HEALTH CHECK
+  // ============================================================================
+  app.get("/api/health", (req, res) => {
+    res.status(200).json({ status: "ok" });
+  });
+
+  // ============================================================================
   // AUTHENTICATION ROUTES
   // ============================================================================
 

@@ -3,6 +3,10 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, log } from "./vite";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Ensure NODE_ENV is set for deployment
 if (!process.env.NODE_ENV) {
@@ -83,7 +87,7 @@ app.use((req, res, next) => {
     await setupVite(app, server);
   } else {
     // Serve static files manually to fix MIME type issues
-    const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
+    const distPath = path.resolve(__dirname, "..", "dist", "public");
     console.log(`[SERVER] Serving static from: ${distPath}`);
 
     // Serve static assets first (before catch-all route)
