@@ -39,6 +39,8 @@ import TimeMachine from "@/pages/time-machine";
 import TimeMachineProba1 from "@/pages/time-machine-proba1";
 import TimeMachineProba2 from "@/pages/time-machine-proba2";
 import ImportManagement from "@/pages/import-management";
+import RoadmapPage from "@/pages/roadmap";
+import RoadmapNodeView from "@/pages/roadmap/node-view";
 
 function Router() {
   return (
@@ -46,6 +48,8 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/" component={Dashboard} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/roadmap" component={RoadmapPage} />
+      <Route path="/roadmap/node/:id" component={RoadmapNodeView} />
       <Route path="/syllabus" component={Syllabus} />
       <Route path="/quiz/:subject?" component={Quiz} />
       <Route path="/simulation" component={Simulation} />

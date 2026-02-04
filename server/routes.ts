@@ -44,6 +44,13 @@ async function getDefaultUserId(): Promise<string> {
 export async function registerRoutes(app: Express): Promise<Server> {
 
   // ============================================================================
+  // HEALTH CHECK
+  // ============================================================================
+  app.get("/api/health", (req, res) => {
+    res.status(200).json({ status: "ok" });
+  });
+
+  // ============================================================================
   // AUTHENTICATION ROUTES
   // ============================================================================
 
@@ -2542,6 +2549,58 @@ Notează obiectiv pe baza baremului.`;
     } catch (error) {
       console.error("Get study plan error:", error);
       res.status(500).json({ error: "Failed to fetch study plan" });
+    }
+  });
+
+  // ============================================================================
+  // ROADMAP & GAMIFICATION ROUTES
+  // ============================================================================
+
+  // GET /api/roadmap - Get the user's roadmap state
+  app.get("/api/roadmap", async (req, res) => {
+    try {
+      const { RoadmapService } = await import("./services/roadmap-service");
+      const userId = await getDefaultUserId();
+
+      const roadmap = await RoadmapService.getRoadmap(userId);
+      res.json(roadmap);
+    } catch (error) {
+      console.error("[ROADMAP] Get roadmap error:", error);
+      res.status(500).json({ error: "Failed to fetch roadmap" });
+    }
+  });
+
+  // GET /api/roadmap/node/:nodeId - Get content for a specific node
+  app.get("/api/roadmap/node/:nodeId", async (req, res) => {
+    try {
+      const { RoadmapService } = await import("./services/roadmap-service");
+      const { nodeId } = req.params;
+
+      const content = await RoadmapService.getNodeContent(nodeId);
+      res.json(content);
+    } catch (error) {
+      console.error("[ROADMAP] Get node content error:", error);
+      res.status(500).json({ error: "Failed to fetch node content" });
+    }
+  });
+
+  // POST /api/roadmap/node/:nodeId/complete - Mark a node as completed
+  app.post("/api/roadmap/node/:nodeId/complete", async (req, res) => {
+    try {
+      const { RoadmapService } = await import("./services/roadmap-service");
+      const userId = await getDefaultUserId();
+      const { nodeId } = req.params;
+      const { score } = req.body;
+
+      if (score === undefined) {
+        return res.status(400).json({ error: "Score is required" });
+      }
+
+      const result = await RoadmapService.completeNode(userId, nodeId, { score });
+      res.json(result);
+    } catch (error) {
+      console.error("[ROADMAP] Complete node error:", error);
+      res.status(500).json({ error: "Failed to complete node" });
     }
   });
 
