@@ -26,7 +26,8 @@ import {
   MessageSquare,
   GraduationCap,
   Flame,
-  Target
+  Target,
+  Map
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -101,6 +102,16 @@ export default function Sidebar() {
           <Link href="/syllabus" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/syllabus') ? 'active' : ''}`} data-testid="nav-syllabus">
             <BookOpen className="h-5 w-5" />
             <span className="font-medium">Tematică & Bibliografie</span>
+          </Link>
+
+          {/* Gamified Roadmap - Learning Journey */}
+          <Link
+            href="/roadmap"
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors bg-gradient-to-r from-green-500/10 to-emerald-500/10 hover:from-green-500/20 hover:to-emerald-500/20 border border-green-500/30 ${isActive('/roadmap') ? 'active ring-2 ring-green-500' : ''}`}
+            data-testid="nav-roadmap"
+          >
+            <Map className="h-5 w-5 text-green-400" />
+            <span className="font-medium bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">Călătoria Ta</span>
           </Link>
 
           {/* SECTION 1: Raw Data */}

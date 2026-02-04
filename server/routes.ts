@@ -13,6 +13,7 @@ import {
   verifyPassword,
   type AuthenticatedUser
 } from "./auth";
+import { authMiddleware } from "./auth-middleware";
 import multer from "multer";
 import { parsePDFBuffer, cleanPDFText, detectExamPaperType } from "./services/pdf-parser";
 
@@ -31,16 +32,6 @@ const upload = multer({
   },
 });
 
-// Extend Express Request to include user
-declare global {
-  namespace Express {
-    interface Request {
-      user?: AuthenticatedUser;
-      sessionToken?: string;
-    }
-  }
-}
-
 // Helper to get first user ID
 async function getDefaultUserId(): Promise<string> {
   const allUsers = await db.select().from(users).limit(1);
@@ -50,27 +41,6 @@ async function getDefaultUserId(): Promise<string> {
   return allUsers[0].id;
 }
 
-// ============================================================================
-// Authentication Middleware
-// ============================================================================
-async function authMiddleware(req: Request, res: Response, next: NextFunction) {
-  const sessionToken = req.headers.authorization?.replace("Bearer ", "") ||
-    req.cookies?.session_token;
-
-  if (!sessionToken) {
-    return res.status(401).json({ error: "Authentication required" });
-  }
-
-  const user = await validateSession(sessionToken);
-  if (!user) {
-    return res.status(401).json({ error: "Invalid or expired session" });
-  }
-
-  req.user = user;
-  req.sessionToken = sessionToken;
-  next();
-}
-
 export async function registerRoutes(app: Express): Promise<Server> {
 
   // ============================================================================
@@ -78,6 +48,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ============================================================================
   app.get("/api/health", (req, res) => {
     res.status(200).json({ status: "ok" });
+  });
+
+  // ============================================================================
+  // ADMIN: DATABASE SETUP - Creates missing tables
+  // ============================================================================
+  app.post("/api/admin/db-setup", async (req, res) => {
+    try {
+      const { sql } = await import("drizzle-orm");
+
+      console.log("[ADMIN] Running database setup...");
+
+      // Check and create roadmap tables if they don't exist
+      const createTablesSQL = `
+        -- Create user_gamification table
+        CREATE TABLE IF NOT EXISTS user_gamification (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          user_id VARCHAR NOT NULL,
+          current_xp INTEGER DEFAULT 0,
+          current_level INTEGER DEFAULT 1,
+          current_streak INTEGER DEFAULT 0,
+          longest_streak INTEGER DEFAULT 0,
+          last_activity_date TIMESTAMP,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Create roadmap_nodes table
+        CREATE TABLE IF NOT EXISTS roadmap_nodes (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          syllabus_id VARCHAR,
+          title VARCHAR NOT NULL,
+          description TEXT,
+          xp_reward INTEGER DEFAULT 100,
+          order_index INTEGER NOT NULL,
+          parent_node_id VARCHAR,
+          milestone_type VARCHAR DEFAULT 'topic',
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Create user_node_progress table
+        CREATE TABLE IF NOT EXISTS user_node_progress (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          user_id VARCHAR NOT NULL,
+          node_id VARCHAR NOT NULL,
+          status VARCHAR DEFAULT 'LOCKED',
+          score INTEGER DEFAULT 0,
+          completed_at TIMESTAMP,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Create unique constraint if not exists
+        DO $$ 
+        BEGIN
+          IF NOT EXISTS (
+            SELECT 1 FROM pg_constraint WHERE conname = 'user_node_progress_user_node_unique'
+          ) THEN
+            ALTER TABLE user_node_progress ADD CONSTRAINT user_node_progress_user_node_unique UNIQUE (user_id, node_id);
+          END IF;
+        EXCEPTION WHEN OTHERS THEN
+          NULL;
+        END $$;
+      `;
+
+      await db.execute(sql.raw(createTablesSQL));
+
+      console.log("[ADMIN] Database setup completed successfully");
+
+      res.json({
+        success: true,
+        message: "Database tables created/verified successfully",
+        tables: ["user_gamification", "roadmap_nodes", "user_node_progress"]
+      });
+    } catch (error: any) {
+      console.error("[ADMIN] Database setup error:", error);
+      res.status(500).json({
+        error: "Database setup failed",
+        message: error.message
+      });
+    }
   });
 
   // ============================================================================
@@ -2590,7 +2638,113 @@ Notează obiectiv pe baza baremului.`;
   app.get("/api/roadmap", async (req, res) => {
     try {
       const { RoadmapService } = await import("./services/roadmap-service");
+      const { roadmapNodes } = await import("../shared/schema");
       const userId = await getDefaultUserId();
+
+      // Auto-init: Check if roadmap nodes exist, if not, populate from syllabus.json
+      let existingNodes;
+      try {
+        existingNodes = await db.select().from(roadmapNodes).limit(1);
+      } catch (dbError: any) {
+        // Table doesn't exist - need to run db:push
+        if (dbError.message?.includes("does not exist") || dbError.code === "42P01") {
+          console.error("[ROADMAP] Table roadmap_nodes does not exist. Run: npm run db:push");
+          return res.status(503).json({
+            error: "Database tables not initialized",
+            message: "Roadmap tables don't exist yet. Admin needs to run 'npm run db:push' on Railway.",
+            code: "TABLES_NOT_FOUND"
+          });
+        }
+        throw dbError;
+      }
+
+      if (existingNodes.length === 0) {
+        console.log("[ROADMAP] No nodes found, auto-initializing from syllabus.json...");
+
+        try {
+          const fs = await import("fs/promises");
+          const path = await import("path");
+          const { fileURLToPath } = await import("url");
+
+          // Get dirname from current module (ESM compatible)
+          const __filename = fileURLToPath(import.meta.url);
+          const __dirname = path.dirname(__filename);
+
+          // Try multiple paths for syllabus.json
+          let syllabusData = null;
+          const possiblePaths = [
+            path.resolve(process.cwd(), "syllabus.json"),
+            path.join(__dirname, "../syllabus.json"),
+            path.join(__dirname, "../../syllabus.json"),
+            "/app/syllabus.json",
+            "./syllabus.json"
+          ];
+
+          console.log(`[ROADMAP] Looking for syllabus.json, cwd: ${process.cwd()}, __dirname: ${__dirname}`);
+
+          for (const syllabusPath of possiblePaths) {
+            try {
+              console.log(`[ROADMAP] Trying path: ${syllabusPath}`);
+              const fileContent = await fs.readFile(syllabusPath, "utf-8");
+              syllabusData = JSON.parse(fileContent);
+              console.log(`[ROADMAP] ✓ Loaded syllabus from: ${syllabusPath}`);
+              break;
+            } catch (pathError: any) {
+              console.log(`[ROADMAP] ✗ Path failed: ${syllabusPath} - ${pathError.code || pathError.message}`);
+            }
+          }
+
+          if (syllabusData) {
+            let orderIndex = 0;
+            const nodesToInsert: any[] = [];
+
+            function processNode(node: any, depth: number = 0) {
+              let milestoneType = "topic";
+              if (depth === 0) milestoneType = "discipline";
+              else if (depth === 1) milestoneType = "chapter";
+              else if (node.children && node.children.length > 0) milestoneType = "section";
+
+              let xpReward = 50;
+              if (milestoneType === "chapter") xpReward = 500;
+              if (milestoneType === "section") xpReward = 200;
+
+              nodesToInsert.push({
+                syllabusId: node.id,
+                title: node.title,
+                description: null,
+                xpReward,
+                orderIndex: orderIndex++,
+                parentNodeId: null,
+                milestoneType,
+              });
+
+              if (node.children) {
+                for (const child of node.children) {
+                  processNode(child, depth + 1);
+                }
+              }
+            }
+
+            for (const disc of syllabusData) {
+              processNode(disc);
+            }
+
+            // Insert in batches
+            const batchSize = 100;
+            for (let i = 0; i < nodesToInsert.length; i += batchSize) {
+              const batch = nodesToInsert.slice(i, i + batchSize);
+              await db.insert(roadmapNodes).values(batch);
+            }
+
+            console.log(`[ROADMAP] Auto-initialized ${nodesToInsert.length} nodes`);
+          } else {
+            console.warn("[ROADMAP] Could not find syllabus.json, roadmap will remain empty");
+          }
+        } catch (initError) {
+          console.error("[ROADMAP] Auto-init error:", initError);
+          // Continue anyway, just return empty roadmap
+        }
+      }
 
       const roadmap = await RoadmapService.getRoadmap(userId);
       res.json(roadmap);
