@@ -3122,6 +3122,9 @@ Notează obiectiv pe baza baremului.`;
       const insertedQuestions = [];
       const errors: Array<{ index: number; error: string }> = [];
 
+      // Phase 1: Prepare all questions for insertion
+      const preparedData: Array<{ index: number, value: any }> = [];
+
       for (let i = 0; i < sessionData.intrebari.length; i++) {
         const q = sessionData.intrebari[i];
         try {
@@ -3159,31 +3162,57 @@ Notează obiectiv pe baza baremului.`;
           };
           const difficulty = difficultyMap[q.dificultate?.toLowerCase() || 'medium'] || 'medium';
 
-          const [inserted] = await db.insert(questions).values({
-            subject,
-            chapter: chapter || meta?.segment_articole || 'General',
-            topic: meta?.segment_articole,
-            difficulty,
-            setType,
-            questionText: q.tulpina,
-            options,
-            correctAnswer,
-            correctAnswersMultiple,
-            explanation: q.feedback?.explicatie_generala || '',
-            legalReferences: q.articole_relevante,
-            feedbackDetailed,
-            keyConcepts: q.concepte_cheie,
-            tags: q.tags,
-            hasExceptions: q.feedback?.are_exceptii || false,
-            sourceType: 'llm-session',
-            sourceLLM: sourceLLM || null,
-            batchId: batch.id
-          }).returning();
-
-          insertedQuestions.push(inserted);
+          preparedData.push({
+            index: i,
+            value: {
+              subject,
+              chapter: chapter || meta?.segment_articole || 'General',
+              topic: meta?.segment_articole,
+              difficulty,
+              setType,
+              questionText: q.tulpina,
+              options,
+              correctAnswer,
+              correctAnswersMultiple,
+              explanation: q.feedback?.explicatie_generala || '',
+              legalReferences: q.articole_relevante,
+              feedbackDetailed,
+              keyConcepts: q.concepte_cheie,
+              tags: q.tags,
+              hasExceptions: q.feedback?.are_exceptii || false,
+              sourceType: 'llm-session',
+              sourceLLM: sourceLLM || null,
+              batchId: batch.id
+            }
+          });
         } catch (qErr: any) {
-          console.warn(`Failed to insert question ${i}:`, qErr.message);
+          console.warn(`Failed to process question ${i} for batch:`, qErr.message);
           errors.push({ index: i, error: qErr.message });
+        }
+      }
+
+      // Phase 2: Batch Insert with Fallback
+      if (preparedData.length > 0) {
+        try {
+          // Try batch insert first
+          console.log(`[BULK-IMPORT] Attempting batch insert for ${preparedData.length} questions...`);
+          const valuesToInsert = preparedData.map(p => p.value);
+          const inserted = await db.insert(questions).values(valuesToInsert).returning();
+          insertedQuestions.push(...inserted);
+          console.log(`[BULK-IMPORT] Batch insert successful!`);
+        } catch (batchErr: any) {
+          console.warn(`[BULK-IMPORT] Batch insert failed, falling back to sequential: ${batchErr.message}`);
+
+          // Fallback to sequential insert to save valid records
+          for (const item of preparedData) {
+            try {
+              const [inserted] = await db.insert(questions).values(item.value).returning();
+              insertedQuestions.push(inserted);
+            } catch (seqErr: any) {
+              console.warn(`[BULK-IMPORT] Sequential insert failed for question index ${item.index}:`, seqErr.message);
+              errors.push({ index: item.index, error: seqErr.message });
+            }
+          }
         }
       }
 
