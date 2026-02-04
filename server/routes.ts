@@ -2927,6 +2927,10 @@ Notează obiectiv pe baza baremului.`;
       const insertedQuestions = [];
       const errors: Array<{ index: number; error: string }> = [];
 
+      // Optimization: Prepare all questions for batch insert first
+      const preparedQuestions: any[] = [];
+      const originalIndices: number[] = [];
+
       for (let i = 0; i < questionsData.length; i++) {
         const q = questionsData[i];
         try {
@@ -2956,7 +2960,7 @@ Notează obiectiv pe baza baremului.`;
             finalCorrectAnswersMultiple = [];
           }
 
-          const [inserted] = await db.insert(questions).values({
+          preparedQuestions.push({
             subject,
             chapter: q.chapter,
             topic: q.topic,
@@ -2973,11 +2977,41 @@ Notează obiectiv pe baza baremului.`;
             sourceType,
             sourceLLM: sourceLLM || null,
             batchId: batch.id
-          }).returning();
-          insertedQuestions.push(inserted);
-        } catch (qErr: any) {
-          console.warn(`Failed to insert question ${i}:`, qErr.message);
-          errors.push({ index: i, error: qErr.message });
+          });
+          originalIndices.push(i);
+        } catch (prepErr: any) {
+          console.warn(`Failed to prepare question ${i}:`, prepErr.message);
+          errors.push({ index: i, error: prepErr.message });
+        }
+      }
+
+      // Attempt Batch Insert
+      let batchSuccess = false;
+      if (preparedQuestions.length > 0) {
+        try {
+          console.log(`[BULK IMPORT] Attempting batch insert of ${preparedQuestions.length} questions...`);
+          const result = await db.insert(questions).values(preparedQuestions).returning();
+          insertedQuestions.push(...result);
+          batchSuccess = true;
+          console.log(`[BULK IMPORT] Batch insert successful!`);
+        } catch (batchErr: any) {
+          console.warn(`[BULK IMPORT] Batch insert failed, falling back to sequential: ${batchErr.message}`);
+          batchSuccess = false;
+        }
+      }
+
+      // Fallback: Sequential Insert if batch failed
+      if (!batchSuccess && preparedQuestions.length > 0) {
+        for (let j = 0; j < preparedQuestions.length; j++) {
+          const qData = preparedQuestions[j];
+          const originalIdx = originalIndices[j];
+          try {
+            const [inserted] = await db.insert(questions).values(qData).returning();
+            insertedQuestions.push(inserted);
+          } catch (qErr: any) {
+             console.warn(`Failed to insert question ${originalIdx} (sequential fallback):`, qErr.message);
+             errors.push({ index: originalIdx, error: qErr.message });
+          }
         }
       }
 
