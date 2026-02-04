@@ -51,6 +51,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ============================================================================
+  // ADMIN: DATABASE SETUP - Creates missing tables
+  // ============================================================================
+  app.post("/api/admin/db-setup", async (req, res) => {
+    try {
+      const { sql } = await import("drizzle-orm");
+
+      console.log("[ADMIN] Running database setup...");
+
+      // Check and create roadmap tables if they don't exist
+      const createTablesSQL = `
+        -- Create user_gamification table
+        CREATE TABLE IF NOT EXISTS user_gamification (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          user_id VARCHAR NOT NULL,
+          current_xp INTEGER DEFAULT 0,
+          current_level INTEGER DEFAULT 1,
+          current_streak INTEGER DEFAULT 0,
+          longest_streak INTEGER DEFAULT 0,
+          last_activity_date TIMESTAMP,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Create roadmap_nodes table
+        CREATE TABLE IF NOT EXISTS roadmap_nodes (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          syllabus_id VARCHAR,
+          title VARCHAR NOT NULL,
+          description TEXT,
+          xp_reward INTEGER DEFAULT 100,
+          order_index INTEGER NOT NULL,
+          parent_node_id VARCHAR,
+          milestone_type VARCHAR DEFAULT 'topic',
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Create user_node_progress table
+        CREATE TABLE IF NOT EXISTS user_node_progress (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          user_id VARCHAR NOT NULL,
+          node_id VARCHAR NOT NULL,
+          status VARCHAR DEFAULT 'LOCKED',
+          score INTEGER DEFAULT 0,
+          completed_at TIMESTAMP,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Create unique constraint if not exists
+        DO $$ 
+        BEGIN
+          IF NOT EXISTS (
+            SELECT 1 FROM pg_constraint WHERE conname = 'user_node_progress_user_node_unique'
+          ) THEN
+            ALTER TABLE user_node_progress ADD CONSTRAINT user_node_progress_user_node_unique UNIQUE (user_id, node_id);
+          END IF;
+        EXCEPTION WHEN OTHERS THEN
+          NULL;
+        END $$;
+      `;
+
+      await db.execute(sql.raw(createTablesSQL));
+
+      console.log("[ADMIN] Database setup completed successfully");
+
+      res.json({
+        success: true,
+        message: "Database tables created/verified successfully",
+        tables: ["user_gamification", "roadmap_nodes", "user_node_progress"]
+      });
+    } catch (error: any) {
+      console.error("[ADMIN] Database setup error:", error);
+      res.status(500).json({
+        error: "Database setup failed",
+        message: error.message
+      });
+    }
+  });
+
+  // ============================================================================
   // AUTHENTICATION ROUTES
   // ============================================================================
 
@@ -2564,7 +2642,21 @@ Notează obiectiv pe baza baremului.`;
       const userId = await getDefaultUserId();
 
       // Auto-init: Check if roadmap nodes exist, if not, populate from syllabus.json
-      const existingNodes = await db.select().from(roadmapNodes).limit(1);
+      let existingNodes;
+      try {
+        existingNodes = await db.select().from(roadmapNodes).limit(1);
+      } catch (dbError: any) {
+        // Table doesn't exist - need to run db:push
+        if (dbError.message?.includes("does not exist") || dbError.code === "42P01") {
+          console.error("[ROADMAP] Table roadmap_nodes does not exist. Run: npm run db:push");
+          return res.status(503).json({
+            error: "Database tables not initialized",
+            message: "Roadmap tables don't exist yet. Admin needs to run 'npm run db:push' on Railway.",
+            code: "TABLES_NOT_FOUND"
+          });
+        }
+        throw dbError;
+      }
 
       if (existingNodes.length === 0) {
         console.log("[ROADMAP] No nodes found, auto-initializing from syllabus.json...");
