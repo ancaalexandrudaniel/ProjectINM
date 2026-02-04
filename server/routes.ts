@@ -2572,23 +2572,33 @@ Notează obiectiv pe baza baremului.`;
         try {
           const fs = await import("fs/promises");
           const path = await import("path");
+          const { fileURLToPath } = await import("url");
+
+          // Get dirname from current module (ESM compatible)
+          const __filename = fileURLToPath(import.meta.url);
+          const __dirname = path.dirname(__filename);
 
           // Try multiple paths for syllabus.json
           let syllabusData = null;
           const possiblePaths = [
-            path.resolve("syllabus.json"),
-            path.resolve("./syllabus.json"),
-            "/app/syllabus.json" // Railway container path
+            path.resolve(process.cwd(), "syllabus.json"),
+            path.join(__dirname, "../syllabus.json"),
+            path.join(__dirname, "../../syllabus.json"),
+            "/app/syllabus.json",
+            "./syllabus.json"
           ];
+
+          console.log(`[ROADMAP] Looking for syllabus.json, cwd: ${process.cwd()}, __dirname: ${__dirname}`);
 
           for (const syllabusPath of possiblePaths) {
             try {
+              console.log(`[ROADMAP] Trying path: ${syllabusPath}`);
               const fileContent = await fs.readFile(syllabusPath, "utf-8");
               syllabusData = JSON.parse(fileContent);
-              console.log(`[ROADMAP] Loaded syllabus from: ${syllabusPath}`);
+              console.log(`[ROADMAP] ✓ Loaded syllabus from: ${syllabusPath}`);
               break;
-            } catch {
-              // Try next path
+            } catch (pathError: any) {
+              console.log(`[ROADMAP] ✗ Path failed: ${syllabusPath} - ${pathError.code || pathError.message}`);
             }
           }
 
