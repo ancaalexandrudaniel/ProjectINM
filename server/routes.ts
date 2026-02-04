@@ -2560,7 +2560,89 @@ Notează obiectiv pe baza baremului.`;
   app.get("/api/roadmap", async (req, res) => {
     try {
       const { RoadmapService } = await import("./services/roadmap-service");
+      const { roadmapNodes } = await import("../shared/schema");
       const userId = await getDefaultUserId();
+
+      // Auto-init: Check if roadmap nodes exist, if not, populate from syllabus.json
+      const existingNodes = await db.select().from(roadmapNodes).limit(1);
+
+      if (existingNodes.length === 0) {
+        console.log("[ROADMAP] No nodes found, auto-initializing from syllabus.json...");
+
+        try {
+          const fs = await import("fs/promises");
+          const path = await import("path");
+
+          // Try multiple paths for syllabus.json
+          let syllabusData = null;
+          const possiblePaths = [
+            path.resolve("syllabus.json"),
+            path.resolve("./syllabus.json"),
+            "/app/syllabus.json" // Railway container path
+          ];
+
+          for (const syllabusPath of possiblePaths) {
+            try {
+              const fileContent = await fs.readFile(syllabusPath, "utf-8");
+              syllabusData = JSON.parse(fileContent);
+              console.log(`[ROADMAP] Loaded syllabus from: ${syllabusPath}`);
+              break;
+            } catch {
+              // Try next path
+            }
+          }
+
+          if (syllabusData) {
+            let orderIndex = 0;
+            const nodesToInsert: any[] = [];
+
+            function processNode(node: any, depth: number = 0) {
+              let milestoneType = "topic";
+              if (depth === 0) milestoneType = "discipline";
+              else if (depth === 1) milestoneType = "chapter";
+              else if (node.children && node.children.length > 0) milestoneType = "section";
+
+              let xpReward = 50;
+              if (milestoneType === "chapter") xpReward = 500;
+              if (milestoneType === "section") xpReward = 200;
+
+              nodesToInsert.push({
+                syllabusId: node.id,
+                title: node.title,
+                description: null,
+                xpReward,
+                orderIndex: orderIndex++,
+                parentNodeId: null,
+                milestoneType,
+              });
+
+              if (node.children) {
+                for (const child of node.children) {
+                  processNode(child, depth + 1);
+                }
+              }
+            }
+
+            for (const disc of syllabusData) {
+              processNode(disc);
+            }
+
+            // Insert in batches
+            const batchSize = 100;
+            for (let i = 0; i < nodesToInsert.length; i += batchSize) {
+              const batch = nodesToInsert.slice(i, i + batchSize);
+              await db.insert(roadmapNodes).values(batch);
+            }
+
+            console.log(`[ROADMAP] Auto-initialized ${nodesToInsert.length} nodes`);
+          } else {
+            console.warn("[ROADMAP] Could not find syllabus.json, roadmap will remain empty");
+          }
+        } catch (initError) {
+          console.error("[ROADMAP] Auto-init error:", initError);
+          // Continue anyway, just return empty roadmap
+        }
+      }
 
       const roadmap = await RoadmapService.getRoadmap(userId);
       res.json(roadmap);
