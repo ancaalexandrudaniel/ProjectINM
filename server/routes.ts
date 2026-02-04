@@ -2344,24 +2344,25 @@ Notează obiectiv pe baza baremului.`;
       console.log(`[CHUNKING] Created ${chunks.length} chunks from ${document.extractedText.length} chars`);
 
       // Save chunks to database
-      const savedChunks = [];
-      for (const chunk of chunks) {
-        const [saved] = await db
+      let savedChunks = [];
+      if (chunks.length > 0) {
+        savedChunks = await db
           .insert(documentChunks)
-          .values({
-            documentId: document.id,
-            chunkText: chunk.text,
-            chunkIndex: chunk.index,
-            metadata: {
-              documentType: document.documentType,
-              subject: document.subject,
-              fileName: document.fileName,
-              startPosition: chunk.startPosition,
-              endPosition: chunk.endPosition
-            }
-          })
+          .values(
+            chunks.map((chunk) => ({
+              documentId: document.id,
+              chunkText: chunk.text,
+              chunkIndex: chunk.index,
+              metadata: {
+                documentType: document.documentType,
+                subject: document.subject,
+                fileName: document.fileName,
+                startPosition: chunk.startPosition,
+                endPosition: chunk.endPosition,
+              },
+            }))
+          )
           .returning();
-        savedChunks.push(saved);
       }
 
       res.json({
