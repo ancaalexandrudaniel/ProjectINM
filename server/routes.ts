@@ -446,24 +446,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log(`[EXAM] Importing ${parsedQuestions.length} questions from ${year} ${subject}`);
 
-      const inserted = [];
-      for (const q of parsedQuestions) {
-        const [insertedQ] = await db.insert(questionsTable).values({
+      if (parsedQuestions.length === 0) {
+        return res.json({
+          success: true,
+          imported: 0,
+          year,
           subject,
-          chapter: `Examen ${year}`,
-          topic: `Subiecte ${year}`,
-          difficulty: 'medium',
-          setType: 'A', // Standard single answer
-          questionText: q.questionText,
-          options: q.options.map((text: string, idx: number) => ({ text, id: idx })),
-          correctAnswer: q.correctAnswer || 0,
-          explanation: `Întrebare din examenul INM ${year}. Răspunsul corect conform baremului oficial.`,
-          sourceType: 'exam-past',
-          tags: [`year:${year}`, `source:inm-official`],
-        }).returning();
-
-        inserted.push(insertedQ);
+        });
       }
+
+      const valuesToInsert = parsedQuestions.map((q: any) => ({
+        subject,
+        chapter: `Examen ${year}`,
+        topic: `Subiecte ${year}`,
+        difficulty: 'medium',
+        setType: 'A', // Standard single answer
+        questionText: q.questionText,
+        options: q.options.map((text: string, idx: number) => ({ text, id: idx })),
+        correctAnswer: q.correctAnswer || 0,
+        explanation: `Întrebare din examenul INM ${year}. Răspunsul corect conform baremului oficial.`,
+        sourceType: 'exam-past',
+        tags: [`year:${year}`, `source:inm-official`],
+      }));
+
+      const inserted = await db.insert(questionsTable).values(valuesToInsert).returning();
 
       console.log(`[EXAM] Successfully imported ${inserted.length} questions`);
 
