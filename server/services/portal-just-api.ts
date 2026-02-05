@@ -1,4 +1,4 @@
-import soap from 'soap';
+import axios, { AxiosInstance } from 'axios';
 import { z } from 'zod';
 
 /**
@@ -15,44 +15,26 @@ import { z } from 'zod';
 // ============================================================================
 
 // Court case search result schema
-// Note: SOAP response fields match WSDL definition
 const CaseSchema = z.object({
-    numar: z.string().optional(),
-    numarVechi: z.string().optional(),
-    data: z.date().optional(), // Date object from SOAP
-    institutie: z.string().optional(), // Enum value
-    departament: z.string().optional(),
-    categorieCaz: z.string().optional(),
-    stadiuProcesual: z.string().optional(),
-    obiect: z.string().optional(),
-    // Handle XML array conversion quirks (object vs array)
-    parti: z.any().optional()
-}).transform(data => ({
-    NumarDosar: data.numar || '',
-    InstantaNumeDenumire: data.institutie || '',
-    DataInregistrare: data.data ? data.data.toISOString() : '',
-    ObiectelePeScurt: data.obiect || '',
-    Stadiu: data.stadiuProcesual || '',
-    Complet: '', // Not always available in simple view
-    DataUltimeiModificari: ''
-}));
+    NumarDosar: z.string(),
+    InstantaNumeDenumire: z.string(),
+    DataInregistrare: z.string().optional(),
+    ObiectelePeScurt: z.string().optional(),
+    Stadiu: z.string().optional(),
+    Complet: z.string().optional(),
+    DataUltimeiModificari: z.string().optional(),
+});
 
 // Court session schema
 const SessionSchema = z.object({
-    departament: z.string().optional(),
-    complet: z.string().optional(),
-    data: z.date().optional(),
-    ora: z.string().optional(),
-    dosare: z.any().optional() // ArrayOfSedintaDosar
-}).transform(data => ({
-    NumarDosar: '', // Aggregated
-    DataSedinta: data.data ? data.data.toISOString() : '',
-    OraSedinta: data.ora || '',
-    TipSedinta: '',
-    Sala: '',
-    InstantaNumeDenumire: '',
-    ObservatiilePeScurt: ''
-}));
+    NumarDosar: z.string(),
+    DataSedinta: z.string(),
+    OraSedinta: z.string().optional(),
+    TipSedinta: z.string().optional(),
+    Sala: z.string().optional(),
+    InstantaNumeDenumire: z.string(),
+    ObservatiilePeScurt: z.string().optional(),
+});
 
 export type CourtCase = z.infer<typeof CaseSchema>;
 export type CourtSession = z.infer<typeof SessionSchema>;
@@ -84,42 +66,47 @@ interface QueryApiResponse<T> {
 // ============================================================================
 
 export class PortalJustApiClient {
-    private static readonly WSDL_URL = 'http://portalquery.just.ro/Query.asmx?wsdl';
-    private static readonly USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+    private static readonly BASE_URL = 'http://portalquery.just.ro';
+    private static readonly QUERY_ENDPOINT = '/Query.asmx';
 
-    private client: soap.Client | null = null;
+    private axiosInstance: AxiosInstance;
     private requestCount: number = 0;
     private lastRequestTime: number = 0;
-    private minDelayMs: number = 2000; // 2 seconds between requests
+    private minDelayMs: number = 2000; // 2 seconds between requests (rate limiting)
 
-    // Helper to map user-friendly names to SOAP Enum values
-    // Example: "Curtea de Apel Bucuresti" -> "CurteadeApelBUCURESTI"
-    private mapInstitution(name: string): string {
-        if (!name) return 'CurteadeApelBUCURESTI'; // Default
+    constructor() {
+        this.axiosInstance = axios.create({
+            baseURL: PortalJustApiClient.BASE_URL,
+            timeout: 30000, // 30 seconds timeout
+            headers: {
+                'User-Agent': 'INMAiMentor-Bot/1.0 (legal education platform)',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        });
 
-        // Hardcoded common mappings for testing/demo
-        const commonMappings: Record<string, string> = {
-            'Curtea de Apel Bucureşti': 'CurteadeApelBUCURESTI',
-            'Curtea de Apel Bucuresti': 'CurteadeApelBUCURESTI',
-            'Tribunalul Bucureşti': 'TribunalulBUCURESTI',
-            'Tribunalul Bucuresti': 'TribunalulBUCURESTI',
-            'Curtea de Apel Cluj': 'CurteadeApelCLUJ',
-            'Curtea de Apel Alba Iulia': 'CurteadeApelALBAIULIA'
-        };
+        // Add request interceptor for logging
+        this.axiosInstance.interceptors.request.use(
+            (config) => {
+                console.log(`[PortalJust] ${config.method?.toUpperCase()} ${config.url}`);
+                return config;
+            },
+            (error) => {
+                console.error('[PortalJust] Request error:', error);
+                return Promise.reject(error);
+            }
+        );
 
-        if (commonMappings[name]) {
-            return commonMappings[name];
-        }
-
-        // Remove spaces and special chars, try to match pattern
-        // Simple heuristic: remove spaces, remove ' de ', uppercase city
-        let normalized = name.replace(/\s/g, '');
-        // Replace diacritics
-        normalized = normalized.replace(/[ăâ]/g, 'a').replace(/[î]/g, 'i').replace(/[șş]/g, 's').replace(/[țţ]/g, 't');
-
-        // Try to uppercase the city part (heuristic: assumes InstitutionType + City)
-        // This is fragile but better than nothing for unknown inputs
-        return normalized;
+        // Add response interceptor for logging
+        this.axiosInstance.interceptors.response.use(
+            (response) => {
+                console.log(`[PortalJust] Response status: ${response.status}`);
+                return response;
+            },
+            (error) => {
+                console.error('[PortalJust] Response error:', error.message);
+                return Promise.reject(error);
+            }
+        );
     }
 
     // ==========================================================================
@@ -127,53 +114,41 @@ export class PortalJustApiClient {
     // ==========================================================================
 
     /**
-     * Initialize SOAP Client
-     */
-    async initialize(): Promise<void> {
-        if (this.client) return;
-
-        try {
-            console.log('[PortalJust] Initializing SOAP client...');
-            this.client = await soap.createClientAsync(PortalJustApiClient.WSDL_URL, {
-                wsdl_headers: { 'User-Agent': PortalJustApiClient.USER_AGENT },
-                headers: { 'User-Agent': PortalJustApiClient.USER_AGENT }
-            });
-            console.log('[PortalJust] Client initialized.');
-        } catch (error) {
-            console.error('[PortalJust] Init failed:', error);
-            throw error;
-        }
-    }
-
-    /**
      * Search for court cases
      */
     async searchCases(params: CaseSearchParams): Promise<QueryApiResponse<CourtCase[]>> {
         await this.enforceRateLimit();
-        if (!this.client) await this.initialize();
 
         try {
             console.log('[PortalJust] Searching cases with params:', params);
 
-            const soapParams = {
-                numarDosar: params.numarDosar || '',
-                obiectDosar: '',
-                numeParte: params.parteNumePrenume || '',
-                institutie: this.mapInstitution(params.institutie || ''),
-                dataStart: params.dataInregistrareStart ? new Date(params.dataInregistrareStart) : null,
-                dataStop: params.dataInregistrareEnd ? new Date(params.dataInregistrareEnd) : null,
-                dataUltimaModificareStart: null,
-                dataUltimaModificareStop: null
-            };
+            // Build SOAP/REST query parameters
+            const queryParams = new URLSearchParams();
 
-            const result = await this.client!.CautareDosareAsync(soapParams);
-            const rawData = result[0];
+            if (params.numarDosar) {
+                queryParams.append('numarDosar', params.numarDosar);
+            }
+            if (params.institutie) {
+                queryParams.append('institutie', params.institutie);
+            }
+            if (params.dataInregistrareStart) {
+                queryParams.append('dataInregistrareStart', params.dataInregistrareStart);
+            }
+            if (params.dataInregistrareEnd) {
+                queryParams.append('dataInregistrareEnd', params.dataInregistrareEnd);
+            }
+            if (params.parteNumePrenume) {
+                queryParams.append('parteNumePrenume', params.parteNumePrenume);
+            }
 
-            // Check for CautareDosareResult which contains ArrayOfDosar
-            const dosare = rawData?.CautareDosareResult?.Dosar || [];
+            // Call the CautareDosare method
+            const response = await this.axiosInstance.post(
+                `${PortalJustApiClient.QUERY_ENDPOINT}/CautareDosare`,
+                queryParams.toString()
+            );
 
-            const cases = Array.isArray(dosare) ? dosare.map((d: any) => CaseSchema.parse(d)) :
-                          (dosare ? [CaseSchema.parse(dosare)] : []);
+            // Parse response (API might return XML/JSON)
+            const cases = this.parseQueryResponse(response.data, CaseSchema);
 
             console.log(`[PortalJust] Found ${cases.length} cases`);
 
@@ -195,20 +170,34 @@ export class PortalJustApiClient {
      */
     async searchSessions(params: SessionSearchParams): Promise<QueryApiResponse<CourtSession[]>> {
         await this.enforceRateLimit();
-        if (!this.client) await this.initialize();
 
         try {
-            const soapParams = {
-                dataSedinta: params.dataSedintaStart ? new Date(params.dataSedintaStart) : new Date(),
-                institutie: this.mapInstitution(params.institutie || '')
-            };
+            console.log('[PortalJust] Searching sessions with params:', params);
 
-            const result = await this.client!.CautareSedinteAsync(soapParams);
-            const rawData = result[0];
+            const queryParams = new URLSearchParams();
 
-            const sedinte = rawData?.CautareSedinteResult?.Sedinta || [];
-            const sessions = Array.isArray(sedinte) ? sedinte.map((s: any) => SessionSchema.parse(s)) :
-                             (sedinte ? [SessionSchema.parse(sedinte)] : []);
+            if (params.numarDosar) {
+                queryParams.append('numarDosar', params.numarDosar);
+            }
+            if (params.institutie) {
+                queryParams.append('institutie', params.institutie);
+            }
+            if (params.dataSedintaStart) {
+                queryParams.append('dataSedintaStart', params.dataSedintaStart);
+            }
+            if (params.dataSedintaEnd) {
+                queryParams.append('dataSedintaEnd', params.dataSedintaEnd);
+            }
+
+            // Call the CautareSedinte method
+            const response = await this.axiosInstance.post(
+                `${PortalJustApiClient.QUERY_ENDPOINT}/CautareSedinte`,
+                queryParams.toString()
+            );
+
+            const sessions = this.parseQueryResponse(response.data, SessionSchema);
+
+            console.log(`[PortalJust] Found ${sessions.length} sessions`);
 
             return {
                 success: true,
