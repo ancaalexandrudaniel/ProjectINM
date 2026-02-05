@@ -33,12 +33,17 @@ const upload = multer({
 });
 
 // Helper to get first user ID
+let cachedDefaultUserId: string | null = null;
+
 async function getDefaultUserId(): Promise<string> {
+  if (cachedDefaultUserId) return cachedDefaultUserId;
+
   const allUsers = await db.select().from(users).limit(1);
   if (allUsers.length === 0) {
     throw new Error("No users found in database");
   }
-  return allUsers[0].id;
+  cachedDefaultUserId = allUsers[0].id;
+  return cachedDefaultUserId;
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
