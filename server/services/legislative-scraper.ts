@@ -214,7 +214,9 @@ class LegislativeScraper {
             const actInfo = this.parseActInfo(title);
 
             // Extract full text (multiple possible selectors)
+            // Updated to match current structure (span.S_ART, etc.)
             const textSelectors = [
+                '.articole_wrapper', // Found in 2025 structure
                 '.document-content',
                 '#continut_document',
                 '.docdetalii',
@@ -229,15 +231,56 @@ class LegislativeScraper {
             for (const selector of textSelectors) {
                 const content = $(selector);
                 if (content.length > 0) {
-                    htmlText = content.html() || '';
-                    fullText = content.text().trim();
+                    // Special handling for articole_wrapper which contains specific structure
+                    if (selector === '.articole_wrapper') {
+                        // Extract text from S_PAR, S_LIT_BDY, S_ART_TTL to avoid navigation noise
+                        const parts: string[] = [];
+
+                        // Title/Header
+                        const header = $('.h1_articole').text().trim();
+                        if (header) parts.push(header);
+
+                        // Articles and paragraphs
+                        content.find('span.S_ART, span.S_PAR, span.S_LIT_BDY, span.S_CAP_TTL, span.S_SEC_TTL').each((_, el) => {
+                            const text = $(el).text().trim();
+                            if (text) parts.push(text);
+                        });
+
+                        if (parts.length > 0) {
+                            fullText = parts.join('\n\n');
+                            htmlText = content.html() || '';
+                        } else {
+                            // Fallback to raw text if structure parsing fails
+                            htmlText = content.html() || '';
+                            fullText = content.text().trim();
+                        }
+                    } else {
+                        htmlText = content.html() || '';
+                        fullText = content.text().trim();
+                    }
+
                     if (fullText.length > 100) break; // Found substantial content
                 }
             }
 
-            // If still no content, get the entire body
+            // Fallback: search for specific classes even if container not found
+            if (fullText.length < 100) {
+                const parts: string[] = [];
+                $('span.S_ART, span.S_PAR, span.S_LIT_BDY').each((_, el) => {
+                     const text = $(el).text().trim();
+                     if (text) parts.push(text);
+                });
+                if (parts.length > 0) {
+                    fullText = parts.join('\n\n');
+                    htmlText = $('body').html() || ''; // We don't have a specific container
+                }
+            }
+
+            // If still no content, get the entire body (last resort)
             if (fullText.length < 100) {
                 const body = $('body');
+                // Remove scripts and styles
+                body.find('script, style, nav, header, footer').remove();
                 fullText = body.text().trim().substring(0, 50000); // Limit to 50k chars
                 htmlText = body.html() || '';
             }
@@ -364,7 +407,7 @@ class LegislativeScraper {
     /**
      * Save scraped act to database
      */
-    async saveToDatabase(act: ScrapedAct): Promise<number> {
+    async saveToDatabase(act: ScrapedAct): Promise<string> {
         const contentHash = crypto
             .createHash('sha256')
             .update(act.fullText)
