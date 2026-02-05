@@ -1,4 +1,4 @@
-CREATE TABLE "essay_subjects" (
+CREATE TABLE IF NOT EXISTS "essay_subjects" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"year" integer NOT NULL,
 	"exam_day" text NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE "essay_subjects" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "essay_submissions" (
+CREATE TABLE IF NOT EXISTS "essay_submissions" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"essay_subject_id" varchar,
@@ -37,7 +37,7 @@ CREATE TABLE "essay_submissions" (
 	"submitted_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "exam_essays" (
+CREATE TABLE IF NOT EXISTS "exam_essays" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"year" integer NOT NULL,
 	"variant" integer DEFAULT 1,
@@ -57,7 +57,7 @@ CREATE TABLE "exam_essays" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "exam_results" (
+CREATE TABLE IF NOT EXISTS "exam_results" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"exam_year" integer NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE "exam_results" (
 	"completed_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "roadmap_nodes" (
+CREATE TABLE IF NOT EXISTS "roadmap_nodes" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"syllabus_id" text,
 	"title" text NOT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE "roadmap_nodes" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "syllabus_topic_mappings" (
+CREATE TABLE IF NOT EXISTS "syllabus_topic_mappings" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"syllabus_id" text NOT NULL,
 	"subject" text NOT NULL,
@@ -101,7 +101,7 @@ CREATE TABLE "syllabus_topic_mappings" (
 	CONSTRAINT "syllabus_topic_mappings_syllabus_id_unique" UNIQUE("syllabus_id")
 );
 --> statement-breakpoint
-CREATE TABLE "user_gamification" (
+CREATE TABLE IF NOT EXISTS "user_gamification" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"current_xp" integer DEFAULT 0,
@@ -115,7 +115,7 @@ CREATE TABLE "user_gamification" (
 	CONSTRAINT "user_gamification_user_id_unique" UNIQUE("user_id")
 );
 --> statement-breakpoint
-CREATE TABLE "user_node_progress" (
+CREATE TABLE IF NOT EXISTS "user_node_progress" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"node_id" varchar NOT NULL,
@@ -125,7 +125,7 @@ CREATE TABLE "user_node_progress" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "user_syllabus_progress" (
+CREATE TABLE IF NOT EXISTS "user_syllabus_progress" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"syllabus_topic_id" varchar NOT NULL,
