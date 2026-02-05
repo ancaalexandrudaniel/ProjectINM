@@ -53,6 +53,8 @@ CREATE TABLE "case_studies" (
 	"batch_id" varchar,
 	"difficulty" text NOT NULL,
 	"estimated_time" integer,
+	"needs_legal_review" boolean DEFAULT false,
+	"affected_by_change" varchar,
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
@@ -121,6 +123,77 @@ CREATE TABLE "essay_prompts" (
 	"estimated_time" integer,
 	"source_type" text,
 	"created_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
+CREATE TABLE "essay_subjects" (
+	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"year" integer NOT NULL,
+	"exam_day" text NOT NULL,
+	"subject" text NOT NULL,
+	"title" text NOT NULL,
+	"prompt" text NOT NULL,
+	"sections" jsonb,
+	"rubric" jsonb NOT NULL,
+	"sample_answer" text,
+	"common_mistakes" jsonb,
+	"difficulty" text DEFAULT 'hard',
+	"estimated_time" integer DEFAULT 240,
+	"max_score" integer DEFAULT 10,
+	"source_type" text DEFAULT 'official',
+	"source_url" text,
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
+CREATE TABLE "essay_submissions" (
+	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" varchar NOT NULL,
+	"essay_subject_id" varchar,
+	"user_answer" text NOT NULL,
+	"section_answers" jsonb,
+	"time_spent" integer,
+	"time_limit" integer,
+	"is_strict_mode" boolean DEFAULT false,
+	"completed_within_time" boolean,
+	"self_evaluation" jsonb,
+	"self_score" integer,
+	"ai_score" text,
+	"ai_grade" text,
+	"ai_feedback" text,
+	"ai_evaluation" jsonb,
+	"submitted_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
+CREATE TABLE "exam_essays" (
+	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"year" integer NOT NULL,
+	"variant" integer DEFAULT 1,
+	"discipline" text NOT NULL,
+	"subject_id" text NOT NULL,
+	"subject_title" text NOT NULL,
+	"subject_area" text NOT NULL,
+	"scenario" text,
+	"requirement_id" text NOT NULL,
+	"requirement_text" text NOT NULL,
+	"points" text NOT NULL,
+	"recommended_time" integer,
+	"solution" text NOT NULL,
+	"legal_refs" jsonb,
+	"rubric" jsonb NOT NULL,
+	"source_type" text DEFAULT 'official',
+	"created_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
+CREATE TABLE "exam_results" (
+	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" varchar NOT NULL,
+	"exam_year" integer NOT NULL,
+	"exam_type" text NOT NULL,
+	"total_score" integer NOT NULL,
+	"is_passed" boolean NOT NULL,
+	"breakdown" jsonb NOT NULL,
+	"time_spent" integer,
+	"completed_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "legal_article_batches" (
@@ -250,6 +323,8 @@ CREATE TABLE "questions" (
 	"source_type" text,
 	"source_llm" text,
 	"batch_id" varchar,
+	"needs_legal_review" boolean DEFAULT false,
+	"affected_by_change" varchar,
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
@@ -266,6 +341,18 @@ CREATE TABLE "quiz_sessions" (
 	"time_spent" integer
 );
 --> statement-breakpoint
+CREATE TABLE "roadmap_nodes" (
+	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"syllabus_id" text,
+	"title" text NOT NULL,
+	"description" text,
+	"xp_reward" integer DEFAULT 100,
+	"order_index" integer NOT NULL,
+	"parent_node_id" varchar,
+	"milestone_type" text DEFAULT 'topic',
+	"created_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
 CREATE TABLE "study_plans" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
@@ -273,6 +360,26 @@ CREATE TABLE "study_plans" (
 	"hours_per_day" integer NOT NULL,
 	"plan_data" jsonb NOT NULL,
 	"generated_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
+CREATE TABLE "syllabus_topic_mappings" (
+	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"syllabus_id" text NOT NULL,
+	"subject" text NOT NULL,
+	"topic_title" text NOT NULL,
+	"parent_id" text,
+	"depth" integer DEFAULT 0,
+	"sort_order" integer DEFAULT 0,
+	"article_refs" jsonb,
+	"article_range_start" integer,
+	"article_range_end" integer,
+	"chapter_patterns" jsonb,
+	"law_sources" jsonb,
+	"total_questions" integer DEFAULT 0,
+	"total_articles" integer DEFAULT 0,
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now(),
+	CONSTRAINT "syllabus_topic_mappings_syllabus_id_unique" UNIQUE("syllabus_id")
 );
 --> statement-breakpoint
 CREATE TABLE "uploaded_documents" (
@@ -323,6 +430,30 @@ CREATE TABLE "user_essay_submissions" (
 	"submitted_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+CREATE TABLE "user_gamification" (
+	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" varchar NOT NULL,
+	"current_xp" integer DEFAULT 0,
+	"current_level" integer DEFAULT 1,
+	"current_streak" integer DEFAULT 0,
+	"longest_streak" integer DEFAULT 0,
+	"last_activity_date" timestamp DEFAULT now(),
+	"coins" integer DEFAULT 0,
+	"unlocked_badges" jsonb,
+	"updated_at" timestamp DEFAULT now(),
+	CONSTRAINT "user_gamification_user_id_unique" UNIQUE("user_id")
+);
+--> statement-breakpoint
+CREATE TABLE "user_node_progress" (
+	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" varchar NOT NULL,
+	"node_id" varchar NOT NULL,
+	"status" text DEFAULT 'LOCKED' NOT NULL,
+	"score" integer DEFAULT 0,
+	"completed_at" timestamp,
+	"updated_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
 CREATE TABLE "user_progress" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
@@ -347,6 +478,19 @@ CREATE TABLE "user_srs_cards" (
 	"consecutive_correct" integer DEFAULT 0,
 	"total_reviews" integer DEFAULT 0,
 	"created_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
+CREATE TABLE "user_syllabus_progress" (
+	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" varchar NOT NULL,
+	"syllabus_topic_id" varchar NOT NULL,
+	"questions_answered" integer DEFAULT 0,
+	"questions_correct" integer DEFAULT 0,
+	"articles_read" integer DEFAULT 0,
+	"progress_percent" integer DEFAULT 0,
+	"last_activity_at" timestamp,
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
@@ -377,6 +521,9 @@ ALTER TABLE "content_reports" ADD CONSTRAINT "content_reports_reporter_id_users_
 ALTER TABLE "content_reports" ADD CONSTRAINT "content_reports_reviewed_by_users_id_fk" FOREIGN KEY ("reviewed_by") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "document_chunks" ADD CONSTRAINT "document_chunks_document_id_uploaded_documents_id_fk" FOREIGN KEY ("document_id") REFERENCES "public"."uploaded_documents"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "essay_prompts" ADD CONSTRAINT "essay_prompts_created_by_users_id_fk" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "essay_submissions" ADD CONSTRAINT "essay_submissions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "essay_submissions" ADD CONSTRAINT "essay_submissions_essay_subject_id_essay_subjects_id_fk" FOREIGN KEY ("essay_subject_id") REFERENCES "public"."essay_subjects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "exam_results" ADD CONSTRAINT "exam_results_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "legal_article_batches" ADD CONSTRAINT "legal_article_batches_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "legal_article_chunks" ADD CONSTRAINT "legal_article_chunks_article_id_legal_articles_id_fk" FOREIGN KEY ("article_id") REFERENCES "public"."legal_articles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "legal_articles" ADD CONSTRAINT "legal_articles_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -395,6 +542,11 @@ ALTER TABLE "user_case_study_submissions" ADD CONSTRAINT "user_case_study_submis
 ALTER TABLE "user_case_study_submissions" ADD CONSTRAINT "user_case_study_submissions_case_study_id_case_studies_id_fk" FOREIGN KEY ("case_study_id") REFERENCES "public"."case_studies"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_essay_submissions" ADD CONSTRAINT "user_essay_submissions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_essay_submissions" ADD CONSTRAINT "user_essay_submissions_essay_prompt_id_essay_prompts_id_fk" FOREIGN KEY ("essay_prompt_id") REFERENCES "public"."essay_prompts"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_gamification" ADD CONSTRAINT "user_gamification_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_node_progress" ADD CONSTRAINT "user_node_progress_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_node_progress" ADD CONSTRAINT "user_node_progress_node_id_roadmap_nodes_id_fk" FOREIGN KEY ("node_id") REFERENCES "public"."roadmap_nodes"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_progress" ADD CONSTRAINT "user_progress_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_srs_cards" ADD CONSTRAINT "user_srs_cards_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "user_srs_cards" ADD CONSTRAINT "user_srs_cards_question_id_questions_id_fk" FOREIGN KEY ("question_id") REFERENCES "public"."questions"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "user_srs_cards" ADD CONSTRAINT "user_srs_cards_question_id_questions_id_fk" FOREIGN KEY ("question_id") REFERENCES "public"."questions"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_syllabus_progress" ADD CONSTRAINT "user_syllabus_progress_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_syllabus_progress" ADD CONSTRAINT "user_syllabus_progress_syllabus_topic_id_syllabus_topic_mappings_id_fk" FOREIGN KEY ("syllabus_topic_id") REFERENCES "public"."syllabus_topic_mappings"("id") ON DELETE no action ON UPDATE no action;

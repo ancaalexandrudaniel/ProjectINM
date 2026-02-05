@@ -1,6 +1,5 @@
-import pkg from 'pg';
-const { Pool } = pkg;
 import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
 import * as schema from "../shared/schema";
 
 if (!process.env.DATABASE_URL) {
@@ -9,7 +8,12 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-export const pool = new Pool({
+console.log('[DB] Connecting to PostgreSQL (Railway)...');
+const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
 });
-export const db = drizzle(pool, { schema });
+
+const db = drizzle({ client: pool, schema });
+
+export { pool, db };
