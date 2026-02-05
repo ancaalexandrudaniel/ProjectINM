@@ -522,8 +522,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (subject === "civil-combined") actualSubject = "civil"; // Store as civil for now
       if (subject === "penal-combined") actualSubject = "penal";
 
-      const inserted = [];
-      for (const q of jsonQuestions) {
+      const questionsToInsert = jsonQuestions.map((q) => {
         // Convert correctAnswer to index (1-based)
         let correctIdx: number;
         if (typeof q.correctAnswer === 'string') {
@@ -532,7 +531,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           correctIdx = q.correctAnswer;
         }
 
-        const [insertedQ] = await db.insert(questionsTable).values({
+        return {
           subject: actualSubject,
           chapter: `Examen ${year} - ${examType === 'grile' ? 'Grilă' : 'Speță'}`,
           topic: `${examType === 'grile' ? 'Proba I' : 'Proba II'} ${year}`,
@@ -544,10 +543,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           explanation: `Întrebare din examenul oficial INM ${year}. Răspunsul corect: ${typeof q.correctAnswer === 'string' ? q.correctAnswer : String.fromCharCode(64 + q.correctAnswer)}.`,
           sourceType: 'exam-past',
           tags: [`year:${year}`, `source:inm-official`, `type:${examType}`, `subject:${subject}`],
-        }).returning();
+        };
+      });
 
-        inserted.push(insertedQ);
-      }
+      const inserted = await db.insert(questionsTable).values(questionsToInsert).returning();
 
       console.log(`[EXAM-JSON] Successfully imported ${inserted.length} questions`);
 
