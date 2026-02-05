@@ -661,10 +661,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log(`[EXAM-ESSAYS] Importing ${subjects.length} subjects for ${year} V${variant} ${discipline}`);
 
-      const inserted = [];
+      const valuesToInsert = [];
       for (const subject of subjects) {
         for (const req of subject.requirements) {
-          const [insertedReq] = await db.insert(examEssays).values({
+          valuesToInsert.push({
             year,
             variant,
             discipline,
@@ -683,10 +683,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
               points: String(r.points)
             })),
             sourceType: 'official',
-          }).returning();
-
-          inserted.push(insertedReq);
+          });
         }
+      }
+
+      let inserted = [];
+      if (valuesToInsert.length > 0) {
+        inserted = await db.insert(examEssays).values(valuesToInsert).returning();
       }
 
       console.log(`[EXAM-ESSAYS] Successfully imported ${inserted.length} requirements`);
