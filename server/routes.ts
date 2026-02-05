@@ -400,7 +400,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/exam-papers", async (req, res) => {
     try {
       const { questions } = await import("../shared/schema");
-      const { and, eq: eqOp, ilike } = await import("drizzle-orm");
+      const { and, eq: eqOp, ilike, arrayContains } = await import("drizzle-orm");
 
       const year = req.query.year as string | undefined;
       const subject = req.query.subject as string | undefined;
@@ -408,16 +408,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Query questions that have sourceType = 'exam-past'
       let query = db.select().from(questions);
 
-      const results = await query.where(
-        eqOp(questions.sourceType, 'exam-past')
-      ).limit(100);
+      const conditions = [eqOp(questions.sourceType, 'exam-past')];
 
-      // Filter by year tag if specified
-      const filtered = year
-        ? results.filter(q => (q.tags as string[] || []).includes(`year:${year}`))
-        : results;
+      if (year) {
+        conditions.push(arrayContains(questions.tags, [`year:${year}`]));
+      }
 
-      res.json(filtered.map(q => ({
+      const results = await query.where(and(...conditions)).limit(100);
+
+      res.json(results.map(q => ({
         id: q.id,
         year: (q.tags as string[] || []).find(t => t.startsWith('year:'))?.replace('year:', '') || 'unknown',
         subject: q.subject,
