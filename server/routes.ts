@@ -2439,14 +2439,25 @@ Notează obiectiv pe baza baremului.`;
 
       console.log(`[EMBEDDINGS] Generated ${embeddings.length} embeddings, updating DB...`);
 
-      // Update chunks with embeddings
+      // Update chunks with embeddings (batched parallel updates)
       let updatedCount = 0;
-      for (let i = 0; i < chunks.length; i++) {
-        await db
-          .update(documentChunks)
-          .set({ embedding: embeddings[i] })
-          .where(eq(documentChunks.id, chunks[i].id));
-        updatedCount++;
+      const BATCH_SIZE = 50;
+
+      for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
+        const batchEnd = Math.min(i + BATCH_SIZE, chunks.length);
+        const updatePromises = [];
+
+        for (let j = i; j < batchEnd; j++) {
+          updatePromises.push(
+            db
+              .update(documentChunks)
+              .set({ embedding: embeddings[j] })
+              .where(eq(documentChunks.id, chunks[j].id))
+          );
+        }
+
+        await Promise.all(updatePromises);
+        updatedCount += (batchEnd - i);
       }
 
       console.log(`[EMBEDDINGS] Updated ${updatedCount} chunks with embeddings`);
