@@ -1,4 +1,4 @@
-CREATE TABLE "active_sessions" (
+CREATE TABLE IF NOT EXISTS "active_sessions" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"device_fingerprint" text NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE "active_sessions" (
 	CONSTRAINT "active_sessions_session_token_unique" UNIQUE("session_token")
 );
 --> statement-breakpoint
-CREATE TABLE "ai_explanations" (
+CREATE TABLE IF NOT EXISTS "ai_explanations" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"question_id" varchar NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE "ai_explanations" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "analytics_snapshots" (
+CREATE TABLE IF NOT EXISTS "analytics_snapshots" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"snapshot_date" timestamp NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE "analytics_snapshots" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "case_studies" (
+CREATE TABLE IF NOT EXISTS "case_studies" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"subject" text NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE "case_studies" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "case_study_batches" (
+CREATE TABLE IF NOT EXISTS "case_study_batches" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"batch_name" text NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE "case_study_batches" (
 	"uploaded_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "clean_room_audit_logs" (
+CREATE TABLE IF NOT EXISTS "clean_room_audit_logs" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar,
 	"generation_type" text NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE "clean_room_audit_logs" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "content_reports" (
+CREATE TABLE IF NOT EXISTS "content_reports" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"reporter_id" varchar NOT NULL,
 	"content_type" text NOT NULL,
@@ -97,7 +97,7 @@ CREATE TABLE "content_reports" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "document_chunks" (
+CREATE TABLE IF NOT EXISTS "document_chunks" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"document_id" varchar NOT NULL,
 	"chunk_text" text NOT NULL,
@@ -107,7 +107,7 @@ CREATE TABLE "document_chunks" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "essay_prompts" (
+CREATE TABLE IF NOT EXISTS "essay_prompts" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"created_by" varchar NOT NULL,
 	"subject" text NOT NULL,
@@ -123,7 +123,7 @@ CREATE TABLE "essay_prompts" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "legal_article_batches" (
+CREATE TABLE IF NOT EXISTS "legal_article_batches" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"batch_name" text NOT NULL,
@@ -135,7 +135,7 @@ CREATE TABLE "legal_article_batches" (
 	"uploaded_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "legal_article_chunks" (
+CREATE TABLE IF NOT EXISTS "legal_article_chunks" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"article_id" varchar NOT NULL,
 	"segment_type" text NOT NULL,
@@ -146,7 +146,7 @@ CREATE TABLE "legal_article_chunks" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "legal_articles" (
+CREATE TABLE IF NOT EXISTS "legal_articles" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"article_number" integer NOT NULL,
@@ -160,7 +160,7 @@ CREATE TABLE "legal_articles" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "legal_resources" (
+CREATE TABLE IF NOT EXISTS "legal_resources" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"resource_type" text NOT NULL,
@@ -174,7 +174,7 @@ CREATE TABLE "legal_resources" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "legislative_acts" (
+CREATE TABLE IF NOT EXISTS "legislative_acts" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"act_type" text NOT NULL,
 	"act_number" text NOT NULL,
@@ -194,7 +194,7 @@ CREATE TABLE "legislative_acts" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "legislative_change_log" (
+CREATE TABLE IF NOT EXISTS "legislative_change_log" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"act_id" varchar NOT NULL,
 	"change_type" text NOT NULL,
@@ -208,7 +208,7 @@ CREATE TABLE "legislative_change_log" (
 	"verification_notes" text
 );
 --> statement-breakpoint
-CREATE TABLE "question_batches" (
+CREATE TABLE IF NOT EXISTS "question_batches" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"batch_name" text NOT NULL,
@@ -220,7 +220,7 @@ CREATE TABLE "question_batches" (
 	"uploaded_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "question_topics" (
+CREATE TABLE IF NOT EXISTS "question_topics" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"subject" text NOT NULL,
 	"topic_name" text NOT NULL,
@@ -229,7 +229,7 @@ CREATE TABLE "question_topics" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "questions" (
+CREATE TABLE IF NOT EXISTS "questions" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"subject" text NOT NULL,
 	"chapter" text NOT NULL,
@@ -253,7 +253,7 @@ CREATE TABLE "questions" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "quiz_sessions" (
+CREATE TABLE IF NOT EXISTS "quiz_sessions" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"subject" text,
@@ -266,7 +266,7 @@ CREATE TABLE "quiz_sessions" (
 	"time_spent" integer
 );
 --> statement-breakpoint
-CREATE TABLE "study_plans" (
+CREATE TABLE IF NOT EXISTS "study_plans" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"days_until_exam" integer NOT NULL,
@@ -275,7 +275,7 @@ CREATE TABLE "study_plans" (
 	"generated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "uploaded_documents" (
+CREATE TABLE IF NOT EXISTS "uploaded_documents" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"file_name" text NOT NULL,
@@ -287,7 +287,7 @@ CREATE TABLE "uploaded_documents" (
 	"uploaded_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "user_answers" (
+CREATE TABLE IF NOT EXISTS "user_answers" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"session_id" varchar,
@@ -298,7 +298,7 @@ CREATE TABLE "user_answers" (
 	"answered_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "user_case_study_submissions" (
+CREATE TABLE IF NOT EXISTS "user_case_study_submissions" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"case_study_id" varchar NOT NULL,
@@ -309,7 +309,7 @@ CREATE TABLE "user_case_study_submissions" (
 	"time_spent" integer
 );
 --> statement-breakpoint
-CREATE TABLE "user_essay_submissions" (
+CREATE TABLE IF NOT EXISTS "user_essay_submissions" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"essay_prompt_id" varchar NOT NULL,
@@ -323,7 +323,7 @@ CREATE TABLE "user_essay_submissions" (
 	"submitted_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "user_progress" (
+CREATE TABLE IF NOT EXISTS "user_progress" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"subject" text NOT NULL,
@@ -335,7 +335,7 @@ CREATE TABLE "user_progress" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "user_srs_cards" (
+CREATE TABLE IF NOT EXISTS "user_srs_cards" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"question_id" varchar NOT NULL,
@@ -349,7 +349,7 @@ CREATE TABLE "user_srs_cards" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "users" (
+CREATE TABLE IF NOT EXISTS "users" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"username" text NOT NULL,
 	"password" text NOT NULL,
