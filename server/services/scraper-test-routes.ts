@@ -220,7 +220,7 @@ export function registerScraperTestRoutes(app: Express): void {
             console.log('[Scraper Test] Starting batch scrape of all known acts...');
 
             const scraper = getLegislativeScraper();
-            const results: { name: string; success: boolean; databaseId?: number; error?: string; textLength?: number }[] = [];
+            const results: { name: string; success: boolean; databaseId?: string; error?: string; textLength?: number }[] = [];
 
             for (const [name, info] of Object.entries(KNOWN_ACTS)) {
                 console.log(`[Scraper Batch] Processing: ${name} (${Object.keys(KNOWN_ACTS).indexOf(name) + 1}/${Object.keys(KNOWN_ACTS).length})`);

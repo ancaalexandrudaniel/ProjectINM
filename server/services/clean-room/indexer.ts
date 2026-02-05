@@ -23,6 +23,7 @@ async function getSystemUserId(): Promise<string> {
     console.log("[INDEXER] No users found. Creating system user...");
     const [newUser] = await db.insert(users).values({
         email: "system@inm-mentor.ro",
+        username: "system_admin",
         password: "system_placeholder_hash", // Not used for login
         fullName: "System Admin",
         subscriptionTier: "pro"

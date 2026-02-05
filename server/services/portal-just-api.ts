@@ -246,8 +246,9 @@ export class PortalJustApiClient {
         let filteredCases = icccjCases.data;
 
         if (params.decisionType && params.decisionType !== 'ALL') {
+            const decisionType = params.decisionType;
             filteredCases = filteredCases.filter(c =>
-                c.NumarDosar.includes(params.decisionType)
+                c.NumarDosar.includes(decisionType)
             );
         }
 
