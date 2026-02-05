@@ -69,6 +69,18 @@ CREATE TABLE "exam_results" (
 	"completed_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+CREATE TABLE "roadmap_nodes" (
+	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"syllabus_id" text,
+	"title" text NOT NULL,
+	"description" text,
+	"xp_reward" integer DEFAULT 100,
+	"order_index" integer NOT NULL,
+	"parent_node_id" varchar,
+	"milestone_type" text DEFAULT 'topic',
+	"created_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
 CREATE TABLE "syllabus_topic_mappings" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"syllabus_id" text NOT NULL,
@@ -89,6 +101,30 @@ CREATE TABLE "syllabus_topic_mappings" (
 	CONSTRAINT "syllabus_topic_mappings_syllabus_id_unique" UNIQUE("syllabus_id")
 );
 --> statement-breakpoint
+CREATE TABLE "user_gamification" (
+	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" varchar NOT NULL,
+	"current_xp" integer DEFAULT 0,
+	"current_level" integer DEFAULT 1,
+	"current_streak" integer DEFAULT 0,
+	"longest_streak" integer DEFAULT 0,
+	"last_activity_date" timestamp DEFAULT now(),
+	"coins" integer DEFAULT 0,
+	"unlocked_badges" jsonb,
+	"updated_at" timestamp DEFAULT now(),
+	CONSTRAINT "user_gamification_user_id_unique" UNIQUE("user_id")
+);
+--> statement-breakpoint
+CREATE TABLE "user_node_progress" (
+	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" varchar NOT NULL,
+	"node_id" varchar NOT NULL,
+	"status" text DEFAULT 'LOCKED' NOT NULL,
+	"score" integer DEFAULT 0,
+	"completed_at" timestamp,
+	"updated_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
 CREATE TABLE "user_syllabus_progress" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
@@ -104,11 +140,13 @@ CREATE TABLE "user_syllabus_progress" (
 --> statement-breakpoint
 ALTER TABLE "case_studies" ADD COLUMN "needs_legal_review" boolean DEFAULT false;--> statement-breakpoint
 ALTER TABLE "case_studies" ADD COLUMN "affected_by_change" varchar;--> statement-breakpoint
-ALTER TABLE "legislative_change_log" ADD COLUMN "diff_summary" text;--> statement-breakpoint
 ALTER TABLE "questions" ADD COLUMN "needs_legal_review" boolean DEFAULT false;--> statement-breakpoint
 ALTER TABLE "questions" ADD COLUMN "affected_by_change" varchar;--> statement-breakpoint
 ALTER TABLE "essay_submissions" ADD CONSTRAINT "essay_submissions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "essay_submissions" ADD CONSTRAINT "essay_submissions_essay_subject_id_essay_subjects_id_fk" FOREIGN KEY ("essay_subject_id") REFERENCES "public"."essay_subjects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "exam_results" ADD CONSTRAINT "exam_results_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_gamification" ADD CONSTRAINT "user_gamification_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_node_progress" ADD CONSTRAINT "user_node_progress_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_node_progress" ADD CONSTRAINT "user_node_progress_node_id_roadmap_nodes_id_fk" FOREIGN KEY ("node_id") REFERENCES "public"."roadmap_nodes"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_syllabus_progress" ADD CONSTRAINT "user_syllabus_progress_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_syllabus_progress" ADD CONSTRAINT "user_syllabus_progress_syllabus_topic_id_syllabus_topic_mappings_id_fk" FOREIGN KEY ("syllabus_topic_id") REFERENCES "public"."syllabus_topic_mappings"("id") ON DELETE no action ON UPDATE no action;

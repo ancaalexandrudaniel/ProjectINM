@@ -1,0 +1,2 @@
+ALTER TABLE "legislative_change_log" ADD COLUMN "diff_summary" text;--> statement-breakpoint
+CREATE INDEX "search_idx" ON "questions" USING gin (to_tsvector('romanian', "question_text" || ' ' || "explanation"));
