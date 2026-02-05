@@ -217,6 +217,7 @@ class LegislativeMonitor {
             changeDescription: `Modificare detectată automat la ${change.actName}`,
             oldContentHash: change.previousHash,
             newContentHash: change.newHash,
+            diffSummary: change.diffSummary,
             affectedArticles: change.affectedArticles,
         }).returning({ id: legislativeChangeLog.id });
 
@@ -269,7 +270,7 @@ class LegislativeMonitor {
             actNumber: change.act?.actNumber || '',
             changeType: change.changeType,
             changeDescription: change.changeDescription,
-            diffSummary: null, // We'll store this separately
+            diffSummary: change.diffSummary,
             affectedArticles: change.affectedArticles as string[] | null,
             detectedAt: change.detectedAt,
             isReviewed: change.verifiedByUser || false,

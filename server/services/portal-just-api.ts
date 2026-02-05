@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { z } from 'zod';
+import { XMLParser } from 'fast-xml-parser';
 
 /**
  * Portal Just API Client for portal.just.ro
@@ -235,9 +236,9 @@ export class PortalJustApiClient {
         let filteredCases = icccjCases.data;
 
         if (params.decisionType && params.decisionType !== 'ALL') {
-            const decisionType = params.decisionType;
+            const type = params.decisionType;
             filteredCases = filteredCases.filter(c =>
-                c.NumarDosar.includes(decisionType)
+                c.NumarDosar.includes(type)
             );
         }
 
@@ -317,35 +318,65 @@ export class PortalJustApiClient {
      * Parse API response (handles both XML and JSON responses)
      */
     private parseQueryResponse<T>(data: any, schema: z.ZodSchema<T>): T[] {
-        // TODO: Implement XML parsing if API returns XML
-        // For now, assuming JSON response or need to parse XML
-
-        // If data is already an array, validate each item
-        if (Array.isArray(data)) {
-            return data.map(item => schema.parse(item));
-        }
+        let parsedData = data;
 
         // If data is a string (XML), parse it
         if (typeof data === 'string') {
-            // Basic XML parsing - in production, use a proper XML parser like 'fast-xml-parser'
-            console.warn('[PortalJust] XML parsing not fully implemented, returning empty array');
-            return [];
-        }
-
-        // If response has a specific structure, extract the array
-        if (data && typeof data === 'object') {
-            // Try to find array in common response structures
-            const possibleArrayKeys = ['results', 'data', 'items', 'dosare', 'sedinte'];
-
-            for (const key of possibleArrayKeys) {
-                if (Array.isArray(data[key])) {
-                    return data[key].map((item: any) => schema.parse(item));
-                }
+            try {
+                // Configure parser to keep values as strings to match Zod schema
+                const parser = new XMLParser({
+                    ignoreAttributes: true,
+                    parseTagValue: false,
+                    trimValues: true,
+                });
+                parsedData = parser.parse(data);
+            } catch (error) {
+                console.error('[PortalJust] XML parsing failed:', error);
+                return [];
             }
         }
 
-        // Fallback: return empty array
-        console.warn('[PortalJust] Could not parse response, returning empty array');
+        // Search strategy: find all objects in the tree that satisfy the schema
+        const results: T[] = [];
+        const visited = new Set();
+
+        // Helper function to recursively traverse the object tree
+        const traverse = (node: any) => {
+            if (!node || typeof node !== 'object') return;
+            if (visited.has(node)) return;
+            visited.add(node);
+
+            // 1. Check if current node is an array, if so traverse items
+            if (Array.isArray(node)) {
+                for (const item of node) {
+                    traverse(item);
+                }
+                return;
+            }
+
+            // 2. Check if current object matches the schema
+            const validationResult = schema.safeParse(node);
+            if (validationResult.success) {
+                results.push(validationResult.data);
+                // If it matches, we assume it's a leaf item we want.
+                return;
+            }
+
+            // 3. If not a match, traverse children properties
+            for (const key in node) {
+                if (Object.prototype.hasOwnProperty.call(node, key)) {
+                    traverse(node[key]);
+                }
+            }
+        };
+
+        traverse(parsedData);
+
+        if (results.length > 0) {
+            return results;
+        }
+
+        console.warn('[PortalJust] No valid items found in response matching schema');
         return [];
     }
 
