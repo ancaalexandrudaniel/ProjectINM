@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS "roadmap_nodes", "roadmap_progress", "user_gamification", "essay_subjects" CASCADE;
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "essay_subjects" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"year" integer NOT NULL,
@@ -138,10 +140,34 @@ CREATE TABLE IF NOT EXISTS "user_syllabus_progress" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-ALTER TABLE "case_studies" ADD COLUMN "needs_legal_review" boolean DEFAULT false;--> statement-breakpoint
-ALTER TABLE "case_studies" ADD COLUMN "affected_by_change" varchar;--> statement-breakpoint
-ALTER TABLE "questions" ADD COLUMN "needs_legal_review" boolean DEFAULT false;--> statement-breakpoint
-ALTER TABLE "questions" ADD COLUMN "affected_by_change" varchar;--> statement-breakpoint
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='case_studies' AND column_name='needs_legal_review') THEN
+        ALTER TABLE "case_studies" ADD COLUMN "needs_legal_review" boolean DEFAULT false;
+    END IF;
+END $$;
+--> statement-breakpoint
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='case_studies' AND column_name='affected_by_change') THEN
+        ALTER TABLE "case_studies" ADD COLUMN "affected_by_change" varchar;
+    END IF;
+END $$;
+--> statement-breakpoint
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='questions' AND column_name='needs_legal_review') THEN
+        ALTER TABLE "questions" ADD COLUMN "needs_legal_review" boolean DEFAULT false;
+    END IF;
+END $$;
+--> statement-breakpoint
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='questions' AND column_name='affected_by_change') THEN
+        ALTER TABLE "questions" ADD COLUMN "affected_by_change" varchar;
+    END IF;
+END $$;
+--> statement-breakpoint
 ALTER TABLE "essay_submissions" ADD CONSTRAINT "essay_submissions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "essay_submissions" ADD CONSTRAINT "essay_submissions_essay_subject_id_essay_subjects_id_fk" FOREIGN KEY ("essay_subject_id") REFERENCES "public"."essay_subjects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "exam_results" ADD CONSTRAINT "exam_results_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
