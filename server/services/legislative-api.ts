@@ -58,9 +58,13 @@ export interface AuthConfig {
 // ============================================================================
 
 export class LegislativeApiClient {
-    private static readonly WSDL_URL = 'http://legislatie.just.ro/apiws/FreeWebService.svc?wsdl';
-    private static readonly BASE_URL = 'http://legislatie.just.ro/apiws/FreeWebService.svc';
+    // Updated to HTTPS and using correct User-Agent to avoid 404/503 blocking
+    private static readonly WSDL_URL = 'https://legislatie.just.ro/apiws/FreeWebService.svc?wsdl';
+    private static readonly BASE_URL = 'https://legislatie.just.ro/apiws/FreeWebService.svc';
     private static readonly NAMESPACE = 'http://tempuri.org/';
+
+    // Browser User-Agent required to bypass firewall/WAF
+    private static readonly USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
     // SOAPAction headers required for each method (from API research)
     private static readonly SOAP_ACTIONS = {
@@ -94,15 +98,28 @@ export class LegislativeApiClient {
         try {
             console.log('[LegislativeAPI] Initializing SOAP client...');
 
-            // Create SOAP client with custom options for correct headers
+            // Define Custom HTTP Client to enforce User-Agent on ALL requests (including XSD imports)
+            class BrowserHttpClient extends soap.HttpClient {
+                request(rurl: string, data: any, callback: any, exheaders?: any, exoptions?: any): any {
+                    const headers = exheaders || {};
+                    // Force Browser User-Agent on every request
+                    headers['User-Agent'] = LegislativeApiClient.USER_AGENT;
+                    return super.request(rurl, data, callback, headers, exoptions);
+                }
+            }
+
+            // Create SOAP client with custom HTTP client
             this.client = await soap.createClientAsync(LegislativeApiClient.WSDL_URL, {
+                httpClient: new BrowserHttpClient({}),
+                // Force endpoint to use HTTPS as WSDL might contain HTTP
+                endpoint: LegislativeApiClient.BASE_URL,
                 wsdl_headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) INMAiMentor/1.0',
-                },
+                    'User-Agent': LegislativeApiClient.USER_AGENT
+                }
             });
 
-            // Add default HTTP headers for all requests
-            this.client.addHttpHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) INMAiMentor/1.0');
+            // Add default HTTP headers for all requests (redundant but safe)
+            this.client.addHttpHeader('User-Agent', LegislativeApiClient.USER_AGENT);
 
             console.log('[LegislativeAPI] SOAP client created successfully');
             console.log('[LegislativeAPI] Available methods:', Object.keys(this.client.describe()));

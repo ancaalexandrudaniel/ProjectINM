@@ -1,5 +1,6 @@
-import axios, { AxiosInstance } from 'axios';
+import soap from 'soap';
 import { z } from 'zod';
+import { XMLParser } from 'fast-xml-parser';
 
 /**
  * Portal Just API Client for portal.just.ro
@@ -15,26 +16,44 @@ import { z } from 'zod';
 // ============================================================================
 
 // Court case search result schema
+// Note: SOAP response fields match WSDL definition
 const CaseSchema = z.object({
-    NumarDosar: z.string(),
-    InstantaNumeDenumire: z.string(),
-    DataInregistrare: z.string().optional(),
-    ObiectelePeScurt: z.string().optional(),
-    Stadiu: z.string().optional(),
-    Complet: z.string().optional(),
-    DataUltimeiModificari: z.string().optional(),
-});
+    numar: z.string().optional(),
+    numarVechi: z.string().optional(),
+    data: z.date().optional(), // Date object from SOAP
+    institutie: z.string().optional(), // Enum value
+    departament: z.string().optional(),
+    categorieCaz: z.string().optional(),
+    stadiuProcesual: z.string().optional(),
+    obiect: z.string().optional(),
+    // Handle XML array conversion quirks (object vs array)
+    parti: z.any().optional()
+}).transform(data => ({
+    NumarDosar: data.numar || '',
+    InstantaNumeDenumire: data.institutie || '',
+    DataInregistrare: data.data ? data.data.toISOString() : '',
+    ObiectelePeScurt: data.obiect || '',
+    Stadiu: data.stadiuProcesual || '',
+    Complet: '', // Not always available in simple view
+    DataUltimeiModificari: ''
+}));
 
 // Court session schema
 const SessionSchema = z.object({
-    NumarDosar: z.string(),
-    DataSedinta: z.string(),
-    OraSedinta: z.string().optional(),
-    TipSedinta: z.string().optional(),
-    Sala: z.string().optional(),
-    InstantaNumeDenumire: z.string(),
-    ObservatiilePeScurt: z.string().optional(),
-});
+    departament: z.string().optional(),
+    complet: z.string().optional(),
+    data: z.date().optional(),
+    ora: z.string().optional(),
+    dosare: z.any().optional() // ArrayOfSedintaDosar
+}).transform(data => ({
+    NumarDosar: '', // Aggregated
+    DataSedinta: data.data ? data.data.toISOString() : '',
+    OraSedinta: data.ora || '',
+    TipSedinta: '',
+    Sala: '',
+    InstantaNumeDenumire: '',
+    ObservatiilePeScurt: ''
+}));
 
 export type CourtCase = z.infer<typeof CaseSchema>;
 export type CourtSession = z.infer<typeof SessionSchema>;
@@ -66,47 +85,42 @@ interface QueryApiResponse<T> {
 // ============================================================================
 
 export class PortalJustApiClient {
-    private static readonly BASE_URL = 'http://portalquery.just.ro';
-    private static readonly QUERY_ENDPOINT = '/Query.asmx';
+    private static readonly WSDL_URL = 'http://portalquery.just.ro/Query.asmx?wsdl';
+    private static readonly USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
-    private axiosInstance: AxiosInstance;
+    private client: soap.Client | null = null;
     private requestCount: number = 0;
     private lastRequestTime: number = 0;
-    private minDelayMs: number = 2000; // 2 seconds between requests (rate limiting)
+    private minDelayMs: number = 2000; // 2 seconds between requests
 
-    constructor() {
-        this.axiosInstance = axios.create({
-            baseURL: PortalJustApiClient.BASE_URL,
-            timeout: 30000, // 30 seconds timeout
-            headers: {
-                'User-Agent': 'INMAiMentor-Bot/1.0 (legal education platform)',
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        });
+    // Helper to map user-friendly names to SOAP Enum values
+    // Example: "Curtea de Apel Bucuresti" -> "CurteadeApelBUCURESTI"
+    private mapInstitution(name: string): string {
+        if (!name) return 'CurteadeApelBUCURESTI'; // Default
 
-        // Add request interceptor for logging
-        this.axiosInstance.interceptors.request.use(
-            (config) => {
-                console.log(`[PortalJust] ${config.method?.toUpperCase()} ${config.url}`);
-                return config;
-            },
-            (error) => {
-                console.error('[PortalJust] Request error:', error);
-                return Promise.reject(error);
-            }
-        );
+        // Hardcoded common mappings for testing/demo
+        const commonMappings: Record<string, string> = {
+            'Curtea de Apel Bucureşti': 'CurteadeApelBUCURESTI',
+            'Curtea de Apel Bucuresti': 'CurteadeApelBUCURESTI',
+            'Tribunalul Bucureşti': 'TribunalulBUCURESTI',
+            'Tribunalul Bucuresti': 'TribunalulBUCURESTI',
+            'Curtea de Apel Cluj': 'CurteadeApelCLUJ',
+            'Curtea de Apel Alba Iulia': 'CurteadeApelALBAIULIA'
+        };
 
-        // Add response interceptor for logging
-        this.axiosInstance.interceptors.response.use(
-            (response) => {
-                console.log(`[PortalJust] Response status: ${response.status}`);
-                return response;
-            },
-            (error) => {
-                console.error('[PortalJust] Response error:', error.message);
-                return Promise.reject(error);
-            }
-        );
+        if (commonMappings[name]) {
+            return commonMappings[name];
+        }
+
+        // Remove spaces and special chars, try to match pattern
+        // Simple heuristic: remove spaces, remove ' de ', uppercase city
+        let normalized = name.replace(/\s/g, '');
+        // Replace diacritics
+        normalized = normalized.replace(/[ăâ]/g, 'a').replace(/[î]/g, 'i').replace(/[șş]/g, 's').replace(/[țţ]/g, 't');
+
+        // Try to uppercase the city part (heuristic: assumes InstitutionType + City)
+        // This is fragile but better than nothing for unknown inputs
+        return normalized;
     }
 
     // ==========================================================================
@@ -114,41 +128,53 @@ export class PortalJustApiClient {
     // ==========================================================================
 
     /**
+     * Initialize SOAP Client
+     */
+    async initialize(): Promise<void> {
+        if (this.client) return;
+
+        try {
+            console.log('[PortalJust] Initializing SOAP client...');
+            this.client = await soap.createClientAsync(PortalJustApiClient.WSDL_URL, {
+                wsdl_headers: { 'User-Agent': PortalJustApiClient.USER_AGENT },
+                headers: { 'User-Agent': PortalJustApiClient.USER_AGENT }
+            });
+            console.log('[PortalJust] Client initialized.');
+        } catch (error) {
+            console.error('[PortalJust] Init failed:', error);
+            throw error;
+        }
+    }
+
+    /**
      * Search for court cases
      */
     async searchCases(params: CaseSearchParams): Promise<QueryApiResponse<CourtCase[]>> {
         await this.enforceRateLimit();
+        if (!this.client) await this.initialize();
 
         try {
             console.log('[PortalJust] Searching cases with params:', params);
 
-            // Build SOAP/REST query parameters
-            const queryParams = new URLSearchParams();
+            const soapParams = {
+                numarDosar: params.numarDosar || '',
+                obiectDosar: '',
+                numeParte: params.parteNumePrenume || '',
+                institutie: this.mapInstitution(params.institutie || ''),
+                dataStart: params.dataInregistrareStart ? new Date(params.dataInregistrareStart) : null,
+                dataStop: params.dataInregistrareEnd ? new Date(params.dataInregistrareEnd) : null,
+                dataUltimaModificareStart: null,
+                dataUltimaModificareStop: null
+            };
 
-            if (params.numarDosar) {
-                queryParams.append('numarDosar', params.numarDosar);
-            }
-            if (params.institutie) {
-                queryParams.append('institutie', params.institutie);
-            }
-            if (params.dataInregistrareStart) {
-                queryParams.append('dataInregistrareStart', params.dataInregistrareStart);
-            }
-            if (params.dataInregistrareEnd) {
-                queryParams.append('dataInregistrareEnd', params.dataInregistrareEnd);
-            }
-            if (params.parteNumePrenume) {
-                queryParams.append('parteNumePrenume', params.parteNumePrenume);
-            }
+            const result = await this.client!.CautareDosareAsync(soapParams);
+            const rawData = result[0];
 
-            // Call the CautareDosare method
-            const response = await this.axiosInstance.post(
-                `${PortalJustApiClient.QUERY_ENDPOINT}/CautareDosare`,
-                queryParams.toString()
-            );
+            // Check for CautareDosareResult which contains ArrayOfDosar
+            const dosare = rawData?.CautareDosareResult?.Dosar || [];
 
-            // Parse response (API might return XML/JSON)
-            const cases = this.parseQueryResponse(response.data, CaseSchema);
+            const cases = Array.isArray(dosare) ? dosare.map((d: any) => CaseSchema.parse(d)) :
+                          (dosare ? [CaseSchema.parse(dosare)] : []);
 
             console.log(`[PortalJust] Found ${cases.length} cases`);
 
@@ -170,34 +196,20 @@ export class PortalJustApiClient {
      */
     async searchSessions(params: SessionSearchParams): Promise<QueryApiResponse<CourtSession[]>> {
         await this.enforceRateLimit();
+        if (!this.client) await this.initialize();
 
         try {
-            console.log('[PortalJust] Searching sessions with params:', params);
+            const soapParams = {
+                dataSedinta: params.dataSedintaStart ? new Date(params.dataSedintaStart) : new Date(),
+                institutie: this.mapInstitution(params.institutie || '')
+            };
 
-            const queryParams = new URLSearchParams();
+            const result = await this.client!.CautareSedinteAsync(soapParams);
+            const rawData = result[0];
 
-            if (params.numarDosar) {
-                queryParams.append('numarDosar', params.numarDosar);
-            }
-            if (params.institutie) {
-                queryParams.append('institutie', params.institutie);
-            }
-            if (params.dataSedintaStart) {
-                queryParams.append('dataSedintaStart', params.dataSedintaStart);
-            }
-            if (params.dataSedintaEnd) {
-                queryParams.append('dataSedintaEnd', params.dataSedintaEnd);
-            }
-
-            // Call the CautareSedinte method
-            const response = await this.axiosInstance.post(
-                `${PortalJustApiClient.QUERY_ENDPOINT}/CautareSedinte`,
-                queryParams.toString()
-            );
-
-            const sessions = this.parseQueryResponse(response.data, SessionSchema);
-
-            console.log(`[PortalJust] Found ${sessions.length} sessions`);
+            const sedinte = rawData?.CautareSedinteResult?.Sedinta || [];
+            const sessions = Array.isArray(sedinte) ? sedinte.map((s: any) => SessionSchema.parse(s)) :
+                             (sedinte ? [SessionSchema.parse(sedinte)] : []);
 
             return {
                 success: true,
@@ -235,8 +247,9 @@ export class PortalJustApiClient {
         let filteredCases = icccjCases.data;
 
         if (params.decisionType && params.decisionType !== 'ALL') {
+            const type = params.decisionType;
             filteredCases = filteredCases.filter(c =>
-                c.NumarDosar.includes(params.decisionType)
+                c.NumarDosar.includes(type)
             );
         }
 
@@ -316,35 +329,65 @@ export class PortalJustApiClient {
      * Parse API response (handles both XML and JSON responses)
      */
     private parseQueryResponse<T>(data: any, schema: z.ZodSchema<T>): T[] {
-        // TODO: Implement XML parsing if API returns XML
-        // For now, assuming JSON response or need to parse XML
-
-        // If data is already an array, validate each item
-        if (Array.isArray(data)) {
-            return data.map(item => schema.parse(item));
-        }
+        let parsedData = data;
 
         // If data is a string (XML), parse it
         if (typeof data === 'string') {
-            // Basic XML parsing - in production, use a proper XML parser like 'fast-xml-parser'
-            console.warn('[PortalJust] XML parsing not fully implemented, returning empty array');
-            return [];
-        }
-
-        // If response has a specific structure, extract the array
-        if (data && typeof data === 'object') {
-            // Try to find array in common response structures
-            const possibleArrayKeys = ['results', 'data', 'items', 'dosare', 'sedinte'];
-
-            for (const key of possibleArrayKeys) {
-                if (Array.isArray(data[key])) {
-                    return data[key].map((item: any) => schema.parse(item));
-                }
+            try {
+                // Configure parser to keep values as strings to match Zod schema
+                const parser = new XMLParser({
+                    ignoreAttributes: true,
+                    parseTagValue: false,
+                    trimValues: true,
+                });
+                parsedData = parser.parse(data);
+            } catch (error) {
+                console.error('[PortalJust] XML parsing failed:', error);
+                return [];
             }
         }
 
-        // Fallback: return empty array
-        console.warn('[PortalJust] Could not parse response, returning empty array');
+        // Search strategy: find all objects in the tree that satisfy the schema
+        const results: T[] = [];
+        const visited = new Set();
+
+        // Helper function to recursively traverse the object tree
+        const traverse = (node: any) => {
+            if (!node || typeof node !== 'object') return;
+            if (visited.has(node)) return;
+            visited.add(node);
+
+            // 1. Check if current node is an array, if so traverse items
+            if (Array.isArray(node)) {
+                for (const item of node) {
+                    traverse(item);
+                }
+                return;
+            }
+
+            // 2. Check if current object matches the schema
+            const validationResult = schema.safeParse(node);
+            if (validationResult.success) {
+                results.push(validationResult.data);
+                // If it matches, we assume it's a leaf item we want.
+                return;
+            }
+
+            // 3. If not a match, traverse children properties
+            for (const key in node) {
+                if (Object.prototype.hasOwnProperty.call(node, key)) {
+                    traverse(node[key]);
+                }
+            }
+        };
+
+        traverse(parsedData);
+
+        if (results.length > 0) {
+            return results;
+        }
+
+        console.warn('[PortalJust] No valid items found in response matching schema');
         return [];
     }
 

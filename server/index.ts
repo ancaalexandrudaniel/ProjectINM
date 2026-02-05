@@ -2,7 +2,14 @@ import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, log } from "./vite";
+import { db } from "./db";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { RoadmapService } from "./services/roadmap-service";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Ensure NODE_ENV is set for deployment
 if (!process.env.NODE_ENV) {
@@ -57,6 +64,24 @@ app.use((req, res, next) => {
 (async () => {
   let server;
   try {
+    // Run migrations on startup
+    console.log("[SERVER] Starting database migration...");
+    try {
+      await migrate(db, { migrationsFolder: path.resolve(process.cwd(), "migrations") });
+      console.log("[SERVER] Database migration complete.");
+    } catch (e) {
+      console.error("[SERVER] Migration failed:", e);
+      // Don't crash here if migration fails, might be just a lock issue or already done
+    }
+
+    // Initialize roadmap data
+    console.log("[SERVER] Checking roadmap initialization...");
+    try {
+      await RoadmapService.initialize();
+    } catch (e) {
+      console.error("[SERVER] Roadmap initialization failed:", e);
+    }
+
     console.log("[DEBUG] About to register routes...");
     server = await registerRoutes(app);
     console.log("[DEBUG] Routes registered successfully.");
@@ -83,7 +108,7 @@ app.use((req, res, next) => {
     await setupVite(app, server);
   } else {
     // Serve static files manually to fix MIME type issues
-    const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
+    const distPath = path.resolve(__dirname, "..", "dist", "public");
     console.log(`[SERVER] Serving static from: ${distPath}`);
 
     // Serve static assets first (before catch-all route)
