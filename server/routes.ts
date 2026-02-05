@@ -5,7 +5,7 @@ import { insertQuizSessionSchema, insertUserAnswerSchema, questionTopics, essayP
 import { z } from "zod";
 import { db } from "./db";
 import { users } from "../shared/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql, inArray } from "drizzle-orm";
 import {
   createSession,
   validateSession,
@@ -13,6 +13,7 @@ import {
   verifyPassword,
   type AuthenticatedUser
 } from "./auth";
+import { authMiddleware } from "./auth-middleware";
 import multer from "multer";
 import { parsePDFBuffer, cleanPDFText, detectExamPaperType } from "./services/pdf-parser";
 
@@ -31,47 +32,106 @@ const upload = multer({
   },
 });
 
-// Extend Express Request to include user
-declare global {
-  namespace Express {
-    interface Request {
-      user?: AuthenticatedUser;
-      sessionToken?: string;
-    }
-  }
-}
-
 // Helper to get first user ID
+let cachedDefaultUserId: string | null = null;
+
 async function getDefaultUserId(): Promise<string> {
+  if (cachedDefaultUserId) return cachedDefaultUserId;
+
   const allUsers = await db.select().from(users).limit(1);
   if (allUsers.length === 0) {
     throw new Error("No users found in database");
   }
-  return allUsers[0].id;
-}
-
-// ============================================================================
-// Authentication Middleware
-// ============================================================================
-async function authMiddleware(req: Request, res: Response, next: NextFunction) {
-  const sessionToken = req.headers.authorization?.replace("Bearer ", "") ||
-    req.cookies?.session_token;
-
-  if (!sessionToken) {
-    return res.status(401).json({ error: "Authentication required" });
-  }
-
-  const user = await validateSession(sessionToken);
-  if (!user) {
-    return res.status(401).json({ error: "Invalid or expired session" });
-  }
-
-  req.user = user;
-  req.sessionToken = sessionToken;
-  next();
+  cachedDefaultUserId = allUsers[0].id;
+  return cachedDefaultUserId;
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+
+  // ============================================================================
+  // HEALTH CHECK
+  // ============================================================================
+  app.get("/api/health", (req, res) => {
+    res.status(200).json({ status: "ok" });
+  });
+
+  // ============================================================================
+  // ADMIN: DATABASE SETUP - Creates missing tables
+  // ============================================================================
+  app.post("/api/admin/db-setup", async (req, res) => {
+    try {
+      const { sql } = await import("drizzle-orm");
+
+      console.log("[ADMIN] Running database setup...");
+
+      // Check and create roadmap tables if they don't exist
+      const createTablesSQL = `
+        -- Create user_gamification table
+        CREATE TABLE IF NOT EXISTS user_gamification (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          user_id VARCHAR NOT NULL,
+          current_xp INTEGER DEFAULT 0,
+          current_level INTEGER DEFAULT 1,
+          current_streak INTEGER DEFAULT 0,
+          longest_streak INTEGER DEFAULT 0,
+          last_activity_date TIMESTAMP,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Create roadmap_nodes table
+        CREATE TABLE IF NOT EXISTS roadmap_nodes (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          syllabus_id VARCHAR,
+          title VARCHAR NOT NULL,
+          description TEXT,
+          xp_reward INTEGER DEFAULT 100,
+          order_index INTEGER NOT NULL,
+          parent_node_id VARCHAR,
+          milestone_type VARCHAR DEFAULT 'topic',
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Create user_node_progress table
+        CREATE TABLE IF NOT EXISTS user_node_progress (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          user_id VARCHAR NOT NULL,
+          node_id VARCHAR NOT NULL,
+          status VARCHAR DEFAULT 'LOCKED',
+          score INTEGER DEFAULT 0,
+          completed_at TIMESTAMP,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Create unique constraint if not exists
+        DO $$ 
+        BEGIN
+          IF NOT EXISTS (
+            SELECT 1 FROM pg_constraint WHERE conname = 'user_node_progress_user_node_unique'
+          ) THEN
+            ALTER TABLE user_node_progress ADD CONSTRAINT user_node_progress_user_node_unique UNIQUE (user_id, node_id);
+          END IF;
+        EXCEPTION WHEN OTHERS THEN
+          NULL;
+        END $$;
+      `;
+
+      await db.execute(sql.raw(createTablesSQL));
+
+      console.log("[ADMIN] Database setup completed successfully");
+
+      res.json({
+        success: true,
+        message: "Database tables created/verified successfully",
+        tables: ["user_gamification", "roadmap_nodes", "user_node_progress"]
+      });
+    } catch (error: any) {
+      console.error("[ADMIN] Database setup error:", error);
+      res.status(500).json({
+        error: "Database setup failed",
+        message: error.message
+      });
+    }
+  });
 
   // ============================================================================
   // AUTHENTICATION ROUTES
@@ -999,14 +1059,15 @@ Notează obiectiv pe baza baremului.`;
       const procedural = penalQuestions.slice(25, 50);
       let updated = 0;
 
-      for (const q of procedural) {
+      const ids = procedural.map(q => q.id);
+      if (ids.length > 0) {
         await db.update(questionsTable)
           .set({
             subject: "penal-procedural",
-            tags: [...(q.tags || []).filter(t => !t.startsWith('subject:')), 'subject:penal-procedural']
+            tags: sql`COALESCE((SELECT array_agg(elem) FROM unnest(${questionsTable.tags}) AS elem WHERE elem NOT LIKE 'subject:%'), ARRAY[]::text[]) || ARRAY['subject:penal-procedural']`
           })
-          .where(eq(questionsTable.id, q.id));
-        updated++;
+          .where(inArray(questionsTable.id, ids));
+        updated = ids.length;
       }
 
       console.log(`[FIX-PENAL] Updated ${updated} questions to penal-procedural`);
@@ -1049,23 +1110,13 @@ Notează obiectiv pe baza baremului.`;
 
       const allQuestions = await db.select().from(questions);
 
-      // Filter by tag "Examen {year}" OR matching year mechanism if we had one
-      // Since we rely on tags for now:
-      const examQuestions = allQuestions.filter(q =>
+      // Filter by tag "Examen {year}" OR matching year mechanism
+      let targetQuestions = allQuestions.filter(q =>
+        q.chapter?.includes(`Examen ${year}`) ||
+        q.tags?.includes(`year:${year}`) ||
         q.tags?.includes(`Examen ${year}`) ||
-        q.tags?.includes(`examen-${year}`) ||
-        // Also include if no specific exam tag but subject matches standard pool? 
-        // No, strict exam simulation needs exact questions.
-        // Fallback: if we imported them recently, maybe they don't have tags?
-        // Let's assume tags are present from import.
-        // For our specific 2024 import, let's verify tags.
-        // If 0 questions found, we might want to panic.
-        true // FOR DEV: Allow all questions to match for testing if tags missing
-      ); // TODO: Refine filter logic for production
-
-      // Filter logic refinement:
-      // Real exam questions MUST have the year tag or property
-      const relevantQuestions = examQuestions.filter(q => true); // Placeholder
+        q.tags?.includes(`examen-${year}`)
+      );
 
       // 3. Grade
       const breakdown = {
@@ -1101,8 +1152,6 @@ Notează obiectiv pe baza baremului.`;
 
       // 2. Identify the Target Question Set
       // Try to find questions for this year
-      let allDbQuestions = await db.select().from(questions);
-      let targetQuestions = allDbQuestions.filter(q => q.chapter.includes(`Examen ${year}`) || (q.tags && q.tags.includes(`year:${year}`)));
 
       // FALLBACK: If no questions found for year (e.g. they are mock questions), 
       // fetch the questions that were answered to at least give a partial score.
@@ -2288,24 +2337,25 @@ Notează obiectiv pe baza baremului.`;
       console.log(`[CHUNKING] Created ${chunks.length} chunks from ${document.extractedText.length} chars`);
 
       // Save chunks to database
-      const savedChunks = [];
-      for (const chunk of chunks) {
-        const [saved] = await db
+      let savedChunks = [];
+      if (chunks.length > 0) {
+        savedChunks = await db
           .insert(documentChunks)
-          .values({
-            documentId: document.id,
-            chunkText: chunk.text,
-            chunkIndex: chunk.index,
-            metadata: {
-              documentType: document.documentType,
-              subject: document.subject,
-              fileName: document.fileName,
-              startPosition: chunk.startPosition,
-              endPosition: chunk.endPosition
-            }
-          })
+          .values(
+            chunks.map((chunk) => ({
+              documentId: document.id,
+              chunkText: chunk.text,
+              chunkIndex: chunk.index,
+              metadata: {
+                documentType: document.documentType,
+                subject: document.subject,
+                fileName: document.fileName,
+                startPosition: chunk.startPosition,
+                endPosition: chunk.endPosition,
+              },
+            }))
+          )
           .returning();
-        savedChunks.push(saved);
       }
 
       res.json({
@@ -2575,6 +2625,164 @@ Notează obiectiv pe baza baremului.`;
     }
   });
 
+  // ============================================================================
+  // ROADMAP & GAMIFICATION ROUTES
+  // ============================================================================
+
+  // GET /api/roadmap - Get the user's roadmap state
+  app.get("/api/roadmap", async (req, res) => {
+    try {
+      const { RoadmapService } = await import("./services/roadmap-service");
+      const { roadmapNodes } = await import("../shared/schema");
+      const userId = await getDefaultUserId();
+
+      // Auto-init: Check if roadmap nodes exist, if not, populate from syllabus.json
+      let existingNodes;
+      try {
+        existingNodes = await db.select().from(roadmapNodes).limit(1);
+      } catch (dbError: any) {
+        // Table doesn't exist - need to run db:push
+        if (dbError.message?.includes("does not exist") || dbError.code === "42P01") {
+          console.error("[ROADMAP] Table roadmap_nodes does not exist. Run: npm run db:push");
+          return res.status(503).json({
+            error: "Database tables not initialized",
+            message: "Roadmap tables don't exist yet. Admin needs to run 'npm run db:push' on Railway.",
+            code: "TABLES_NOT_FOUND"
+          });
+        }
+        throw dbError;
+      }
+
+      if (existingNodes.length === 0) {
+        console.log("[ROADMAP] No nodes found, auto-initializing from syllabus.json...");
+
+        try {
+          const fs = await import("fs/promises");
+          const path = await import("path");
+          const { fileURLToPath } = await import("url");
+
+          // Get dirname from current module (ESM compatible)
+          const __filename = fileURLToPath(import.meta.url);
+          const __dirname = path.dirname(__filename);
+
+          // Try multiple paths for syllabus.json
+          let syllabusData = null;
+          const possiblePaths = [
+            path.resolve(process.cwd(), "syllabus.json"),
+            path.join(__dirname, "../syllabus.json"),
+            path.join(__dirname, "../../syllabus.json"),
+            "/app/syllabus.json",
+            "./syllabus.json"
+          ];
+
+          console.log(`[ROADMAP] Looking for syllabus.json, cwd: ${process.cwd()}, __dirname: ${__dirname}`);
+
+          for (const syllabusPath of possiblePaths) {
+            try {
+              console.log(`[ROADMAP] Trying path: ${syllabusPath}`);
+              const fileContent = await fs.readFile(syllabusPath, "utf-8");
+              syllabusData = JSON.parse(fileContent);
+              console.log(`[ROADMAP] ✓ Loaded syllabus from: ${syllabusPath}`);
+              break;
+            } catch (pathError: any) {
+              console.log(`[ROADMAP] ✗ Path failed: ${syllabusPath} - ${pathError.code || pathError.message}`);
+            }
+          }
+
+          if (syllabusData) {
+            let orderIndex = 0;
+            const nodesToInsert: any[] = [];
+
+            function processNode(node: any, depth: number = 0) {
+              let milestoneType = "topic";
+              if (depth === 0) milestoneType = "discipline";
+              else if (depth === 1) milestoneType = "chapter";
+              else if (node.children && node.children.length > 0) milestoneType = "section";
+
+              let xpReward = 50;
+              if (milestoneType === "chapter") xpReward = 500;
+              if (milestoneType === "section") xpReward = 200;
+
+              nodesToInsert.push({
+                syllabusId: node.id,
+                title: node.title,
+                description: null,
+                xpReward,
+                orderIndex: orderIndex++,
+                parentNodeId: null,
+                milestoneType,
+              });
+
+              if (node.children) {
+                for (const child of node.children) {
+                  processNode(child, depth + 1);
+                }
+              }
+            }
+
+            for (const disc of syllabusData) {
+              processNode(disc);
+            }
+
+            // Insert in batches
+            const batchSize = 100;
+            for (let i = 0; i < nodesToInsert.length; i += batchSize) {
+              const batch = nodesToInsert.slice(i, i + batchSize);
+              await db.insert(roadmapNodes).values(batch);
+            }
+
+            console.log(`[ROADMAP] Auto-initialized ${nodesToInsert.length} nodes`);
+          } else {
+            console.warn("[ROADMAP] Could not find syllabus.json, roadmap will remain empty");
+          }
+        } catch (initError) {
+          console.error("[ROADMAP] Auto-init error:", initError);
+          // Continue anyway, just return empty roadmap
+        }
+      }
+
+      const roadmap = await RoadmapService.getRoadmap(userId);
+      res.json(roadmap);
+    } catch (error) {
+      console.error("[ROADMAP] Get roadmap error:", error);
+      res.status(500).json({ error: "Failed to fetch roadmap" });
+    }
+  });
+
+  // GET /api/roadmap/node/:nodeId - Get content for a specific node
+  app.get("/api/roadmap/node/:nodeId", async (req, res) => {
+    try {
+      const { RoadmapService } = await import("./services/roadmap-service");
+      const { nodeId } = req.params;
+
+      const content = await RoadmapService.getNodeContent(nodeId);
+      res.json(content);
+    } catch (error) {
+      console.error("[ROADMAP] Get node content error:", error);
+      res.status(500).json({ error: "Failed to fetch node content" });
+    }
+  });
+
+  // POST /api/roadmap/node/:nodeId/complete - Mark a node as completed
+  app.post("/api/roadmap/node/:nodeId/complete", async (req, res) => {
+    try {
+      const { RoadmapService } = await import("./services/roadmap-service");
+      const userId = await getDefaultUserId();
+      const { nodeId } = req.params;
+      const { score } = req.body;
+
+      if (score === undefined) {
+        return res.status(400).json({ error: "Score is required" });
+      }
+
+      const result = await RoadmapService.completeNode(userId, nodeId, { score });
+      res.json(result);
+    } catch (error) {
+      console.error("[ROADMAP] Complete node error:", error);
+      res.status(500).json({ error: "Failed to complete node" });
+    }
+  });
+
   // ============================================
   // BULK IMPORT & SEARCH ROUTES
   // ============================================
@@ -2714,6 +2922,10 @@ Notează obiectiv pe baza baremului.`;
       const insertedQuestions = [];
       const errors: Array<{ index: number; error: string }> = [];
 
+      // Optimization: Prepare all questions for batch insert first
+      const preparedQuestions: any[] = [];
+      const originalIndices: number[] = [];
+
       for (let i = 0; i < questionsData.length; i++) {
         const q = questionsData[i];
         try {
@@ -2743,7 +2955,7 @@ Notează obiectiv pe baza baremului.`;
             finalCorrectAnswersMultiple = [];
           }
 
-          const [inserted] = await db.insert(questions).values({
+          preparedQuestions.push({
             subject,
             chapter: q.chapter,
             topic: q.topic,
@@ -2760,11 +2972,41 @@ Notează obiectiv pe baza baremului.`;
             sourceType,
             sourceLLM: sourceLLM || null,
             batchId: batch.id
-          }).returning();
-          insertedQuestions.push(inserted);
-        } catch (qErr: any) {
-          console.warn(`Failed to insert question ${i}:`, qErr.message);
-          errors.push({ index: i, error: qErr.message });
+          });
+          originalIndices.push(i);
+        } catch (prepErr: any) {
+          console.warn(`Failed to prepare question ${i}:`, prepErr.message);
+          errors.push({ index: i, error: prepErr.message });
+        }
+      }
+
+      // Attempt Batch Insert
+      let batchSuccess = false;
+      if (preparedQuestions.length > 0) {
+        try {
+          console.log(`[BULK IMPORT] Attempting batch insert of ${preparedQuestions.length} questions...`);
+          const result = await db.insert(questions).values(preparedQuestions).returning();
+          insertedQuestions.push(...result);
+          batchSuccess = true;
+          console.log(`[BULK IMPORT] Batch insert successful!`);
+        } catch (batchErr: any) {
+          console.warn(`[BULK IMPORT] Batch insert failed, falling back to sequential: ${batchErr.message}`);
+          batchSuccess = false;
+        }
+      }
+
+      // Fallback: Sequential Insert if batch failed
+      if (!batchSuccess && preparedQuestions.length > 0) {
+        for (let j = 0; j < preparedQuestions.length; j++) {
+          const qData = preparedQuestions[j];
+          const originalIdx = originalIndices[j];
+          try {
+            const [inserted] = await db.insert(questions).values(qData).returning();
+            insertedQuestions.push(inserted);
+          } catch (qErr: any) {
+             console.warn(`Failed to insert question ${originalIdx} (sequential fallback):`, qErr.message);
+             errors.push({ index: originalIdx, error: qErr.message });
+          }
         }
       }
 
@@ -2909,6 +3151,9 @@ Notează obiectiv pe baza baremului.`;
       const insertedQuestions = [];
       const errors: Array<{ index: number; error: string }> = [];
 
+      // Phase 1: Prepare all questions for insertion
+      const preparedData: Array<{ index: number, value: any }> = [];
+
       for (let i = 0; i < sessionData.intrebari.length; i++) {
         const q = sessionData.intrebari[i];
         try {
@@ -2946,31 +3191,57 @@ Notează obiectiv pe baza baremului.`;
           };
           const difficulty = difficultyMap[q.dificultate?.toLowerCase() || 'medium'] || 'medium';
 
-          const [inserted] = await db.insert(questions).values({
-            subject,
-            chapter: chapter || meta?.segment_articole || 'General',
-            topic: meta?.segment_articole,
-            difficulty,
-            setType,
-            questionText: q.tulpina,
-            options,
-            correctAnswer,
-            correctAnswersMultiple,
-            explanation: q.feedback?.explicatie_generala || '',
-            legalReferences: q.articole_relevante,
-            feedbackDetailed,
-            keyConcepts: q.concepte_cheie,
-            tags: q.tags,
-            hasExceptions: q.feedback?.are_exceptii || false,
-            sourceType: 'llm-session',
-            sourceLLM: sourceLLM || null,
-            batchId: batch.id
-          }).returning();
-
-          insertedQuestions.push(inserted);
+          preparedData.push({
+            index: i,
+            value: {
+              subject,
+              chapter: chapter || meta?.segment_articole || 'General',
+              topic: meta?.segment_articole,
+              difficulty,
+              setType,
+              questionText: q.tulpina,
+              options,
+              correctAnswer,
+              correctAnswersMultiple,
+              explanation: q.feedback?.explicatie_generala || '',
+              legalReferences: q.articole_relevante,
+              feedbackDetailed,
+              keyConcepts: q.concepte_cheie,
+              tags: q.tags,
+              hasExceptions: q.feedback?.are_exceptii || false,
+              sourceType: 'llm-session',
+              sourceLLM: sourceLLM || null,
+              batchId: batch.id
+            }
+          });
         } catch (qErr: any) {
-          console.warn(`Failed to insert question ${i}:`, qErr.message);
+          console.warn(`Failed to process question ${i} for batch:`, qErr.message);
           errors.push({ index: i, error: qErr.message });
+        }
+      }
+
+      // Phase 2: Batch Insert with Fallback
+      if (preparedData.length > 0) {
+        try {
+          // Try batch insert first
+          console.log(`[BULK-IMPORT] Attempting batch insert for ${preparedData.length} questions...`);
+          const valuesToInsert = preparedData.map(p => p.value);
+          const inserted = await db.insert(questions).values(valuesToInsert).returning();
+          insertedQuestions.push(...inserted);
+          console.log(`[BULK-IMPORT] Batch insert successful!`);
+        } catch (batchErr: any) {
+          console.warn(`[BULK-IMPORT] Batch insert failed, falling back to sequential: ${batchErr.message}`);
+
+          // Fallback to sequential insert to save valid records
+          for (const item of preparedData) {
+            try {
+              const [inserted] = await db.insert(questions).values(item.value).returning();
+              insertedQuestions.push(inserted);
+            } catch (seqErr: any) {
+              console.warn(`[BULK-IMPORT] Sequential insert failed for question index ${item.index}:`, seqErr.message);
+              errors.push({ index: item.index, error: seqErr.message });
+            }
+          }
         }
       }
 
@@ -2991,7 +3262,7 @@ Notează obiectiv pe baza baremului.`;
   app.get("/api/questions/search", async (req, res) => {
     try {
       const { questions } = await import("../shared/schema");
-      const { eq, ilike, and, or, desc } = await import("drizzle-orm");
+      const { eq, ilike, and, or, desc, sql } = await import("drizzle-orm");
 
       const { subject, chapter, topic, difficulty, keyword, sourceType, limit: limitStr } = req.query;
       const limit = parseInt(limitStr as string) || 50;
@@ -3016,10 +3287,7 @@ Notează obiectiv pe baza baremului.`;
       }
       if (keyword && keyword !== '') {
         conditions.push(
-          or(
-            ilike(questions.questionText, `%${keyword}%`),
-            ilike(questions.explanation, `%${keyword}%`)
-          )
+          sql`to_tsvector('romanian', ${questions.questionText} || ' ' || ${questions.explanation}) @@ plainto_tsquery('romanian', ${keyword})`
         );
       }
 
@@ -3187,30 +3455,59 @@ Notează obiectiv pe baza baremului.`;
       const insertedCaseStudies = [];
       const errors: Array<{ index: number; error: string }> = [];
 
-      for (let i = 0; i < caseStudiesData.length; i++) {
-        const cs = caseStudiesData[i];
-        try {
-          const [inserted] = await db.insert(caseStudies).values({
-            userId,
-            subject,
-            examDay: examDay || null,
-            title: cs.title,
-            scenario: cs.scenario,
-            questions: cs.questions,
-            referenceArticles: cs.referenceArticles,
-            sampleAnswer: cs.sampleAnswer,
-            modelEvaluation: cs.modelEvaluation,
-            aiFeedback: cs.aiFeedback,
-            sourceType,
-            sourceLLM: sourceLLM || null,
-            batchId: batch.id,
-            difficulty: cs.difficulty,
-            estimatedTime: cs.estimatedTime
-          }).returning();
-          insertedCaseStudies.push(inserted);
-        } catch (csErr: any) {
-          console.warn(`Failed to insert case study ${i}:`, csErr.message);
-          errors.push({ index: i, error: csErr.message });
+      // Optimization: Batch insert first
+      // Map all data to schema structure
+      const caseStudiesToInsert = caseStudiesData.map(cs => ({
+        userId,
+        subject,
+        examDay: examDay || null,
+        title: cs.title,
+        scenario: cs.scenario,
+        questions: cs.questions,
+        referenceArticles: cs.referenceArticles,
+        sampleAnswer: cs.sampleAnswer,
+        modelEvaluation: cs.modelEvaluation,
+        aiFeedback: cs.aiFeedback,
+        sourceType,
+        sourceLLM: sourceLLM || null,
+        batchId: batch.id,
+        difficulty: cs.difficulty,
+        estimatedTime: cs.estimatedTime
+      }));
+
+      try {
+        if (caseStudiesToInsert.length > 0) {
+          const batchInserted = await db.insert(caseStudies).values(caseStudiesToInsert).returning();
+          insertedCaseStudies.push(...batchInserted);
+        }
+      } catch (batchError) {
+        console.warn("Batch insert failed, falling back to sequential insert:", batchError);
+        // Fallback: Sequential insert to isolate errors
+        for (let i = 0; i < caseStudiesData.length; i++) {
+          const cs = caseStudiesData[i];
+          try {
+            const [inserted] = await db.insert(caseStudies).values({
+              userId,
+              subject,
+              examDay: examDay || null,
+              title: cs.title,
+              scenario: cs.scenario,
+              questions: cs.questions,
+              referenceArticles: cs.referenceArticles,
+              sampleAnswer: cs.sampleAnswer,
+              modelEvaluation: cs.modelEvaluation,
+              aiFeedback: cs.aiFeedback,
+              sourceType,
+              sourceLLM: sourceLLM || null,
+              batchId: batch.id,
+              difficulty: cs.difficulty,
+              estimatedTime: cs.estimatedTime
+            }).returning();
+            insertedCaseStudies.push(inserted);
+          } catch (csErr: any) {
+            console.warn(`Failed to insert case study ${i}:`, csErr.message);
+            errors.push({ index: i, error: csErr.message });
+          }
         }
       }
 
@@ -3343,34 +3640,44 @@ Notează obiectiv pe baza baremului.`;
       }).returning();
 
       // Insert validated articles only
-      const insertedArticles = [];
+      let insertedArticles = [];
       const errors: { index: number; error: string }[] = [];
 
-      for (let i = 0; i < validArticles.length; i++) {
-        const art = validArticles[i];
-        try {
+      // Prepare all values for insertion
+      const allValues = validArticles.map((art: any) => {
+        const rawContent = Object.entries(art.segments || {})
+          .map(([key, value]) => `[${key.toUpperCase()}]\n${value}`)
+          .join('\n\n');
 
-          // Build raw content from all segments
-          const rawContent = Object.entries(art.segments || {})
-            .map(([key, value]) => `[${key.toUpperCase()}]\n${value}`)
-            .join('\n\n');
+        return {
+          userId,
+          articleNumber: art.article,
+          title: art.title,
+          subject,
+          lawSource: lawSource || meta?.source || null,
+          segments: art.segments,
+          rawContent: art.raw || rawContent,
+          batchId: batch.id,
+          isProcessedForRag: false
+        };
+      });
 
-          const [inserted] = await db.insert(legalArticles).values({
-            userId,
-            articleNumber: art.article,
-            title: art.title,
-            subject,
-            lawSource: lawSource || meta?.source || null,
-            segments: art.segments,
-            rawContent: art.raw || rawContent,
-            batchId: batch.id,
-            isProcessedForRag: false
-          }).returning();
+      try {
+        // Optimization: Try batch insert first
+        insertedArticles = await db.insert(legalArticles).values(allValues).returning();
+      } catch (batchErr) {
+        console.warn("Batch insert failed, falling back to sequential insert:", batchErr);
 
-          insertedArticles.push(inserted);
-        } catch (artErr: any) {
-          console.warn(`Failed to insert article ${art.article}:`, artErr.message);
-          errors.push({ index: i, error: artErr.message });
+        // Fallback: Sequential insert to handle individual errors
+        for (let i = 0; i < validArticles.length; i++) {
+          const art = validArticles[i];
+          try {
+            const [inserted] = await db.insert(legalArticles).values(allValues[i]).returning();
+            insertedArticles.push(inserted);
+          } catch (artErr: any) {
+            console.warn(`Failed to insert article ${art.article}:`, artErr.message);
+            errors.push({ index: i, error: artErr.message });
+          }
         }
       }
 
@@ -3555,25 +3862,26 @@ Notează obiectiv pe baza baremului.`;
       const embeddings = await batchGenerateEmbeddings(texts);
 
       // Save chunks with embeddings
-      const savedChunks = [];
-      for (let i = 0; i < allChunks.length; i++) {
-        const [saved] = await db
+      const chunksToInsert = allChunks.map((chunk, i) => ({
+        articleId,
+        segmentType: chunk.segmentType,
+        chunkText: chunk.text,
+        chunkIndex: chunk.index,
+        embedding: embeddings[i],
+        metadata: {
+          articleNumber: article.articleNumber,
+          title: article.title,
+          subject: article.subject,
+          segmentType: chunk.segmentType,
+        },
+      }));
+
+      let savedChunks: any[] = [];
+      if (chunksToInsert.length > 0) {
+        savedChunks = await db
           .insert(legalArticleChunks)
-          .values({
-            articleId,
-            segmentType: allChunks[i].segmentType,
-            chunkText: allChunks[i].text,
-            chunkIndex: allChunks[i].index,
-            embedding: embeddings[i],
-            metadata: {
-              articleNumber: article.articleNumber,
-              title: article.title,
-              subject: article.subject,
-              segmentType: allChunks[i].segmentType
-            }
-          })
+          .values(chunksToInsert)
           .returning();
-        savedChunks.push(saved);
       }
 
       // Mark article as processed
