@@ -7,7 +7,7 @@
 
 import { db } from '../../db';
 import { legislativeActs } from '@shared/schema';
-import { eq, ilike, or, sql, inArray } from 'drizzle-orm';
+import { eq, ilike, or, sql } from 'drizzle-orm';
 import { sanitizeLegislativeAct, sanitizeLegislativeActs } from './sanitizer';
 import { buildContextSection } from './agent-config';
 import type {
@@ -149,28 +149,15 @@ export async function buildArticleContext(
 ): Promise<SanitizedLegalText[]> {
     const result: SanitizedLegalText[] = [];
 
-    // Collect all unique act IDs
-    const actIds = Array.from(new Set(articleReferences.map(ref => ref.actId)));
-
-    if (actIds.length === 0) {
-        return [];
-    }
-
-    // Fetch all acts in a single query
-    const acts = await db
-        .select()
-        .from(legislativeActs)
-        .where(inArray(legislativeActs.id, actIds));
-
-    // Create a map for quick lookup
-    const actsMap = new Map(acts.map(act => [act.id, act]));
-
-    // Process each reference
     for (const ref of articleReferences) {
-        const act = actsMap.get(ref.actId);
+        const acts = await db
+            .select()
+            .from(legislativeActs)
+            .where(eq(legislativeActs.id, ref.actId))
+            .limit(1);
 
-        if (act) {
-            const sanitizedAct = sanitizeLegislativeAct(act);
+        if (acts.length > 0) {
+            const sanitizedAct = sanitizeLegislativeAct(acts[0]);
             const article = extractArticleFromAct(sanitizedAct, ref.articleNumber);
             if (article) {
                 result.push(article);
