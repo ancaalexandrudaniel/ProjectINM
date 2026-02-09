@@ -12,6 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Sparkles } from "lucide-react";
+import { formatTime } from "@/lib/constants";
 import {
     Clock,
     ChevronLeft,
@@ -283,14 +284,6 @@ export default function TimeMachineProba1() {
             offset += sections[i].questions.length;
         }
         return globalIndex - offset;
-    };
-
-    // Format time
-    const formatTime = (seconds: number) => {
-        const h = Math.floor(seconds / 3600);
-        const m = Math.floor((seconds % 3600) / 60);
-        const s = seconds % 60;
-        return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     };
 
     // Answer handlers

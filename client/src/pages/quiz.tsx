@@ -19,6 +19,7 @@ import QuestionCard from "@/components/quiz/question-card";
 import AnswerFeedback from "@/components/quiz/answer-feedback";
 import type { QuizQuestion, QuizSession, UserAnswer } from "@/types/quiz";
 import { toast } from "@/hooks/use-toast";
+import { formatTime } from "@/lib/constants";
 
 export default function Quiz() {
   const [, params] = useRoute("/quiz/:subject?");
@@ -157,12 +158,6 @@ export default function Quiz() {
       });
     }
   }, [questions, quizSession]);
-
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
 
   const handleAnswerSelect = (answerIndex: number) => {
     if (showFeedback) return;

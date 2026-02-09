@@ -37,57 +37,9 @@ import { CaseWorkflow } from "@/components/case-workflow/CaseWorkflow";
 import { WorkflowState, INITIAL_WORKFLOW_STATE } from "@/components/case-workflow/types";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-
-// Types
-interface ExamRequirement {
-    id: string;
-    requirementId: string; // '1.1', '1.2', '2.1'
-    requirementText: string;
-    points: string;
-    recommendedTime?: number;
-    solution: string;
-    rubric: Array<{ criterion: string; points: string }>;
-}
-
-interface ExamSubject {
-    subjectId: string; // 'civil-1', 'civil-2', 'proc-1'
-    subjectTitle: string;
-    subjectArea: string; // 'Drept Civil' | 'Drept Procesual Civil'
-    scenario?: string;
-    requirements: ExamRequirement[];
-}
-
-interface ExamData {
-    year: number;
-    discipline: string; // 'civil-combined' | 'penal-combined'
-    subjects: ExamSubject[];
-    totalPoints: number;
-}
-
-interface UserAnswers {
-    [requirementId: string]: string;
-}
-
-interface GradingResult {
-    totalScore: number;
-    maxScore: number;
-    percentage: number;
-    passed: boolean;
-    bySubject: Record<string, { score: number; max: number }>;
-    feedback: Array<{
-        requirementId: string;
-        score: number;
-        maxScore: number;
-        feedback: string;
-        strengths: string[];
-        improvements: string[];
-    }>;
-    overallFeedback: string;
-    expressionScore: number; // 0.50pt for clarity
-}
-
-// Exam duration: 4 hours per day
-const EXAM_DURATION = 4 * 60 * 60; // 4 hours in seconds
+import { formatTime } from "@/lib/constants";
+import type { ExamRequirement, ExamSubject, ExamData, UserAnswers, GradingResult } from "@/types/exam";
+import { EXAM_DURATION } from "@/types/exam";
 
 // Section colors (matching Proba I palette)
 const SECTION_COLORS = {
@@ -96,13 +48,6 @@ const SECTION_COLORS = {
     'penal': { color: 'text-amber-300', bg: 'bg-amber-900/50 border-amber-600', progress: 'bg-amber-500' },
     'penal-procedural': { color: 'text-fuchsia-300', bg: 'bg-fuchsia-900/50 border-fuchsia-600', progress: 'bg-fuchsia-500' },
 };
-
-function formatTime(seconds: number): string {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-}
 
 // Calculate word count
 function countWords(text: string): number {

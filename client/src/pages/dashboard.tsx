@@ -31,6 +31,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import StatsCards from "@/components/dashboard/stats-cards";
+import { SUBJECTS, getSubjectName } from "@/lib/constants";
 import type { UserProgress, QuizSession } from "@/types/quiz";
 
 // Level thresholds (mirrors server)
@@ -146,12 +147,7 @@ export default function Dashboard() {
   const daysLeft = getDaysUntilExam();
   const studyStreak = getStudyStreak();
 
-  const subjects = [
-    { id: 'civil', name: 'Drept Civil', icon: Scale, color: 'bg-blue-500' },
-    { id: 'civil-procedural', name: 'Drept Procesual Civil', icon: FileText, color: 'bg-green-500' },
-    { id: 'penal', name: 'Drept Penal', icon: Shield, color: 'bg-red-500' },
-    { id: 'penal-procedural', name: 'Drept Procesual Penal', icon: Gavel, color: 'bg-purple-500' },
-  ];
+  const subjects = SUBJECTS;
 
   const getSubjectStats = (subjectId: string) => {
     const subjectProgress = progress.filter(p => p.subject === subjectId);
@@ -195,11 +191,7 @@ export default function Dashboard() {
                         <span className="font-medium">Continuă de unde ai rămas</span>
                       </div>
                       <p className="text-sm text-slate-300 mb-3">
-                        Ultima sesiune: {lastSession.subject === 'civil' ? 'Drept Civil' :
-                          lastSession.subject === 'penal' ? 'Drept Penal' :
-                            lastSession.subject === 'civil-procedural' ? 'Drept Procesual Civil' :
-                              lastSession.subject === 'penal-procedural' ? 'Drept Procesual Penal' :
-                                'Test mixt'}
+                        Ultima sesiune: {lastSession.subject ? getSubjectName(lastSession.subject) : 'Test mixt'}
                         {' • '}
                         {new Date(lastSession.completedAt!).toLocaleDateString('ro-RO')}
                       </p>

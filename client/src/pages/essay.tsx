@@ -33,28 +33,7 @@ import {
     Zap,
     Save
 } from "lucide-react";
-
-interface EssayPrompt {
-    id: string;
-    subject: string;
-    examDay: string;
-    title: string;
-    prompt: string;
-    gradingRubric: RubricItem[];
-    sampleAnswer?: string;
-    commonMistakes?: string[];
-    difficulty: string;
-    estimatedTime: number;
-    sourceType: string;
-}
-
-interface RubricItem {
-    id: string;
-    category: string;
-    description: string;
-    points: number;
-    criteria: string[];
-}
+import type { EssayPrompt, RubricItem } from "@/types/essay";
 
 type PageState = "list" | "writing" | "evaluation" | "result";
 

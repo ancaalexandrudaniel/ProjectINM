@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { getSubjectName, getSubjectIcon } from "@/lib/constants";
 import type { Question, UserAnswer } from "@shared/schema";
 import { useState } from "react";
 
@@ -24,14 +25,14 @@ interface WrongAnswerWithQuestion extends UserAnswer {
   question: Question;
 }
 
-const subjectIcons = {
+const subjectIcons: Record<string, any> = {
   'civil': Scale,
   'civil-procedural': FileText,
   'penal': Shield,
   'penal-procedural': Gavel,
 };
 
-const subjectNames = {
+const subjectNames: Record<string, string> = {
   'civil': 'Drept Civil',
   'civil-procedural': 'Drept Procesual Civil',
   'penal': 'Drept Penal',
