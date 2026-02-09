@@ -4,7 +4,6 @@ import { AppError } from "../middleware/error-handler";
 import { z } from "zod";
 import { eq, and, ilike, or, desc, asc, gte, lte, sql, count } from "drizzle-orm";
 import {
-  users,
   questions,
   questionBatches,
   questionTopics,
@@ -22,19 +21,6 @@ import { batchGenerateEmbeddings, gradeCaseStudy } from "../gemini";
 
 const router = Router();
 
-// Helper to get first user ID (will be replaced in auth phase)
-let cachedDefaultUserId: string | null = null;
-
-async function getDefaultUserId(): Promise<string> {
-  if (cachedDefaultUserId) return cachedDefaultUserId;
-
-  const allUsers = await db.select().from(users).limit(1);
-  if (allUsers.length === 0) {
-    throw new AppError(500, "No users found in database");
-  }
-  cachedDefaultUserId = allUsers[0].id;
-  return cachedDefaultUserId;
-}
 
 // ============================================
 // EXAM ESSAYS ROUTES
@@ -264,7 +250,7 @@ router.get("/exam-essays/:year/:discipline", asyncHandler(async (req, res) => {
 
 // GET /question-batches - Get all question batches
 router.get("/question-batches", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const batches = await db
     .select()
@@ -277,7 +263,7 @@ router.get("/question-batches", asyncHandler(async (req, res) => {
 
 // POST /questions/bulk-import - Bulk import questions from LLM session
 router.post("/questions/bulk-import", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   // Validate request body - supports both single answer and multiple answers
   const optionSchema = z.union([
@@ -485,7 +471,7 @@ router.post("/questions/bulk-import", asyncHandler(async (req, res) => {
 
 // POST /questions/bulk-import-session - Bulk import with rich feedback format
 router.post("/questions/bulk-import-session", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   // Schema for the rich session format
   const variantSchema = z.object({
@@ -809,7 +795,7 @@ router.get("/questions/filters/:subject", asyncHandler(async (req, res) => {
 
 // GET /case-study-batches - Get all case study batches
 router.get("/case-study-batches", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const batches = await db
     .select()
@@ -822,7 +808,7 @@ router.get("/case-study-batches", asyncHandler(async (req, res) => {
 
 // POST /case-studies/bulk-import - Bulk import case studies from LLM session
 router.post("/case-studies/bulk-import", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const requestSchema = z.object({
     batchName: z.string().min(1, "Batch name is required"),
@@ -964,7 +950,7 @@ router.get("/case-studies/:id", asyncHandler(async (req, res) => {
 
 // POST /case-studies/:id/submit - Submit case study solution for grading
 router.post("/case-studies/:id/submit", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
   const caseStudyId = req.params.id;
   const { userAnswer, timeSpent } = req.body;
 
@@ -998,7 +984,7 @@ router.post("/case-studies/:id/submit", asyncHandler(async (req, res) => {
 
 // GET /case-studies/:id/submissions - Get user submissions for a case study
 router.get("/case-studies/:id/submissions", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
   const caseStudyId = req.params.id;
 
   const submissions = await db
@@ -1021,7 +1007,7 @@ router.get("/case-studies/:id/submissions", asyncHandler(async (req, res) => {
 
 // POST /legal-articles/bulk-import - Bulk import legal articles from structured JSON
 router.post("/legal-articles/bulk-import", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const {
     batchName,
@@ -1119,7 +1105,7 @@ router.post("/legal-articles/bulk-import", asyncHandler(async (req, res) => {
 
 // GET /legal-article-batches - Get all legal article batches
 router.get("/legal-article-batches", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const batches = await db
     .select()
@@ -1132,7 +1118,7 @@ router.get("/legal-article-batches", asyncHandler(async (req, res) => {
 
 // GET /legal-articles - Get all legal articles with optional filters
 router.get("/legal-articles", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const { subject, lawSource, articleFrom, articleTo, search, batchId } = req.query;
 
@@ -1168,7 +1154,7 @@ router.get("/legal-articles", asyncHandler(async (req, res) => {
 
 // GET /legal-articles/stats - Get statistics for legal articles
 router.get("/legal-articles/stats", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const [articlesCount] = await db
     .select({ count: count() })
@@ -1208,7 +1194,7 @@ router.get("/legal-articles/:id", asyncHandler(async (req, res) => {
 
 // DELETE /legal-article-batches/:id - Delete legal article batch (and its articles)
 router.delete("/legal-article-batches/:id", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
   const batchId = req.params.id;
 
   // Delete articles first
@@ -1388,7 +1374,7 @@ router.get("/exam-papers", asyncHandler(async (req, res) => {
 
 // POST /exam-papers/import - Import exam papers from parsed questions
 router.post("/exam-papers/import", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
   const { year, subject, type, questions: parsedQuestions } = req.body;
 
   if (!year || !subject || !parsedQuestions || !Array.isArray(parsedQuestions)) {

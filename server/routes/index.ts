@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import { authMiddleware } from "../middleware/auth";
 
 // Import route modules
 import authRouter from "./auth.routes";
@@ -18,13 +19,18 @@ import adminRouter, { registerExternalRoutes } from "./admin.routes";
  * the "/api" prefix is applied here once.
  */
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Health check (simple, no sub-router needed)
+  // Health check (no auth needed)
   app.get("/api/health", (_req, res) => {
     res.status(200).json({ status: "ok" });
   });
 
-  // Mount all sub-routers under /api
+  // Auth routes (login, register, logout, me) — no global auth middleware
   app.use("/api", authRouter);
+
+  // Apply authMiddleware globally for all protected routes
+  app.use("/api", authMiddleware);
+
+  // Mount all protected sub-routers under /api
   app.use("/api", roadmapRouter);
   app.use("/api", srsRouter);
   app.use("/api", quizRouter);

@@ -4,7 +4,6 @@ import { AppError } from "../middleware/error-handler";
 import { z } from "zod";
 import { db } from "../db";
 import {
-  users,
   questions,
   insertQuizSessionSchema,
   insertUserAnswerSchema,
@@ -16,19 +15,6 @@ import { storage } from "../storage";
 
 const router = Router();
 
-// Helper to get first user ID (temporary)
-let cachedDefaultUserId: string | null = null;
-
-async function getDefaultUserId(): Promise<string> {
-  if (cachedDefaultUserId) return cachedDefaultUserId;
-
-  const allUsers = await db.select().from(users).limit(1);
-  if (allUsers.length === 0) {
-    throw new Error("No users found in database");
-  }
-  cachedDefaultUserId = allUsers[0].id;
-  return cachedDefaultUserId;
-}
 
 // Get all questions
 router.get("/questions", asyncHandler(async (req, res) => {
@@ -105,7 +91,7 @@ router.post("/quiz/answer", asyncHandler(async (req, res) => {
     if (!answerData.isCorrect) {
       try {
         const { createSrsCard } = await import("../srs");
-        const userId = await getDefaultUserId();
+        const userId = req.user!.id;
         await createSrsCard(userId, answerData.questionId);
         console.log(`[SRS] Created review card for question ${answerData.questionId}`);
       } catch (srsError) {
@@ -116,7 +102,7 @@ router.post("/quiz/answer", asyncHandler(async (req, res) => {
 
     // Syllabus Progress Integration: Update progress for matching syllabus topics
     try {
-      const userId = await getDefaultUserId();
+      const userId = req.user!.id;
 
       // Find syllabus topics that match this question's chapter via chapterPatterns
       const allTopics = await db.select().from(syllabusTopicMappings)
@@ -212,28 +198,28 @@ router.patch("/quiz/session/:id", asyncHandler(async (req, res) => {
 
 // Get user progress
 router.get("/progress", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
   const progress = await storage.getUserProgress(userId);
   res.json(progress);
 }));
 
 // Get user quiz sessions
 router.get("/sessions", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
   const sessions = await storage.getUserQuizSessions(userId);
   res.json(sessions);
 }));
 
 // Get user answers for analysis
 router.get("/answers", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
   const answers = await storage.getUserAnswers(userId);
   res.json(answers);
 }));
 
 // Get wrong answers with question details
 router.get("/wrong-answers", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
   const subject = req.query.subject as string | undefined;
   const chapter = req.query.chapter as string | undefined;
 

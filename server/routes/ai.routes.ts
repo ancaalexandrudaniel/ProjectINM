@@ -3,7 +3,7 @@ import { z } from "zod";
 import { asyncHandler } from "../middleware/async-handler";
 import { AppError } from "../middleware/error-handler";
 import { explainWrongAnswer, generateEmbedding, calculateCosineSimilarity, generatePersonalizedStudyPlan } from "../gemini";
-import { questions, documentChunks, studyPlans, insertStudyPlanSchema, examEssays, users } from "../../shared/schema";
+import { questions, documentChunks, studyPlans, insertStudyPlanSchema, examEssays } from "../../shared/schema";
 import { eq, and, desc, isNotNull } from "drizzle-orm";
 import { generateWithSanitizedContext } from "../services/clean-room/generator";
 import { storage } from "../storage";
@@ -12,28 +12,13 @@ import { GoogleGenAI } from "@google/genai";
 
 const router = Router();
 
-// ---------------------------------------------------------------------------
-// Temporary helper – will be replaced by auth middleware
-// ---------------------------------------------------------------------------
-let cachedDefaultUserId: string | null = null;
-
-async function getDefaultUserId(): Promise<string> {
-  if (cachedDefaultUserId) return cachedDefaultUserId;
-
-  const allUsers = await db.select().from(users).limit(1);
-  if (allUsers.length === 0) {
-    throw new AppError(500, "No users found in database");
-  }
-  cachedDefaultUserId = allUsers[0].id;
-  return cachedDefaultUserId;
-}
 
 // ===========================================================================
 // POST /ai/explain-wrong-answer
 // ===========================================================================
 router.post("/ai/explain-wrong-answer", asyncHandler(async (req, res) => {
   const { questionId, userAnswerId } = req.body;
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   // Get question details
   const [question] = await db.select().from(questions).where(eq(questions.id, questionId));
@@ -298,7 +283,7 @@ Noteaza obiectiv pe baza baremului.`;
 // POST /legal-assistant/ask  (RAG Q&A with Clean Room)
 // ===========================================================================
 router.post("/legal-assistant/ask", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const { question, topK = 5 } = req.body;
 
@@ -384,7 +369,7 @@ router.post("/legal-assistant/ask", asyncHandler(async (req, res) => {
 // POST /study-plan/generate
 // ===========================================================================
 router.post("/study-plan/generate", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
   const { daysUntilExam, hoursPerDay } = req.body;
 
   // Validate input
@@ -431,7 +416,7 @@ router.post("/study-plan/generate", asyncHandler(async (req, res) => {
 // GET /study-plan/latest
 // ===========================================================================
 router.get("/study-plan/latest", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const [latestPlan] = await db
     .select()

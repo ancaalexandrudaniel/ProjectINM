@@ -31,6 +31,8 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import type { UserProgress } from "@/types/quiz";
+import { useAuth } from "@/hooks/use-auth";
+import { LogOut, Settings } from "lucide-react";
 
 const subjects = [
   { id: 'civil', name: 'Drept Civil', icon: Scale, href: '/quiz/civil' },
@@ -41,14 +43,22 @@ const subjects = [
 
 export default function Sidebar() {
   const [location] = useLocation();
+  const { user, isAdmin, logout, isAuthenticated } = useAuth();
+  const [, setLocation] = useLocation();
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     'raw': false,
     'historical': false,
     'etapa1': true,
     'grile': true,
     'spete': false,
-    'etapa2': false
+    'etapa2': false,
+    'admin': false,
   });
+
+  // Don't render sidebar on login page or if not authenticated
+  if (!isAuthenticated || location === '/login') {
+    return null;
+  }
 
   const { data: progress = [] } = useQuery<UserProgress[]>({
     queryKey: ['/api/progress'],
@@ -81,11 +91,6 @@ export default function Sidebar() {
           <Link href="/" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/') ? 'active' : ''}`} data-testid="nav-dashboard">
             <LayoutDashboard className="h-5 w-5" />
             <span className="font-medium">Dashboard</span>
-          </Link>
-
-          <Link href="/import-management" className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/import-management') ? 'active' : ''}`} data-testid="nav-import-management">
-            <Upload className="h-5 w-5" />
-            <span className="font-medium">Import Centralizat</span>
           </Link>
 
           {/* Time Machine - Featured */}
@@ -124,10 +129,12 @@ export default function Sidebar() {
                 <BookOpen className="h-4 w-4" />
                 <span>Legislație</span>
               </Link>
-              <Link href="/legal-articles-import" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/legal-articles-import') ? 'active' : ''}`} data-testid="nav-legal-articles-import">
-                <Plus className="h-4 w-4" />
-                <span>Import Articole</span>
-              </Link>
+              {isAdmin && (
+                <Link href="/legal-articles-import" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/legal-articles-import') ? 'active' : ''}`} data-testid="nav-legal-articles-import">
+                  <Plus className="h-4 w-4" />
+                  <span>Import Articole</span>
+                </Link>
+              )}
               <Link href="/raw-data" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/raw-data') ? 'active' : ''}`} data-testid="nav-raw-data">
                 <FolderOpen className="h-4 w-4" />
                 <span>Resurse Juridice</span>
@@ -203,10 +210,12 @@ export default function Sidebar() {
 
               {expandedSections['grile'] && (
                 <div className="pl-3 space-y-1">
-                  <Link href="/bulk-import" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/bulk-import') ? 'active' : ''}`} data-testid="nav-bulk-import">
-                    <Plus className="h-4 w-4" />
-                    <span>Import Întrebări</span>
-                  </Link>
+                  {isAdmin && (
+                    <Link href="/bulk-import" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/bulk-import') ? 'active' : ''}`} data-testid="nav-bulk-import">
+                      <Plus className="h-4 w-4" />
+                      <span>Import Întrebări</span>
+                    </Link>
+                  )}
                   <Link href="/question-bank" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/question-bank') ? 'active' : ''}`} data-testid="nav-question-bank">
                     <Search className="h-4 w-4" />
                     <span>Bancă de Întrebări</span>
@@ -274,10 +283,12 @@ export default function Sidebar() {
                     <PenTool className="h-4 w-4" />
                     <span>Rezolvă Speță</span>
                   </Link>
-                  <Link href="/spete-import" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/spete-import') ? 'active' : ''}`} data-testid="nav-spete-import">
-                    <Plus className="h-4 w-4" />
-                    <span>Import Spețe</span>
-                  </Link>
+                  {isAdmin && (
+                    <Link href="/spete-import" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/spete-import') ? 'active' : ''}`} data-testid="nav-spete-import">
+                      <Plus className="h-4 w-4" />
+                      <span>Import Spețe</span>
+                    </Link>
+                  )}
                   <Link href="/spete-bank" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/spete-bank') ? 'active' : ''}`} data-testid="nav-spete-bank">
                     <Search className="h-4 w-4" />
                     <span>Bancă de Spețe</span>
@@ -352,6 +363,61 @@ export default function Sidebar() {
             <Calendar className="h-5 w-5" />
             <span className="font-medium">Plan de Studiu</span>
           </Link>
+
+          {/* ADMIN SECTION */}
+          {isAdmin && (
+            <>
+              <div className="pt-4">
+                <button
+                  onClick={() => toggleSection('admin')}
+                  className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-red-400 uppercase tracking-wider hover:text-red-300 transition-colors"
+                  data-testid="section-toggle-admin"
+                >
+                  <span className="flex items-center gap-2">
+                    <Settings className="h-4 w-4" />
+                    Admin
+                  </span>
+                  {expandedSections['admin'] ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                </button>
+              </div>
+
+              {expandedSections['admin'] && (
+                <div className="pl-2 space-y-1">
+                  <Link href="/import-management" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/import-management') ? 'active' : ''}`}>
+                    <Upload className="h-4 w-4" />
+                    <span>Import Centralizat</span>
+                  </Link>
+                  <Link href="/exam-papers-import" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/exam-papers-import') ? 'active' : ''}`}>
+                    <Plus className="h-4 w-4" />
+                    <span>Import Subiecte PDF</span>
+                  </Link>
+                  <Link href="/exam-essays-import" className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm ${isActive('/exam-essays-import') ? 'active' : ''}`}>
+                    <Plus className="h-4 w-4" />
+                    <span>Import Probe Scrise</span>
+                  </Link>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* USER INFO + LOGOUT */}
+          <div className="mt-6 pt-4 border-t border-border">
+            <div className="px-4 py-2">
+              <p className="text-sm font-medium truncate">{user?.fullName}</p>
+              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+              {isAdmin && (
+                <span className="inline-block mt-1 text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full">Admin</span>
+              )}
+            </div>
+            <button
+              onClick={async () => { await logout(); setLocation('/login'); }}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300"
+              data-testid="nav-logout"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Deconectare</span>
+            </button>
+          </div>
         </div>
       </nav>
     </aside>

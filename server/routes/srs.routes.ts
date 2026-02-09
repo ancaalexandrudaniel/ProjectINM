@@ -1,29 +1,14 @@
 import { Router } from "express";
-import { db } from "../db";
-import { users } from "../../shared/schema";
 import { asyncHandler } from "../middleware/async-handler";
 import { AppError } from "../middleware/error-handler";
 import { getDueCards, getSrsStats, processReview, createSrsCard, getDueCardCount } from "../srs";
 
 const router = Router();
 
-// Helper to get first user ID (will be replaced in auth phase)
-let cachedDefaultUserId: string | null = null;
-
-async function getDefaultUserId(): Promise<string> {
-  if (cachedDefaultUserId) return cachedDefaultUserId;
-
-  const allUsers = await db.select().from(users).limit(1);
-  if (allUsers.length === 0) {
-    throw new AppError(500, "No users found in database");
-  }
-  cachedDefaultUserId = allUsers[0].id;
-  return cachedDefaultUserId;
-}
 
 // GET /srs/due - Get cards due for review
 router.get("/srs/due", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
   const limit = parseInt(req.query.limit as string) || 20;
 
   const dueCards = await getDueCards(userId, limit);
@@ -54,7 +39,7 @@ router.get("/srs/due", asyncHandler(async (req, res) => {
 
 // GET /srs/stats - Get SRS statistics
 router.get("/srs/stats", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const stats = await getSrsStats(userId);
 
@@ -63,7 +48,7 @@ router.get("/srs/stats", asyncHandler(async (req, res) => {
 
 // POST /srs/review - Process a card review
 router.post("/srs/review", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const { cardId, grade } = req.body;
 
@@ -87,7 +72,7 @@ router.post("/srs/review", asyncHandler(async (req, res) => {
 
 // GET /srs/count - Get count of cards due today (for dashboard)
 router.get("/srs/count", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const count = await getDueCardCount(userId);
 
@@ -96,7 +81,7 @@ router.get("/srs/count", asyncHandler(async (req, res) => {
 
 // POST /srs/card - Create an SRS card for a question
 router.post("/srs/card", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const { questionId } = req.body;
 

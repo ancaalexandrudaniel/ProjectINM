@@ -56,6 +56,7 @@ router.post("/login", asyncHandler(async (req, res) => {
       id: user.id,
       email: user.email,
       fullName: user.fullName,
+      role: user.role || "student",
       subscriptionTier: user.subscriptionTier || "free",
     },
   });
@@ -111,6 +112,7 @@ router.post("/register", asyncHandler(async (req, res) => {
       id: newUser.id,
       email: newUser.email,
       fullName: newUser.fullName,
+      role: "student",
       subscriptionTier: "free",
     },
   });

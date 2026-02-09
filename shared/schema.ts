@@ -9,6 +9,7 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   fullName: text("full_name").notNull(),
   email: text("email").notNull().unique(),
+  role: text("role").default("student").notNull(), // 'student' | 'admin'
   createdAt: timestamp("created_at").defaultNow(),
 
   // [PILON 1] Monetizare

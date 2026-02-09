@@ -128,6 +128,7 @@ export interface AuthenticatedUser {
     username: string;
     email: string;
     fullName: string;
+    role: string;
     subscriptionTier: string;
     isVerified: boolean;
 }
@@ -176,6 +177,7 @@ export async function validateSession(sessionToken: string): Promise<Authenticat
         username: user.username,
         email: user.email,
         fullName: user.fullName,
+        role: user.role || "student",
         subscriptionTier: user.subscriptionTier || "free",
         isVerified: user.isVerified || false,
     };

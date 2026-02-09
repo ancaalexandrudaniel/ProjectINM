@@ -3,6 +3,8 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard";
 import Quiz from "@/pages/quiz";
@@ -45,64 +47,78 @@ import RoadmapNodeView from "@/pages/roadmap/node-view";
 function Router() {
   return (
     <Switch>
+      {/* Public route */}
       <Route path="/login" component={Login} />
-      <Route path="/" component={Dashboard} />
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/roadmap" component={RoadmapPage} />
-      <Route path="/roadmap/node/:id" component={RoadmapNodeView} />
-      <Route path="/syllabus" component={Syllabus} />
-      <Route path="/quiz/:subject?" component={Quiz} />
-      <Route path="/simulation" component={Simulation} />
-      <Route path="/library" component={Library} />
-      <Route path="/essay" component={Essay} />
-      <Route path="/performance" component={Performance} />
-      <Route path="/weak-points" component={WeakPoints} />
-      <Route path="/srs-review" component={SrsReview} />
-      <Route path="/wrong-answers" component={WrongAnswers} />
-      <Route path="/documents" component={Documents} />
-      <Route path="/exam-analysis" component={ExamAnalysis} />
-      <Route path="/study-plan" component={StudyPlan} />
-      <Route path="/legal-assistant" component={LegalAssistant} />
-      <Route path="/bulk-import" component={BulkImport} />
-      <Route path="/question-bank" component={QuestionBank} />
-      <Route path="/raw-data" component={Documents} />
-      <Route path="/spete-import" component={SpeteImport} />
-      <Route path="/spete-bank" component={SpeteBank} />
-      <Route path="/solve-case/:id" component={SolveCase} />
-      <Route path="/quiz-select" component={QuizModeSelect} />
-      <Route path="/quiz-god-mode" component={QuizGodMode} />
-      <Route path="/legal-articles-import" component={LegalArticlesImport} />
-      <Route path="/legal-acts" component={LegalActs} />
-      <Route path="/bulletin-board" component={BulletinBoard} />
-      <Route path="/exam-papers-import" component={ExamPapersImport} />
-      <Route path="/exam-essays-import" component={ExamEssaysImport} />
-      <Route path="/essay-practice" component={EssayPractice} />
-      <Route path="/time-machine" component={TimeMachine} />
-      <Route path="/time-machine/:year/proba-1" component={TimeMachineProba1} />
-      <Route path="/time-machine/:year/proba-2" component={TimeMachineProba2} />
-      <Route path="/import-management" component={ImportManagement} />
-      <Route path="/psihologic">{() => <Etapa2Placeholder type="psihologic" />}</Route>
-      <Route path="/interviu">{() => <Etapa2Placeholder type="interviu" />}</Route>
+
+      {/* Protected student routes */}
+      <Route path="/">{() => <ProtectedRoute><Dashboard /></ProtectedRoute>}</Route>
+      <Route path="/dashboard">{() => <ProtectedRoute><Dashboard /></ProtectedRoute>}</Route>
+      <Route path="/roadmap">{() => <ProtectedRoute><RoadmapPage /></ProtectedRoute>}</Route>
+      <Route path="/roadmap/node/:id">{() => <ProtectedRoute><RoadmapNodeView /></ProtectedRoute>}</Route>
+      <Route path="/syllabus">{() => <ProtectedRoute><Syllabus /></ProtectedRoute>}</Route>
+      <Route path="/quiz/:subject?">{() => <ProtectedRoute><Quiz /></ProtectedRoute>}</Route>
+      <Route path="/simulation">{() => <ProtectedRoute><Simulation /></ProtectedRoute>}</Route>
+      <Route path="/library">{() => <ProtectedRoute><Library /></ProtectedRoute>}</Route>
+      <Route path="/essay">{() => <ProtectedRoute><Essay /></ProtectedRoute>}</Route>
+      <Route path="/performance">{() => <ProtectedRoute><Performance /></ProtectedRoute>}</Route>
+      <Route path="/weak-points">{() => <ProtectedRoute><WeakPoints /></ProtectedRoute>}</Route>
+      <Route path="/srs-review">{() => <ProtectedRoute><SrsReview /></ProtectedRoute>}</Route>
+      <Route path="/wrong-answers">{() => <ProtectedRoute><WrongAnswers /></ProtectedRoute>}</Route>
+      <Route path="/documents">{() => <ProtectedRoute><Documents /></ProtectedRoute>}</Route>
+      <Route path="/exam-analysis">{() => <ProtectedRoute><ExamAnalysis /></ProtectedRoute>}</Route>
+      <Route path="/study-plan">{() => <ProtectedRoute><StudyPlan /></ProtectedRoute>}</Route>
+      <Route path="/legal-assistant">{() => <ProtectedRoute><LegalAssistant /></ProtectedRoute>}</Route>
+      <Route path="/question-bank">{() => <ProtectedRoute><QuestionBank /></ProtectedRoute>}</Route>
+      <Route path="/raw-data">{() => <ProtectedRoute><Documents /></ProtectedRoute>}</Route>
+      <Route path="/spete-bank">{() => <ProtectedRoute><SpeteBank /></ProtectedRoute>}</Route>
+      <Route path="/solve-case/:id">{() => <ProtectedRoute><SolveCase /></ProtectedRoute>}</Route>
+      <Route path="/quiz-select">{() => <ProtectedRoute><QuizModeSelect /></ProtectedRoute>}</Route>
+      <Route path="/quiz-god-mode">{() => <ProtectedRoute><QuizGodMode /></ProtectedRoute>}</Route>
+      <Route path="/legal-acts">{() => <ProtectedRoute><LegalActs /></ProtectedRoute>}</Route>
+      <Route path="/bulletin-board">{() => <ProtectedRoute><BulletinBoard /></ProtectedRoute>}</Route>
+      <Route path="/essay-practice">{() => <ProtectedRoute><EssayPractice /></ProtectedRoute>}</Route>
+      <Route path="/time-machine">{() => <ProtectedRoute><TimeMachine /></ProtectedRoute>}</Route>
+      <Route path="/time-machine/:year/proba-1">{() => <ProtectedRoute><TimeMachineProba1 /></ProtectedRoute>}</Route>
+      <Route path="/time-machine/:year/proba-2">{() => <ProtectedRoute><TimeMachineProba2 /></ProtectedRoute>}</Route>
+      <Route path="/psihologic">{() => <ProtectedRoute><Etapa2Placeholder type="psihologic" /></ProtectedRoute>}</Route>
+      <Route path="/interviu">{() => <ProtectedRoute><Etapa2Placeholder type="interviu" /></ProtectedRoute>}</Route>
+
+      {/* Admin-only routes */}
+      <Route path="/bulk-import">{() => <ProtectedRoute adminOnly><BulkImport /></ProtectedRoute>}</Route>
+      <Route path="/spete-import">{() => <ProtectedRoute adminOnly><SpeteImport /></ProtectedRoute>}</Route>
+      <Route path="/legal-articles-import">{() => <ProtectedRoute adminOnly><LegalArticlesImport /></ProtectedRoute>}</Route>
+      <Route path="/exam-papers-import">{() => <ProtectedRoute adminOnly><ExamPapersImport /></ProtectedRoute>}</Route>
+      <Route path="/exam-essays-import">{() => <ProtectedRoute adminOnly><ExamEssaysImport /></ProtectedRoute>}</Route>
+      <Route path="/import-management">{() => <ProtectedRoute adminOnly><ImportManagement /></ProtectedRoute>}</Route>
+
       <Route component={NotFound} />
     </Switch>
+  );
+}
+
+function AppLayout() {
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <div className="flex">
+        <Sidebar />
+        <main className="flex-1 overflow-y-auto">
+          <Router />
+        </main>
+      </div>
+    </div>
   );
 }
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <div className="min-h-screen bg-background">
-          <Header />
-          <div className="flex">
-            <Sidebar />
-            <main className="flex-1 overflow-y-auto">
-              <Router />
-            </main>
-          </div>
-        </div>
-        <Toaster />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <AppLayout />
+          <Toaster />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

@@ -11,7 +11,6 @@ import {
   userSyllabusProgress,
   legalArticles,
   examEssays,
-  users,
 } from "../../shared/schema";
 import { z } from "zod";
 import { db } from "../db";
@@ -20,19 +19,6 @@ import { gradeCaseStudy } from "../gemini";
 
 const router = Router();
 
-// Helper to get first user ID (will be replaced in auth phase)
-let cachedDefaultUserId: string | null = null;
-
-async function getDefaultUserId(): Promise<string> {
-  if (cachedDefaultUserId) return cachedDefaultUserId;
-
-  const allUsers = await db.select().from(users).limit(1);
-  if (allUsers.length === 0) {
-    throw new AppError(500, "No users found in database");
-  }
-  cachedDefaultUserId = allUsers[0].id;
-  return cachedDefaultUserId;
-}
 
 // ============================================================================
 // QUESTIONS ADMIN UTILITIES
@@ -102,7 +88,7 @@ router.post("/exam-sessions/submit", asyncHandler(async (req, res) => {
   }
 
   const { year, answers, timeSpent } = parsed.data;
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   // 2. Fetch Questions (explicitly fetch questions for the exam year)
   const allQuestions = await db.select().from(questions);
@@ -270,7 +256,7 @@ router.get("/essays/:id", asyncHandler(async (req, res) => {
 router.post("/essays/:id/submit", asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { userAnswer, selfEvaluation, selfScore, timeSpent } = req.body;
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   if (!userAnswer) {
     return res.status(400).json({ error: "userAnswer is required" });
@@ -299,7 +285,7 @@ router.post("/essays/:id/submit", asyncHandler(async (req, res) => {
 
 // GET /essays/submissions/history - Get user's essay submission history
 router.get("/essays/submissions/history", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const submissions = await db
     .select({
@@ -411,7 +397,7 @@ router.get("/syllabus-topics", asyncHandler(async (req, res) => {
   // Get user progress if authenticated (optional)
   let userProgressMap: Map<string, number> = new Map();
   try {
-    const userId = await getDefaultUserId();
+    const userId = req.user!.id;
     const progressData = await db.select().from(userSyllabusProgress)
       .where(eq(userSyllabusProgress.userId, userId));
     progressData.forEach(p => {

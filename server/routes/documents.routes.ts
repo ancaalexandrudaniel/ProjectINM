@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db } from "../db";
-import { uploadedDocuments, documentChunks, users } from "../../shared/schema";
+import { uploadedDocuments, documentChunks } from "../../shared/schema";
 import { eq, and, inArray, asc } from "drizzle-orm";
 import { extractTextFromPDF, analyzeLegalDocument, analyzeExamPatterns, batchGenerateEmbeddings } from "../gemini";
 import { chunkText } from "../utils/chunking";
@@ -11,23 +11,11 @@ import fs from "fs";
 
 const router = Router();
 
-// Temporary helper until auth middleware provides user context
-let cachedDefaultUserId: string | null = null;
-async function getDefaultUserId(): Promise<string> {
-  if (cachedDefaultUserId) return cachedDefaultUserId;
-
-  const allUsers = await db.select().from(users).limit(1);
-  if (allUsers.length === 0) {
-    throw new Error("No users found in database");
-  }
-  cachedDefaultUserId = allUsers[0].id;
-  return cachedDefaultUserId;
-}
 
 // POST /documents/upload - Upload document (base64)
 router.post("/documents/upload", asyncHandler(async (req, res) => {
   console.log("[UPLOAD] Starting document upload...");
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const { fileName, documentType, subject, fileContent } = req.body;
   console.log("[UPLOAD] File:", fileName, "Type:", documentType, "Subject:", subject);
@@ -96,7 +84,7 @@ router.post("/documents/upload", asyncHandler(async (req, res) => {
 
 // GET /documents - Get all uploaded documents
 router.get("/documents", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const docs = await db
     .select()
@@ -109,7 +97,7 @@ router.get("/documents", asyncHandler(async (req, res) => {
 // POST /documents/process - Process uploaded document
 router.post("/documents/process", asyncHandler(async (req, res) => {
   const storageService = new ObjectStorageService();
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const { uploadURL, fileName, documentType, subject } = req.body;
 
@@ -148,7 +136,7 @@ router.post("/documents/process", asyncHandler(async (req, res) => {
 
 // POST /documents/analyze-patterns - Analyze exam patterns from uploaded exam documents
 router.post("/documents/analyze-patterns", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
 
   const { documentIds, subject } = req.body;
 
@@ -192,7 +180,7 @@ router.post("/documents/analyze-patterns", asyncHandler(async (req, res) => {
 
 // DELETE /documents/:id - Delete document
 router.delete("/documents/:id", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
   const documentId = req.params.id;
 
   await db
@@ -209,7 +197,7 @@ router.delete("/documents/:id", asyncHandler(async (req, res) => {
 
 // POST /documents/:id/process-chunks - Process document into chunks
 router.post("/documents/:id/process-chunks", asyncHandler(async (req, res) => {
-  const userId = await getDefaultUserId();
+  const userId = req.user!.id;
   const documentId = req.params.id;
 
   // Get document
