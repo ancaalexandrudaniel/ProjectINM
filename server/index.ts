@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
+import { registerRoutes } from "./routes/index";
 import { setupVite, log } from "./vite";
+import { errorHandler } from "./middleware/error-handler";
 import { db } from "./db";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { RoadmapService } from "./services/roadmap-service";
@@ -90,13 +91,8 @@ app.use((req, res, next) => {
     process.exit(1);
   }
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
-  });
+  // Global error handler — must be registered after all routes
+  app.use(errorHandler);
 
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
