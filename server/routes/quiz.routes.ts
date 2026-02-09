@@ -12,6 +12,7 @@ import {
 } from "../../shared/schema";
 import { eq, and, inArray } from "drizzle-orm";
 import { storage } from "../storage";
+import { createSrsCard } from "../srs";
 
 const router = Router();
 
@@ -90,7 +91,6 @@ router.post("/quiz/answer", asyncHandler(async (req, res) => {
     // SRS Integration: Create card for wrong answers
     if (!answerData.isCorrect) {
       try {
-        const { createSrsCard } = await import("../srs");
         const userId = req.user!.id;
         await createSrsCard(userId, answerData.questionId);
         console.log(`[SRS] Created review card for question ${answerData.questionId}`);
