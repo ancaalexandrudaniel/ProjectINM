@@ -33,6 +33,15 @@ import { Progress } from "@/components/ui/progress";
 import StatsCards from "@/components/dashboard/stats-cards";
 import type { UserProgress, QuizSession } from "@/types/quiz";
 
+// Level thresholds (mirrors server)
+const LEVEL_THRESHOLDS = [0, 0, 100, 300, 600, 1000, 1500, 2200, 3000, 4000, 5500, 7500, 10000];
+function getNextLevelXp(level: number): number {
+  return level < LEVEL_THRESHOLDS.length - 1 ? LEVEL_THRESHOLDS[level + 1] : LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
+}
+function getCurrentLevelXp(level: number): number {
+  return level > 0 && level < LEVEL_THRESHOLDS.length ? LEVEL_THRESHOLDS[level] : 0;
+}
+
 // Exam date constant - INM 2025
 const EXAM_DATE = new Date('2025-09-20');
 
@@ -47,6 +56,19 @@ export default function Dashboard() {
 
   const { data: dueCards = { dueCount: 0 } } = useQuery<{ dueCount: number }>({
     queryKey: ['/api/srs/due-count'],
+  });
+
+  const { data: roadmapData } = useQuery<{
+    nodes: Array<{ status: string }>;
+    stats: {
+      currentXp: number;
+      currentLevel: number;
+      currentStreak: number;
+      longestStreak: number;
+      unlockedBadges: string[] | null;
+    } | null;
+  }>({
+    queryKey: ['/api/roadmap'],
   });
 
   // Calculate days until exam
@@ -285,6 +307,92 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Roadmap Gamification Widget */}
+      {roadmapData?.stats && (() => {
+        const gs = roadmapData.stats!;
+        const level = gs.currentLevel || 1;
+        const xp = gs.currentXp || 0;
+        const currentLevelStart = getCurrentLevelXp(level);
+        const nextLevel = getNextLevelXp(level);
+        const xpInLevel = xp - currentLevelStart;
+        const xpNeeded = nextLevel - currentLevelStart;
+        const xpPercent = xpNeeded > 0 ? Math.min(100, Math.round((xpInLevel / xpNeeded) * 100)) : 100;
+        const totalNodes = roadmapData.nodes?.length || 0;
+        const completedNodes = roadmapData.nodes?.filter(n => n.status === "COMPLETED" || n.status === "MASTERED").length || 0;
+        const masteredNodes = roadmapData.nodes?.filter(n => n.status === "MASTERED").length || 0;
+        const badges = gs.unlockedBadges || [];
+
+        return (
+          <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-yellow-500" />
+                Progres Roadmap
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {/* Level + XP */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="bg-primary text-primary-foreground rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg">
+                      {level}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">Nivel {level}</p>
+                      <p className="text-xs text-muted-foreground">{xp.toLocaleString()} XP</p>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>{xpInLevel} / {xpNeeded} XP</span>
+                      <span>{xpPercent}%</span>
+                    </div>
+                    <Progress value={xpPercent} className="h-2" />
+                  </div>
+                </div>
+
+                {/* Streak */}
+                <div className="flex flex-col items-center justify-center">
+                  <Flame className={`h-8 w-8 ${(gs.currentStreak || 0) > 0 ? 'text-orange-500' : 'text-slate-300'}`} />
+                  <span className="text-2xl font-bold">{gs.currentStreak || 0}</span>
+                  <span className="text-xs text-muted-foreground">zile streak</span>
+                  {(gs.longestStreak || 0) > 0 && (
+                    <span className="text-xs text-muted-foreground">record: {gs.longestStreak}</span>
+                  )}
+                </div>
+
+                {/* Nodes Completed */}
+                <div className="flex flex-col items-center justify-center">
+                  <CheckCircle className="h-8 w-8 text-green-500" />
+                  <span className="text-2xl font-bold">{completedNodes}</span>
+                  <span className="text-xs text-muted-foreground">din {totalNodes} noduri</span>
+                  {masteredNodes > 0 && (
+                    <span className="text-xs text-yellow-600">{masteredNodes} mastered</span>
+                  )}
+                </div>
+
+                {/* Badges */}
+                <div className="flex flex-col items-center justify-center">
+                  <Sparkles className="h-8 w-8 text-purple-500" />
+                  <span className="text-2xl font-bold">{badges.length}</span>
+                  <span className="text-xs text-muted-foreground">badge-uri</span>
+                </div>
+              </div>
+
+              <div className="mt-4 flex justify-end">
+                <Link href="/roadmap">
+                  <Button variant="outline" size="sm">
+                    Deschide Roadmap
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       {/* Progress by Subject */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

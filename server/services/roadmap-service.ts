@@ -3,6 +3,21 @@ import { roadmapNodes, userNodeProgress, userGamification, syllabusTopicMappings
 import { eq, and, asc, desc, inArray, sql } from "drizzle-orm";
 import fs from "fs";
 import path from "path";
+import { checkBadges } from "./badge-definitions";
+
+// Level thresholds: index = level, value = XP needed to reach that level
+const LEVEL_THRESHOLDS = [0, 0, 100, 300, 600, 1000, 1500, 2200, 3000, 4000, 5500, 7500, 10000];
+
+function computeLevel(xp: number): number {
+  for (let i = LEVEL_THRESHOLDS.length - 1; i >= 0; i--) {
+    if (xp >= LEVEL_THRESHOLDS[i]) return i;
+  }
+  return 1;
+}
+
+function getNextLevelXp(level: number): number {
+  return level < LEVEL_THRESHOLDS.length - 1 ? LEVEL_THRESHOLDS[level + 1] : LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
+}
 
 export class RoadmapService {
 
@@ -35,7 +50,7 @@ export class RoadmapService {
       let orderIndex = 0;
       const nodesToInsert: any[] = [];
 
-      function processNode(node: any, depth: number = 0) {
+      const processNode = (node: any, depth: number = 0) => {
         let milestoneType = "topic";
         if (depth === 0) milestoneType = "discipline";
         else if (depth === 1) milestoneType = "chapter";
@@ -61,7 +76,7 @@ export class RoadmapService {
             processNode(child, depth + 1);
           }
         }
-      }
+      };
 
       for (const disc of syllabusData) {
         processNode(disc);
@@ -180,7 +195,7 @@ export class RoadmapService {
   }
 
   /**
-   * Marks a node as complete, calculates XP, and unlocks the next node.
+   * Marks a node as complete, calculates XP, updates level/streak/badges.
    */
   static async completeNode(userId: string, nodeId: string, performance: { score: number }) {
     const node = await db.query.roadmapNodes.findFirst({
@@ -210,32 +225,124 @@ export class RoadmapService {
       }).onConflictDoUpdate({
         target: [userNodeProgress.userId, userNodeProgress.nodeId],
         set: {
-            status,
-            score: sql`GREATEST(user_node_progress.score, ${performance.score})`,
-            completedAt: new Date(),
+          status,
+          score: sql`GREATEST(user_node_progress.score, ${performance.score})`,
+          completedAt: new Date(),
         }
       });
 
       await db.update(userGamification)
         .set({
-            currentXp: sql`current_xp + ${xpGained}`,
+          currentXp: sql`current_xp + ${xpGained}`,
         })
         .where(eq(userGamification.userId, userId));
 
     } else {
-         await db.update(userNodeProgress)
-            .set({
-                status: (existingProgress.status === "MASTERED") ? "MASTERED" : status,
-                score: sql`GREATEST(user_node_progress.score, ${performance.score})`
-            })
-            .where(and(eq(userNodeProgress.userId, userId), eq(userNodeProgress.nodeId, nodeId)));
+      await db.update(userNodeProgress)
+        .set({
+          status: (existingProgress.status === "MASTERED") ? "MASTERED" : status,
+          score: sql`GREATEST(user_node_progress.score, ${performance.score})`
+        })
+        .where(and(eq(userNodeProgress.userId, userId), eq(userNodeProgress.nodeId, nodeId)));
+    }
+
+    // ========== LEVEL-UP ==========
+    const gamification = await db.query.userGamification.findFirst({
+      where: eq(userGamification.userId, userId),
+    });
+
+    let leveledUp = false;
+    let newLevel = gamification?.currentLevel || 1;
+    const currentXp = gamification?.currentXp || 0;
+
+    const computedLevel = computeLevel(currentXp);
+    if (computedLevel > newLevel) {
+      newLevel = computedLevel;
+      leveledUp = true;
+      await db.update(userGamification)
+        .set({ currentLevel: newLevel })
+        .where(eq(userGamification.userId, userId));
+    }
+
+    // ========== STREAK ==========
+    let streakUpdated = false;
+    let currentStreak = gamification?.currentStreak || 0;
+
+    if (gamification) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const lastActivity = gamification.lastActivityDate ? new Date(gamification.lastActivityDate) : null;
+      if (lastActivity) lastActivity.setHours(0, 0, 0, 0);
+
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      if (!lastActivity || lastActivity.getTime() < today.getTime()) {
+        // Not yet active today
+        if (lastActivity && lastActivity.getTime() === yesterday.getTime()) {
+          // Yesterday -> increment streak
+          currentStreak = (gamification.currentStreak || 0) + 1;
+        } else if (!lastActivity || lastActivity.getTime() < yesterday.getTime()) {
+          // Older -> reset streak
+          currentStreak = 1;
+        }
+
+        const longestStreak = Math.max(gamification.longestStreak || 0, currentStreak);
+
+        await db.update(userGamification)
+          .set({
+            currentStreak,
+            longestStreak,
+            lastActivityDate: new Date(),
+          })
+          .where(eq(userGamification.userId, userId));
+
+        streakUpdated = true;
+      }
+    }
+
+    // ========== BADGES ==========
+    // Count completed and mastered nodes
+    const allProgress = await db.query.userNodeProgress.findMany({
+      where: eq(userNodeProgress.userId, userId),
+    });
+    const completedNodes = allProgress.filter(
+      (p) => p.status === "COMPLETED" || p.status === "MASTERED"
+    ).length;
+    const masteredNodes = allProgress.filter(
+      (p) => p.status === "MASTERED"
+    ).length;
+
+    const alreadyUnlocked = (gamification?.unlockedBadges as string[]) || [];
+    const newBadges = checkBadges({
+      currentXp,
+      currentStreak,
+      completedNodes,
+      masteredNodes,
+      isPerfectScore: performance.score === 100,
+      alreadyUnlocked,
+    });
+
+    if (newBadges.length > 0) {
+      const updatedBadges = [...alreadyUnlocked, ...newBadges];
+      await db.update(userGamification)
+        .set({ unlockedBadges: updatedBadges })
+        .where(eq(userGamification.userId, userId));
     }
 
     return {
       success: true,
       xpGained,
       status,
-      nodeId
+      nodeId,
+      leveledUp,
+      newLevel,
+      nextLevelXp: getNextLevelXp(newLevel),
+      currentXp,
+      streakUpdated,
+      currentStreak,
+      newBadges,
     };
   }
 }
