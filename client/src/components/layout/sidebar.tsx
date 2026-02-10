@@ -55,14 +55,16 @@ export default function Sidebar() {
     'admin': false,
   });
 
+  // Hook must be called before any early return (Rules of Hooks)
+  const { data: progress = [] } = useQuery<UserProgress[]>({
+    queryKey: ['/api/progress'],
+    enabled: isAuthenticated,
+  });
+
   // Don't render sidebar on login page or if not authenticated
   if (!isAuthenticated || location === '/login') {
     return null;
   }
-
-  const { data: progress = [] } = useQuery<UserProgress[]>({
-    queryKey: ['/api/progress'],
-  });
 
   const getSubjectProgress = (subjectId: string) => {
     const subjectProgress = progress.filter(p => p.subject === subjectId);
