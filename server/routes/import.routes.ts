@@ -18,6 +18,7 @@ import {
 import { db } from "../db";
 import { chunkText } from "../utils/chunking";
 import { batchGenerateEmbeddings, gradeCaseStudy } from "../gemini";
+import { processArticleForRAG } from "../utils/process-article-rag";
 
 const router = Router();
 
@@ -1113,50 +1114,8 @@ router.post("/legal-articles/bulk-import", asyncHandler(async (req, res) => {
       let processed = 0;
       for (const article of insertedArticles) {
         try {
-          const segments = article.segments as Record<string, string>;
-          const allChunks: { text: string; segmentType: string; index: number }[] = [];
-
-          for (const [segmentType, segmentText] of Object.entries(segments)) {
-            if (!segmentText || typeof segmentText !== "string") continue;
-            const segmentChunks = chunkText(segmentText, {
-              chunkSize: 600,
-              overlap: 50,
-              minChunkSize: 200,
-            });
-            for (const chunk of segmentChunks) {
-              allChunks.push({ text: chunk.text, segmentType, index: allChunks.length });
-            }
-          }
-
-          if (allChunks.length === 0) continue;
-
-          const texts = allChunks.map((c) => c.text);
-          const embeddings = await batchGenerateEmbeddings(texts);
-
-          const chunksToInsert = allChunks.map((chunk, i) => ({
-            articleId: article.id,
-            segmentType: chunk.segmentType,
-            chunkText: chunk.text,
-            chunkIndex: chunk.index,
-            embedding: embeddings[i],
-            metadata: {
-              articleNumber: article.articleNumber,
-              title: article.title,
-              subject: article.subject,
-              segmentType: chunk.segmentType,
-            },
-          }));
-
-          if (chunksToInsert.length > 0) {
-            await db.insert(legalArticleChunks).values(chunksToInsert);
-          }
-
-          await db
-            .update(legalArticles)
-            .set({ isProcessedForRag: true })
-            .where(eq(legalArticles.id, article.id));
-
-          processed++;
+          const result = await processArticleForRAG(article);
+          if (result) processed++;
         } catch (err: any) {
           console.error(`[RAG-AUTO] Failed to process article ${article.id}:`, err.message);
         }
@@ -1279,11 +1238,10 @@ router.delete("/legal-article-batches/:id", asyncHandler(async (req, res) => {
   res.json({ success: true });
 }));
 
-// POST /legal-articles/:id/process-rag - Process legal articles for RAG
+// POST /legal-articles/:id/process-rag - Process single legal article for RAG
 router.post("/legal-articles/:id/process-rag", asyncHandler(async (req, res) => {
   const articleId = req.params.id;
 
-  // Get article
   const [article] = await db
     .select()
     .from(legalArticles)
@@ -1293,77 +1251,13 @@ router.post("/legal-articles/:id/process-rag", asyncHandler(async (req, res) => 
     return res.status(404).json({ error: "Article not found" });
   }
 
-  // Delete existing chunks for this article
-  await db.delete(legalArticleChunks).where(eq(legalArticleChunks.articleId, articleId));
+  const result = await processArticleForRAG(article);
 
-  // Create chunks from each segment
-  const segments = article.segments as Record<string, string>;
-  const allChunks: { text: string; segmentType: string; index: number }[] = [];
-
-  for (const [segmentType, segmentText] of Object.entries(segments)) {
-    if (!segmentText || typeof segmentText !== 'string') continue;
-
-    // Chunk the segment
-    const segmentChunks = chunkText(segmentText, {
-      chunkSize: 600,
-      overlap: 50,
-      minChunkSize: 200
-    });
-
-    for (const chunk of segmentChunks) {
-      allChunks.push({
-        text: chunk.text,
-        segmentType,
-        index: allChunks.length
-      });
-    }
-  }
-
-  if (allChunks.length === 0) {
+  if (!result) {
     return res.status(400).json({ error: "No text to chunk in article segments" });
   }
 
-  console.log(`[RAG] Created ${allChunks.length} chunks for article ${article.articleNumber}`);
-
-  // Generate embeddings
-  const texts = allChunks.map(c => c.text);
-  const embeddings = await batchGenerateEmbeddings(texts);
-
-  // Save chunks with embeddings
-  const chunksToInsert = allChunks.map((chunk, i) => ({
-    articleId,
-    segmentType: chunk.segmentType,
-    chunkText: chunk.text,
-    chunkIndex: chunk.index,
-    embedding: embeddings[i],
-    metadata: {
-      articleNumber: article.articleNumber,
-      title: article.title,
-      subject: article.subject,
-      segmentType: chunk.segmentType,
-    },
-  }));
-
-  let savedChunks: any[] = [];
-  if (chunksToInsert.length > 0) {
-    savedChunks = await db
-      .insert(legalArticleChunks)
-      .values(chunksToInsert)
-      .returning();
-  }
-
-  // Mark article as processed
-  await db
-    .update(legalArticles)
-    .set({ isProcessedForRag: true })
-    .where(eq(legalArticles.id, articleId));
-
-  res.json({
-    articleId,
-    articleNumber: article.articleNumber,
-    chunksCreated: savedChunks.length,
-    embeddingDimensions: embeddings[0]?.length || 0
-  });
+  res.json(result);
 }));
 
 // POST /legal-articles/batch-process-rag - Batch process all unprocessed articles for RAG
@@ -1392,58 +1286,11 @@ router.post("/legal-articles/batch-process-rag", asyncHandler(async (req, res) =
 
   for (const article of unprocessed) {
     try {
-      // Delete existing chunks
-      await db.delete(legalArticleChunks).where(eq(legalArticleChunks.articleId, article.id));
-
-      // Create chunks from segments
-      const segments = article.segments as Record<string, string>;
-      const allChunks: { text: string; segmentType: string; index: number }[] = [];
-
-      for (const [segmentType, segmentText] of Object.entries(segments)) {
-        if (!segmentText || typeof segmentText !== "string") continue;
-        const segmentChunks = chunkText(segmentText, {
-          chunkSize: 600,
-          overlap: 50,
-          minChunkSize: 200,
-        });
-        for (const chunk of segmentChunks) {
-          allChunks.push({ text: chunk.text, segmentType, index: allChunks.length });
-        }
+      const result = await processArticleForRAG(article);
+      if (result) {
+        processed++;
+        console.log(`[RAG-BATCH] Processed article ${article.articleNumber} (${result.chunksCreated} chunks)`);
       }
-
-      if (allChunks.length === 0) continue;
-
-      // Generate embeddings
-      const texts = allChunks.map((c) => c.text);
-      const embeddings = await batchGenerateEmbeddings(texts);
-
-      // Save chunks
-      const chunksToInsert = allChunks.map((chunk, i) => ({
-        articleId: article.id,
-        segmentType: chunk.segmentType,
-        chunkText: chunk.text,
-        chunkIndex: chunk.index,
-        embedding: embeddings[i],
-        metadata: {
-          articleNumber: article.articleNumber,
-          title: article.title,
-          subject: article.subject,
-          segmentType: chunk.segmentType,
-        },
-      }));
-
-      if (chunksToInsert.length > 0) {
-        await db.insert(legalArticleChunks).values(chunksToInsert);
-      }
-
-      // Mark processed
-      await db
-        .update(legalArticles)
-        .set({ isProcessedForRag: true })
-        .where(eq(legalArticles.id, article.id));
-
-      processed++;
-      console.log(`[RAG-BATCH] Processed article ${article.articleNumber} (${allChunks.length} chunks)`);
     } catch (err: any) {
       console.error(`[RAG-BATCH] Failed article ${article.id}:`, err.message);
       errors.push({ articleId: article.id, error: err.message });
