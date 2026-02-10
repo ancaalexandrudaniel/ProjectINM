@@ -167,7 +167,7 @@ function autoFixJSON(jsonString: string): { fixed: string; fixes: string[] } {
   // Emoji-urile (✅, ❌, etc.) cauzează erori de parsare
   const beforeEmoji = result;
   // Remove common emoji characters that break JSON parsing
-  result = result.replace(/[\u2705\u274C\u274E\u2714\u2716\u2611\u2612\u2B50\u26A0\u2139\u{1F4A1}\u{1F4D6}\u{1F4DD}\u{1F4DA}]/gu, '');
+  result = result.replace(new RegExp('[\u2705\u274C\u274E\u2714\u2716\u2611\u2612\u2B50\u26A0\u2139\uD83D\uDCA1\uD83D\uDCD6\uD83D\uDCDD\uD83D\uDCDA]', 'g'), '');
   if (result !== beforeEmoji) {
     fixes.push('Emoji-uri eliminate (✅, ❌, etc.)');
   }

@@ -842,7 +842,7 @@ async function seedAdditional() {
 
   try {
     // Insert additional questions in batch
-    await db.insert(questions).values(additionalQuestions);
+    await db.insert(questions).values(additionalQuestions as any);
 
     console.log(`✅ Successfully seeded ${additionalQuestions.length} additional questions`);
     console.log("\nBreakdown:");

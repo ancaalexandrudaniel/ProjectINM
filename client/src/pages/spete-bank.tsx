@@ -276,7 +276,7 @@ export default function SpeteBank() {
                           <p className="text-sm whitespace-pre-wrap">{cs.scenario}</p>
                         </div>
 
-                        {cs.questions && Array.isArray(cs.questions) && cs.questions.length > 0 && (
+                        {!!cs.questions && Array.isArray(cs.questions) && (cs.questions as string[]).length > 0 && (
                           <div className="space-y-2">
                             <p className="text-sm font-medium">Cerințe/Întrebări:</p>
                             <ul className="list-decimal pl-5 space-y-1">
@@ -287,7 +287,7 @@ export default function SpeteBank() {
                           </div>
                         )}
 
-                        {cs.referenceArticles && Array.isArray(cs.referenceArticles) && cs.referenceArticles.length > 0 && (
+                        {!!cs.referenceArticles && Array.isArray(cs.referenceArticles) && (cs.referenceArticles as string[]).length > 0 && (
                           <div className="flex flex-wrap gap-2">
                             <span className="text-sm text-muted-foreground">Articole relevante:</span>
                             {(cs.referenceArticles as string[]).map((ref: string, i: number) => (

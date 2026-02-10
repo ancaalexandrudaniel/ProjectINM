@@ -244,13 +244,12 @@ export default function SolveCase() {
                                 {caseStudy.scenario}
                             </p>
 
-                            {caseStudy.questions && (
+                            {!!caseStudy.questions && Array.isArray(caseStudy.questions) && (caseStudy.questions as string[]).length > 0 && (
                                 <div className="mt-8 p-4 bg-card rounded-lg border">
                                     <h3 className="font-semibold mb-3">Cerinte:</h3>
                                     {Array.isArray(caseStudy.questions) ? (
                                         <ul className="list-decimal pl-5 space-y-2">
-                                            {/* @ts-ignore */}
-                                            {caseStudy.questions.map((q: string, i: number) => (
+                                            {(caseStudy.questions as string[]).map((q: string, i: number) => (
                                                 <li key={i}>{q}</li>
                                             ))}
                                         </ul>

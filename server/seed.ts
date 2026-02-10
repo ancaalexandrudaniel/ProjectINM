@@ -652,7 +652,7 @@ async function seed() {
     }
 
     // Insert sample questions in batch
-    await db.insert(questions).values(sampleQuestions);
+    await db.insert(questions).values(sampleQuestions as any);
 
     console.log(`✅ Successfully seeded ${sampleQuestions.length} questions`);
     console.log("\nBreakdown:");

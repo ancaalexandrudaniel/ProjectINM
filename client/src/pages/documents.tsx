@@ -287,7 +287,7 @@ export default function Documents() {
                           {documentTypeLabels[doc.documentType]}
                         </Badge>
                         <Badge variant="secondary" data-testid={`doc-subject-${doc.id}`}>
-                          {subjectLabels[doc.subject] || doc.subject}
+                          {subjectLabels[doc.subject as keyof typeof subjectLabels] || doc.subject}
                         </Badge>
                       </div>
 
@@ -306,7 +306,7 @@ export default function Documents() {
                       )}
 
                       <p className="text-xs text-muted-foreground">
-                        Încărcat: {new Date(doc.uploadedAt).toLocaleString('ro-RO')}
+                        Încărcat: {doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleString('ro-RO') : 'N/A'}
                       </p>
                     </div>
 

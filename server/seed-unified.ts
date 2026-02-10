@@ -22,7 +22,7 @@ async function seedAll() {
     
     const allQuestions = [...sampleQuestions, ...additionalQuestions, ...finalQuestions];
     
-    await db.insert(questions).values(allQuestions);
+    await db.insert(questions).values(allQuestions as any);
 
     console.log(`✅ Successfully seeded ${allQuestions.length} questions`);
     

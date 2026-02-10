@@ -440,7 +440,8 @@ export async function extractTextFromPDF(pdfPath: string): Promise<string> {
 
   // Try to parse PDF, fallback to plain text if parsing fails
   try {
-    const pdfParse = (await import("pdf-parse")).default;
+    const pdfParseModule = await import("pdf-parse");
+    const pdfParse = (pdfParseModule as any).default ?? pdfParseModule;
     const result = await pdfParse(dataBuffer);
     return result.text;
   } catch (pdfError) {

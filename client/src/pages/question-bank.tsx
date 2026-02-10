@@ -273,10 +273,10 @@ export default function QuestionBank() {
                           </div>
                         )}
 
-                        {question.legalReferences && (question.legalReferences as string[]).length > 0 && (
+                        {!!question.legalReferences && Array.isArray(question.legalReferences) && (question.legalReferences as string[]).length > 0 && (
                           <div className="flex flex-wrap gap-2">
                             <span className="text-sm text-muted-foreground">Referințe:</span>
-                            {(question.legalReferences as string[]).map((ref, i) => (
+                            {(question.legalReferences as string[]).map((ref: string, i: number) => (
                               <Badge key={i} variant="outline" className="text-xs">
                                 {ref}
                               </Badge>

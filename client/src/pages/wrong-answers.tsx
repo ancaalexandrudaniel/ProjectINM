@@ -220,7 +220,7 @@ export default function WrongAnswers() {
             const userAnswer = answer.lastSelectedAnswer !== null 
               ? options[answer.lastSelectedAnswer]
               : null;
-            const correctOption = options[question.correctAnswer];
+            const correctOption = question.correctAnswer !== null ? options[question.correctAnswer] : null;
 
             return (
               <Card 
@@ -317,10 +317,10 @@ export default function WrongAnswers() {
                   )}
 
                   {/* Legal References */}
-                  {question.legalReferences && (question.legalReferences as string[]).length > 0 && (
+                  {!!question.legalReferences && Array.isArray(question.legalReferences) && (question.legalReferences as string[]).length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       <span className="text-sm font-medium">Referințe legale:</span>
-                      {(question.legalReferences as string[]).map((ref, i) => (
+                      {(question.legalReferences as string[]).map((ref: string, i: number) => (
                         <Badge key={i} variant="outline" className="font-mono text-xs">
                           {ref}
                         </Badge>

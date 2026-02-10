@@ -160,7 +160,7 @@ async function seedFinal() {
   console.log("🌱 Starting final database seed...");
 
   try {
-    await db.insert(questions).values(finalQuestions);
+    await db.insert(questions).values(finalQuestions as any);
 
     console.log(`✅ Successfully seeded ${finalQuestions.length} final questions`);
     

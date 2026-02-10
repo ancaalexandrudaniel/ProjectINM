@@ -2,7 +2,7 @@
 // Seed test data for testing weak points and wrong answers functionality
 import { db } from "./db";
 import { users, questions, quizSessions, userAnswers, userProgress } from "@shared/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 async function seedTestData() {
   console.log("🧪 Seeding test data for wrong answers functionality...");
@@ -56,9 +56,9 @@ async function seedTestData() {
       const question = allQuestions[i];
       const isCorrect = i % 3 !== 0; // Make every 3rd answer wrong
       
-      const selectedAnswer = isCorrect 
-        ? question.correctAnswer 
-        : (question.correctAnswer + 1) % 4; // Wrong answer
+      const selectedAnswer = isCorrect
+        ? (question.correctAnswer ?? 0)
+        : ((question.correctAnswer ?? 0) + 1) % 4; // Wrong answer
 
       await db.insert(userAnswers).values({
         userId,
@@ -74,9 +74,11 @@ async function seedTestData() {
       // Update progress for this chapter
       const existing = await db.select()
         .from(userProgress)
-        .where(eq(userProgress.userId, userId))
-        .where(eq(userProgress.subject, question.subject))
-        .where(eq(userProgress.chapter, question.chapter))
+        .where(and(
+          eq(userProgress.userId, userId),
+          eq(userProgress.subject, question.subject),
+          eq(userProgress.chapter, question.chapter)
+        ))
         .limit(1);
 
       if (existing.length > 0) {
@@ -117,7 +119,7 @@ async function seedTestData() {
       .from(userProgress)
       .where(eq(userProgress.userId, userId));
     
-    const weak = weakPoints.filter(p => p.accuracy < 60);
+    const weak = weakPoints.filter(p => (p.accuracy ?? 0) < 60);
     console.log(`\n📊 Weak points created: ${weak.length}`);
     weak.forEach(w => {
       console.log(`   - ${w.subject} / ${w.chapter}: ${w.accuracy}% (${w.totalQuestions} questions)`);
