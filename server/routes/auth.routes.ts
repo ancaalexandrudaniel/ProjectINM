@@ -11,16 +11,13 @@ import {
 } from "../auth";
 import { asyncHandler } from "../middleware/async-handler";
 import { AppError } from "../middleware/error-handler";
+import { loginSchema, registerSchema } from "../validation";
 
 const router = Router();
 
 // POST /api/login - Authenticate user and create session
 router.post("/login", asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    throw new AppError(400, "Email and password are required");
-  }
+  const { email, password } = loginSchema.parse(req.body);
 
   const [user] = await db
     .select()
@@ -64,11 +61,7 @@ router.post("/login", asyncHandler(async (req, res) => {
 
 // POST /api/register - Create new user account
 router.post("/register", asyncHandler(async (req, res) => {
-  const { email, password, fullName, username } = req.body;
-
-  if (!email || !password || !fullName) {
-    throw new AppError(400, "Email, password, and full name are required");
-  }
+  const { email, password, fullName, username } = registerSchema.parse(req.body);
 
   // Check if email already exists
   const [existing] = await db

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { asyncHandler } from "../middleware/async-handler";
 import { AppError } from "../middleware/error-handler";
 import { getDueCards, getSrsStats, processReview, createSrsCard, getDueCardCount } from "../srs";
+import { srsReviewSchema, srsCardSchema } from "../validation";
 
 const router = Router();
 
@@ -49,16 +50,7 @@ router.get("/srs/stats", asyncHandler(async (req, res) => {
 // POST /srs/review - Process a card review
 router.post("/srs/review", asyncHandler(async (req, res) => {
   const userId = req.user!.id;
-
-  const { cardId, grade } = req.body;
-
-  if (!cardId || grade === undefined) {
-    throw new AppError(400, "cardId and grade are required");
-  }
-
-  if (grade < 0 || grade > 5) {
-    throw new AppError(400, "Grade must be between 0 and 5");
-  }
+  const { cardId, grade } = srsReviewSchema.parse(req.body);
 
   const result = await processReview(userId, cardId, grade as 0 | 1 | 2 | 3 | 4 | 5);
 
@@ -82,12 +74,7 @@ router.get("/srs/count", asyncHandler(async (req, res) => {
 // POST /srs/card - Create an SRS card for a question
 router.post("/srs/card", asyncHandler(async (req, res) => {
   const userId = req.user!.id;
-
-  const { questionId } = req.body;
-
-  if (!questionId) {
-    throw new AppError(400, "questionId is required");
-  }
+  const { questionId } = srsCardSchema.parse(req.body);
 
   await createSrsCard(userId, questionId);
 

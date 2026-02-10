@@ -4,6 +4,7 @@ import { AppError } from "../middleware/error-handler";
 import { insertQuizSessionSchema } from "../../shared/schema";
 import { storage } from "../storage";
 import { submitAnswer, getWrongAnswersWithDetails } from "../services/quiz.service";
+import { submitAnswerSchema, completeSessionSchema } from "../validation";
 
 const router = Router();
 
@@ -42,15 +43,17 @@ router.post("/quiz/session", asyncHandler(async (req, res) => {
 // Submit answer (with SRS + syllabus progress integration)
 router.post("/quiz/answer", asyncHandler(async (req, res) => {
   const userId = req.user!.id;
-  const answer = await submitAnswer(userId, req.body);
+  const body = submitAnswerSchema.parse(req.body);
+  const answer = await submitAnswer(userId, body);
   res.json(answer);
 }));
 
 // Complete quiz session
 router.patch("/quiz/session/:id", asyncHandler(async (req, res) => {
   const { id } = req.params;
+  const body = completeSessionSchema.parse(req.body);
   const session = await storage.updateQuizSession(id, {
-    ...req.body,
+    ...body,
     completedAt: new Date(),
   });
   if (!session) {

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { asyncHandler } from "../middleware/async-handler";
 import { AppError } from "../middleware/error-handler";
 import { RoadmapService } from "../services/roadmap-service";
+import { completeNodeSchema } from "../validation";
 
 const router = Router();
 
@@ -23,11 +24,7 @@ router.get("/roadmap/node/:nodeId", asyncHandler(async (req, res) => {
 router.post("/roadmap/node/:nodeId/complete", asyncHandler(async (req, res) => {
   const userId = req.user!.id;
   const { nodeId } = req.params;
-  const { score } = req.body;
-
-  if (score === undefined) {
-    throw new AppError(400, "Score is required");
-  }
+  const { score } = completeNodeSchema.parse(req.body);
 
   const result = await RoadmapService.completeNode(userId, nodeId, { score });
   res.json(result);

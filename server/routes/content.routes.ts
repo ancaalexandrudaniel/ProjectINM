@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { asyncHandler } from "../middleware/async-handler";
 import { z } from "zod";
+import { submitEssaySchema } from "../validation";
 import {
   fixPenalSubjects,
   submitExamSession,
@@ -54,8 +55,7 @@ router.get("/essays/:id", asyncHandler(async (req, res) => {
 // POST /essays/:id/submit
 router.post("/essays/:id/submit", asyncHandler(async (req, res) => {
   const userId = req.user!.id;
-  const { userAnswer, selfEvaluation, selfScore, timeSpent } = req.body;
-  if (!userAnswer) return res.status(400).json({ error: "userAnswer is required" });
+  const { userAnswer, selfEvaluation, selfScore, timeSpent } = submitEssaySchema.parse(req.body);
 
   const submission = await submitEssay(userId, req.params.id, { userAnswer, selfEvaluation, selfScore, timeSpent });
   res.json({ success: true, submissionId: submission.id, selfScore });

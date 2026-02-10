@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { asyncHandler } from "../middleware/async-handler";
 import { AppError } from "../middleware/error-handler";
+import { uploadDocumentSchema, processDocumentSchema, analyzeDocumentPatternsSchema } from "../validation";
 import {
   uploadDocument,
   getDocuments,
@@ -17,7 +18,8 @@ const router = Router();
 // POST /documents/upload - Upload document (base64)
 router.post("/documents/upload", asyncHandler(async (req, res) => {
   const userId = req.user!.id;
-  const result = await uploadDocument(userId, req.body);
+  const body = uploadDocumentSchema.parse(req.body);
+  const result = await uploadDocument(userId, body);
   res.json(result);
 }));
 
@@ -31,17 +33,15 @@ router.get("/documents", asyncHandler(async (req, res) => {
 // POST /documents/process - Process uploaded document
 router.post("/documents/process", asyncHandler(async (req, res) => {
   const userId = req.user!.id;
-  const result = await processDocument(userId, req.body);
+  const body = processDocumentSchema.parse(req.body);
+  const result = await processDocument(userId, body);
   res.json(result);
 }));
 
 // POST /documents/analyze-patterns - Analyze exam patterns
 router.post("/documents/analyze-patterns", asyncHandler(async (req, res) => {
   const userId = req.user!.id;
-  const { documentIds, subject } = req.body;
-  if (!documentIds || documentIds.length === 0) {
-    throw new AppError(400, "No documents specified");
-  }
+  const { documentIds, subject } = analyzeDocumentPatternsSchema.parse(req.body);
   try {
     const analysis = await analyzeDocumentPatterns(userId, documentIds, subject);
     res.json(analysis);
