@@ -2,6 +2,7 @@
 import { db } from "./db";
 import { questions, users } from "@shared/schema";
 import { eq } from "drizzle-orm";
+import bcrypt from "bcrypt";
 
 export const sampleQuestions = [
   // Drept Civil - 10 questions
@@ -626,18 +627,46 @@ async function seed() {
       .where(eq(users.email, "demo@inm.ro"))
       .limit(1);
 
+    const hashedDemoPassword = await bcrypt.hash("demo123", 12);
     if (existingDemo.length === 0) {
       await db.insert(users).values({
         username: "demo",
-        password: "demo123", // In production, use bcrypt
+        password: hashedDemoPassword,
         fullName: "Utilizator Demo",
         email: "demo@inm.ro",
+        role: "student",
         subscriptionTier: "premium",
         isVerified: true,
       });
-      console.log("✅ Created demo user: demo@inm.ro / demo123 (premium)");
+      console.log("✅ Created demo user: demo@inm.ro / demo123 (premium, bcrypt-hashed)");
     } else {
-      console.log("ℹ️  Demo user already exists");
+      // Update existing demo user to ensure password is hashed
+      await db.update(users).set({ password: hashedDemoPassword }).where(eq(users.email, "demo@inm.ro"));
+      console.log("🔄 Updated demo user password (bcrypt-hashed)");
+    }
+
+    // ADMIN USER SEEDING
+    const existingAdmin = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, "admin@inm.ro"))
+      .limit(1);
+
+    const hashedAdminPassword = await bcrypt.hash("admin2025!", 12);
+    if (existingAdmin.length === 0) {
+      await db.insert(users).values({
+        username: "admin",
+        password: hashedAdminPassword,
+        fullName: "Administrator INM",
+        email: "admin@inm.ro",
+        role: "admin",
+        subscriptionTier: "premium",
+        isVerified: true,
+      });
+      console.log("✅ Created admin user: admin@inm.ro / admin2025! (admin, bcrypt-hashed)");
+    } else {
+      await db.update(users).set({ password: hashedAdminPassword, role: "admin" }).where(eq(users.email, "admin@inm.ro"));
+      console.log("🔄 Updated admin user (bcrypt-hashed, role=admin)");
     }
 
     // ========================================================================

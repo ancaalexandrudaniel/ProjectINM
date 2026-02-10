@@ -23,15 +23,24 @@ export async function hashPassword(password: string): Promise<string> {
 }
 
 /**
- * Verify password against bcrypt hash
+ * Verify password against bcrypt hash (or legacy plaintext)
  */
 export async function verifyPassword(inputPassword: string, storedHash: string): Promise<boolean> {
-    // Handle legacy plain-text passwords (for migration)
-    if (!storedHash.startsWith("$2")) {
-        // Plain text comparison (temporary for demo user)
-        return inputPassword === storedHash;
+    if (!inputPassword || !storedHash) {
+        console.warn("[AUTH] verifyPassword called with null/empty input");
+        return false;
     }
-    return bcrypt.compare(inputPassword, storedHash);
+    try {
+        // Handle legacy plain-text passwords (for migration)
+        if (!storedHash.startsWith("$2")) {
+            console.warn("[AUTH] Legacy plaintext password detected — consider re-hashing");
+            return inputPassword === storedHash;
+        }
+        return await bcrypt.compare(inputPassword, storedHash);
+    } catch (err) {
+        console.error("[AUTH] verifyPassword error:", err);
+        return false;
+    }
 }
 
 // ============================================================================
