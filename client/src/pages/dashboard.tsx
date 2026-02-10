@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import {
@@ -72,16 +73,15 @@ export default function Dashboard() {
     queryKey: ['/api/roadmap'],
   });
 
-  // Calculate days until exam
-  const getDaysUntilExam = () => {
+  // Memoize expensive calculations to avoid recomputing on every render
+  const daysLeft = useMemo(() => {
     const today = new Date();
     const diffTime = EXAM_DATE.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays > 0 ? diffDays : 0;
-  };
+  }, []);
 
-  // Get overall stats
-  const getOverallStats = () => {
+  const stats = useMemo(() => {
     const totalQuestions = progress.reduce((sum, p) => sum + p.totalQuestions, 0);
     const correctAnswers = progress.reduce((sum, p) => sum + p.correctAnswers, 0);
     const accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
@@ -95,19 +95,16 @@ export default function Dashboard() {
       weakPoints: progress.filter(p => p.accuracy < 60).length,
       totalQuestions
     };
-  };
+  }, [progress, sessions]);
 
-  // Get last incomplete session for "pick up where you left off"
-  const getLastSession = () => {
+  const lastSession = useMemo(() => {
     const sortedSessions = [...sessions]
       .filter(s => s.completedAt)
       .sort((a, b) => new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime());
-
     return sortedSessions[0] || null;
-  };
+  }, [sessions]);
 
-  // Calculate study streak (consecutive days)
-  const getStudyStreak = () => {
+  const studyStreak = useMemo(() => {
     if (sessions.length === 0) return 0;
 
     const sortedDates = Array.from(new Set(
@@ -122,7 +119,6 @@ export default function Dashboard() {
     const today = new Date().toDateString();
     const yesterday = new Date(Date.now() - 86400000).toDateString();
 
-    // Check if studied today or yesterday
     if (sortedDates[0] !== today && sortedDates[0] !== yesterday) {
       return 0;
     }
@@ -140,24 +136,27 @@ export default function Dashboard() {
     }
 
     return streak + 1;
-  };
-
-  const stats = getOverallStats();
-  const lastSession = getLastSession();
-  const daysLeft = getDaysUntilExam();
-  const studyStreak = getStudyStreak();
+  }, [sessions]);
 
   const subjects = SUBJECTS;
 
+  const subjectStatsMap = useMemo(() => {
+    const map = new Map<string, { totalQuestions: number; accuracy: number }>();
+    for (const subject of SUBJECTS) {
+      const subjectProgress = progress.filter(p => p.subject === subject.id);
+      const totalQuestions = subjectProgress.reduce((sum, p) => sum + p.totalQuestions, 0);
+      const correctAnswers = subjectProgress.reduce((sum, p) => sum + p.correctAnswers, 0);
+      const accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+      map.set(subject.id, { totalQuestions, accuracy });
+    }
+    return map;
+  }, [progress]);
+
   const getSubjectStats = (subjectId: string) => {
-    const subjectProgress = progress.filter(p => p.subject === subjectId);
-    const totalQuestions = subjectProgress.reduce((sum, p) => sum + p.totalQuestions, 0);
-    const correctAnswers = subjectProgress.reduce((sum, p) => sum + p.correctAnswers, 0);
-    const accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-    return { totalQuestions, accuracy };
+    return subjectStatsMap.get(subjectId) || { totalQuestions: 0, accuracy: 0 };
   };
 
-  const weakPoints = progress.filter(p => p.accuracy < 60).slice(0, 3);
+  const weakPoints = useMemo(() => progress.filter(p => p.accuracy < 60).slice(0, 3), [progress]);
 
   return (
     <div className="max-w-[1200px] mx-auto p-6 space-y-6">

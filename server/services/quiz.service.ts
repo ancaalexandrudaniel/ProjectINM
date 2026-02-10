@@ -24,10 +24,12 @@ export async function submitAnswer(
 
   const answer = await storage.createUserAnswer(answerData);
 
-  // Update user progress
-  const question = await storage
-    .getAllQuestions()
-    .then((qs) => qs.find((q) => q.id === answerData.questionId));
+  // Update user progress — direct lookup instead of loading all questions
+  const [question] = await db
+    .select()
+    .from(questions)
+    .where(eq(questions.id, answerData.questionId))
+    .limit(1);
 
   if (question) {
     const existingProgress = await storage.getSubjectProgress(
@@ -176,11 +178,21 @@ export async function getWrongAnswersWithDetails(
 ) {
   const answers = await storage.getUserAnswers(userId);
   const wrongAnswers = answers.filter((a) => !a.isCorrect);
-  const allQuestions = await storage.getAllQuestions();
+
+  // Fetch only the questions we need instead of all questions
+  const questionIds = Array.from(new Set(wrongAnswers.map((a) => a.questionId)));
+  if (questionIds.length === 0) return [];
+
+  const neededQuestions = await db
+    .select()
+    .from(questions)
+    .where(inArray(questions.id, questionIds));
+
+  const questionMap = new Map(neededQuestions.map((q) => [q.id, q]));
 
   return wrongAnswers
     .map((answer) => {
-      const question = allQuestions.find((q) => q.id === answer.questionId);
+      const question = questionMap.get(answer.questionId);
       return question ? { ...answer, question } : null;
     })
     .filter((item) => item !== null)

@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
+import compression from "compression";
 import { registerRoutes } from "./routes/index";
 import { setupVite, log } from "./vite";
 import { errorHandler } from "./middleware/error-handler";
@@ -19,18 +20,21 @@ if (!process.env.NODE_ENV) {
 
 const app = express();
 
+// Gzip/Brotli compression — reduces payload sizes by ~60%
+app.use(compression());
+
 declare module 'http' {
   interface IncomingMessage {
     rawBody: unknown
   }
 }
 app.use(express.json({
-  limit: '50mb',
+  limit: '10mb',
   verify: (req, _res, buf) => {
     req.rawBody = buf;
   }
 }));
-app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -107,8 +111,18 @@ app.use((req, res, next) => {
     const distPath = path.resolve(__dirname, "..", "dist", "public");
     console.log(`[SERVER] Serving static from: ${distPath}`);
 
-    // Serve static assets first (before catch-all route)
-    app.use(express.static(distPath));
+    // Serve static assets with long-term caching (hashed filenames = safe to cache forever)
+    app.use(express.static(distPath, {
+      maxAge: '1y',
+      etag: true,
+      immutable: true,
+      setHeaders: (res, filePath) => {
+        // HTML files should not be cached (they reference hashed assets)
+        if (filePath.endsWith('.html')) {
+          res.setHeader('Cache-Control', 'no-cache');
+        }
+      },
+    }));
 
     // Fall through to index.html for client-side routing
     app.use("*", (_req, res) => {

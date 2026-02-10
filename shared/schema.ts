@@ -49,6 +49,8 @@ export const questions = pgTable("questions", {
 }, (table) => {
   return {
     searchIdx: index("search_idx").using("gin", sql`to_tsvector('romanian', ${table.questionText} || ' ' || ${table.explanation})`),
+    subjectIdx: index("questions_subject_idx").on(table.subject),
+    subjectChapterIdx: index("questions_subject_chapter_idx").on(table.subject, table.chapter),
   }
 });
 
@@ -63,7 +65,9 @@ export const quizSessions = pgTable("quiz_sessions", {
   totalQuestions: integer("total_questions").notNull(),
   correctAnswers: integer("correct_answers").default(0),
   timeSpent: integer("time_spent"), // seconds
-});
+}, (table) => ({
+  userIdIdx: index("quiz_sessions_user_id_idx").on(table.userId),
+}));
 
 export const userAnswers = pgTable("user_answers", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -74,7 +78,11 @@ export const userAnswers = pgTable("user_answers", {
   isCorrect: boolean("is_correct").notNull(),
   timeToAnswer: integer("time_to_answer"), // seconds
   answeredAt: timestamp("answered_at").defaultNow(),
-});
+}, (table) => ({
+  userIdIdx: index("user_answers_user_id_idx").on(table.userId),
+  sessionIdIdx: index("user_answers_session_id_idx").on(table.sessionId),
+  questionIdIdx: index("user_answers_question_id_idx").on(table.questionId),
+}));
 
 export const userProgress = pgTable("user_progress", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -86,7 +94,10 @@ export const userProgress = pgTable("user_progress", {
   accuracy: integer("accuracy").default(0), // percentage
   lastPracticed: timestamp("last_practiced"),
   updatedAt: timestamp("updated_at").defaultNow(),
-});
+}, (table) => ({
+  userSubjectIdx: index("user_progress_user_subject_idx").on(table.userId, table.subject),
+  userSubjectChapterIdx: index("user_progress_user_subject_chapter_idx").on(table.userId, table.subject, table.chapter),
+}));
 
 export const uploadedDocuments = pgTable("uploaded_documents", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),

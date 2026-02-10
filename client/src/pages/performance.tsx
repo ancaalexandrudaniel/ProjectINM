@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { 
   TrendingUp, 
@@ -134,10 +134,10 @@ export default function Performance() {
       });
   };
 
-  const stats = getOverallStats();
-  const chartData = getPerformanceTrend();
-  const subjectPerformance = getSubjectPerformance();
-  const recentActivity = getRecentActivity();
+  const stats = useMemo(() => getOverallStats(), [progress, sessions]);
+  const chartData = useMemo(() => getPerformanceTrend(), [sessions, answers, timeframe]);
+  const subjectPerformance = useMemo(() => getSubjectPerformance(), [progress]);
+  const recentActivity = useMemo(() => getRecentActivity(), [sessions]);
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
