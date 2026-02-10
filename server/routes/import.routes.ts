@@ -360,16 +360,6 @@ router.post("/questions/bulk-import", asyncHandler(async (req, res) => {
     });
   }
 
-  // Create batch record
-  const [batch] = await db.insert(questionBatches).values({
-    userId,
-    batchName,
-    subject,
-    sourceType,
-    sourceLLM: sourceLLM || null,
-    questionsCount: questionsData.length
-  }).returning();
-
   // Insert questions with validation errors tracking
   const insertedQuestions: any[] = [];
   const errors: Array<{ index: number; error: string }> = [];
@@ -378,10 +368,10 @@ router.post("/questions/bulk-import", asyncHandler(async (req, res) => {
   const preparedQuestions: any[] = [];
   const originalIndices: number[] = [];
 
+  // Prepare question data (no batch ID yet — assigned inside transaction)
   for (let i = 0; i < questionsData.length; i++) {
     const q = questionsData[i];
     try {
-      // Normalize options to array of objects with id and text
       const normalizedOptions = q.options.map((opt, idx) => {
         if (typeof opt === 'string') {
           return { id: idx, text: opt };
@@ -389,21 +379,16 @@ router.post("/questions/bulk-import", asyncHandler(async (req, res) => {
         return opt;
       });
 
-      // Determine correctAnswer and correctAnswersMultiple
       let finalCorrectAnswer: number | null = null;
       let finalCorrectAnswersMultiple: number[] | null = null;
 
       if (q.correctAnswer !== null && q.correctAnswer !== undefined) {
-        // Single correct answer
         finalCorrectAnswer = q.correctAnswer;
       } else if (q.correctAnswers && q.correctAnswers.length === 1) {
-        // Single answer in array format
         finalCorrectAnswer = q.correctAnswers[0];
       } else if (q.correctAnswers && q.correctAnswers.length > 1) {
-        // Multiple correct answers
         finalCorrectAnswersMultiple = q.correctAnswers;
       } else if (q.correctAnswers && q.correctAnswers.length === 0) {
-        // No correct answer (God Mode Set C edge case)
         finalCorrectAnswersMultiple = [];
       }
 
@@ -423,7 +408,7 @@ router.post("/questions/bulk-import", asyncHandler(async (req, res) => {
         feedbackDetailed: q.feedbackDetailed || null,
         sourceType,
         sourceLLM: sourceLLM || null,
-        batchId: batch.id
+        batchId: "" // placeholder — set inside transaction
       });
       originalIndices.push(i);
     } catch (prepErr: any) {
@@ -432,35 +417,53 @@ router.post("/questions/bulk-import", asyncHandler(async (req, res) => {
     }
   }
 
-  // Attempt Batch Insert
-  let batchSuccess = false;
-  if (preparedQuestions.length > 0) {
-    try {
-      console.log(`[BULK IMPORT] Attempting batch insert of ${preparedQuestions.length} questions...`);
-      const result = await db.insert(questions).values(preparedQuestions).returning();
-      insertedQuestions.push(...result);
-      batchSuccess = true;
-      console.log(`[BULK IMPORT] Batch insert successful!`);
-    } catch (batchErr: any) {
-      console.warn(`[BULK IMPORT] Batch insert failed, falling back to sequential: ${batchErr.message}`);
-      batchSuccess = false;
-    }
-  }
+  // Wrap batch creation + question insert in a transaction
+  const batch = await db.transaction(async (tx) => {
+    const [batch] = await tx.insert(questionBatches).values({
+      userId,
+      batchName,
+      subject,
+      sourceType,
+      sourceLLM: sourceLLM || null,
+      questionsCount: questionsData.length
+    }).returning();
 
-  // Fallback: Sequential Insert if batch failed
-  if (!batchSuccess && preparedQuestions.length > 0) {
-    for (let j = 0; j < preparedQuestions.length; j++) {
-      const qData = preparedQuestions[j];
-      const originalIdx = originalIndices[j];
+    // Assign batchId to all prepared questions
+    for (const q of preparedQuestions) {
+      q.batchId = batch.id;
+    }
+
+    // Attempt Batch Insert
+    let batchSuccess = false;
+    if (preparedQuestions.length > 0) {
       try {
-        const [inserted] = await db.insert(questions).values(qData).returning();
-        insertedQuestions.push(inserted);
-      } catch (qErr: any) {
-         console.warn(`Failed to insert question ${originalIdx} (sequential fallback):`, qErr.message);
-         errors.push({ index: originalIdx, error: qErr.message });
+        console.log(`[BULK IMPORT] Attempting batch insert of ${preparedQuestions.length} questions...`);
+        const result = await tx.insert(questions).values(preparedQuestions).returning();
+        insertedQuestions.push(...result);
+        batchSuccess = true;
+        console.log(`[BULK IMPORT] Batch insert successful!`);
+      } catch (batchErr: any) {
+        console.warn(`[BULK IMPORT] Batch insert failed, falling back to sequential: ${batchErr.message}`);
       }
     }
-  }
+
+    // Fallback: Sequential Insert if batch failed
+    if (!batchSuccess && preparedQuestions.length > 0) {
+      for (let j = 0; j < preparedQuestions.length; j++) {
+        const qData = preparedQuestions[j];
+        const originalIdx = originalIndices[j];
+        try {
+          const [inserted] = await tx.insert(questions).values(qData).returning();
+          insertedQuestions.push(inserted);
+        } catch (qErr: any) {
+          console.warn(`Failed to insert question ${originalIdx} (sequential fallback):`, qErr.message);
+          errors.push({ index: originalIdx, error: qErr.message });
+        }
+      }
+    }
+
+    return batch;
+  });
 
   res.json({
     batch,
@@ -580,36 +583,22 @@ router.post("/questions/bulk-import-session", asyncHandler(async (req, res) => {
     });
   }
 
-  // Create batch with session metadata
-  const batchName = meta?.segment_articole || `Sesiune ${new Date().toLocaleDateString('ro-RO')}`;
-
-  const [batch] = await db.insert(questionBatches).values({
-    userId,
-    batchName,
-    subject,
-    sourceType: 'llm-session',
-    sourceLLM: sourceLLM || null,
-    questionsCount: sessionData.intrebari.length
-  }).returning();
-
   // Insert questions with rich feedback
   const insertedQuestions: any[] = [];
   const errors: Array<{ index: number; error: string }> = [];
 
-  // Phase 1: Prepare all questions for insertion
+  // Phase 1: Prepare all questions for insertion (no batchId yet)
   const preparedData: Array<{ index: number, value: any }> = [];
 
   for (let i = 0; i < sessionData.intrebari.length; i++) {
     const q = sessionData.intrebari[i];
     try {
-      // Convert variante to options format
       const options = q.variante.map((v, idx) => ({
         id: idx,
         text: v.text,
         litera: v.litera
       }));
 
-      // Find correct answers
       const correctIndices = q.variante
         .map((v, idx) => v.este_corecta ? idx : -1)
         .filter(idx => idx !== -1);
@@ -617,7 +606,6 @@ router.post("/questions/bulk-import-session", asyncHandler(async (req, res) => {
       const correctAnswer = correctIndices.length === 1 ? correctIndices[0] : null;
       const correctAnswersMultiple = correctIndices.length !== 1 ? correctIndices : null;
 
-      // Build feedbackDetailed from rich feedback
       const feedbackDetailed = q.feedback ? {
         explicatie_generala: q.feedback.explicatie_generala,
         analiza_variante: q.feedback.analiza_variante,
@@ -628,7 +616,6 @@ router.post("/questions/bulk-import-session", asyncHandler(async (req, res) => {
         are_exceptii: q.feedback.are_exceptii
       } : null;
 
-      // Map difficulty
       const difficultyMap: Record<string, string> = {
         'usor': 'easy', 'u\u0219or': 'easy', 'easy': 'easy',
         'mediu': 'medium', 'medium': 'medium',
@@ -656,7 +643,7 @@ router.post("/questions/bulk-import-session", asyncHandler(async (req, res) => {
           hasExceptions: q.feedback?.are_exceptii || false,
           sourceType: 'llm-session',
           sourceLLM: sourceLLM || null,
-          batchId: batch.id
+          batchId: "" // placeholder — set inside transaction
         }
       });
     } catch (qErr: any) {
@@ -665,30 +652,49 @@ router.post("/questions/bulk-import-session", asyncHandler(async (req, res) => {
     }
   }
 
-  // Phase 2: Batch Insert with Fallback
-  if (preparedData.length > 0) {
-    try {
-      // Try batch insert first
-      console.log(`[BULK-IMPORT] Attempting batch insert for ${preparedData.length} questions...`);
-      const valuesToInsert = preparedData.map(p => p.value);
-      const inserted = await db.insert(questions).values(valuesToInsert).returning();
-      insertedQuestions.push(...inserted);
-      console.log(`[BULK-IMPORT] Batch insert successful!`);
-    } catch (batchErr: any) {
-      console.warn(`[BULK-IMPORT] Batch insert failed, falling back to sequential: ${batchErr.message}`);
+  // Wrap batch creation + question insert in a transaction
+  const batchName = meta?.segment_articole || `Sesiune ${new Date().toLocaleDateString('ro-RO')}`;
 
-      // Fallback to sequential insert to save valid records
-      for (const item of preparedData) {
-        try {
-          const [inserted] = await db.insert(questions).values(item.value).returning();
-          insertedQuestions.push(inserted);
-        } catch (seqErr: any) {
-          console.warn(`[BULK-IMPORT] Sequential insert failed for question index ${item.index}:`, seqErr.message);
-          errors.push({ index: item.index, error: seqErr.message });
+  const batch = await db.transaction(async (tx) => {
+    const [batch] = await tx.insert(questionBatches).values({
+      userId,
+      batchName,
+      subject,
+      sourceType: 'llm-session',
+      sourceLLM: sourceLLM || null,
+      questionsCount: sessionData.intrebari.length
+    }).returning();
+
+    // Assign batchId to all prepared questions
+    for (const item of preparedData) {
+      item.value.batchId = batch.id;
+    }
+
+    // Phase 2: Batch Insert with Fallback
+    if (preparedData.length > 0) {
+      try {
+        console.log(`[BULK-IMPORT] Attempting batch insert for ${preparedData.length} questions...`);
+        const valuesToInsert = preparedData.map(p => p.value);
+        const inserted = await tx.insert(questions).values(valuesToInsert).returning();
+        insertedQuestions.push(...inserted);
+        console.log(`[BULK-IMPORT] Batch insert successful!`);
+      } catch (batchErr: any) {
+        console.warn(`[BULK-IMPORT] Batch insert failed, falling back to sequential: ${batchErr.message}`);
+
+        for (const item of preparedData) {
+          try {
+            const [inserted] = await tx.insert(questions).values(item.value).returning();
+            insertedQuestions.push(inserted);
+          } catch (seqErr: any) {
+            console.warn(`[BULK-IMPORT] Sequential insert failed for question index ${item.index}:`, seqErr.message);
+            errors.push({ index: item.index, error: seqErr.message });
+          }
         }
       }
     }
-  }
+
+    return batch;
+  });
 
   res.json({
     batch,
@@ -842,57 +848,59 @@ router.post("/case-studies/bulk-import", asyncHandler(async (req, res) => {
 
   const { batchName, subject, examDay, sourceType, sourceLLM, caseStudiesData } = parseResult.data;
 
-  const [batch] = await db.insert(caseStudyBatches).values({
-    userId,
-    batchName,
-    subject,
-    examDay: examDay || null,
-    sourceType,
-    sourceLLM: sourceLLM || null,
-    caseStudiesCount: caseStudiesData.length
-  }).returning();
-
   const insertedCaseStudies: any[] = [];
   const errors: Array<{ index: number; error: string }> = [];
 
-  // Prepare all data objects first
-  const caseStudiesDataPrepared = caseStudiesData.map((cs: any) => ({
-    userId,
-    subject,
-    examDay: examDay || null,
-    title: cs.title,
-    scenario: cs.scenario,
-    questions: cs.questions,
-    referenceArticles: cs.referenceArticles,
-    sampleAnswer: cs.sampleAnswer,
-    modelEvaluation: cs.modelEvaluation,
-    aiFeedback: cs.aiFeedback,
-    sourceType,
-    sourceLLM: sourceLLM || null,
-    batchId: batch.id,
-    difficulty: cs.difficulty,
-    estimatedTime: cs.estimatedTime
-  }));
+  // Wrap batch creation + case study insert in a transaction
+  const batch = await db.transaction(async (tx) => {
+    const [batch] = await tx.insert(caseStudyBatches).values({
+      userId,
+      batchName,
+      subject,
+      examDay: examDay || null,
+      sourceType,
+      sourceLLM: sourceLLM || null,
+      caseStudiesCount: caseStudiesData.length
+    }).returning();
 
-  try {
-    // Attempt batch insert
-    const inserted = await db.insert(caseStudies).values(caseStudiesDataPrepared).returning();
-    inserted.forEach(i => insertedCaseStudies.push(i));
-  } catch (batchError) {
-    console.warn("[Bulk Import] Batch insert failed, falling back to sequential insert:", batchError);
+    const caseStudiesDataPrepared = caseStudiesData.map((cs: any) => ({
+      userId,
+      subject,
+      examDay: examDay || null,
+      title: cs.title,
+      scenario: cs.scenario,
+      questions: cs.questions,
+      referenceArticles: cs.referenceArticles,
+      sampleAnswer: cs.sampleAnswer,
+      modelEvaluation: cs.modelEvaluation,
+      aiFeedback: cs.aiFeedback,
+      sourceType,
+      sourceLLM: sourceLLM || null,
+      batchId: batch.id,
+      difficulty: cs.difficulty,
+      estimatedTime: cs.estimatedTime
+    }));
 
-    // Fallback to sequential insert
-    for (let i = 0; i < caseStudiesDataPrepared.length; i++) {
-      const csData = caseStudiesDataPrepared[i];
-      try {
-        const [inserted] = await db.insert(caseStudies).values(csData).returning();
-        insertedCaseStudies.push(inserted);
-      } catch (csErr: any) {
-         console.warn(`Failed to insert case study ${i}:`, csErr.message);
-         errors.push({ index: i, error: csErr.message });
+    try {
+      const inserted = await tx.insert(caseStudies).values(caseStudiesDataPrepared).returning();
+      inserted.forEach(i => insertedCaseStudies.push(i));
+    } catch (batchError) {
+      console.warn("[Bulk Import] Batch insert failed, falling back to sequential insert:", batchError);
+
+      for (let i = 0; i < caseStudiesDataPrepared.length; i++) {
+        const csData = caseStudiesDataPrepared[i];
+        try {
+          const [inserted] = await tx.insert(caseStudies).values(csData).returning();
+          insertedCaseStudies.push(inserted);
+        } catch (csErr: any) {
+          console.warn(`Failed to insert case study ${i}:`, csErr.message);
+          errors.push({ index: i, error: csErr.message });
+        }
       }
     }
-  }
+
+    return batch;
+  });
 
   res.json({
     batch,
@@ -1046,58 +1054,60 @@ router.post("/legal-articles/bulk-import", asyncHandler(async (req, res) => {
   const maxArticle = Math.max(...articleNumbers);
   const articleRange = minArticle === maxArticle ? `${minArticle}` : `${minArticle}-${maxArticle}`;
 
-  // Create batch
-  const [batch] = await db.insert(legalArticleBatches).values({
-    userId,
-    batchName: batchName || `${lawSource || 'Articole'} ${articleRange}`,
-    subject,
-    lawSource: lawSource || meta?.source || null,
-    articleRange,
-    sourceLLM: sourceLLM || null,
-    articlesCount: validArticles.length
-  }).returning();
-
   // Insert validated articles only
   let insertedArticles: any[] = [];
   const errors: { index: number; error: string }[] = [];
 
-  // Prepare all values for insertion
-  const allValues = validArticles.map((art: any) => {
-    const rawContent = Object.entries(art.segments || {})
-      .map(([key, value]) => `[${key.toUpperCase()}]\n${value}`)
-      .join('\n\n');
-
-    return {
+  // Wrap batch creation + article insert in a transaction
+  const batch = await db.transaction(async (tx) => {
+    const [batch] = await tx.insert(legalArticleBatches).values({
       userId,
-      articleNumber: art.article,
-      title: art.title,
+      batchName: batchName || `${lawSource || 'Articole'} ${articleRange}`,
       subject,
       lawSource: lawSource || meta?.source || null,
-      segments: art.segments,
-      rawContent: art.raw || rawContent,
-      batchId: batch.id,
-      isProcessedForRag: false
-    };
-  });
+      articleRange,
+      sourceLLM: sourceLLM || null,
+      articlesCount: validArticles.length
+    }).returning();
 
-  try {
-    // Optimization: Try batch insert first
-    insertedArticles = await db.insert(legalArticles).values(allValues).returning();
-  } catch (batchErr) {
-    console.warn("Batch insert failed, falling back to sequential insert:", batchErr);
+    // Prepare all values for insertion
+    const allValues = validArticles.map((art: any) => {
+      const rawContent = Object.entries(art.segments || {})
+        .map(([key, value]) => `[${key.toUpperCase()}]\n${value}`)
+        .join('\n\n');
 
-    // Fallback: Sequential insert to handle individual errors
-    for (let i = 0; i < validArticles.length; i++) {
-      const art = validArticles[i];
-      try {
-        const [inserted] = await db.insert(legalArticles).values(allValues[i]).returning();
-        insertedArticles.push(inserted);
-      } catch (artErr: any) {
-        console.warn(`Failed to insert article ${art.article}:`, artErr.message);
-        errors.push({ index: i, error: artErr.message });
+      return {
+        userId,
+        articleNumber: art.article,
+        title: art.title,
+        subject,
+        lawSource: lawSource || meta?.source || null,
+        segments: art.segments,
+        rawContent: art.raw || rawContent,
+        batchId: batch.id,
+        isProcessedForRag: false
+      };
+    });
+
+    try {
+      insertedArticles = await tx.insert(legalArticles).values(allValues).returning();
+    } catch (batchErr) {
+      console.warn("Batch insert failed, falling back to sequential insert:", batchErr);
+
+      for (let i = 0; i < validArticles.length; i++) {
+        const art = validArticles[i];
+        try {
+          const [inserted] = await tx.insert(legalArticles).values(allValues[i]).returning();
+          insertedArticles.push(inserted);
+        } catch (artErr: any) {
+          console.warn(`Failed to insert article ${art.article}:`, artErr.message);
+          errors.push({ index: i, error: artErr.message });
+        }
       }
     }
-  }
+
+    return batch;
+  });
 
   res.json({
     batch,

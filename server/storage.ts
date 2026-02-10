@@ -75,20 +75,21 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(questions).limit(limit).offset(offset);
   }
 
-  async getQuestionsBySubject(subject: string): Promise<Question[]> {
-    return await db.select().from(questions).where(eq(questions.subject, subject));
+  async getQuestionsBySubject(subject: string, limit = 500): Promise<Question[]> {
+    return await db.select().from(questions).where(eq(questions.subject, subject)).limit(limit);
   }
 
-  async getQuestionsByChapter(subject: string, chapter: string): Promise<Question[]> {
+  async getQuestionsByChapter(subject: string, chapter: string, limit = 500): Promise<Question[]> {
     return await db.select().from(questions)
       .where(and(
         eq(questions.subject, subject),
         eq(questions.chapter, chapter)
-      ));
+      ))
+      .limit(limit);
   }
 
-  async getQuestionsByDifficulty(difficulty: string): Promise<Question[]> {
-    return await db.select().from(questions).where(eq(questions.difficulty, difficulty));
+  async getQuestionsByDifficulty(difficulty: string, limit = 500): Promise<Question[]> {
+    return await db.select().from(questions).where(eq(questions.difficulty, difficulty)).limit(limit);
   }
 
   async getRandomQuestions(subject?: string, count = 20, setType?: string): Promise<Question[]> {
@@ -153,8 +154,8 @@ export class DatabaseStorage implements IStorage {
     return session || undefined;
   }
 
-  async getUserQuizSessions(userId: string): Promise<QuizSession[]> {
-    return await db.select().from(quizSessions).where(eq(quizSessions.userId, userId));
+  async getUserQuizSessions(userId: string, limit = 100): Promise<QuizSession[]> {
+    return await db.select().from(quizSessions).where(eq(quizSessions.userId, userId)).limit(limit);
   }
 
   // User Answers
@@ -166,8 +167,8 @@ export class DatabaseStorage implements IStorage {
     return answer;
   }
 
-  async getUserAnswers(userId: string): Promise<UserAnswer[]> {
-    return await db.select().from(userAnswers).where(eq(userAnswers.userId, userId));
+  async getUserAnswers(userId: string, limit = 500): Promise<UserAnswer[]> {
+    return await db.select().from(userAnswers).where(eq(userAnswers.userId, userId)).limit(limit);
   }
 
   async getSessionAnswers(sessionId: string): Promise<UserAnswer[]> {
