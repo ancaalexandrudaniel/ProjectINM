@@ -78,8 +78,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (data) => {
       setStoredToken(data.sessionToken);
+      localStorage.setItem("user", JSON.stringify(data.user));
       queryClient.setQueryData(["/api/me"], data.user);
-      queryClient.invalidateQueries();
     },
   });
 
@@ -100,8 +100,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (data) => {
       setStoredToken(data.sessionToken);
+      localStorage.setItem("user", JSON.stringify(data.user));
       queryClient.setQueryData(["/api/me"], data.user);
-      queryClient.invalidateQueries();
     },
   });
 
