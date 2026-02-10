@@ -680,8 +680,9 @@ async function seed() {
       return;
     }
 
-    // Insert sample questions in batch
-    await db.insert(questions).values(sampleQuestions as any);
+    // Insert sample questions in batch (add default setType='A' if missing)
+    const questionsWithSetType = sampleQuestions.map(q => ({ ...q, setType: (q as any).setType || 'A' }));
+    await db.insert(questions).values(questionsWithSetType as any);
 
     console.log(`✅ Successfully seeded ${sampleQuestions.length} questions`);
     console.log("\nBreakdown:");

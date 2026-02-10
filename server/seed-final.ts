@@ -160,7 +160,8 @@ async function seedFinal() {
   console.log("🌱 Starting final database seed...");
 
   try {
-    await db.insert(questions).values(finalQuestions as any);
+    const withSetType = finalQuestions.map(q => ({ ...q, setType: (q as any).setType || 'A' }));
+    await db.insert(questions).values(withSetType as any);
 
     console.log(`✅ Successfully seeded ${finalQuestions.length} final questions`);
     

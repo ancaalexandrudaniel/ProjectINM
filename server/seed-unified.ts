@@ -22,7 +22,8 @@ async function seedAll() {
     
     const allQuestions = [...sampleQuestions, ...additionalQuestions, ...finalQuestions];
     
-    await db.insert(questions).values(allQuestions as any);
+    const withSetType = allQuestions.map(q => ({ ...q, setType: (q as any).setType || 'A' }));
+    await db.insert(questions).values(withSetType as any);
 
     console.log(`✅ Successfully seeded ${allQuestions.length} questions`);
     
