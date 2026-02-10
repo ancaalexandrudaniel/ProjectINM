@@ -18,6 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
+import CelebrationOverlay, { type CompletionResult } from "@/components/gamification/celebration-overlay";
 
 type RoadmapNodeContent = {
   node: {
@@ -46,6 +47,7 @@ export default function RoadmapNodeView() {
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [aiScenario, setAiScenario] = useState<string | null>(null);
   const [quizScore, setQuizScore] = useState<number | null>(null);
+  const [celebrationResult, setCelebrationResult] = useState<CompletionResult | null>(null);
 
   const { data, isLoading } = useQuery<RoadmapNodeContent>({
     queryKey: [`/api/roadmap/node/${id}`],
@@ -57,12 +59,9 @@ export default function RoadmapNodeView() {
       const res = await apiRequest("POST", `/api/roadmap/node/${id}/complete`, { score });
       return res.json();
     },
-    onSuccess: (data) => {
-      toast({
-        title: "Felicitări! 🎉",
-        description: `Ai completat nodul și ai câștigat ${data.xpGained} XP!`,
-      });
-      // Optionally redirect or show success screen
+    onSuccess: (data: CompletionResult) => {
+      // Show celebration overlay with all gamification info
+      setCelebrationResult(data);
       queryClient.invalidateQueries({ queryKey: ["/api/roadmap"] });
     },
   });
@@ -228,7 +227,12 @@ export default function RoadmapNodeView() {
                       <CheckCircle className="h-8 w-8" />
                     </div>
                     <h2 className="text-2xl font-bold mb-2">Nivel Completat!</h2>
-                    <p className="text-lg mb-6">Scor: {quizScore}%</p>
+                    <p className="text-lg mb-2">Scor: {quizScore}%</p>
+                    {celebrationResult && (
+                      <p className="text-sm text-muted-foreground mb-4">
+                        +{celebrationResult.xpGained} XP | Nivel {celebrationResult.newLevel} | {celebrationResult.currentXp.toLocaleString()} XP total
+                      </p>
+                    )}
                     <Button onClick={() => setLocation("/roadmap")}>
                       Continuă Călătoria
                     </Button>
@@ -268,6 +272,12 @@ export default function RoadmapNodeView() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Gamification celebration overlay */}
+      <CelebrationOverlay
+        result={celebrationResult}
+        onClose={() => setCelebrationResult(null)}
+      />
     </div>
   );
 }
