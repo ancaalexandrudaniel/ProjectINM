@@ -2,19 +2,18 @@ import { db } from "../db";
 import { storage } from "../storage";
 import {
   questions,
-  documentChunks,
   studyPlans,
   insertStudyPlanSchema,
   examEssays,
 } from "../../shared/schema";
-import { eq, and, desc, isNotNull } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import {
   explainWrongAnswer,
   generateEmbedding,
-  calculateCosineSimilarity,
   generatePersonalizedStudyPlan,
 } from "../gemini";
 import { generateWithSanitizedContext } from "./clean-room/generator";
+import { searchSimilarChunks } from "../utils/vector-search";
 import { GoogleGenAI } from "@google/genai";
 
 /**
@@ -245,31 +244,21 @@ Noteaza obiectiv pe baza baremului.`;
 export async function askLegalAssistant(userId: string, question: string, topK = 5) {
   const questionEmbedding = await generateEmbedding(question);
 
-  const chunks = await db
-    .select()
-    .from(documentChunks)
-    .where(isNotNull(documentChunks.embedding));
+  // Unified SQL search across document_chunks AND legal_article_chunks
+  const similarities = await searchSimilarChunks(questionEmbedding, topK);
 
-  if (chunks.length === 0) {
+  if (similarities.length === 0) {
     throw new Error("Baza de date legislativa este goala sau neindexata.");
   }
 
-  const similarities = chunks
-    .map((chunk) => ({
-      ...chunk,
-      similarity: calculateCosineSimilarity(questionEmbedding, chunk.embedding as number[]),
-    }))
-    .sort((a, b) => b.similarity - a.similarity)
-    .slice(0, topK);
-
   const sanitizedContext = similarities.map((s) => ({
-    actName: (s.metadata as any)?.actName || "Act Normativ",
-    actNumber: (s.metadata as any)?.actNumber || "",
+    actName: (s.metadata as any)?.actName || (s.metadata as any)?.title || "Act Normativ",
+    actNumber: (s.metadata as any)?.actNumber || (s.metadata as any)?.articleNumber || "",
     rawOfficialText: s.chunkText,
     sourceUrl: "legislatie.just.ro",
     sanitizedAt: new Date(),
     contentHash: "vector-retrieved",
-    articleNumber: "",
+    articleNumber: (s.metadata as any)?.articleNumber || "",
   }));
 
   const result = await generateWithSanitizedContext(
@@ -292,6 +281,7 @@ export async function askLegalAssistant(userId: string, question: string, topK =
     text: s.chunkText,
     similarity: s.similarity,
     metadata: s.metadata,
+    sourceType: s.sourceType,
   }));
 
   return {

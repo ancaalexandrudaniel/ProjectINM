@@ -700,8 +700,10 @@ router.post("/questions/bulk-import-session", asyncHandler(async (req, res) => {
 
 // GET /questions/search - Search questions with filters
 router.get("/questions/search", asyncHandler(async (req, res) => {
-  const { subject, chapter, topic, difficulty, keyword, sourceType, limit: limitStr } = req.query;
-  const limit = parseInt(limitStr as string) || 50;
+  const { subject, chapter, topic, difficulty, keyword, sourceType, limit: limitStr, page: pageStr, pageSize: pageSizeStr } = req.query;
+  const page = Math.max(1, parseInt(pageStr as string) || 1);
+  const pageSize = Math.min(200, Math.max(1, parseInt(pageSizeStr as string) || parseInt(limitStr as string) || 50));
+  const offset = (page - 1) * pageSize;
 
   const conditions = [];
 
@@ -727,14 +729,14 @@ router.get("/questions/search", asyncHandler(async (req, res) => {
     );
   }
 
-  const results = await db
-    .select()
-    .from(questions)
-    .where(conditions.length > 0 ? and(...conditions) : undefined)
-    .orderBy(desc(questions.createdAt))
-    .limit(limit);
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
-  res.json(results);
+  const [totalResult, results] = await Promise.all([
+    db.select({ count: count() }).from(questions).where(whereClause),
+    db.select().from(questions).where(whereClause).orderBy(desc(questions.createdAt)).limit(pageSize).offset(offset),
+  ]);
+
+  res.json({ data: results, total: totalResult[0]?.count || 0, page, pageSize });
 }));
 
 // GET /question-topics - Get question topics (query-param version)
@@ -901,8 +903,10 @@ router.post("/case-studies/bulk-import", asyncHandler(async (req, res) => {
 
 // GET /case-studies/search - Search case studies with filters
 router.get("/case-studies/search", asyncHandler(async (req, res) => {
-  const { subject, examDay, difficulty, keyword, limit: limitStr } = req.query;
-  const limit = parseInt(limitStr as string) || 50;
+  const { subject, examDay, difficulty, keyword, limit: limitStr, page: pageStr, pageSize: pageSizeStr } = req.query;
+  const page = Math.max(1, parseInt(pageStr as string) || 1);
+  const pageSize = Math.min(200, Math.max(1, parseInt(pageSizeStr as string) || parseInt(limitStr as string) || 50));
+  const offset = (page - 1) * pageSize;
 
   const conditions: any[] = [];
 
@@ -924,14 +928,14 @@ router.get("/case-studies/search", asyncHandler(async (req, res) => {
     );
   }
 
-  const results = await db
-    .select()
-    .from(caseStudies)
-    .where(conditions.length > 0 ? and(...conditions) : undefined)
-    .orderBy(desc(caseStudies.createdAt))
-    .limit(limit);
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
-  res.json(results);
+  const [totalResult, results] = await Promise.all([
+    db.select({ count: count() }).from(caseStudies).where(whereClause),
+    db.select().from(caseStudies).where(whereClause).orderBy(desc(caseStudies.createdAt)).limit(pageSize).offset(offset),
+  ]);
+
+  res.json({ data: results, total: totalResult[0]?.count || 0, page, pageSize });
 }));
 
 // GET /case-studies/:id - Get single case study by ID
@@ -1101,6 +1105,65 @@ router.post("/legal-articles/bulk-import", asyncHandler(async (req, res) => {
     articleRange,
     errors: errors.length > 0 ? errors : undefined
   });
+
+  // Auto-trigger RAG processing in background for newly imported articles
+  if (insertedArticles.length > 0) {
+    setImmediate(async () => {
+      console.log(`[RAG-AUTO] Starting background RAG processing for batch ${batch.id} (${insertedArticles.length} articles)...`);
+      let processed = 0;
+      for (const article of insertedArticles) {
+        try {
+          const segments = article.segments as Record<string, string>;
+          const allChunks: { text: string; segmentType: string; index: number }[] = [];
+
+          for (const [segmentType, segmentText] of Object.entries(segments)) {
+            if (!segmentText || typeof segmentText !== "string") continue;
+            const segmentChunks = chunkText(segmentText, {
+              chunkSize: 600,
+              overlap: 50,
+              minChunkSize: 200,
+            });
+            for (const chunk of segmentChunks) {
+              allChunks.push({ text: chunk.text, segmentType, index: allChunks.length });
+            }
+          }
+
+          if (allChunks.length === 0) continue;
+
+          const texts = allChunks.map((c) => c.text);
+          const embeddings = await batchGenerateEmbeddings(texts);
+
+          const chunksToInsert = allChunks.map((chunk, i) => ({
+            articleId: article.id,
+            segmentType: chunk.segmentType,
+            chunkText: chunk.text,
+            chunkIndex: chunk.index,
+            embedding: embeddings[i],
+            metadata: {
+              articleNumber: article.articleNumber,
+              title: article.title,
+              subject: article.subject,
+              segmentType: chunk.segmentType,
+            },
+          }));
+
+          if (chunksToInsert.length > 0) {
+            await db.insert(legalArticleChunks).values(chunksToInsert);
+          }
+
+          await db
+            .update(legalArticles)
+            .set({ isProcessedForRag: true })
+            .where(eq(legalArticles.id, article.id));
+
+          processed++;
+        } catch (err: any) {
+          console.error(`[RAG-AUTO] Failed to process article ${article.id}:`, err.message);
+        }
+      }
+      console.log(`[RAG-AUTO] Background processing complete: ${processed}/${insertedArticles.length} articles indexed`);
+    });
+  }
 }));
 
 // GET /legal-article-batches - Get all legal article batches
@@ -1143,13 +1206,18 @@ router.get("/legal-articles", asyncHandler(async (req, res) => {
     conditions.push(ilike(legalArticles.rawContent, `%${search}%`));
   }
 
-  const articles = await db
-    .select()
-    .from(legalArticles)
-    .where(and(...conditions))
-    .orderBy(asc(legalArticles.articleNumber));
+  const page = Math.max(1, parseInt(req.query.page as string) || 1);
+  const pageSize = Math.min(200, Math.max(1, parseInt(req.query.pageSize as string) || 50));
+  const offset = (page - 1) * pageSize;
 
-  res.json(articles);
+  const whereClause = and(...conditions);
+
+  const [totalResult, articles] = await Promise.all([
+    db.select({ count: count() }).from(legalArticles).where(whereClause),
+    db.select().from(legalArticles).where(whereClause).orderBy(asc(legalArticles.articleNumber)).limit(pageSize).offset(offset),
+  ]);
+
+  res.json({ data: articles, total: totalResult[0]?.count || 0, page, pageSize });
 }));
 
 // GET /legal-articles/stats - Get statistics for legal articles
@@ -1295,6 +1363,98 @@ router.post("/legal-articles/:id/process-rag", asyncHandler(async (req, res) => 
     articleNumber: article.articleNumber,
     chunksCreated: savedChunks.length,
     embeddingDimensions: embeddings[0]?.length || 0
+  });
+}));
+
+// POST /legal-articles/batch-process-rag - Batch process all unprocessed articles for RAG
+router.post("/legal-articles/batch-process-rag", asyncHandler(async (req, res) => {
+  const batchId = req.query.batchId as string | undefined;
+
+  // Find articles that need processing
+  const conditions = [eq(legalArticles.isProcessedForRag, false)];
+  if (batchId) {
+    conditions.push(eq(legalArticles.batchId, batchId));
+  }
+
+  const unprocessed = await db
+    .select()
+    .from(legalArticles)
+    .where(and(...conditions));
+
+  if (unprocessed.length === 0) {
+    return res.json({ processed: 0, message: "No unprocessed articles found" });
+  }
+
+  console.log(`[RAG-BATCH] Processing ${unprocessed.length} articles for RAG...`);
+
+  let processed = 0;
+  const errors: Array<{ articleId: string; error: string }> = [];
+
+  for (const article of unprocessed) {
+    try {
+      // Delete existing chunks
+      await db.delete(legalArticleChunks).where(eq(legalArticleChunks.articleId, article.id));
+
+      // Create chunks from segments
+      const segments = article.segments as Record<string, string>;
+      const allChunks: { text: string; segmentType: string; index: number }[] = [];
+
+      for (const [segmentType, segmentText] of Object.entries(segments)) {
+        if (!segmentText || typeof segmentText !== "string") continue;
+        const segmentChunks = chunkText(segmentText, {
+          chunkSize: 600,
+          overlap: 50,
+          minChunkSize: 200,
+        });
+        for (const chunk of segmentChunks) {
+          allChunks.push({ text: chunk.text, segmentType, index: allChunks.length });
+        }
+      }
+
+      if (allChunks.length === 0) continue;
+
+      // Generate embeddings
+      const texts = allChunks.map((c) => c.text);
+      const embeddings = await batchGenerateEmbeddings(texts);
+
+      // Save chunks
+      const chunksToInsert = allChunks.map((chunk, i) => ({
+        articleId: article.id,
+        segmentType: chunk.segmentType,
+        chunkText: chunk.text,
+        chunkIndex: chunk.index,
+        embedding: embeddings[i],
+        metadata: {
+          articleNumber: article.articleNumber,
+          title: article.title,
+          subject: article.subject,
+          segmentType: chunk.segmentType,
+        },
+      }));
+
+      if (chunksToInsert.length > 0) {
+        await db.insert(legalArticleChunks).values(chunksToInsert);
+      }
+
+      // Mark processed
+      await db
+        .update(legalArticles)
+        .set({ isProcessedForRag: true })
+        .where(eq(legalArticles.id, article.id));
+
+      processed++;
+      console.log(`[RAG-BATCH] Processed article ${article.articleNumber} (${allChunks.length} chunks)`);
+    } catch (err: any) {
+      console.error(`[RAG-BATCH] Failed article ${article.id}:`, err.message);
+      errors.push({ articleId: article.id, error: err.message });
+    }
+  }
+
+  res.json({
+    processed,
+    total: unprocessed.length,
+    errors: errors.length > 0 ? errors : undefined,
+    message: `Processed ${processed}/${unprocessed.length} articles for RAG`,
   });
 }));
 
