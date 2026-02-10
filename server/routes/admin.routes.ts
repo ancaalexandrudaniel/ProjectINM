@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { asyncHandler } from "../middleware/async-handler";
+import { requireAdmin } from "../middleware/auth";
 import { db } from "../db";
 import { questions } from "../../shared/schema";
 
 const router = Router();
 
 // POST /admin/purge-questions - Delete all questions (admin only)
-router.post("/admin/purge-questions", asyncHandler(async (req, res) => {
+router.post("/admin/purge-questions", requireAdmin, asyncHandler(async (req, res) => {
   console.log("[ADMIN] Purging all questions from database...");
   await db.delete(questions);
   console.log("[ADMIN] Questions purged successfully.");
@@ -30,14 +31,20 @@ import { cleanRoomRoutes } from "../services/clean-room/routes";
  * Called from the orchestrator with the Express app instance.
  */
 export function registerExternalRoutes(app: Express): void {
-  registerLegislativeTestRoutes(app);
-  registerPortalJustTestRoutes(app);
-  registerRawLegislativeTestRoutes(app);
-  registerScraperTestRoutes(app);
+  // Test/debug routes — only in development
+  if (process.env.NODE_ENV !== "production") {
+    registerLegislativeTestRoutes(app);
+    registerPortalJustTestRoutes(app);
+    registerRawLegislativeTestRoutes(app);
+    registerScraperTestRoutes(app);
+    console.log("[ROUTES] Test routes registered (dev only)");
+  }
+
+  // Production routes
   registerLegalActsRoutes(app);
   registerBulletinBoardRoutes(app);
   app.use("/api/clean-room", cleanRoomRoutes);
-  console.log("[ROUTES] External routes registered (legislative, portal-just, scraper, legal-acts, bulletin-board, clean-room)");
+  console.log("[ROUTES] External routes registered (legal-acts, bulletin-board, clean-room)");
 }
 
 export default router;

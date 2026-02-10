@@ -8,9 +8,11 @@ import { submitAnswerSchema, completeSessionSchema } from "../validation";
 
 const router = Router();
 
-// Get all questions
+// Get all questions (paginated — default 200, max 500)
 router.get("/questions", asyncHandler(async (req, res) => {
-  const allQuestions = await storage.getAllQuestions();
+  const limit = Math.min(500, Math.max(1, parseInt(req.query.limit as string) || 200));
+  const offset = Math.max(0, parseInt(req.query.offset as string) || 0);
+  const allQuestions = await storage.getAllQuestions(limit, offset);
   res.json(allQuestions);
 }));
 
@@ -34,7 +36,7 @@ router.get("/quiz/random", asyncHandler(async (req, res) => {
 router.post("/quiz/session", asyncHandler(async (req, res) => {
   const sessionData = insertQuizSessionSchema.parse({
     ...req.body,
-    userId: "default-user",
+    userId: req.user!.id,
   });
   const session = await storage.createQuizSession(sessionData);
   res.json(session);

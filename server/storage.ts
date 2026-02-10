@@ -71,8 +71,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Questions
-  async getAllQuestions(): Promise<Question[]> {
-    return await db.select().from(questions);
+  async getAllQuestions(limit = 200, offset = 0): Promise<Question[]> {
+    return await db.select().from(questions).limit(limit).offset(offset);
   }
 
   async getQuestionsBySubject(subject: string): Promise<Question[]> {

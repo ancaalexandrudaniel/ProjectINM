@@ -1,4 +1,5 @@
 import { Router } from "express";
+import rateLimit from "express-rate-limit";
 import { asyncHandler } from "../middleware/async-handler";
 import { AppError } from "../middleware/error-handler";
 import {
@@ -18,6 +19,18 @@ import {
 } from "../services/ai.service";
 
 const router = Router();
+
+// Rate limit AI endpoints: 15 requests per minute per user
+const aiRateLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 15,
+  keyGenerator: (req) => req.user?.id || req.ip || "anonymous",
+  message: { error: "Prea multe cereri AI. Încercați din nou într-un minut." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+router.use(aiRateLimiter);
 
 // POST /ai/explain-wrong-answer
 router.post("/ai/explain-wrong-answer", asyncHandler(async (req, res) => {

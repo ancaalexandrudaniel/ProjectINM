@@ -4,6 +4,30 @@ import * as fs from "fs";
 // Initialize Gemini AI client
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
+// Centralized model constants — change once, applies everywhere
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3-flash-preview";
+const GEMINI_EMBEDDING_MODEL = process.env.GEMINI_EMBEDDING_MODEL || "gemini-embedding-001";
+
+/**
+ * Retry wrapper for Gemini API calls with exponential backoff.
+ * Retries on transient errors (500, 503, rate limits) up to maxRetries times.
+ */
+async function withRetry<T>(fn: () => Promise<T>, maxRetries = 2): Promise<T> {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err: any) {
+      const isRetryable = err?.status >= 500 || err?.status === 429 ||
+        err?.message?.includes("503") || err?.message?.includes("RESOURCE_EXHAUSTED");
+      if (!isRetryable || attempt === maxRetries) throw err;
+      const delay = Math.pow(2, attempt) * 1000 + Math.random() * 500;
+      console.warn(`[GEMINI] Retrying in ${Math.round(delay)}ms (attempt ${attempt + 1}/${maxRetries})...`);
+      await new Promise(r => setTimeout(r, delay));
+    }
+  }
+  throw new Error("Unreachable");
+}
+
 /**
  * Generates a personalized explanation for why a user answered incorrectly
  * Uses Gemini Flash 2.5 for fast, cost-effective responses
@@ -52,8 +76,8 @@ Materie: ${params.subject}
 
 Generează explicația structurată conform instrucțiunilor.`;
 
-  const result = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+  const result = await withRetry(() => ai.models.generateContent({
+    model: GEMINI_MODEL,
     config: {
       systemInstruction: systemPrompt,
     },
@@ -63,7 +87,7 @@ Generează explicația structurată conform instrucțiunilor.`;
         parts: [{ text: userPrompt }]
       }
     ]
-  });
+  }));
 
   return result.text || "Nu am putut genera explicația. Încearcă din nou.";
 }
@@ -98,8 +122,8 @@ Răspunde în format JSON cu următoarea structură:
   "focusAreas": ["zonă focus 1", "zonă focus 2"]
 }`;
 
-  const result = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+  const result = await withRetry(() => ai.models.generateContent({
+    model: GEMINI_MODEL,
     config: {
       systemInstruction: systemPrompt,
       responseMimeType: "application/json"
@@ -110,7 +134,7 @@ Răspunde în format JSON cu următoarea structură:
         parts: [{ text: userPrompt }]
       }
     ]
-  });
+  }));
 
   const rawJson = result.text;
   if (rawJson) {
@@ -169,8 +193,8 @@ Răspunde în format JSON:
   "tips": ["sfat practic 1", "sfat practic 2"]
 }`;
 
-  const result = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+  const result = await withRetry(() => ai.models.generateContent({
+    model: GEMINI_MODEL,
     config: {
       systemInstruction: systemPrompt,
       responseMimeType: "application/json"
@@ -181,7 +205,7 @@ Răspunde în format JSON:
         parts: [{ text: userPrompt }]
       }
     ]
-  });
+  }));
 
   const rawJson = result.text;
   if (rawJson) {
@@ -270,8 +294,8 @@ Răspunde în format JSON (limba română pentru text):
   "studyTips": ["Sfat 1", "Sfat 2"]
 }`;
 
-  const result = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+  const result = await withRetry(() => ai.models.generateContent({
+    model: GEMINI_MODEL,
     config: {
       systemInstruction: systemPrompt,
       responseMimeType: "application/json"
@@ -282,7 +306,7 @@ Răspunde în format JSON (limba română pentru text):
         parts: [{ text: userPrompt }]
       }
     ]
-  });
+  }));
 
   const rawJson = result.text;
   console.log("[generatePersonalizedStudyPlan] Gemini response:", rawJson);
@@ -370,8 +394,8 @@ Răspunde în format JSON:
   "recommendations": ["recomandare studiu 1", "recomandare 2"]
 }`;
 
-  const result = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+  const result = await withRetry(() => ai.models.generateContent({
+    model: GEMINI_MODEL,
     config: {
       systemInstruction: systemPrompt,
       responseMimeType: "application/json"
@@ -382,7 +406,7 @@ Răspunde în format JSON:
         parts: [{ text: userPrompt }]
       }
     ]
-  });
+  }));
 
   const rawJson = result.text;
   console.log("[analyzeExamPatterns] Gemini response:", rawJson);
@@ -500,8 +524,8 @@ Răspunde în format JSON:
 }`;
   }
 
-  const result = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+  const result = await withRetry(() => ai.models.generateContent({
+    model: GEMINI_MODEL,
     config: {
       systemInstruction: systemPrompt,
       responseMimeType: "application/json"
@@ -512,7 +536,7 @@ Răspunde în format JSON:
         parts: [{ text: userPrompt }]
       }
     ]
-  });
+  }));
 
   const rawJson = result.text;
   console.log("[analyzeLegalDocument] Gemini response:", rawJson);
@@ -558,7 +582,7 @@ IMPORTANT:
 - Citează articole de lege când este relevant
 ${params.context ? `\n\nCONTEXT din documente:\n${params.context}` : ""}`;
 
-  const contents = [];
+  const contents: Array<{ role: string; parts: Array<{ text: string }> }> = [];
 
   if (params.conversationHistory && params.conversationHistory.length > 0) {
     for (const msg of params.conversationHistory) {
@@ -574,13 +598,13 @@ ${params.context ? `\n\nCONTEXT din documente:\n${params.context}` : ""}`;
     parts: [{ text: params.userMessage }],
   });
 
-  const result = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+  const result = await withRetry(() => ai.models.generateContent({
+    model: GEMINI_MODEL,
     config: {
       systemInstruction: systemPrompt,
     },
     contents: contents
-  });
+  }));
 
   return result.text || "Nu am putut genera un răspuns. Încearcă din nou.";
 }
@@ -595,7 +619,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
   }
 
   const result = await ai.models.embedContent({
-    model: "gemini-embedding-001",
+    model: GEMINI_EMBEDDING_MODEL,
     contents: text,
     config: {
       outputDimensionality: 768 // Use MRL to reduce to 768 dimensions for storage optimization
@@ -729,8 +753,8 @@ Răspunde STRICT în format JSON:
   }
 }`;
 
-  const result = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+  const result = await withRetry(() => ai.models.generateContent({
+    model: GEMINI_MODEL,
     config: {
       systemInstruction: systemPrompt,
       responseMimeType: "application/json"
@@ -741,7 +765,7 @@ Răspunde STRICT în format JSON:
         parts: [{ text: userPrompt }]
       }
     ]
-  });
+  }));
 
   const rawJson = result.text;
 

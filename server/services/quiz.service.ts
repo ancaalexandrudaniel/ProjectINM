@@ -19,7 +19,7 @@ export async function submitAnswer(
 ) {
   const answerData = insertUserAnswerSchema.parse({
     ...body,
-    userId: "default-user",
+    userId: userId,
   });
 
   const answer = await storage.createUserAnswer(answerData);
@@ -33,7 +33,7 @@ export async function submitAnswer(
 
   if (question) {
     const existingProgress = await storage.getSubjectProgress(
-      "default-user",
+      userId,
       question.subject
     );
     const chapterProgress = existingProgress.find(
@@ -47,7 +47,7 @@ export async function submitAnswer(
       const newAccuracy = Math.round((newCorrect / newTotal) * 100);
 
       await storage.updateUserProgress(
-        "default-user",
+        userId,
         question.subject,
         question.chapter,
         {
@@ -59,7 +59,7 @@ export async function submitAnswer(
       );
     } else {
       await storage.updateUserProgress(
-        "default-user",
+        userId,
         question.subject,
         question.chapter,
         {

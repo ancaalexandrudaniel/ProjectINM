@@ -1,6 +1,6 @@
 import { Bell, School, LogOut, User } from "lucide-react";
-import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,49 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface StoredUser {
-  id: string;
-  email: string;
-  fullName: string;
-  subscriptionTier: string;
-}
-
 export default function Header() {
   const [, setLocation] = useLocation();
-  const [user, setUser] = useState<StoredUser | null>(null);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error("Failed to parse stored user");
-      }
-    }
-  }, []);
+  const { user, logout } = useAuth();
 
   const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem("session_token");
-      if (token) {
-        await fetch("/api/logout", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      }
-    } catch (e) {
-      console.error("Logout API error:", e);
-    }
-
-    // Clear local storage
-    localStorage.removeItem("session_token");
-    localStorage.removeItem("user");
-    setUser(null);
-
-    // Redirect to login
+    await logout();
     setLocation("/login");
   };
 
@@ -93,8 +56,8 @@ export default function Header() {
           <div className="flex items-center gap-6">
             <div className="hidden md:flex items-center gap-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-lg">
               <div className="text-sm">
-                <p className="font-medium text-primary">28 Septembrie 2025</p>
-                <p className="text-xs text-muted-foreground">Test Grilă</p>
+                <p className="font-medium text-primary">Septembrie 2025</p>
+                <p className="text-xs text-muted-foreground">Admitere INM</p>
               </div>
             </div>
 

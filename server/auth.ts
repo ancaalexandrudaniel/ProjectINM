@@ -31,10 +31,21 @@ export async function verifyPassword(inputPassword: string, storedHash: string):
         return false;
     }
     try {
-        // Handle legacy plain-text passwords (for migration)
+        // Handle legacy plain-text passwords — auto-migrate to bcrypt
         if (!storedHash.startsWith("$2")) {
-            console.warn("[AUTH] Legacy plaintext password detected — consider re-hashing");
-            return inputPassword === storedHash;
+            const isMatch = inputPassword === storedHash;
+            if (isMatch) {
+                console.warn("[AUTH] Legacy plaintext password matched — auto-rehashing to bcrypt");
+                // Auto-rehash in background (caller should pass userId for DB update)
+                const newHash = await hashPassword(inputPassword);
+                try {
+                    await db.update(users).set({ password: newHash }).where(eq(users.password, storedHash));
+                    console.log("[AUTH] Password successfully rehashed to bcrypt");
+                } catch (rehashErr) {
+                    console.error("[AUTH] Failed to rehash password:", rehashErr);
+                }
+            }
+            return isMatch;
         }
         return await bcrypt.compare(inputPassword, storedHash);
     } catch (err) {
@@ -145,50 +156,64 @@ export interface AuthenticatedUser {
 /**
  * Validate a session token and return the user
  */
+// Debounce lastActivityAt updates — only write once per 60 seconds per session
+const lastActivityCache = new Map<string, number>();
+const ACTIVITY_UPDATE_INTERVAL_MS = 60_000;
+
 export async function validateSession(sessionToken: string): Promise<AuthenticatedUser | null> {
     if (!sessionToken) return null;
 
-    // Find active session
-    const [session] = await db
-        .select()
+    // Single JOIN query: session + user in one round-trip
+    const results = await db
+        .select({
+            sessionId: activeSessions.id,
+            expiresAt: activeSessions.expiresAt,
+            userId: users.id,
+            username: users.username,
+            email: users.email,
+            fullName: users.fullName,
+            role: users.role,
+            subscriptionTier: users.subscriptionTier,
+            isVerified: users.isVerified,
+        })
         .from(activeSessions)
+        .innerJoin(users, eq(activeSessions.userId, users.id))
         .where(and(
             eq(activeSessions.sessionToken, sessionToken),
             eq(activeSessions.isActive, true)
         ))
         .limit(1);
 
-    if (!session) return null;
+    const row = results[0];
+    if (!row) return null;
 
     // Check if expired
-    if (new Date(session.expiresAt) < new Date()) {
-        await db.delete(activeSessions).where(eq(activeSessions.id, session.id));
+    if (new Date(row.expiresAt) < new Date()) {
+        await db.delete(activeSessions).where(eq(activeSessions.id, row.sessionId));
+        lastActivityCache.delete(row.sessionId);
         return null;
     }
 
-    // Update last activity
-    await db
-        .update(activeSessions)
-        .set({ lastActivityAt: new Date() })
-        .where(eq(activeSessions.id, session.id));
-
-    // Get user
-    const [user] = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, session.userId))
-        .limit(1);
-
-    if (!user) return null;
+    // Debounced lastActivityAt update — skip if updated less than 60s ago
+    const now = Date.now();
+    const lastUpdate = lastActivityCache.get(row.sessionId) || 0;
+    if (now - lastUpdate > ACTIVITY_UPDATE_INTERVAL_MS) {
+        lastActivityCache.set(row.sessionId, now);
+        // Fire-and-forget — don't await
+        db.update(activeSessions)
+            .set({ lastActivityAt: new Date() })
+            .where(eq(activeSessions.id, row.sessionId))
+            .catch(() => {});
+    }
 
     return {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        fullName: user.fullName,
-        role: user.role || "student",
-        subscriptionTier: user.subscriptionTier || "free",
-        isVerified: user.isVerified || false,
+        id: row.userId,
+        username: row.username,
+        email: row.email,
+        fullName: row.fullName,
+        role: row.role || "student",
+        subscriptionTier: row.subscriptionTier || "free",
+        isVerified: row.isVerified || false,
     };
 }
 
