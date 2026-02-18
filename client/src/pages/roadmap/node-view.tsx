@@ -26,6 +26,14 @@ type RoadmapNodeContent = {
     title: string;
     description: string;
     xpReward: number;
+    phaseId?: string;
+    unitId?: string;
+    weekRange?: string;
+    subject?: string;
+    chapter?: string;
+    articleRefs?: string[];
+    nodeType?: string;
+    pathType?: string;
   };
   syllabusTopic?: {
     id: string;
@@ -37,6 +45,13 @@ type RoadmapNodeContent = {
     options: any[];
     correctAnswer: number;
   }>;
+};
+
+const SUBJECT_LABELS: Record<string, string> = {
+  civil: "Drept Civil",
+  penal: "Drept Penal",
+  procesual_civil: "Drept Procesual Civil",
+  procesual_penal: "Drept Procesual Penal",
 };
 
 export default function RoadmapNodeView() {
@@ -103,11 +118,37 @@ export default function RoadmapNodeView() {
           </Button>
           <div className="flex justify-between items-start">
             <div>
+              {/* Pedagogical context */}
+              {node.pathType === "pedagogical" && (
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  {node.subject && (
+                    <Badge variant="secondary" className="text-xs">
+                      {SUBJECT_LABELS[node.subject] || node.subject}
+                    </Badge>
+                  )}
+                  {node.weekRange && (
+                    <Badge variant="outline" className="text-xs">
+                      Săptămâna {node.weekRange}
+                    </Badge>
+                  )}
+                </div>
+              )}
               <h1 className="text-2xl font-bold">{node.title}</h1>
               <p className="text-muted-foreground">{node.description}</p>
+              {/* Article references */}
+              {node.articleRefs && (node.articleRefs as string[]).length > 0 && (
+                <div className="flex items-center gap-2 mt-2 flex-wrap">
+                  <span className="text-xs font-medium text-muted-foreground">Articole relevante:</span>
+                  {(node.articleRefs as string[]).map((ref, i) => (
+                    <Badge key={i} variant="outline" className="text-xs bg-blue-50 dark:bg-blue-950/30 border-blue-200">
+                      {ref}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
-            <Badge variant="outline" className="text-yellow-600 border-yellow-200 bg-yellow-50">
-              Reward: {node.xpReward} XP
+            <Badge variant="outline" className="text-yellow-600 border-yellow-200 bg-yellow-50 shrink-0">
+              {node.xpReward} XP
             </Badge>
           </div>
         </div>

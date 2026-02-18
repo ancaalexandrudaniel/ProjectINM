@@ -1,0 +1,990 @@
+{
+  "version": "1.0",
+  "title": "Parcurs INM — De la Zero la Examen",
+  "description": "Parcurs pedagogic structurat pe faze, bazat pe analiza Pareto a subiectelor INM 2019-2025",
+  "phases": [
+    {
+      "id": "phase-0",
+      "title": "Fundația",
+      "description": "Vocabular juridic de bază, concepte fundamentale, Titlul Preliminar al Codului Civil",
+      "weekRange": "1-3",
+      "sequenceNumber": 0,
+      "units": [
+        {
+          "id": "unit-0-1",
+          "title": "Vocabular Juridic Fundamental",
+          "weekRange": "1-2",
+          "description": "Termenii esențiali fără de care nu poți înțelege niciun text de lege",
+          "topics": [
+            {
+              "id": "topic-0-1-1",
+              "title": "Norma juridică și raportul juridic",
+              "description": "Structura normei (ipoteză-dispoziție-sancțiune), raportul juridic, subiectele de drept",
+              "subject": "civil",
+              "chapter": "Introducere",
+              "articleRefs": [],
+              "xpReward": 100
+            },
+            {
+              "id": "topic-0-1-2",
+              "title": "Persoane fizice și juridice — noțiuni de bază",
+              "description": "Ce înseamnă persoană fizică vs. juridică, capacitate juridică de folosință și de exercițiu",
+              "subject": "civil",
+              "chapter": "Persoanele fizice și juridice",
+              "articleRefs": ["Art. 25-58 C.civ.", "Art. 187-251 C.civ."],
+              "xpReward": 100
+            },
+            {
+              "id": "topic-0-1-3",
+              "title": "Act juridic vs. fapt juridic",
+              "description": "Distincția fundamentală: actul juridic civil (manifestare de voință) vs. faptul juridic (eveniment care produce efecte de drept)",
+              "subject": "civil",
+              "chapter": "Introducere",
+              "articleRefs": [],
+              "xpReward": 100
+            },
+            {
+              "id": "topic-0-1-4",
+              "title": "Drept subiectiv vs. drept obiectiv, drept substanțial vs. procesual",
+              "description": "Diferențele fundamentale între categoriile de drept și de ce contează pentru examen",
+              "subject": "civil",
+              "chapter": "Introducere",
+              "articleRefs": [],
+              "xpReward": 100
+            }
+          ]
+        },
+        {
+          "id": "unit-0-2",
+          "title": "Titlul Preliminar al Codului Civil",
+          "weekRange": "2-3",
+          "description": "Primele 46 de articole — fundația întregului drept civil",
+          "topics": [
+            {
+              "id": "topic-0-2-1",
+              "title": "Aplicarea generală a legii civile",
+              "description": "Obiectul și conținutul Codului Civil, aplicarea legii civile în timp și spațiu, analogia",
+              "subject": "civil",
+              "chapter": "Titlul Preliminar",
+              "articleRefs": ["Art. 1-8 C.civ."],
+              "xpReward": 100
+            },
+            {
+              "id": "topic-0-2-2",
+              "title": "Buna-credință și abuzul de drept",
+              "description": "Principiul bunei-credințe (art. 14), abuzul de drept (art. 15) — concepte care traversează tot dreptul civil",
+              "subject": "civil",
+              "chapter": "Titlul Preliminar",
+              "articleRefs": ["Art. 14-15 C.civ."],
+              "xpReward": 100
+            },
+            {
+              "id": "topic-0-2-3",
+              "title": "Interpretarea și aplicarea legii civile",
+              "description": "Regulile de interpretare, ierarhia surselor, rolul cutumei și al principiilor generale",
+              "subject": "civil",
+              "chapter": "Titlul Preliminar",
+              "articleRefs": ["Art. 9-13 C.civ."],
+              "xpReward": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-1",
+      "title": "Pilonii de Drept Civil",
+      "description": "Instituțiile fundamentale de drept civil — nucleul din care derivă totul",
+      "weekRange": "4-10",
+      "sequenceNumber": 1,
+      "units": [
+        {
+          "id": "unit-1-1",
+          "title": "Persoanele și Actul Juridic Civil",
+          "weekRange": "4-5",
+          "description": "Capacitatea civilă, bunurile, condițiile de validitate ale actului juridic, nulitatea",
+          "topics": [
+            {
+              "id": "topic-1-1-1",
+              "title": "Capacitatea civilă (de folosință și de exercițiu)",
+              "description": "Capacitatea de folosință (aptitudinea de a avea drepturi și obligații), capacitatea de exercițiu (deplină, restrânsă, lipsă)",
+              "subject": "civil",
+              "chapter": "Capacitatea de exercițiu",
+              "articleRefs": ["Art. 34-48 C.civ.", "Art. 37-43 C.civ."],
+              "xpReward": 150
+            },
+            {
+              "id": "topic-1-1-2",
+              "title": "Bunurile și patrimoniul",
+              "description": "Clasificarea bunurilor (mobile/imobile, fungibile/nefungibile, consumptibile/neconsumptibile), patrimoniul, universalitatea",
+              "subject": "civil",
+              "chapter": "Bunurile și patrimoniul",
+              "articleRefs": ["Art. 535-549 C.civ."],
+              "xpReward": 150
+            },
+            {
+              "id": "topic-1-1-3",
+              "title": "Actul juridic civil — condiții de validitate",
+              "description": "Capacitatea, consimțământul (vicii: eroare, dol, violență, leziune), obiectul, cauza",
+              "subject": "civil",
+              "chapter": "Persoanele fizice și juridice",
+              "articleRefs": ["Art. 1179-1224 C.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-1-1-4",
+              "title": "Nulitatea actului juridic civil",
+              "description": "Nulitatea absolută vs. relativă, cauze, efecte (retroactivitate, restituirea prestațiilor), conversiunea, validarea",
+              "subject": "civil",
+              "chapter": "Persoanele fizice și juridice",
+              "articleRefs": ["Art. 1246-1265 C.civ."],
+              "xpReward": 200
+            }
+          ]
+        },
+        {
+          "id": "unit-1-2",
+          "title": "Teoria Generală a Obligațiilor — Contractele",
+          "weekRange": "6-7",
+          "description": "TEMA NR. 1 la examen. Apare FIECARE an. Încheierea, efectele, interpretarea, încetarea contractului.",
+          "topics": [
+            {
+              "id": "topic-1-2-1",
+              "title": "Încheierea contractului",
+              "description": "Oferta, acceptarea, momentul și locul încheierii, negocierile precontractuale, promisiunea de a contracta, pactul de opțiune",
+              "subject": "civil",
+              "chapter": "Obligațiile civile",
+              "articleRefs": ["Art. 1166-1203 C.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-1-2-2",
+              "title": "Efectele contractului",
+              "description": "Forța obligatorie (pacta sunt servanda), relativitatea (res inter alios acta), opozabilitatea, simulația, promisiunea faptei altuia, stipulația pentru altul",
+              "subject": "civil",
+              "chapter": "Obligațiile civile",
+              "articleRefs": ["Art. 1270-1329 C.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-1-2-3",
+              "title": "Interpretarea contractului",
+              "description": "Regulile de interpretare: voința reală, interpretarea sistematică, contra proferentem, clauzele standard",
+              "subject": "civil",
+              "chapter": "Obligațiile civile",
+              "articleRefs": ["Art. 1266-1269 C.civ."],
+              "xpReward": 150
+            },
+            {
+              "id": "topic-1-2-4",
+              "title": "Încetarea contractului",
+              "description": "Rezoluțiunea (neexecutare imputabilă), rezilierea (contracte cu executare succesivă), denunțarea unilaterală, imposibilitatea fortuită",
+              "subject": "civil",
+              "chapter": "Obligațiile civile",
+              "articleRefs": ["Art. 1549-1557 C.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-1-2-5",
+              "title": "Cesiunea contractului și cesiunea de creanță",
+              "description": "Transmiterea contractului, cesiunea de creanță (condiții, efecte, opozabilitate), subrogația",
+              "subject": "civil",
+              "chapter": "Obligațiile civile",
+              "articleRefs": ["Art. 1315-1320 C.civ.", "Art. 1566-1592 C.civ."],
+              "xpReward": 150
+            }
+          ]
+        },
+        {
+          "id": "unit-1-3",
+          "title": "Răspunderea Civilă",
+          "weekRange": "8",
+          "description": "A doua temă ca frecvență la examen. Legătura logică cu dreptul penal (acțiunea civilă în procesul penal).",
+          "topics": [
+            {
+              "id": "topic-1-3-1",
+              "title": "Răspunderea delictuală pentru fapta proprie",
+              "description": "Condițiile generale: fapta ilicită, prejudiciul, legătura de cauzalitate, vinovăția. Art. 1357-1371 C.civ.",
+              "subject": "civil",
+              "chapter": "Răspunderea civilă delictuală",
+              "articleRefs": ["Art. 1357-1371 C.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-1-3-2",
+              "title": "Răspunderea pentru fapta altuia",
+              "description": "Răspunderea comitenților pentru prepuși, a părinților pentru minori, a persoanei care supraveghează un minor sau interzis",
+              "subject": "civil",
+              "chapter": "Răspunderea civilă delictuală",
+              "articleRefs": ["Art. 1372-1374 C.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-1-3-3",
+              "title": "Răspunderea pentru prejudiciul cauzat de lucruri, animale și ruina edificiului",
+              "description": "Răspunderea obiectivă pentru lucruri (art. 1376), animale (art. 1375), ruina edificiului (art. 1378)",
+              "subject": "civil",
+              "chapter": "Răspunderea civilă delictuală",
+              "articleRefs": ["Art. 1375-1378 C.civ."],
+              "xpReward": 150
+            },
+            {
+              "id": "topic-1-3-4",
+              "title": "Cauze exoneratoare de răspundere și repararea prejudiciului",
+              "description": "Forța majoră, cazul fortuit, fapta victimei, fapta terțului. Repararea integrală: în natură și prin echivalent.",
+              "subject": "civil",
+              "chapter": "Răspunderea civilă delictuală",
+              "articleRefs": ["Art. 1351-1356 C.civ.", "Art. 1381-1395 C.civ."],
+              "xpReward": 150
+            }
+          ]
+        },
+        {
+          "id": "unit-1-4",
+          "title": "Executarea Obligațiilor și Prescripția Extinctivă",
+          "weekRange": "9",
+          "description": "Cum se execută obligațiile și când se sting drepturile de acțiune",
+          "topics": [
+            {
+              "id": "topic-1-4-1",
+              "title": "Plata și executarea obligațiilor",
+              "description": "Condițiile plății, dovada, imputația plății, punerea în întârziere, executarea în natură, executarea prin echivalent (daunele-interese)",
+              "subject": "civil",
+              "chapter": "Obligațiile civile",
+              "articleRefs": ["Art. 1469-1515 C.civ.", "Art. 1516-1548 C.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-1-4-2",
+              "title": "Mijloacele de protecție ale creditorului",
+              "description": "Acțiunea oblică (art. 1560), acțiunea pauliană/revocatorie (art. 1562-1565), dreptul de retenție",
+              "subject": "civil",
+              "chapter": "Obligațiile civile",
+              "articleRefs": ["Art. 1558-1565 C.civ."],
+              "xpReward": 150
+            },
+            {
+              "id": "topic-1-4-3",
+              "title": "Prescripția extinctivă",
+              "description": "Termene (3 ani regula, 10 ani, 1 an), începutul prescripției, suspendarea, întreruperea, repunerea în termen, efecte",
+              "subject": "civil",
+              "chapter": "Prescripția extinctivă",
+              "articleRefs": ["Art. 2500-2544 C.civ."],
+              "xpReward": 200
+            }
+          ]
+        },
+        {
+          "id": "unit-1-5",
+          "title": "Proprietatea și Coproprietatea",
+          "weekRange": "10",
+          "description": "Drepturile reale principale, accesiunea, coproprietatea, posesia",
+          "topics": [
+            {
+              "id": "topic-1-5-1",
+              "title": "Dreptul de proprietate privată",
+              "description": "Conținut, caractere, moduri de dobândire, stingere, apărarea (acțiunea în revendicare)",
+              "subject": "civil",
+              "chapter": "Dreptul de proprietate",
+              "articleRefs": ["Art. 555-566 C.civ.", "Art. 563 C.civ."],
+              "xpReward": 150
+            },
+            {
+              "id": "topic-1-5-2",
+              "title": "Accesiunea imobiliară artificială",
+              "description": "Construcții pe terenul altuia — prezumția de proprietate, buna/reaua-credință, despăgubiri",
+              "subject": "civil",
+              "chapter": "Drepturi reale principale",
+              "articleRefs": ["Art. 577-597 C.civ."],
+              "xpReward": 150
+            },
+            {
+              "id": "topic-1-5-3",
+              "title": "Coproprietatea obișnuită și partajul",
+              "description": "Drepturile coproprietarilor, actele juridice (conservare, administrare, dispoziție), partajul (convențional, judiciar)",
+              "subject": "civil",
+              "chapter": "Drepturi reale principale",
+              "articleRefs": ["Art. 634-686 C.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-1-5-4",
+              "title": "Posesia",
+              "description": "Elementele posesiei (corpus + animus), vicii (discontinuitate, violență, clandestinitate), efecte, acțiunile posesorii",
+              "subject": "civil",
+              "chapter": "Drepturi reale principale",
+              "articleRefs": ["Art. 916-952 C.civ."],
+              "xpReward": 150
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-2",
+      "title": "Pilonii de Drept Penal",
+      "description": "Partea Generală + infracțiunile-cheie din Partea Specială. Al doilea pilon substanțial.",
+      "weekRange": "11-17",
+      "sequenceNumber": 2,
+      "units": [
+        {
+          "id": "unit-2-1",
+          "title": "Infracțiunea — Partea Generală",
+          "weekRange": "11-12",
+          "description": "Structura infracțiunii, formele de vinovăție, cauze justificative și de neimputabilitate, tentativa",
+          "topics": [
+            {
+              "id": "topic-2-1-1",
+              "title": "Structura infracțiunii și formele de vinovăție",
+              "description": "Tipicitate, antijuridicitate, imputabilitate. Intenția (directă/indirectă), culpa (cu/fără prevedere), praeterintenția.",
+              "subject": "penal",
+              "chapter": "Infracțiunea",
+              "articleRefs": ["Art. 15-17 C.pen.", "Art. 16 C.pen."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-2-1-2",
+              "title": "Cauzele justificative",
+              "description": "Legitima apărare (art. 19), starea de necesitate (art. 20), exercitarea unui drept (art. 21), consimțământul persoanei vătămate (art. 22)",
+              "subject": "penal",
+              "chapter": "Cauzele care înlătură caracterul penal",
+              "articleRefs": ["Art. 18-22 C.pen."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-2-1-3",
+              "title": "Cauzele de neimputabilitate",
+              "description": "Constrângerea fizică/morală, excesul neimputabil, minoritatea, iresponsabilitatea, intoxicația, eroarea",
+              "subject": "penal",
+              "chapter": "Cauzele care înlătură caracterul penal",
+              "articleRefs": ["Art. 24-30 C.pen."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-2-1-4",
+              "title": "Tentativa",
+              "description": "Formele tentativei, sancționarea (limitele speciale reduse la jumătate), desistarea, împiedicarea producerii rezultatului",
+              "subject": "penal",
+              "chapter": "Formele infracțiunii",
+              "articleRefs": ["Art. 32-34 C.pen."],
+              "xpReward": 150
+            }
+          ]
+        },
+        {
+          "id": "unit-2-2",
+          "title": "Participația + Unitatea și Pluralitatea de Infracțiuni",
+          "weekRange": "13",
+          "description": "Apare FIECARE an la redactare. Instrumentele esențiale pentru rezolvarea oricărei spețe penale.",
+          "topics": [
+            {
+              "id": "topic-2-2-1",
+              "title": "Participația penală",
+              "description": "Autorul, coautorul, instigatorul, complicele — condiții, sancționare, particularități. TEMA NR. 1 la penal.",
+              "subject": "penal",
+              "chapter": "Infracțiunea",
+              "articleRefs": ["Art. 46-52 C.pen."],
+              "xpReward": 250
+            },
+            {
+              "id": "topic-2-2-2",
+              "title": "Unitatea de infracțiune",
+              "description": "Infracțiunea continuată, complexă, de obicei, progresivă — distincții și consecințe practice",
+              "subject": "penal",
+              "chapter": "Infracțiunea",
+              "articleRefs": ["Art. 35-37 C.pen."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-2-2-3",
+              "title": "Concursul de infracțiuni și recidiva",
+              "description": "Concursul real și ideal, sancționare (pedeapsa cea mai grea + spor obligatoriu 1/3). Recidiva postcondamnatorie și postexecutorie.",
+              "subject": "penal",
+              "chapter": "Concursul de infracțiuni",
+              "articleRefs": ["Art. 38-45 C.pen.", "Art. 41-43 C.pen."],
+              "xpReward": 250
+            }
+          ]
+        },
+        {
+          "id": "unit-2-3",
+          "title": "Pedepsele și Individualizarea",
+          "weekRange": "14-15",
+          "description": "Categorii de pedepse, circumstanțe atenuante/agravante, modalitățile de individualizare",
+          "topics": [
+            {
+              "id": "topic-2-3-1",
+              "title": "Categorii de pedepse",
+              "description": "Pedepse principale (detențiunea pe viață, închisoarea, amenda), complementare, accesorii. Pedepsele aplicabile persoanei juridice.",
+              "subject": "penal",
+              "chapter": "Sancțiunile penale",
+              "articleRefs": ["Art. 53-73^1 C.pen."],
+              "xpReward": 150
+            },
+            {
+              "id": "topic-2-3-2",
+              "title": "Individualizarea pedepsei — criterii și circumstanțe",
+              "description": "Criterii generale (art. 74), circumstanțe atenuante legale și judiciare (art. 75-76), circumstanțe agravante (art. 77-78)",
+              "subject": "penal",
+              "chapter": "Individualizarea pedepsei",
+              "articleRefs": ["Art. 74-79 C.pen."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-2-3-3",
+              "title": "Modalitățile de individualizare",
+              "description": "Renunțarea la aplicarea pedepsei (art. 80-82), amânarea aplicării (art. 83-90), suspendarea sub supraveghere (art. 91-98), liberarea condiționată (art. 99-106)",
+              "subject": "penal",
+              "chapter": "Individualizarea pedepsei",
+              "articleRefs": ["Art. 80-106 C.pen."],
+              "xpReward": 250
+            }
+          ]
+        },
+        {
+          "id": "unit-2-4",
+          "title": "Partea Specială — Infracțiunile-Cheie",
+          "weekRange": "16-17",
+          "description": "Infracțiunile cu cea mai mare frecvență la examen, targetate Pareto",
+          "topics": [
+            {
+              "id": "topic-2-4-1",
+              "title": "Infracțiuni contra vieții și integrității corporale",
+              "description": "Omor simplu, calificat, uciderea din culpă, lovirea, vătămare corporală",
+              "subject": "penal",
+              "chapter": "Infracțiuni contra persoanei",
+              "articleRefs": ["Art. 188-198 C.pen."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-2-4-2",
+              "title": "Infracțiuni contra libertății sexuale",
+              "description": "Violul (art. 218), agresiunea sexuală, actul sexual cu un minor",
+              "subject": "penal",
+              "chapter": "Infracțiuni contra persoanei",
+              "articleRefs": ["Art. 218-221 C.pen."],
+              "xpReward": 150
+            },
+            {
+              "id": "topic-2-4-3",
+              "title": "Infracțiuni contra patrimoniului",
+              "description": "Furt simplu/calificat, tâlhărie, înșelăciune, abuz de încredere, distrugere",
+              "subject": "penal",
+              "chapter": "Infracțiuni contra patrimoniului",
+              "articleRefs": ["Art. 228-256 C.pen."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-2-4-4",
+              "title": "Infracțiuni contra înfăptuirii justiției",
+              "description": "Mărturie mincinoasă, evadare, favorizarea făptuitorului",
+              "subject": "penal",
+              "chapter": "Infracțiuni contra persoanei",
+              "articleRefs": ["Art. 266-288 C.pen."],
+              "xpReward": 150
+            },
+            {
+              "id": "topic-2-4-5",
+              "title": "Infracțiuni de corupție și de serviciu",
+              "description": "Luare de mită, dare de mită, delapidare, abuz în serviciu",
+              "subject": "penal",
+              "chapter": "Infracțiuni contra persoanei",
+              "articleRefs": ["Art. 289-309 C.pen."],
+              "xpReward": 200
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-3",
+      "title": "Procedurile",
+      "description": "Dreptul procesual civil și penal. Acum ai 'ce' (drept substanțial) și construiești 'cum' (drept procesual).",
+      "weekRange": "18-26",
+      "sequenceNumber": 3,
+      "units": [
+        {
+          "id": "unit-3-1",
+          "title": "DPC: Principii, Acțiunea Civilă, Participanții",
+          "weekRange": "18",
+          "description": "Fundamentele procedurii civile: principii, acțiunea, părți, terți, incompatibilități",
+          "topics": [
+            {
+              "id": "topic-3-1-1",
+              "title": "Principiile procesului civil",
+              "description": "Dreptul la un proces echitabil, contradictorialitatea, disponibilitatea, rolul activ al judecătorului, publicitatea, oralitatea",
+              "subject": "procesual_civil",
+              "chapter": "Principiile procesului civil",
+              "articleRefs": ["Art. 1-23 C.pr.civ."],
+              "xpReward": 150
+            },
+            {
+              "id": "topic-3-1-2",
+              "title": "Acțiunea civilă și participanții la proces",
+              "description": "Elementele acțiunii civile, condiții de exercitare. Părți: capacitate procesuală, calitate procesuală, coparticipare. Terți: intervenție voluntară/forțată.",
+              "subject": "procesual_civil",
+              "chapter": "Principiile procesului civil",
+              "articleRefs": ["Art. 29-42 C.pr.civ.", "Art. 56-81 C.pr.civ."],
+              "xpReward": 200
+            }
+          ]
+        },
+        {
+          "id": "unit-3-2",
+          "title": "DPC: Competența — TEMA NR. 1",
+          "weekRange": "19",
+          "description": "Competența materială, teritorială, prorogarea, excepția de necompetență, litispendența, conexitatea",
+          "topics": [
+            {
+              "id": "topic-3-2-1",
+              "title": "Competența materială și teritorială",
+              "description": "Competența materială (după materie și valoare), teritorială (de drept comun, alternativă, exclusivă). Regulile fundamentale.",
+              "subject": "procesual_civil",
+              "chapter": "Competența instanțelor",
+              "articleRefs": ["Art. 94-112 C.pr.civ."],
+              "xpReward": 250
+            },
+            {
+              "id": "topic-3-2-2",
+              "title": "Prorogarea, litispendența, conexitatea, conflictele",
+              "description": "Prorogarea de competență (legală, convențională, judiciară), excepția de necompetență, litispendența, conexitatea, conflictele de competență",
+              "subject": "procesual_civil",
+              "chapter": "Competența instanțelor",
+              "articleRefs": ["Art. 112-136 C.pr.civ."],
+              "xpReward": 200
+            }
+          ]
+        },
+        {
+          "id": "unit-3-3",
+          "title": "DPC: Procedura în fața Primei Instanțe",
+          "weekRange": "20",
+          "description": "De la cererea de chemare în judecată până la pronunțarea hotărârii",
+          "topics": [
+            {
+              "id": "topic-3-3-1",
+              "title": "Cererea de chemare în judecată și regularizarea",
+              "description": "Cuprinsul cererii, efectele depunerii, regularizarea (10 zile), anularea cererii, citarea",
+              "subject": "procesual_civil",
+              "chapter": "Procedura în fața primei instanțe",
+              "articleRefs": ["Art. 194-202 C.pr.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-3-3-2",
+              "title": "Întâmpinarea, cererea reconvențională, excepțiile procesuale",
+              "description": "Întâmpinarea (obligatorie), cererea reconvențională, excepțiile procesuale (de procedură vs. de fond; peremtorii vs. dilatorii)",
+              "subject": "procesual_civil",
+              "chapter": "Procedura în fața primei instanțe",
+              "articleRefs": ["Art. 205-210 C.pr.civ.", "Art. 245-248 C.pr.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-3-3-3",
+              "title": "Probele, dezbaterile, hotărârea judecătorească",
+              "description": "Sarcina probei, probe (înscrisuri, martori, expertiză, prezumții). Dezbaterile. Hotărârea: cuprins, efecte, autoritatea de lucru judecat.",
+              "subject": "procesual_civil",
+              "chapter": "Procedura în fața primei instanțe",
+              "articleRefs": ["Art. 249-329 C.pr.civ.", "Art. 424-435 C.pr.civ."],
+              "xpReward": 200
+            }
+          ]
+        },
+        {
+          "id": "unit-3-4",
+          "title": "DPC: Căile de Atac + Executarea Silită + Proceduri Speciale",
+          "weekRange": "21",
+          "description": "Apelul, executarea silită, procedura divorțului, ordonanța de plată",
+          "topics": [
+            {
+              "id": "topic-3-4-1",
+              "title": "Apelul",
+              "description": "Obiect, termen (30 zile), motivare, efecte (devolutiv, suspensiv), soluții, apelul incident și provocat",
+              "subject": "procesual_civil",
+              "chapter": "Căile de atac ordinare",
+              "articleRefs": ["Art. 466-482 C.pr.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-3-4-2",
+              "title": "Executarea silită și contestația la executare",
+              "description": "Titlul executoriu, cererea de executare, formele de executare, contestația la executare",
+              "subject": "procesual_civil",
+              "chapter": "Executarea silită",
+              "articleRefs": ["Art. 622-720 C.pr.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-3-4-3",
+              "title": "Proceduri speciale: divorțul, ordonanța de plată",
+              "description": "Procedura divorțului (cazuri, competență, efecte), ordonanța de plată, ordonanța președințială, cererile de valoare redusă",
+              "subject": "procesual_civil",
+              "chapter": "Procedura în fața primei instanțe",
+              "articleRefs": ["Art. 914-935 C.pr.civ.", "Art. 1014-1033 C.pr.civ."],
+              "xpReward": 200
+            }
+          ]
+        },
+        {
+          "id": "unit-3-5",
+          "title": "DPP: Principii, Acțiunile, Competența",
+          "weekRange": "22",
+          "description": "Fundamentele procedurii penale: principii, acțiunea penală și civilă, subiecții procesuali, competența",
+          "topics": [
+            {
+              "id": "topic-3-5-1",
+              "title": "Principiile procesului penal",
+              "description": "Prezumția de nevinovăție, dreptul la apărare, ne bis in idem, principiul legalității, oficialității",
+              "subject": "procesual_penal",
+              "chapter": "Principiile procesului penal",
+              "articleRefs": ["Art. 1-12 C.pr.pen."],
+              "xpReward": 150
+            },
+            {
+              "id": "topic-3-5-2",
+              "title": "Acțiunile în procesul penal",
+              "description": "Acțiunea penală (punere în mișcare, exercitare, stingere), acțiunea civilă în procesul penal (constituire ca parte civilă)",
+              "subject": "procesual_penal",
+              "chapter": "Principiile procesului penal",
+              "articleRefs": ["Art. 14-28 C.pr.pen."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-3-5-3",
+              "title": "Competența organelor judiciare penale",
+              "description": "Competența materială, teritorială, funcțională. Prorogarea, strămutarea, conflictele de competență.",
+              "subject": "procesual_penal",
+              "chapter": "Principiile procesului penal",
+              "articleRefs": ["Art. 35-50 C.pr.pen."],
+              "xpReward": 200
+            }
+          ]
+        },
+        {
+          "id": "unit-3-6",
+          "title": "DPP: Probele și Mijloacele de Probă",
+          "weekRange": "23",
+          "description": "Reguli generale, audierea, metode speciale de supraveghere, percheziția, expertiza",
+          "topics": [
+            {
+              "id": "topic-3-6-1",
+              "title": "Reguli generale privind probele",
+              "description": "Sarcina probei, administrarea, aprecierea, excluderea probelor nelegal administrate (nulitatea, loialitatea)",
+              "subject": "procesual_penal",
+              "chapter": "Probele în procesul penal",
+              "articleRefs": ["Art. 97-103 C.pr.pen."],
+              "xpReward": 150
+            },
+            {
+              "id": "topic-3-6-2",
+              "title": "Mijloacele de probă specifice",
+              "description": "Audierea (suspect, inculpat, martor), percheziția, expertiza, interceptarea comunicațiilor, supravegherea tehnică",
+              "subject": "procesual_penal",
+              "chapter": "Probele în procesul penal",
+              "articleRefs": ["Art. 104-153 C.pr.pen.", "Art. 138-172 C.pr.pen."],
+              "xpReward": 200
+            }
+          ]
+        },
+        {
+          "id": "unit-3-7",
+          "title": "DPP: Măsurile Preventive — TEMA NR. 1",
+          "weekRange": "24",
+          "description": "Apare FIECARE an. Trebuie știut impecabil.",
+          "topics": [
+            {
+              "id": "topic-3-7-1",
+              "title": "Reținerea și controlul judiciar",
+              "description": "Reținerea (24 ore, condiții, organ competent), controlul judiciar (condiții, obligații, durată, verificare), controlul judiciar pe cauțiune",
+              "subject": "procesual_penal",
+              "chapter": "Măsurile preventive",
+              "articleRefs": ["Art. 209-216 C.pr.pen."],
+              "xpReward": 250
+            },
+            {
+              "id": "topic-3-7-2",
+              "title": "Arestul la domiciliu și arestarea preventivă",
+              "description": "Arestul la domiciliu (30 zile, prelungire), arestarea preventivă (30 zile, prelungire, verificare periodică, luare și menținere)",
+              "subject": "procesual_penal",
+              "chapter": "Măsurile preventive",
+              "articleRefs": ["Art. 218-240 C.pr.pen."],
+              "xpReward": 250
+            },
+            {
+              "id": "topic-3-7-3",
+              "title": "Înlocuirea, revocarea, încetarea măsurilor preventive",
+              "description": "Condițiile de înlocuire/revocare, încetarea de drept, contestația împotriva măsurilor preventive",
+              "subject": "procesual_penal",
+              "chapter": "Măsurile preventive",
+              "articleRefs": ["Art. 242-243 C.pr.pen."],
+              "xpReward": 200
+            }
+          ]
+        },
+        {
+          "id": "unit-3-8",
+          "title": "DPP: Urmărirea Penală + Camera Preliminară",
+          "weekRange": "25",
+          "description": "Sesizarea, efectuarea urmăririi, rezolvarea cauzelor, camera preliminară",
+          "topics": [
+            {
+              "id": "topic-3-8-1",
+              "title": "Urmărirea penală",
+              "description": "Sesizarea (plângere, denunț, din oficiu), efectuarea urmăririi, rezolvarea: clasare, renunțare, trimitere în judecată (rechizitoriu)",
+              "subject": "procesual_penal",
+              "chapter": "Urmărirea penală",
+              "articleRefs": ["Art. 288-341 C.pr.pen."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-3-8-2",
+              "title": "Camera preliminară",
+              "description": "Obiect, procedură, verificarea legalității, excepții, soluții (începerea judecății, restituirea la parchet)",
+              "subject": "procesual_penal",
+              "chapter": "Urmărirea penală",
+              "articleRefs": ["Art. 342-348 C.pr.pen."],
+              "xpReward": 200
+            }
+          ]
+        },
+        {
+          "id": "unit-3-9",
+          "title": "DPP: Judecata + Proceduri Speciale",
+          "weekRange": "26",
+          "description": "Judecata în primă instanță, apelul, proceduri speciale penale",
+          "topics": [
+            {
+              "id": "topic-3-9-1",
+              "title": "Judecata în primă instanță",
+              "description": "Pregătirea, cercetarea judecătorească, dezbaterile, deliberarea, soluții: condamnare, renunțare, amânare, achitare, încetare",
+              "subject": "procesual_penal",
+              "chapter": "Judecata",
+              "articleRefs": ["Art. 349-407 C.pr.pen."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-3-9-2",
+              "title": "Apelul penal",
+              "description": "Obiect, termen (10 zile), limitele devoluțiunii, soluții în apel",
+              "subject": "procesual_penal",
+              "chapter": "Căile de atac",
+              "articleRefs": ["Art. 408-425 C.pr.pen."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-3-9-3",
+              "title": "Proceduri speciale penale",
+              "description": "Acordul de recunoaștere a vinovăției, procedura cu minori, procedura simplificată (recunoașterea învinuirii)",
+              "subject": "procesual_penal",
+              "chapter": "Judecata",
+              "articleRefs": ["Art. 478-484 C.pr.pen.", "Art. 504-520 C.pr.pen."],
+              "xpReward": 150
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-4",
+      "title": "Completări Strategice",
+      "description": "Temele secundare care completează pregătirea — securizarea pragului de 75%+ acoperire",
+      "weekRange": "27-30",
+      "sequenceNumber": 4,
+      "units": [
+        {
+          "id": "unit-4-1",
+          "title": "DC Completări: Succesiuni, Contracte Speciale, Familie",
+          "weekRange": "27-28",
+          "description": "Moștenirea legală, contracte speciale (locațiune, mandat, împrumut), familia, dezmembrăminte, cartea funciară",
+          "topics": [
+            {
+              "id": "topic-4-1-1",
+              "title": "Succesiunile",
+              "description": "Moștenirea legală, clasele de moștenitori, reprezentarea, rezerva succesorală, cotitatea disponibilă, opțiunea succesorală, partajul succesoral",
+              "subject": "civil",
+              "chapter": "Obligațiile civile",
+              "articleRefs": ["Art. 953-1163 C.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-4-1-2",
+              "title": "Contracte speciale: vânzarea, locațiunea, mandatul",
+              "description": "Vânzarea (reguli, garanții), locațiunea (închiriere + arendă), mandatul (cu/fără reprezentare), împrumutul, contractul de întreținere",
+              "subject": "civil",
+              "chapter": "Contracte speciale",
+              "articleRefs": ["Art. 1650-1762 C.civ.", "Art. 1777-1850 C.civ.", "Art. 2009-2042 C.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-4-1-3",
+              "title": "Familia: regimuri matrimoniale, divorț, autoritate părintească",
+              "description": "Comunitatea legală, divorțul (cazuri, efecte), obligația de întreținere, autoritatea părintească",
+              "subject": "civil",
+              "chapter": "Obligațiile civile",
+              "articleRefs": ["Art. 312-372 C.civ.", "Art. 373-404 C.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-4-1-4",
+              "title": "Dezmembrăminte și cartea funciară",
+              "description": "Uzufructul, servitutea (noțiuni). Cartea funciară: principii, înscrieri, rectificarea.",
+              "subject": "civil",
+              "chapter": "Drepturi reale principale",
+              "articleRefs": ["Art. 703-772 C.civ.", "Art. 876-915 C.civ."],
+              "xpReward": 150
+            }
+          ]
+        },
+        {
+          "id": "unit-4-2",
+          "title": "DP Completări: Infracțiuni adiționale, Cauze de înlăturare",
+          "weekRange": "29",
+          "description": "Infracțiuni de fals, contra autorității, rutiere. Cauze care înlătură răspunderea/executarea pedepsei.",
+          "topics": [
+            {
+              "id": "topic-4-2-1",
+              "title": "Infracțiuni de fals și contra autorității",
+              "description": "Fals material/intelectual, uz de fals. Ultraj. Conducerea sub influența alcoolului, părăsirea locului accidentului.",
+              "subject": "penal",
+              "chapter": "Infracțiuni contra persoanei",
+              "articleRefs": ["Art. 257 C.pen.", "Art. 320-328 C.pen.", "Art. 334-338 C.pen."],
+              "xpReward": 150
+            },
+            {
+              "id": "topic-4-2-2",
+              "title": "Cauze care înlătură răspunderea și executarea pedepsei",
+              "description": "Amnistia, prescripția răspunderii penale, lipsa/retragerea plângerii, împăcarea. Grațierea, prescripția executării, reabilitarea.",
+              "subject": "penal",
+              "chapter": "Infracțiunea",
+              "articleRefs": ["Art. 152-164 C.pen."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-4-2-3",
+              "title": "Minoritatea și răspunderea persoanei juridice",
+              "description": "Regimul penal al minorilor (măsuri educative). Răspunderea penală a persoanei juridice (condiții, pedepse).",
+              "subject": "penal",
+              "chapter": "Infracțiunea",
+              "articleRefs": ["Art. 113-134 C.pen.", "Art. 135-151 C.pen."],
+              "xpReward": 150
+            }
+          ]
+        },
+        {
+          "id": "unit-4-3",
+          "title": "DPC + DPP Completări",
+          "weekRange": "30",
+          "description": "Nulități procesuale, termene, căi extraordinare de atac, proceduri necontencioase, măsuri asigurătorii",
+          "topics": [
+            {
+              "id": "topic-4-3-1",
+              "title": "DPC: Nulități, termene, căi extraordinare de atac",
+              "description": "Nulitatea actelor de procedură (absolută, relativă). Termene procedurale. Contestația în anulare, revizuirea.",
+              "subject": "procesual_civil",
+              "chapter": "Căile de atac extraordinare",
+              "articleRefs": ["Art. 174-186 C.pr.civ.", "Art. 503-513 C.pr.civ."],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-4-3-2",
+              "title": "DPP: Măsuri asigurătorii, executare, căi extraordinare",
+              "description": "Sechestrul asigurător, executarea hotărârilor penale, revizuirea, contestația în anulare, redeschiderea procesului penal",
+              "subject": "procesual_penal",
+              "chapter": "Căile de atac",
+              "articleRefs": ["Art. 249-256 C.pr.pen.", "Art. 452-465 C.pr.pen.", "Art. 466 C.pr.pen."],
+              "xpReward": 200
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phase-5",
+      "title": "Antrenament și Simulare",
+      "description": "Transformarea cunoștințelor în performanță la examen — grile, spețe, simulări complete",
+      "weekRange": "31-36+",
+      "sequenceNumber": 5,
+      "units": [
+        {
+          "id": "unit-5-1",
+          "title": "Antrenament Grile",
+          "weekRange": "31-33",
+          "description": "Rezolvare intensivă de grile din 2019-2025, analiză erori, simulări cronometrate",
+          "topics": [
+            {
+              "id": "topic-5-1-1",
+              "title": "Grile Drept Civil — simulări tematice",
+              "description": "Seturi de 25 grile pe materie civilă, cronometrat, analiză erori",
+              "subject": "civil",
+              "chapter": "Simulare",
+              "articleRefs": [],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-5-1-2",
+              "title": "Grile Drept Penal — simulări tematice",
+              "description": "Seturi de 25 grile pe materie penală, cronometrat, analiză erori",
+              "subject": "penal",
+              "chapter": "Simulare",
+              "articleRefs": [],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-5-1-3",
+              "title": "Grile DPC + DPP — simulări tematice",
+              "description": "Seturi de 25+25 grile procedurale, cronometrat, analiză erori",
+              "subject": "procesual_civil",
+              "chapter": "Simulare",
+              "articleRefs": [],
+              "xpReward": 200
+            },
+            {
+              "id": "topic-5-1-4",
+              "title": "Simulare completă — 100 grile în 3 ore",
+              "description": "Simulare realistă de examen: 25 DC + 25 DPC + 25 DP + 25 DPP, cronometrat la 180 minute",
+              "subject": "civil",
+              "chapter": "Simulare",
+              "articleRefs": [],
+              "xpReward": 500
+            }
+          ]
+        },
+        {
+          "id": "unit-5-2",
+          "title": "Antrenament Redactare (Spețe)",
+          "weekRange": "34-36",
+          "description": "Rezolvare spețe din 2019-2025, structura de redactare, exerciții cronometrate",
+          "topics": [
+            {
+              "id": "topic-5-2-1",
+              "title": "Spețe DC + DPC",
+              "description": "Rezolvare spețe civile/procesual civile cu barem, exercițiu de redactare structurată",
+              "subject": "civil",
+              "chapter": "Simulare",
+              "articleRefs": [],
+              "xpReward": 300
+            },
+            {
+              "id": "topic-5-2-2",
+              "title": "Spețe DP + DPP",
+              "description": "Rezolvare spețe penale/procesual penale cu barem, exercițiu de redactare structurată",
+              "subject": "penal",
+              "chapter": "Simulare",
+              "articleRefs": [],
+              "xpReward": 300
+            },
+            {
+              "id": "topic-5-2-3",
+              "title": "Simulare completă examen scris",
+              "description": "Simulare realistă: 2 zile consecutive de probe scrise (DC+DPC și DP+DPP), cronometrat la 4 ore fiecare",
+              "subject": "civil",
+              "chapter": "Simulare",
+              "articleRefs": [],
+              "xpReward": 500
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

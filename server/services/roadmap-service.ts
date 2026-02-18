@@ -1,9 +1,10 @@
 import { db } from "../db";
-import { roadmapNodes, userNodeProgress, userGamification, syllabusTopicMappings, questions, legislativeActs } from "@shared/schema";
-import { eq, and, asc, desc, inArray, sql } from "drizzle-orm";
+import { roadmapNodes, userNodeProgress, userGamification, syllabusTopicMappings, questions } from "@shared/schema";
+import { eq, and, asc, sql } from "drizzle-orm";
 import fs from "fs";
 import path from "path";
 import { checkBadges } from "./badge-definitions";
+import { parseLearningPath, getLearningPathStats } from "./learning-path-service";
 
 // Level thresholds: index = level, value = XP needed to reach that level
 const LEVEL_THRESHOLDS = [0, 0, 100, 300, 600, 1000, 1500, 2200, 3000, 4000, 5500, 7500, 10000];
@@ -22,75 +23,36 @@ function getNextLevelXp(level: number): number {
 export class RoadmapService {
 
   /**
-   * Initializes the roadmap data if the table is empty.
+   * Initializes both syllabus-based and pedagogical roadmap data.
+   * Idempotent — skips each type if already present.
    */
   static async initialize() {
     try {
+      // Check existing data
       const countResult = await db.select({ count: sql<number>`count(*)` }).from(roadmapNodes);
-      const count = Number(countResult[0]?.count || 0);
+      const totalCount = Number(countResult[0]?.count || 0);
 
-      if (count > 0) {
-        console.log("[ROADMAP] Roadmap data already exists. Skipping initialization.");
-        return;
+      // Check if pedagogical nodes exist
+      const pedCountResult = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(roadmapNodes)
+        .where(eq(roadmapNodes.pathType, "pedagogical"));
+      const pedCount = Number(pedCountResult[0]?.count || 0);
+
+      // ===== SYLLABUS-BASED NODES (legacy) =====
+      if (totalCount === 0 || (totalCount > 0 && pedCount === totalCount)) {
+        // No syllabus nodes exist — seed them
+        await RoadmapService.initializeSyllabus();
+      } else {
+        console.log("[ROADMAP] Syllabus nodes already exist. Skipping.");
       }
 
-      console.log("[ROADMAP] Table empty. Seeding roadmap from syllabus.json...");
-
-      // Determine path to syllabus.json
-      // In production (bundled), process.cwd() is usually the app root
-      const syllabusPath = path.resolve(process.cwd(), "syllabus.json");
-
-      if (!fs.existsSync(syllabusPath)) {
-        console.error(`[ROADMAP] FATAL: syllabus.json not found at ${syllabusPath}`);
-        return;
+      // ===== PEDAGOGICAL NODES (new) =====
+      if (pedCount > 0) {
+        console.log(`[ROADMAP] Pedagogical path already initialized (${pedCount} nodes). Skipping.`);
+      } else {
+        await RoadmapService.initializePedagogicalPath();
       }
-
-      const syllabusData = JSON.parse(fs.readFileSync(syllabusPath, "utf-8"));
-
-      let orderIndex = 0;
-      const nodesToInsert: any[] = [];
-
-      const processNode = (node: any, depth: number = 0) => {
-        let milestoneType = "topic";
-        if (depth === 0) milestoneType = "discipline";
-        else if (depth === 1) milestoneType = "chapter";
-        else if (node.children && node.children.length > 0) milestoneType = "section";
-        else milestoneType = "topic";
-
-        let xpReward = 50;
-        if (milestoneType === "chapter") xpReward = 500;
-        if (milestoneType === "section") xpReward = 200;
-
-        nodesToInsert.push({
-          syllabusId: node.id,
-          title: node.title,
-          description: null,
-          xpReward,
-          orderIndex: orderIndex++,
-          parentNodeId: null,
-          milestoneType,
-        });
-
-        if (node.children) {
-          for (const child of node.children) {
-            processNode(child, depth + 1);
-          }
-        }
-      };
-
-      for (const disc of syllabusData) {
-        processNode(disc);
-      }
-
-      // Batch insert
-      const batchSize = 100;
-      for (let i = 0; i < nodesToInsert.length; i += batchSize) {
-        const batch = nodesToInsert.slice(i, i + batchSize);
-        await db.insert(roadmapNodes).values(batch);
-        console.log(`[ROADMAP] Inserted batch ${Math.floor(i / batchSize) + 1}`);
-      }
-
-      console.log("[ROADMAP] Initialization complete!");
 
     } catch (error) {
       console.error("[ROADMAP] Initialization failed:", error);
@@ -98,12 +60,103 @@ export class RoadmapService {
   }
 
   /**
-   * Retrieves the full roadmap for a user, including their progress status on each node.
+   * Seeds roadmap from syllabus.json (legacy behavior).
    */
-  static async getRoadmap(userId: string) {
-    // 1. Fetch all nodes
-    const nodes = await db.query.roadmapNodes.findMany({
+  private static async initializeSyllabus() {
+    console.log("[ROADMAP] Seeding roadmap from syllabus.json...");
+
+    const syllabusPath = path.resolve(process.cwd(), "syllabus.json");
+    if (!fs.existsSync(syllabusPath)) {
+      console.error(`[ROADMAP] syllabus.json not found at ${syllabusPath}`);
+      return;
+    }
+
+    const syllabusData = JSON.parse(fs.readFileSync(syllabusPath, "utf-8"));
+
+    let orderIndex = 0;
+    const nodesToInsert: any[] = [];
+
+    const processNode = (node: any, depth: number = 0) => {
+      let milestoneType = "topic";
+      if (depth === 0) milestoneType = "discipline";
+      else if (depth === 1) milestoneType = "chapter";
+      else if (node.children && node.children.length > 0) milestoneType = "section";
+
+      let xpReward = 50;
+      if (milestoneType === "chapter") xpReward = 500;
+      if (milestoneType === "section") xpReward = 200;
+
+      nodesToInsert.push({
+        syllabusId: node.id,
+        title: node.title,
+        description: null,
+        xpReward,
+        orderIndex: orderIndex++,
+        parentNodeId: null,
+        milestoneType,
+        pathType: "syllabus",
+      });
+
+      if (node.children) {
+        for (const child of node.children) {
+          processNode(child, depth + 1);
+        }
+      }
+    };
+
+    for (const disc of syllabusData) {
+      processNode(disc);
+    }
+
+    // Batch insert
+    const batchSize = 100;
+    for (let i = 0; i < nodesToInsert.length; i += batchSize) {
+      const batch = nodesToInsert.slice(i, i + batchSize);
+      await db.insert(roadmapNodes).values(batch);
+      console.log(`[ROADMAP] Syllabus batch ${Math.floor(i / batchSize) + 1} inserted`);
+    }
+
+    console.log(`[ROADMAP] Syllabus initialization complete (${nodesToInsert.length} nodes).`);
+  }
+
+  /**
+   * Seeds roadmap from learning-path.json (pedagogical path).
+   */
+  private static async initializePedagogicalPath() {
+    const nodes = parseLearningPath();
+    if (!nodes) {
+      console.log("[ROADMAP] No pedagogical path data available.");
+      return;
+    }
+
+    const stats = getLearningPathStats(nodes);
+    console.log(`[ROADMAP] Inserting pedagogical path: ${stats.phases} phases, ${stats.units} units, ${stats.topics} topics (${stats.totalNodes} nodes total, ${stats.totalXp} total XP)`);
+
+    // Batch insert
+    const batchSize = 100;
+    for (let i = 0; i < nodes.length; i += batchSize) {
+      const batch = nodes.slice(i, i + batchSize);
+      await db.insert(roadmapNodes).values(batch);
+      console.log(`[ROADMAP] Pedagogical batch ${Math.floor(i / batchSize) + 1} inserted`);
+    }
+
+    console.log("[ROADMAP] Pedagogical path initialization complete!");
+  }
+
+  /**
+   * Retrieves the roadmap for a user.
+   * Default: returns pedagogical path. Pass pathType="syllabus" for legacy view.
+   */
+  static async getRoadmap(userId: string, pathType: string = "pedagogical") {
+    // 1. Fetch nodes filtered by path type
+    const allNodes = await db.query.roadmapNodes.findMany({
       orderBy: [asc(roadmapNodes.orderIndex)],
+    });
+
+    const nodes = allNodes.filter(n => {
+      if (pathType === "pedagogical") return n.pathType === "pedagogical";
+      if (pathType === "syllabus") return n.pathType === "syllabus" || !n.pathType;
+      return true; // "all"
     });
 
     // 2. Fetch user progress
@@ -113,8 +166,120 @@ export class RoadmapService {
 
     const progressMap = new Map(progress.map(p => [p.nodeId, p]));
 
-    // 3. Merge and determine status
-    const roadmap = nodes.map((node, index) => {
+    // 3. Determine status with phase-aware unlocking
+    const roadmap = pathType === "pedagogical"
+      ? RoadmapService.computePedagogicalStatus(nodes, progressMap)
+      : RoadmapService.computeLinearStatus(nodes, progressMap);
+
+    // 4. Fetch user gamification stats
+    let userStats = await db.query.userGamification.findFirst({
+      where: eq(userGamification.userId, userId),
+    });
+
+    if (!userStats) {
+      try {
+        [userStats] = await db.insert(userGamification).values({ userId }).returning();
+      } catch (e) {
+        userStats = await db.query.userGamification.findFirst({
+          where: eq(userGamification.userId, userId),
+        });
+      }
+    }
+
+    return { nodes: roadmap, stats: userStats };
+  }
+
+  /**
+   * Phase-aware unlocking for pedagogical path:
+   * - Phase milestones: available if previous phase is complete (or first phase)
+   * - Unit milestones: available if their phase is available
+   * - Topics: all topics in current phase are AVAILABLE simultaneously (flexible within phase)
+   */
+  private static computePedagogicalStatus(
+    nodes: any[],
+    progressMap: Map<string, any>
+  ) {
+    // Group topics by phase
+    const phaseTopics = new Map<string, any[]>();
+    for (const node of nodes) {
+      if (node.nodeType === "topic" && node.phaseId) {
+        if (!phaseTopics.has(node.phaseId)) phaseTopics.set(node.phaseId, []);
+        phaseTopics.get(node.phaseId)!.push(node);
+      }
+    }
+
+    // Determine which phases are complete (all topics COMPLETED or MASTERED)
+    const phaseComplete = new Map<string, boolean>();
+    for (const [phaseId, topics] of phaseTopics) {
+      const allDone = topics.every(t => {
+        const p = progressMap.get(t.id);
+        return p && (p.status === "COMPLETED" || p.status === "MASTERED");
+      });
+      phaseComplete.set(phaseId, allDone);
+    }
+
+    // Extract ordered phase IDs
+    const phaseOrder = nodes
+      .filter(n => n.nodeType === "phase-milestone")
+      .map(n => n.phaseId as string);
+
+    // Determine which phases are available
+    const phaseAvailable = new Map<string, boolean>();
+    for (let i = 0; i < phaseOrder.length; i++) {
+      if (i === 0) {
+        phaseAvailable.set(phaseOrder[i], true);
+      } else {
+        const prevPhaseId = phaseOrder[i - 1];
+        phaseAvailable.set(phaseOrder[i], phaseComplete.get(prevPhaseId) === true);
+      }
+    }
+
+    return nodes.map(node => {
+      const userProgress = progressMap.get(node.id);
+      let status = userProgress?.status || "LOCKED";
+
+      if (status === "LOCKED") {
+        const phaseId = node.phaseId as string;
+
+        if (node.nodeType === "phase-milestone") {
+          // Phase milestone: available if it's the first or previous phase is complete
+          if (phaseAvailable.get(phaseId)) {
+            status = "AVAILABLE";
+          }
+          // Auto-complete phase milestone if all its topics are done
+          if (phaseComplete.get(phaseId)) {
+            status = "COMPLETED";
+          }
+        } else if (node.nodeType === "unit-milestone") {
+          // Unit milestone: available when its phase is available
+          if (phaseAvailable.get(phaseId)) {
+            status = "AVAILABLE";
+          }
+        } else if (node.nodeType === "topic") {
+          // Topics: all topics in an available phase are AVAILABLE
+          if (phaseAvailable.get(phaseId)) {
+            status = "AVAILABLE";
+          }
+        }
+      }
+
+      return {
+        ...node,
+        status,
+        score: userProgress?.score || 0,
+        completedAt: userProgress?.completedAt,
+      };
+    });
+  }
+
+  /**
+   * Legacy linear unlocking (for syllabus-based roadmap).
+   */
+  private static computeLinearStatus(
+    nodes: any[],
+    progressMap: Map<string, any>
+  ) {
+    return nodes.map((node, index) => {
       const userProgress = progressMap.get(node.id);
       let status = userProgress?.status || "LOCKED";
 
@@ -137,32 +302,11 @@ export class RoadmapService {
         completedAt: userProgress?.completedAt,
       };
     });
-
-    // 4. Also fetch user gamification stats
-    let userStats = await db.query.userGamification.findFirst({
-      where: eq(userGamification.userId, userId),
-    });
-
-    if (!userStats) {
-      // Initialize if not exists
-      try {
-        [userStats] = await db.insert(userGamification).values({ userId }).returning();
-      } catch (e) {
-        // Handle race condition
-        userStats = await db.query.userGamification.findFirst({
-            where: eq(userGamification.userId, userId),
-        });
-      }
-    }
-
-    return {
-      nodes: roadmap,
-      stats: userStats
-    };
   }
 
   /**
-   * Retrieves the content for a specific roadmap node (Theory, Context, etc.)
+   * Retrieves content for a specific roadmap node.
+   * Enhanced: uses subject + chapter for pedagogical nodes.
    */
   static async getNodeContent(nodeId: string) {
     const node = await db.query.roadmapNodes.findFirst({
@@ -174,7 +318,18 @@ export class RoadmapService {
     let syllabusTopic = null;
     let relevantQuestions: any[] = [];
 
-    if (node.syllabusId) {
+    // For pedagogical nodes: use subject + chapter to find questions
+    if (node.pathType === "pedagogical" && node.subject && node.chapter) {
+      relevantQuestions = await db.query.questions.findMany({
+        where: and(
+          eq(questions.subject, node.subject),
+          eq(questions.chapter, node.chapter)
+        ),
+        limit: 10,
+      });
+    }
+    // For syllabus nodes: use syllabusId (legacy behavior)
+    else if (node.syllabusId) {
       syllabusTopic = await db.query.syllabusTopicMappings.findFirst({
         where: eq(syllabusTopicMappings.syllabusId, node.syllabusId),
       });
@@ -196,6 +351,7 @@ export class RoadmapService {
 
   /**
    * Marks a node as complete, calculates XP, updates level/streak/badges.
+   * Works identically for both pedagogical and syllabus nodes.
    */
   static async completeNode(userId: string, nodeId: string, performance: { score: number }) {
     const node = await db.query.roadmapNodes.findFirst({
@@ -279,12 +435,9 @@ export class RoadmapService {
       yesterday.setDate(yesterday.getDate() - 1);
 
       if (!lastActivity || lastActivity.getTime() < today.getTime()) {
-        // Not yet active today
         if (lastActivity && lastActivity.getTime() === yesterday.getTime()) {
-          // Yesterday -> increment streak
           currentStreak = (gamification.currentStreak || 0) + 1;
         } else if (!lastActivity || lastActivity.getTime() < yesterday.getTime()) {
-          // Older -> reset streak
           currentStreak = 1;
         }
 
@@ -303,7 +456,6 @@ export class RoadmapService {
     }
 
     // ========== BADGES ==========
-    // Count completed and mastered nodes
     const allProgress = await db.query.userNodeProgress.findMany({
       where: eq(userNodeProgress.userId, userId),
     });

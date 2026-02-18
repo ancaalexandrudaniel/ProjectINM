@@ -7,9 +7,11 @@ import { completeNodeSchema } from "../validation";
 const router = Router();
 
 // GET /roadmap - Get the user's roadmap state
+// Query param ?pathType=pedagogical|syllabus (default: pedagogical)
 router.get("/roadmap", asyncHandler(async (req, res) => {
   const userId = req.user!.id;
-  const roadmap = await RoadmapService.getRoadmap(userId);
+  const pathType = (req.query.pathType as string) || "pedagogical";
+  const roadmap = await RoadmapService.getRoadmap(userId, pathType);
   res.json(roadmap);
 }));
 

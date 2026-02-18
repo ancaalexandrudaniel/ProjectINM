@@ -688,6 +688,16 @@ export const roadmapNodes = pgTable("roadmap_nodes", {
 
   milestoneType: text("milestone_type").default("topic"), // 'chapter', 'topic', 'assessment', 'milestone'
 
+  // Pedagogical learning path fields
+  phaseId: text("phase_id"), // "phase-0", "phase-1", etc.
+  unitId: text("unit_id"), // "unit-0-1", etc.
+  weekRange: text("week_range"), // "1-3", "4-5"
+  subject: text("subject"), // "civil", "penal", "procesual_civil", "procesual_penal"
+  chapter: text("chapter"), // For question filtering
+  articleRefs: jsonb("article_refs"), // ["Art. 1166-1224 C.civ."]
+  nodeType: text("node_type"), // "phase-milestone", "unit-milestone", "topic"
+  pathType: text("path_type"), // "pedagogical" vs "syllabus" — distinguishes new from old nodes
+
   createdAt: timestamp("created_at").defaultNow(),
 });
 
