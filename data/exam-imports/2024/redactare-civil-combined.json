@@ -1,0 +1,231 @@
+{
+  "year": 2024,
+  "variant": 1,
+  "discipline": "civil-combined",
+  "subjects": [
+    {
+      "id": "dc-s1",
+      "area": "Drept Civil",
+      "title": "Subiectul 1",
+      "scenario": null,
+      "requirements": [
+        {
+          "id": "dc-s1-1",
+          "text": "Arătați motivat dacă poate fi atrasă răspunderea civilă delictuală pentru fapta lucrului în sarcina proprietarului unui magazin, față de un pieton care se împiedică accidental în fața vitrinei și o sparge, rănindu-se.",
+          "points": 0.50,
+          "time": 10,
+          "solution": "Nu poate fi atrasă răspunderea civilă delictuală a proprietarului magazinului (0,1 puncte) deoarece nu există obligația de reparare a prejudiciului pentru fapta lucrului, atunci când acesta este cauzat exclusiv de fapta victimei înseși (0,4 puncte).",
+          "legalRefs": ["art. 1380 C. civ."],
+          "rubric": [
+            { "criterion": "Concluzia corectă - nu poate fi atrasă răspunderea", "points": 0.10 },
+            { "criterion": "Motivare - prejudiciul cauzat exclusiv de fapta victimei înseși", "points": 0.40 }
+          ]
+        },
+        {
+          "id": "dc-s1-2",
+          "text": "Arătați motivat dacă, fiind deposedat la 15.02.2021, prin furt, de mașina sa de epocă marca Jaguar Daimler V8, A mai este în termen, la 01.03.2024, să o revendice de la cumpărătorul acesteia, C, în ipoteza în care acesta din urmă a încheiat la 03.03.2021 contractul de vânzare cu cel vinovat de furt, B, ocazie cu care a plătit integral prețul, încrezându-se în actele de proprietate falsificate de vânzător și a aflat de proveniența ilicită a bunului, în urma unui reportaj prezentat în mass-media, cu doar o zi înainte de a intra în stăpânirea autoturismului, la 10.03.2021.",
+          "points": 1.00,
+          "time": 20,
+          "solution": "Da (0,1 puncte). C este posesor de rea-credință (0,25 puncte) deoarece a cunoscut proveniența ilicită a autoturismului (0,2 puncte) la data intrării în posesie efectivă (0,2 puncte) astfel încât acțiunea în revendicare formulată de A este imprescriptibilă (0,25 puncte).",
+          "legalRefs": ["art. 938 alin. 1 și 2 C. civ.", "art. 563 alin. 2 C. civ."],
+          "rubric": [
+            { "criterion": "Concluzia corectă - Da, este în termen", "points": 0.10 },
+            { "criterion": "C este posesor de rea-credință", "points": 0.25 },
+            { "criterion": "A cunoscut proveniența ilicită a autoturismului", "points": 0.20 },
+            { "criterion": "La data intrării în posesie efectivă", "points": 0.20 },
+            { "criterion": "Acțiunea în revendicare este imprescriptibilă", "points": 0.25 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dc-s2",
+      "area": "Drept Civil",
+      "title": "Subiectul 2",
+      "scenario": "Prin cererea de chemare în judecată înregistrată pe rolul instanței, la data de 15.01.2024, reclamantul A l-a chemat în judecată pe pârâtul B.\n\nA a solicitat revocarea contractului de donație încheiat cu B, autentificat notarial, având ca obiect imobilul situat în București, str. Învingătorilor nr. 20, Sector 2.\n\nLa primul termen de judecată, care a avut loc la data de 01.03.2024, reclamantul a formulat o cerere adițională, chemându-l în judecată și pe C, pentru desființarea contractului de donație, autentificat notarial, încheiat între B și C, cu obligarea acestuia din urmă să-i restituie imobilul situat în București, str. Învingătorilor nr. 20, Sector 2.\n\nÎn susținerea cererii de chemare în judecată, astfel cum aceasta a fost completată, reclamantul a expus următoarele împrejurări relevante:\n- la data de 30.06.2023 între A și B s-a încheiat un contract, autentificat la notar, prin care A i-a donat lui B imobilul situat în București, str. Învingătorilor nr. 20, Sector 2;\n- la 01.02.2024, de asemenea prin act notarial, B a donat același imobil lui C;\n- deși A i-a solicitat lui B să-i cumpere alimentele necesare traiului și să i le aducă la domiciliu, oferindu-i sume de bani din pensia sa în acest scop, acesta a refuzat, fără vreo explicație.\n\nPrin întâmpinare, pârâtul B a solicitat respingerea cererii de chemare în judecată, arătând că, prin contractul de donație, părțile au convenit ca A îl iartă anticipat pe B, în cazul în care acesta nu-i va asigura cele necesarului traiului.\n\nPrin întâmpinare, pârâtul C a solicitat respingerea cererii de chemare în judecată, arătând că revocarea nu poate produce niciun efect asupra dreptului său de proprietate deoarece a fost de bună-credință. În acest sens, a precizat că, la momentul încheierii contractului de donație cu B, acesta l-a informat că, în pofida unei clauze contractuale exprese prin care A îl iertase anticipat, acesta din urmă nu doar că i-a cerut întreținere, dar îl și șicanează, introducând pe rolul instanțelor judecătorești o cerere de revocare a contractului de donație.\n\nSusținerile părților cu privire la situația de fapt au fost dovedite.",
+      "requirements": [
+        {
+          "id": "dc-s2-1",
+          "text": "Independent de datele speței, enumerați efectele generale ale revocării donației pentru ingratitudine. La rezolvare se va proceda exclusiv la enumerarea efectelor, nu și la analiza acestora.",
+          "points": 0.75,
+          "time": 20,
+          "solution": "Efectele generale ale revocării donației pentru ingratitudine sunt:\n- restituirea în natură a bunului donat (0,25 puncte);\n- dacă restituirea în natură a bunului donat nu este posibilă (0,1 puncte), donatarul va fi obligat să plătească valoarea acestuia (0,1 puncte), socotită la data soluționării cauzei (0,05 puncte);\n- donatarul va fi obligat să restituie fructele pe care le-a perceput (0,15 puncte) începând cu data introducerii cererii de revocare a donației (0,1 puncte).",
+          "legalRefs": ["art. 1025 C. civ."],
+          "rubric": [
+            { "criterion": "Restituirea în natură a bunului donat", "points": 0.25 },
+            { "criterion": "Dacă restituirea în natură nu este posibilă", "points": 0.10 },
+            { "criterion": "Donatarul obligat să plătească valoarea bunului", "points": 0.10 },
+            { "criterion": "Socotită la data soluționării cauzei", "points": 0.05 },
+            { "criterion": "Restituirea fructelor percepute", "points": 0.15 },
+            { "criterion": "Începând cu data introducerii cererii de revocare", "points": 0.10 }
+          ]
+        },
+        {
+          "id": "dc-s2-2",
+          "text": "Indicați motivat dacă este întemeiată apărarea pârâtului B.",
+          "points": 0.75,
+          "time": 20,
+          "solution": "Apărarea pârâtului B nu este întemeiată (0,15 puncte). Clauza din contractul de donație este lovită de nulitate absolută (0,25 puncte). Donatorul nu poate renunța la acțiunea în revocare înainte de producerea faptelor de ingratitudine (0,1 puncte) deoarece, prin intermediul acestei clauze, se urmărește o cauză ilicită și imorală / deoarece nu se poate deroga prin convenții de la legile care interesează ordinea publică sau de la bunele moravuri (0,25 puncte).",
+          "legalRefs": ["art. 11 C. civ.", "art. 1238 alin. 2 C. civ."],
+          "rubric": [
+            { "criterion": "Apărarea nu este întemeiată", "points": 0.15 },
+            { "criterion": "Clauza lovită de nulitate absolută", "points": 0.25 },
+            { "criterion": "Nu poate renunța la acțiunea în revocare înainte de producerea faptelor", "points": 0.10 },
+            { "criterion": "Cauză ilicită și imorală / derogare de la ordinea publică", "points": 0.25 }
+          ]
+        },
+        {
+          "id": "dc-s2-3",
+          "text": "Independent de apărarea lui B, arătați motivat dacă este întemeiată cererea de chemare în judecată formulată de reclamantul A în contradictoriu cu B.",
+          "points": 0.75,
+          "time": 20,
+          "solution": "Cererea lui A este neîntemeiată (0,25 puncte). Revocarea donației pentru ingratitudine, pe motivul refuzului de asigurare a alimentelor, poate interveni doar atunci când donatorul a ajuns în nevoie (0,25 puncte). Or, în speță, această condiție nu este îndeplinită, donatorul având mijloacele materiale de a-și procura singur alimentele necesare traiului din veniturile personale încasate cu titlu de pensie (0,25 puncte).",
+          "legalRefs": ["art. 1023 lit. c C. civ."],
+          "rubric": [
+            { "criterion": "Cererea este neîntemeiată", "points": 0.25 },
+            { "criterion": "Revocarea pentru refuzul alimentelor - doar când donatorul a ajuns în nevoie", "points": 0.25 },
+            { "criterion": "Condiția nu este îndeplinită - donatorul are mijloace proprii (pensie)", "points": 0.25 }
+          ]
+        },
+        {
+          "id": "dc-s2-4",
+          "text": "Presupunând că instanța ar dispune revocarea contractului de donație încheiat între A și B, arătați motivat dacă această soluție ar produce efecte și asupra dreptului de proprietate dobândit de C, analizând și apărarea acestuia din urmă.",
+          "points": 1.00,
+          "time": 30,
+          "solution": "Da, revocarea contractului de donație dintre A și B ar produce efecte asupra dreptului de proprietate dobândit de C (0,1 puncte). Pentru ca drepturile reale dobândite de terți să fie menținute (0,1 puncte), este necesar ca dobândirea să se fi făcut cu titlu oneros (0,1 puncte), iar terții să fie de bună-credință (0,1 puncte). În cauză, aceste condiții nu sunt îndeplinite (0,1 puncte). Dobândirea a fost făcută prin contract de donație, deci cu titlu gratuit (0,1 puncte). Apărarea lui C nu este întemeiată (0,1 puncte). C nu a fost de bună-credință (0,15 puncte) deoarece, la momentul încheierii contractului cu B, cunoștea că donatorul A formulase cererea de revocare a donației (0,15 puncte).",
+          "legalRefs": ["art. 1026 C. civ."],
+          "rubric": [
+            { "criterion": "Da, revocarea produce efecte asupra dreptului lui C", "points": 0.10 },
+            { "criterion": "Pentru menținerea drepturilor terților - dobândire cu titlu oneros", "points": 0.10 },
+            { "criterion": "Condiția titlului oneros", "points": 0.10 },
+            { "criterion": "Condiția bunei-credințe a terților", "points": 0.10 },
+            { "criterion": "Condițiile nu sunt îndeplinite", "points": 0.10 },
+            { "criterion": "Dobândirea cu titlu gratuit (donație)", "points": 0.10 },
+            { "criterion": "Apărarea lui C nu este întemeiată", "points": 0.10 },
+            { "criterion": "C nu a fost de bună-credință", "points": 0.15 },
+            { "criterion": "Cunoștea cererea de revocare la momentul încheierii contractului", "points": 0.15 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dpc-s1",
+      "area": "Drept Procesual Civil",
+      "title": "Subiectul 1",
+      "scenario": null,
+      "requirements": [
+        {
+          "id": "dpc-s1-1",
+          "text": "Indicați cazurile în care judecătorul poate încuviința executarea provizorie judecătorească. Indicați care este termenul până la care se poate formula cererea de executare provizorie judecătorească, în fața primei instanțe.",
+          "points": 0.50,
+          "time": 15,
+          "solution": "Instanța poate încuviința executarea provizorie a hotărârilor privitoare la bunuri (0,10 puncte) ori de câte ori va considera că măsura este necesară în raport cu temeinicia vădită a dreptului (0,10 puncte) ori cu starea de insolvabilitate a debitorului (0,10 puncte), precum și atunci când ar aprecia că neluarea de îndată a acestei măsuri este vădit prejudiciabilă pentru creditor (0,10 puncte). Cererea de executare provizorie se va putea face până la închiderea dezbaterilor (0,10 puncte).",
+          "legalRefs": ["art. 449 C. proc. civ."],
+          "rubric": [
+            { "criterion": "Hotărâri privitoare la bunuri", "points": 0.10 },
+            { "criterion": "Temeinicia vădită a dreptului", "points": 0.10 },
+            { "criterion": "Starea de insolvabilitate a debitorului", "points": 0.10 },
+            { "criterion": "Neluarea măsurii vădit prejudiciabilă pentru creditor", "points": 0.10 },
+            { "criterion": "Termen: până la închiderea dezbaterilor", "points": 0.10 }
+          ]
+        },
+        {
+          "id": "dpc-s1-2",
+          "text": "Indicați care este mijlocul procedural pe care îl are la dispoziție debitorul pentru a supune cenzurii instanței încheierea de încuviințare a executării silite, pe motiv că înscrisul prezentat de creditor (contract de împrumut) nu constituie, potrivit legii, titlu executoriu, în cazul în care executarea silită a început prin urmărirea unui imobil aflat în circumscripția altei curți de apel decât cea în care se află domiciliul debitorului. Prin raportare la mijlocul procedural identificat, indicați termenul de exercitare și momentul de la care acesta începe să curgă, precum și instanța competentă material și teritorial.",
+          "points": 0.75,
+          "time": 25,
+          "solution": "Mijlocul procedural prin care debitorul poate supune cenzurii instanței încheierea de încuviințare a executării silite, pe motiv că înscrisul prezentat de creditor (contract de împrumut) nu constituie, potrivit legii, titlu executoriu este contestația la executare (0,20 puncte). Termenul de formulare a contestației la executare este 15 zile (0,10 puncte). Atunci când debitorul contestă executarea silită însăși, termenul curge de la data la care debitorul a primit încheierea de încuviințare a executării sau somația ori de la data când a luat cunoștință de primul act de executare, în cazurile în care nu a primit încheierea de încuviințare a executării și nici somația (0,15 puncte). Instanța competentă să judece contestația la executare în cazul urmăririi silite a imobilului este instanța de executare (judecătoria în raza căreia își are domiciliul/sediul debitorul) (0,15 puncte) sau judecătoria de la locul situării imobilului (0,15 puncte).",
+          "legalRefs": ["art. 651 C. proc. civ.", "art. 666 alin. 6 C. proc. civ.", "art. 714 alin. 1 și 2 C. proc. civ.", "art. 715 alin. 1 pct. 3 C. proc. civ."],
+          "rubric": [
+            { "criterion": "Contestația la executare", "points": 0.20 },
+            { "criterion": "Termen de 15 zile", "points": 0.10 },
+            { "criterion": "Momentul de la care curge termenul", "points": 0.15 },
+            { "criterion": "Instanța de executare (judecătoria domiciliului debitorului)", "points": 0.15 },
+            { "criterion": "Sau judecătoria de la locul situării imobilului", "points": 0.15 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dpc-s2",
+      "area": "Drept Procesual Civil",
+      "title": "Subiectul 2",
+      "scenario": "Prin cererea de chemare în judecată înregistrată la Tribunalul București, reclamantul X, persoană fizică, a solicitat în contradictoriu cu pârâtul Y (societate) declararea nulității contractului de vânzare a unui autoturism și repunerea părților în situația anterioară.\n\nÎn motivarea cererii, reclamantul a arătat că a cumpărat autoturismul pentru uzul personal de la Y (societate care are ca principală activitate vânzarea de autoturisme) și ulterior a constatat existența în contractul de vânzare a unor clauze abuzive, contrare legislației privind protecția consumatorilor și care, fiind esențiale, afectează întregul contract.\n\nPârâtul a formulat întâmpinare, prin care a invocat apărări de fond referitoare la caracterul legal al clauzelor indicate în cerere de chemare în judecată drept abuzive.\n\nLa primul termen de judecată, reclamantul a invocat excepția de necompetență teritorială a instanței și excepția nelegalei reprezentări a pârâtului. În legătură cu excepția necompetenței teritoriale a instanței, a solicitat trimiterea cauzei la Tribunalul Botoșani, pe raza teritorială a căruia își are domiciliul reclamantul, indicând în acest sens faptul că are calitatea de consumator iar pârâtul este profesionist.\n\nÎn legătură cu excepția nelegalei reprezentări a pârâtului, reclamantul a arătat că pârâtul este reprezentat în proces de consilierul juridic al unei societăți terțe (respectiv societatea Z), iar nu de propriul avocat sau consilier juridic.\n\nCu privire la excepția de necompetență teritorială, pârâtul a arătat că este competentă instanța de la sediul acestuia, adică Tribunalul București.\n\nCu privire la excepția nelegalei reprezentări, pârâtul a arătat că este reprezentat convențional prin consilierul juridic al societății Z (societate care are aceiași asociați ca și Y) și că acest lucru se justifică prin faptul că a încheiat cu aceasta un contract de mandat, cu respectarea formelor prevăzute de lege, care prevede reprezentarea convențională a societății Y de către societatea Z, la judecarea acestei cauze.\n\nDupă punerea în discuția părților a celor două excepții, instanța a respins ca nefondată excepția de necompetență teritorială și a admis excepția nelegalei reprezentări a pârâtului Y, ambele invocate de reclamant, acordând termen în vederea asigurării legalei reprezentări a pârâtului Y.\n\nDupă încuviințarea și administrarea probelor și terminarea cercetării procesului, instanța a acordat cuvântul părților asupra fondului, iar după închiderea dezbaterilor și deliberare a pronunțat o hotărâre prin care a respins cererea ca neîntemeiată. Hotărârea a fost comunicată părților la data de 21.03.2023.\n\nÎmpotriva hotărârii a declarat apel reclamantul X, la data de 26.05.2023. În apel, reclamantul a invocat un prim motiv privind greșita soluționare de către prima instanță a excepției de necompetență, un al doilea motiv întemeiat pe greșita interpretare a probelor și un al treilea motiv întemeiat pe opunerea sentinței nr.xxxxx/10.09.2021 a Tribunalului Giurgiu, rămasă definitivă prin neexercitarea apelului, la data de 12.01.2022. Prin aceasta, într-un proces între F, persoană fizică (reclamant) și același Y (pârât) s-a admis acțiunea în nulitate a unor clauze similare cu cele cuprinse în contractul de vânzare ce face obiectul prezentului proces. Prin întâmpinare, intimatul Y a invocat excepția tardivității declarării căii de atac a apelului. Prin răspunsul la întâmpinare, apelantul X a solicitat respingerea excepției invocate de intimat, arătând că la data de 19.04.2023 a depus la instanța competentă o cerere de ajutor public judiciar în forma plății onorariului pentru asigurarea reprezentării/asistenței juridice printr-un avocat, în vederea redactării cererii privind calea de atac, depunând totodată toate înscrisurile doveditoare ale situației sale materiale, așa cum prevede legea. Cererea de ajutor public judiciar a fost soluționată favorabil de instanță prin încheierea din data de 24.04.2023 iar avocatul a fost desemnat de barou pe data de 27.04.2023. La aceeași dată a fost adusă la cunoștința instanței și solicitantului desemnarea avocatului și datele acestuia.\n\nDupă ce a pus în discuția părților excepția invocată de intimatul Y, instanța a respins-o, ca nefondată.\n\nApelul a fost respins ca nefondat.\n\nÎmpotriva deciziei din apel a formulat contestație în anulare apelantul — reclamant X, indicând drept motiv că instanța nu s-a pronunțat asupra motivului privind greșita soluționare de către prima instanță a excepției de necompetență teritorială. Prin întâmpinare, intimatul Y a invocat inadmisibilitatea contestației în anulare, deoarece reclamantul nu a formulat cerere de recurs. La primul termen acordat pentru judecata contestației în anulare, intimatul Y a formulat cerere de recuzare a judecătorului T, motivând că a pronunțat sentința nr.xxxxx/10.09.2021, ale cărei efecte au fost invocate de X, prin motivele de apel.\n\nCererea de recuzare a fost respinsă ca neîntemeiată.",
+      "requirements": [
+        {
+          "id": "dpc-s2-1",
+          "text": "Indicați argumentat care este ordinea de soluționare a excepțiilor invocate de reclamantul X la primul termen de judecată.",
+          "points": 0.50,
+          "time": 15,
+          "solution": "Ordinea de soluționare a excepțiilor invocate de reclamantul X este următoarea: mai întâi se soluționează excepția nelegalei reprezentări și apoi cea a necompetenței teritoriale a instanței (0,25 puncte). Această ordine este impusă de faptul că dezbaterea asupra excepției necompetenței instanței trebuie să aibă loc în contradictoriu, iar aceasta implică reprezentarea ambelor părți în conformitate cu cerințele legale (0,25 puncte).",
+          "legalRefs": ["art. 248 alin. 2 C. proc. civ.", "art. 219 C. proc. civ."],
+          "rubric": [
+            { "criterion": "Ordinea corectă: nelegala reprezentare, apoi necompetența", "points": 0.25 },
+            { "criterion": "Motivare: dezbaterea în contradictoriu implică reprezentarea legală", "points": 0.25 }
+          ]
+        },
+        {
+          "id": "dpc-s2-2",
+          "text": "Indicați argumentat, independent de ordinea de soluționare a excepțiilor, dacă soluția asupra excepției de necompetență este legală, prin raportare la regulile privind competența teritorială.",
+          "points": 0.75,
+          "time": 15,
+          "solution": "Soluția instanței asupra excepției de necompetență teritorială este legală, deoarece necompetența teritorială în cazul cererilor făcute de un consumator împotriva unui profesionist sunt de ordine privată (0,50 puncte). Necompetența de ordine privată poate fi invocată doar de pârât / fiind vorba de o competență teritorială alternativă, reclamantul a înțeles să opteze pentru instanța competentă prin cererea de chemare în judecată (0,25 puncte).",
+          "legalRefs": ["art. 113 alin. 1 pct. 8 C. proc. civ.", "art. 130 alin. 3 C. proc. civ.", "art. 116 C. proc. civ."],
+          "rubric": [
+            { "criterion": "Necompetența teritorială consumator-profesionist este de ordine privată", "points": 0.50 },
+            { "criterion": "Poate fi invocată doar de pârât / competență alternativă, reclamantul a ales", "points": 0.25 }
+          ]
+        },
+        {
+          "id": "dpc-s2-3",
+          "text": "Indicați argumentat, independent de ordinea de soluționare a excepțiilor, dacă soluția asupra excepției nelegalei reprezentări a pârâtului Y este legală.",
+          "points": 0.75,
+          "time": 15,
+          "solution": "Soluția instanței asupra excepției nelegalei reprezentări a pârâtului Y este legală (0,25 puncte), deoarece reprezentarea convențională a persoanei juridice în fața instanțelor de judecată nu se poate face prin mandatar persoană juridică, nici prin consilierul juridic sau avocatul acesteia din urmă (0,50 puncte).",
+          "legalRefs": ["art. 84 C. proc. civ.", "ÎCCJ decizia HP nr. 9/2016"],
+          "rubric": [
+            { "criterion": "Soluția este legală", "points": 0.25 },
+            { "criterion": "Reprezentarea convențională a PJ nu se poate face prin mandatar PJ", "points": 0.50 }
+          ]
+        },
+        {
+          "id": "dpc-s2-4",
+          "text": "Indicați argumentat dacă soluția instanței de apel asupra excepției de tardivitate a apelului, invocată de intimatul Y, este legală.",
+          "points": 0.50,
+          "time": 15,
+          "solution": "Soluția de respingere a excepției de tardivitate a declarării căii de atac a apelului, invocată de intimatul Y este legală (0,15 puncte). Având în vedere faptul că X a formulat o cerere de ajutor public judiciar în interiorul termenului de apel, depunând înscrisurile doveditoare solicitate de lege, la data înregistrării acestei cereri a operat întreruperea termenului de apel (0,20 puncte). De la data desemnării avocatului începe să curgă un nou termen pentru exercitarea căii de atac. Cererea de apel a fost depusă în termenul de 30 de zile de la data la care a fost desemnat avocatul ca urmare a admiterii cererii de ajutor public judiciar (0,15 puncte).",
+          "legalRefs": ["art. 13 din O.U.G. nr. 51/2008"],
+          "rubric": [
+            { "criterion": "Soluția de respingere este legală", "points": 0.15 },
+            { "criterion": "Cererea de ajutor public judiciar a întrerupt termenul de apel", "points": 0.20 },
+            { "criterion": "Apelul depus în 30 zile de la desemnarea avocatului", "points": 0.15 }
+          ]
+        },
+        {
+          "id": "dpc-s2-5",
+          "text": "Arătați motivat soluția pe care instanța o va pronunța asupra excepției de inadmisibilitate a contestației în anulare, invocată de intimatul Y.",
+          "points": 0.50,
+          "time": 10,
+          "solution": "Instanța va respinge excepția de inadmisibilitate a contestației în anulare, deoarece hotărârile pronunțate în materia protecției consumatorilor nu sunt supuse recursului (0,25 puncte), iar contestația în anulare specială poate fi formulată și împotriva hotărârilor date în apel, care potrivit legii, nu pot fi atacate cu recurs (0,25 puncte).",
+          "legalRefs": ["art. 483 alin. 2 C. proc. civ.", "art. 503 alin. 3 C. proc. civ."],
+          "rubric": [
+            { "criterion": "Hotărârile în materia protecției consumatorilor nu sunt supuse recursului", "points": 0.25 },
+            { "criterion": "Contestația în anulare specială admisibilă împotriva hotărârilor nesupuse recursului", "points": 0.25 }
+          ]
+        },
+        {
+          "id": "dpc-s2-6",
+          "text": "Indicați care este calea prin care X ar putea, dacă ar avea interes, să atace soluția asupra cererii de recuzare, care ar fi termenul de exercitare a acestuia și momentul de la care începe să curgă.",
+          "points": 0.50,
+          "time": 10,
+          "solution": "Împotriva încheierii prin care s-a respins cererea de recuzare, X poate formula recurs (0,25 puncte) în termen de 5 zile de la comunicarea hotărârii pronunțate asupra contestației în anulare (0,25 puncte).",
+          "legalRefs": ["art. 53 alin. 1 C. proc. civ."],
+          "rubric": [
+            { "criterion": "Recurs", "points": 0.25 },
+            { "criterion": "5 zile de la comunicarea hotărârii asupra contestației în anulare", "points": 0.25 }
+          ]
+        }
+      ]
+    }
+  ]
+}

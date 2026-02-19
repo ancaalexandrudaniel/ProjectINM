@@ -1,0 +1,257 @@
+{
+  "year": 2024,
+  "examType": "grile",
+  "subject": "penal",
+  "questions": [
+    {
+      "number": 51,
+      "text": "În cazul legitimei apărări:",
+      "options": [
+        "se reține cauza justificativă și dacă apărarea se realizează împotriva unei persoane care pune în executare un mandat de aducere, pe motiv că autorul consideră că a fost acuzat în mod injust de comiterea unei infracțiuni;",
+        "apărarea poate fi comisă ca ripostă împotriva atacului unui urs sălbatic;",
+        "nu se poate dispune confiscarea specială a bunului folosit pentru comiterea faptei în legitimă apărare."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 52,
+      "text": "Actele de pregătire sunt:",
+      "options": [
+        "incompatibile cu intenția spontană;",
+        "sancționate doar atunci când legiuitorul le asimilează tentativei;",
+        "posibile în cazul infracțiunilor comise cu intenție depășită."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 53,
+      "text": "Renunțarea la aplicarea pedepsei nu se poate dispune dacă:",
+      "options": [
+        "pedeapsa prevăzută de lege pentru infracțiunea săvârșită este închisoarea de la unu la 5 ani;",
+        "față de același infractor s-a mai dispus, în urmă cu 3 ani față de săvârșirea infracțiunii pentru care este judecat, renunțarea la aplicarea pedepsei;",
+        "infracțiunea a fost comisă în perioada în care era suspendată prescripția executării pedepsei aplicate pentru o infracțiune săvârșită în urmă cu 3 ani."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 54,
+      "text": "Pe durata termenului de supraveghere, persoanei față de care s-a dispus amânarea aplicării pedepsei i se poate impune obligația de a presta o muncă în folosul comunității pentru o perioadă cuprinsă între:",
+      "options": [
+        "30 și 60 de zile;",
+        "90 și 120 de zile;",
+        "70 și 120 de zile."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 55,
+      "text": "Legea penală de dezincriminare:",
+      "options": [
+        "nu împiedică posibilitatea luării măsurii de siguranță a obligării la tratament medical, însă numai cu acordul prealabil al inculpatului;",
+        "nu se aplică dacă fapta este reincriminată, în termen de 45 de zile de la intrarea în vigoare a legii care a dezincriminat fapta;",
+        "produce efecte chiar dacă condamnarea a rămas definitivă și a fost reținută ca prim termen al recidivei pentru o infracțiune comisă de aceeași persoană."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 56,
+      "text": "Minoritatea se va reține drept cauză de neimputabilitate dacă minorul:",
+      "options": [
+        "a comis o faptă chiar neprevăzută de legea penală;",
+        "a comis o faptă prevăzută de legea penală înainte de a împlini 14 ani, iar urmarea imediată se produce ulterior acestui moment;",
+        "a luat rezoluția de a comite o faptă prevăzută de legea penală anterior împlinirii vârstei de 14 ani, chiar dacă fapta este comisă după acest moment."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 57,
+      "text": "Pedeapsa accesorie:",
+      "options": [
+        "în cazul unei pluralități de infracțiuni, poate fi aplicată pe lângă pedeapsa rezultantă chiar dacă nu a fost mai întâi aplicată pe lângă niciuna dintre pedepsele stabilite pentru infracțiunile ce au format pluralitatea;",
+        "nu se dispune în toate cazurile în care se aplică o pedeapsă complementară;",
+        "poate fi aplicată numai dacă se dispune o condamnare la pedeapsa închisorii."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 58,
+      "text": "Confiscarea extinsă poate viza și:",
+      "options": [
+        "sumele de bani transferate membrilor familiei, dacă aceștia știau sau ar fi trebuit să știe că scopul transferului a fost evitarea acestei măsuri;",
+        "bunurile dobândite prin săvârșirea faptei prevăzute de legea penală, dacă nu sunt restituite persoanei vătămate și în măsura în care nu servesc la despăgubirea acesteia;",
+        "toate bunurile dobândite de persoana condamnată într-o perioadă de 5 ani de la comiterea infracțiunii, chiar dacă instanța de judecată este sesizată înainte de împlinirea acestui termen."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 59,
+      "text": "În cazul în care infracțiunea de omor pentru care inculpatul a fost condamnat definitiv este concurentă atât cu infracțiunea de tâlhărie ce reprezintă primul termen, cât și cu infracțiunea de furt calificat ce reprezintă al doilea termen al unei recidive postcondamnatorii, operațiunea de stabilire a pedepsei rezultante în cazul trimiterii în judecată pentru această din urmă infracțiune de furt calificat implică:",
+      "options": [
+        "aplicarea regulilor concursului de infracțiuni între pedepsele stabilite pentru omor și tâlhărie, pedeapsa rezultantă fiind considerată primul termen al recidivei postcondamnatorii pentru infracțiunea de furt calificat;",
+        "aplicarea regulilor recidivei postcondamnatorii cu privire la infracțiunea de tâlhărie și furt calificat, pedeapsa rezultantă fiind ulterior contopită, potrivit regulilor concursului de infracțiuni, cu pedeapsa stabilită pentru infracțiunea de omor;",
+        "contopirea pedepselor pentru infracțiunile de omor, tâlhărie și furt calificat potrivit regulilor de la concursul de infracțiuni, aplicând apoi și regulile privind recidiva postcondamnatorie, prin adăugarea pedepsei anterioare neexecutate sau a restului rămas neexecutat din aceasta."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 60,
+      "text": "În materia prescripției executării măsurilor educative:",
+      "options": [
+        "termenul curge de la data pronunțării hotărârii, dacă măsura a constat în aplicarea unui avertisment;",
+        "în cazul măsurilor neprivative de libertate termenul este egal cu durata măsurii, dar nu mai puțin de 2 ani;",
+        "în cazul măsurilor privative de libertate, termenul de prescripție poate depăși 2 ani."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 61,
+      "text": "Acoperirea integrală a prejudiciului material cauzat prin infracțiune reprezintă circumstanță atenuantă legală în ipoteza unei infracțiuni de:",
+      "options": [
+        "purtare abuzivă, dacă sunt acoperite toate pretențiile părții civile, inclusiv în ceea ce privește diminuarea veniturilor din activități pe perioada spitalizării victimei;",
+        "înșelăciune, chiar dacă acoperirea integrală a prejudiciului a avut loc în faza camerei preliminare, după sesizarea instanței;",
+        "ucidere din culpă, atunci când autorul a acoperit cheltuielile cu spitalizarea victimei, contravaloarea cheltuielilor de înmormântare și a încheiat un acord de mediere cu privire la celelalte daune solicitate de urmașii decedatului."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 62,
+      "text": "Ca urmare a reținerii circumstanțelor atenuante, instanța reduce:",
+      "options": [
+        "cuantumul sumei corespunzătoare zilei-amendă;",
+        "în mod corespunzător limitele prevăzute de lege pentru pedepsele complementare;",
+        "limitele speciale ale pedepsei închisorii o singură dată, indiferent de numărul circumstanțelor atenuante reținute."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 63,
+      "text": "Întrunește și elementele constitutive ale tentativei la infracțiunea de omor calificat fapta celui care:",
+      "options": [
+        "dorind să-și ucidă soția cu care se afla în proces de divorț, o așteaptă pe aceasta la locul de muncă, la terminarea programului, având asupra sa un cuțit de mari dimensiuni, dar, în urma discuției cu ea, renunță să mai comită fapta, hotărând împreună să mai acorde o șansă relației lor;",
+        "fiind medic de specialitate obstetrică-ginecologie, încearcă să provoace întreruperea cursului sarcinii unei persoane prin manopere abortive specifice, efectuate fără consimțământul acesteia, care i-au produs victimei o infecție pentru a cărei vindecare au fost necesare 20 de zile de îngrijiri medicale, fără ca vreun moment să-i fi fost pusă viața în primejdie;",
+        "fiind condamnat definitiv pentru o infracțiune de loviri sau vătămări cauzatoare de moarte, aflându-se în executarea pedepsei cu închisoarea în penitenciar, pentru a putea evada, înjunghie în zona pieptului un alt deținut care încerca să avertizeze paznicii despre evadare, victima fiind transportată de urgență la spital, unde viața i-a fost salvată."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 64,
+      "text": "Amenințarea:",
+      "options": [
+        "unui judecător constituie infracțiunea de ultraj judiciar doar dacă este realizată nemijlocit sau prin mijloace de comunicare directă;",
+        "constituie infracțiune numai dacă se probează că a fost produsă în concret o stare de temere;",
+        "cu darea în vileag a unui fapte imaginare compromițătoare pentru un membru de familie al persoanei amenințate, în scopul obținerii unei sume de bani, întrunește elementele constitutive ale infracțiunii de șantaj."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 65,
+      "text": "Nici infracțiunea de viol, nici cea de agresiune sexuală comise asupra unui major:",
+      "options": [
+        "nu pot fi comise în formă continuată;",
+        "săvârșite de două sau mai multe persoane împreună nu permit reținerea circumstanței agravante constând în săvârșirea faptei de trei sau mai multe persoane împreună;",
+        "nu au ca variantă agravată situația în care, în urma faptei, victima rămâne însărcinată."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 66,
+      "text": "Spre deosebire de violarea de domiciliu, violarea sediului profesional:",
+      "options": [
+        "nu presupune lipsa consimțământului persoanei vătămate, ca o condiție (cerință) atașată elementului material prevăzut de Codul penal;",
+        "presupune, în mod obligatoriu, plângerea prealabilă a persoanei vătămate pentru punerea în mișcare a acțiunii penale;",
+        "nu se poate absorbi în infracțiunea de tâlhărie calificată."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 67,
+      "text": "Întrunește elementele constitutive ale infracțiunii de abuz de încredere fapta celui care:",
+      "options": [
+        "luând cu împrumut o sumă de bani pentru 3 luni, nu o restituie la scadență;",
+        "folosește un autovehicul, lăsat în vederea vopsirii caroseriei, pentru a face o deplasare la mare cu prietenii;",
+        "fiind gestionar la un magazin de încălțăminte, își însușește mai multe perechi de pantofi din gestiune."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 68,
+      "text": "Este tipică fapta constând în conducerea pe drumurile publice a unui autovehicul de către o persoană care:",
+      "options": [
+        "deține un permis de conducere provizoriu valabil, eliberat de autoritatea competentă din Marea Britanie, chiar dacă are dreptul de a conduce în România;",
+        "a consumat băuturi alcoolice înainte de a conduce, indiferent de îmbibația alcoolică;",
+        "consumă alcool după producerea unui accident de circulație care a avut ca rezultat uciderea unei persoane, până la recoltarea mostrelor biologice."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 69,
+      "text": "Distrugerea unui înscris:",
+      "options": [
+        "sub semnătură privată constituie întotdeauna infracțiune;",
+        "oficial care se află în păstrarea unui notar public conduce la reținerea infracțiunii de distrugere în variantă agravată;",
+        "în scopul de a împiedica aflarea adevărului într-o procedură judiciară, conduce la reținerea infracțiunii de sustragere sau distrugere de probe ori de înscrisuri."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 70,
+      "text": "Infracțiunile de înșelăciune și însușirea bunului găsit sau ajuns din eroare la făptuitor:",
+      "options": [
+        "aduc, ambele, atingere bunei-credințe și corectitudinii (încrederii) care trebuie să existe între participanții la relațiile patrimoniale;",
+        "au același obiect material;",
+        "au aceleași variante agravate."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 71,
+      "text": "Lovirea unui minor:",
+      "options": [
+        "nou-născut imediat după naștere, dar nu mai târziu de 24 de ore, de către mama aflată în stare de tulburare psihică care nu înlătură discernământul, nu constituie infracțiune;",
+        "de către tatăl său, în mod repetat, cu consecința punerii în primejdie gravă a dezvoltării fizice și morale a minorului, conduce la reținerea în concurs a unei infracțiuni de rele tratamente aplicate minorului;",
+        "conduce la reținerea infracțiunii de lovire sau alte violențe în varianta tip dacă minorul nu a avut nevoie de îngrijiri medicale."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 72,
+      "text": "Spre deosebire de infracțiunea de nedenunțare, infracțiunea de omisiunea sesizării:",
+      "options": [
+        "are un subiect activ calificat (special);",
+        "nu poate fi comisă și din culpă;",
+        "nu se pedepsește dacă, înainte de punerea în mișcare a acțiunii penale împotriva unei persoane pentru săvârșirea faptei a cărei sesizare a fost omisă, încunoștințează autoritățile competente despre aceasta."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 73,
+      "text": "Infracțiunea de favorizare a făptuitorului:",
+      "options": [
+        "nu poate intra niciodată în concurs cu infracțiunea de mărturie mincinoasă comisă de aceeași persoană;",
+        "se poate reține în concurs cu o infracțiune de înlesnirea evadării;",
+        "se reține atunci când o persoană i-a promis autorului, înainte de săvârșirea faptei de către acesta, că îl va ajuta în scopul sustragerii de la răspundere penală, iar ulterior își ține promisiunea."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 74,
+      "text": "Infracțiunile de luare de mită și trafic de influență:",
+      "options": [
+        "au aceleași condiții (cerințe) esențiale atașate elementului material;",
+        "pot fi comise doar cu intenție;",
+        "au, ambele, subiect activ calificat (special)."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 75,
+      "text": "Infracțiunea de incest:",
+      "options": [
+        "se poate comite prin întreținerea unui act sexual anal între tată și fiul său major;",
+        "are același element material ca infracțiunea de agresiune sexuală;",
+        "se absoarbe în mod natural în infracțiunea de corupere sexuală a minorilor."
+      ],
+      "correctAnswer": "A"
+    }
+  ]
+}

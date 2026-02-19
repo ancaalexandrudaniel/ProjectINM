@@ -1,0 +1,181 @@
+{
+  "year": 2024,
+  "variant": 1,
+  "discipline": "penal-combined",
+  "subjects": [
+    {
+      "id": "dp-s1",
+      "area": "Drept Penal",
+      "title": "Subiectul 1",
+      "scenario": null,
+      "requirements": [
+        {
+          "id": "dp-s1-1",
+          "text": "Arătați asemănările între infracțiunile de dare de mită și cumpărare de influență, fiind avute în vedere exclusiv aspecte de drept penal.\n\nNotă: Nu vor fi avute în vedere aspectele privind formele infracțiunii după fazele de realizare a activității infracționale.",
+          "points": 1.00,
+          "time": 30,
+          "solution": "Se va acorda punctajul integral pentru această cerință (0,10 x 10 = 1,00p) în cazul identificării a oricare 10 dintre următoarele 12 asemănări:\n\n1. Infracțiunile au obiect juridic comun, fiind prevăzute în Capitolul intitulat «Infracțiuni de corupție».\n2. Niciuna dintre cele două infracțiuni nu are obiect material; ambele au în vedere bani sau alte foloase.\n3. Subiectul activ poate fi orice persoană, inclusiv persoana juridică, iar participația penală este posibilă sub toate formele.\n4. Subiectul pasiv este (statul prin) instituția unde lucrează funcționarul public la care se referă infracțiunea.\n5. Elementul material este identic — promisiunea, oferirea sau darea.\n6. Urmarea imediată este similară — o stare de pericol pentru valoarea socială protejată.\n7. Legătura de cauzalitate rezultă din materialitatea faptei.\n8. Există o cauză de nepedepsire comună — denunțarea faptei mai înainte ca organul de urmărire penală să fi fost sesizat cu privire la aceasta.\n9. Reguli comune privind restituirea bunurilor — banii, valorile sau orice alte bunuri date se restituie persoanei care le-a dat, dacă acestea au fost date după denunț.\n10. Reguli comune privind confiscarea bunurilor — banii, valorile sau orice alte bunuri oferite sau date sunt supuse confiscării, iar când acestea nu se mai găsesc, se dispune confiscarea prin echivalent.\n11. Ambele se pedepsesc cu închisoarea (între aceleași limite).\n12. Ambele pot fi reținute în varianta atenuată prevăzută de art. 308 C. pen.",
+          "legalRefs": ["art. 290 C. pen.", "art. 292 C. pen.", "art. 308 C. pen."],
+          "rubric": [
+            { "criterion": "Obiect juridic comun (infracțiuni de corupție)", "points": 0.10 },
+            { "criterion": "Niciuna nu are obiect material; ambele vizează bani sau alte foloase", "points": 0.10 },
+            { "criterion": "Subiect activ: orice persoană, inclusiv PJ; participație sub toate formele", "points": 0.10 },
+            { "criterion": "Subiect pasiv: instituția funcționarului public", "points": 0.10 },
+            { "criterion": "Element material identic: promisiunea, oferirea sau darea", "points": 0.10 },
+            { "criterion": "Urmare imediată similară: stare de pericol", "points": 0.10 },
+            { "criterion": "Legătura de cauzalitate rezultă din materialitatea faptei", "points": 0.10 },
+            { "criterion": "Cauză de nepedepsire comună: denunțarea faptei", "points": 0.10 },
+            { "criterion": "Reguli comune privind restituirea bunurilor", "points": 0.10 },
+            { "criterion": "Reguli comune privind confiscarea bunurilor", "points": 0.10 },
+            { "criterion": "Ambele pedepsite cu închisoare între aceleași limite", "points": 0.10 },
+            { "criterion": "Ambele pot fi reținute în varianta atenuată art. 308 C. pen.", "points": 0.10 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dp-s2",
+      "area": "Drept Penal",
+      "title": "Subiectul 2",
+      "scenario": "La 15 ianuarie 2024, ora 23.00, A și B au pătruns într-o farmacie, în afara programului cu publicul, cu intenția de a sustrage bani. În interior au constatat însă prezența unei farmaciste, pe care A a amenințat-o cu un cuțit pentru ca aceasta să spună cum se deschide casa de bani. Farmacista a refuzat, motiv pentru care A a imobilizat-o și a legat-o cu o curea de un dulap, timp în care B încerca să deschidă casa de bani. În momentul în care B a încercat să forțeze încuietoarea casei de bani, s-a declanșat alarma, astfel încât cei doi s-au speriat și au fugit fără a mai lua vreun bun din farmacie. Farmacista a reușit să se dezlege la câteva secunde de la fuga celor doi.\n\nDin fișa de cazier a lui A, născut la 30 decembrie 1999, rezultă că a fost condamnat prin sentința penală nr. 112/2018 pronunțată de Judecătoria F, definitivă prin neapelare la 5 ianuarie 2019, la un an și 6 luni închisoare cu suspendarea sub supraveghere pe un termen de 2 ani a executării pedepsei aplicate pentru infracțiunea de furt comisă la 1 ianuarie 2018.\n\nB, născut la 29 decembrie 2011, nu este cunoscut cu antecedente penale.\n\nInstanța l-a condamnat pe A pentru complicitate la infracțiunea de tâlhărie calificată comisă în timpul nopții și într-un loc public, de două persoane împreună — dintre care una avea o armă asupra ei, precum și pentru săvârșirea infracțiunii de lipsire de libertate în mod ilegal, ambele în stare de recidivă postexecutorie.\n\nFață de B instanța a luat măsura internării într-un centru educativ până la împlinirea vârstei de 18 ani, reținând calitatea de autor pentru aceleași infracțiuni pentru care a dispus condamnarea lui A.",
+      "requirements": [
+        {
+          "id": "dp-s2-1",
+          "text": "Identificați, motivat, greșelile făcute de instanță, având în vedere exclusiv aspectele de drept penal.",
+          "points": 2.50,
+          "time": 60,
+          "solution": "Pentru A:\n- În mod greșit s-a reținut un concurs de infracțiuni, pentru că infracțiunea de lipsire de libertate în mod ilegal se absoarbe în cea de tâlhărie, lipsirea de libertate limitându-se la perioada de timp necesară săvârșirii infracțiunii-scop (0,50p);\n- În mod greșit s-a reținut complicitate la infracțiunea de tâlhărie, deoarece A a exercitat acte de violență/punere a victimei în stare de neputință de a se apăra, acte care au fost comise nemijlocit asupra persoanei vătămate; având în vedere că tâlhăria este o infracțiune complexă, săvârșirea de acte materiale specifice uneia din infracțiunile componente este suficientă pentru reținerea (co)autoratului (0,50p);\n- În mod greșit s-a reținut forma consumată, întrucât furtul din componența infracțiunii complexe a îmbrăcat forma tentativei, astfel încât tâlhăria a rămas în formă tentată (0,25p);\n- În mod greșit s-au reținut elementele circumstanțiale «în loc public» și «de două persoane împreună», care nu sunt prevăzute de norma de incriminare (0,50p);\n- În mod greșit s-a reținut starea de recidivă, deoarece pentru prima faptă a intervenit reabilitarea de drept, fiind împlinit termenul de 3 ani (0,25p);\n\nPentru B:\n- B nu împlinise 14 ani la data săvârșirii faptei, fiind incidentă cauza de neimputabilitate a minorității, care nu putea conduce la dispunerea unei soluții prin care să se constate existența unei infracțiuni (0,25p);\n- Nu se putea dispune aplicarea unei măsuri educative (0,25p).",
+          "legalRefs": ["art. 233-234 C. pen.", "art. 46 C. pen.", "art. 32 C. pen.", "art. 77 C. pen.", "art. 165-166 C. pen.", "art. 113 C. pen."],
+          "rubric": [
+            { "criterion": "Greșit concursul: lipsirea de libertate se absoarbe în tâlhărie", "points": 0.50 },
+            { "criterion": "Greșit complicitatea: A este (co)autor, nu complice", "points": 0.50 },
+            { "criterion": "Greșit forma consumată: tâlhăria a rămas în formă tentată", "points": 0.25 },
+            { "criterion": "Greșit elementele circumstanțiale «în loc public» și «de două persoane împreună»", "points": 0.50 },
+            { "criterion": "Greșit starea de recidivă: a intervenit reabilitarea de drept (3 ani)", "points": 0.25 },
+            { "criterion": "B nu împlinise 14 ani — cauza de neimputabilitate a minorității", "points": 0.25 },
+            { "criterion": "Nu se putea dispune o măsură educativă", "points": 0.25 }
+          ]
+        },
+        {
+          "id": "dp-s2-2",
+          "text": "Identificați, motivat, încadrarea juridică corectă pentru infracțiunea/infracțiunile comise, raportându-vă exclusiv la datele speței, arătând, dacă este cazul, forma de pluralitate de infracțiuni și de făptuitori.",
+          "points": 0.75,
+          "time": 15,
+          "solution": "Instanța trebuia să rețină următoarea încadrare juridică: A este coautor la tentativa la infracțiunea de tâlhărie calificată comisă prin folosirea unei arme, în timpul nopții, prin violare de sediu profesional — art. 32 alin. (1) rap. la art. 233-234 alin. (1) lit. a), d), f) C. pen. (0,50p).\n\nLa individualizarea pedepsei se va reține și circumstanța agravantă a comiterii faptei de un major împreună cu un minor [art. 77 lit. d) C. pen.], aceasta fiind incidentă și când fapta este comisă de inculpat împreună cu o persoană care nu răspunde penal, dacă ambii s-au aflat la locul faptei (0,25p).",
+          "legalRefs": ["art. 32 alin. 1 C. pen.", "art. 233-234 alin. 1 lit. a), d), f) C. pen.", "art. 77 lit. d) C. pen."],
+          "rubric": [
+            { "criterion": "Încadrarea juridică corectă: coautor la tentativa la tâlhărie calificată", "points": 0.50 },
+            { "criterion": "Circumstanța agravantă: comiterea faptei de major împreună cu minor", "points": 0.25 }
+          ]
+        },
+        {
+          "id": "dp-s2-3",
+          "text": "Știind că, după comiterea faptei, A a mers acasă și a povestit totul mamei sale, care i-a spălat hainele pentru a înlătura orice urme ale comiterii faptelor și l-a ascuns pentru a nu fi găsit de poliție timp de două săptămâni, arătați, motivat, care va fi încadrarea juridică a faptei comise de mamă, precum și dacă aceasta va răspunde penal.",
+          "points": 0.50,
+          "time": 15,
+          "solution": "Mama comite infracțiunea de favorizarea făptuitorului (art. 269 C. pen.), întrucât l-a ajutat pe A în scopul împiedicării cercetărilor și a tragerii la răspundere într-o cauză penală (0,25p).\n\nMama nu răspunde penal pentru infracțiunea astfel comisă, beneficiind de o cauză de nepedepsire, având în vedere calitatea sa de membru de familie — art. 269 alin. (3) C. pen. (0,25p).",
+          "legalRefs": ["art. 269 C. pen.", "art. 269 alin. 3 C. pen."],
+          "rubric": [
+            { "criterion": "Încadrarea: favorizarea făptuitorului (art. 269 C. pen.)", "points": 0.25 },
+            { "criterion": "Nu răspunde penal: cauză de nepedepsire — membru de familie", "points": 0.25 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dpp-s1",
+      "area": "Drept Procesual Penal",
+      "title": "Subiectul 1",
+      "scenario": null,
+      "requirements": [
+        {
+          "id": "dpp-s1-1",
+          "text": "Obiectul probațiunii.",
+          "points": 1.00,
+          "time": 30,
+          "solution": "Faptele și împrejurările care constituie obiectul probei potrivit art. 98 C. pr. pen.:\n- existența infracțiunii și săvârșirea ei de către inculpat (0,10p);\n- faptele privitoare la răspunderea civilă, atunci când există parte civilă constituită legal în cauză (0,10p);\n- faptele și împrejurările de fapt de care depinde aplicarea legii (0,10p);\n- orice împrejurare necesară pentru justa soluționare a cauzei (0,10p).\n\nFapte care pot constitui obiect al probațiunii:\n- fapte auxiliare (0,10p);\n- fapte similare (0,10p);\n- fapte negative determinate (0,10p).\n\nFapte și împrejurări care nu trebuie sau nu pot fi dovedite:\n- prezumțiile legale (0,10p);\n- fapte notorii sau evidente (0,10p);\n- fapte necontestate, în măsura în care nu influențează răspunderea penală (0,10p).",
+          "legalRefs": ["art. 98 C. pr. pen."],
+          "rubric": [
+            { "criterion": "Existența infracțiunii și săvârșirea ei de către inculpat", "points": 0.10 },
+            { "criterion": "Faptele privitoare la răspunderea civilă", "points": 0.10 },
+            { "criterion": "Faptele și împrejurările de care depinde aplicarea legii", "points": 0.10 },
+            { "criterion": "Orice împrejurare necesară pentru justa soluționare", "points": 0.10 },
+            { "criterion": "Fapte auxiliare", "points": 0.10 },
+            { "criterion": "Fapte similare", "points": 0.10 },
+            { "criterion": "Fapte negative determinate", "points": 0.10 },
+            { "criterion": "Prezumțiile legale", "points": 0.10 },
+            { "criterion": "Fapte notorii sau evidente", "points": 0.10 },
+            { "criterion": "Fapte necontestate", "points": 0.10 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dpp-s2",
+      "area": "Drept Procesual Penal",
+      "title": "Subiectul 2",
+      "scenario": "Prin rechizitoriul din data de 13 noiembrie 2023 al Parchetului de pe lângă Judecătoria Sectorului 1 București, verificat sub aspectul legalității și temeiniciei de prim-procuror, a fost trimis în judecată, în stare de arest preventiv, inculpatul X pentru săvârșirea, în concurs formal, a infracțiunilor de tâlhărie și viol.\n\nPrin actul de sesizare al instanței s-a reținut că, la data de 24 ianuarie 2023, inculpatul a întreținut prin constrângere un raport sexual cu persoana vătămată Y. În aceleași împrejurări, inculpatul X i-a sustras persoanei vătămate Y un lănțișor de aur.\n\nÎn rechizitoriu s-a reținut că inculpatul X a continuat să amenințe persoana vătămată Y pentru a primi și alte bunuri de la aceasta până la data de 17 martie 2023, astfel încât, la data de 17 martie 2023, persoana vătămată Y a sesizat organele de poliție, solicitând tragerea la răspundere penală a inculpatului pentru faptele săvârșite de acesta.\n\nTotodată, persoana vătămată Y s-a constituit parte civilă în cauză cu suma de 100.000 lei, reprezentând daune morale pentru traumele suferite ca urmare a violului și a amenințărilor primite ulterior din partea inculpatului X.\n\nLa data de 25 martie 2023, față de inculpatul X s-a dispus luarea măsurii arestării preventive în lipsă, reținându-se că X se sustrage de la urmărirea penală. Mandatul de arestare preventivă a fost pus în executare la data de 01 iunie 2023. Măsura arestării preventive față de inculpatul X a fost prelungită succesiv, fiecare prelungire fiind pentru o durată de 30 zile.\n\nLa data de 16 noiembrie 2023, judecătorul de cameră preliminară din cadrul Judecătoriei Sectorului 1 București, verificând legalitatea și temeinicia măsurii preventive, a apreciat că aceasta a depășit termenul de 180 zile de la data la care a fost luată și a constatat încetată de drept arestarea preventivă, dispunând punerea în libertate a inculpatului la momentul rămânerii definitive a încheierii.\n\nÎn cursul cercetării judecătorești, instanța a dispus, prin încheiere, extinderea acțiunii penale cu privire la infracțiunea de amenințare comisă de inculpatul X împotriva lui Y, constatând, în primul rând, că obiectul judecății este limitat la fapta pentru care s-a dispus trimiterea în judecată și, în al doilea rând, că în cuprinsul rechizitoriului sunt descrise pe larg actele de amenințare comise de inculpat în perioada 24 ianuarie 2023 — 17 martie 2023.\n\nInculpatul X a recunoscut comiterea infracțiunii de amenințare, dar a negat săvârșirea infracțiunilor de tâlhărie și viol.\n\nPe parcursul judecății, partea civilă Y nu s-a prezentat pentru a fi audiată, întrucât era plecată din țară.\n\nÎn cursul dezbaterilor pe fondul cauzei, în instanță s-a prezentat mama lui Y, care a arătat că fiica ei s-a împăcat cu inculpatul X, acesta înapoind-i lănțișorul de aur. Mama lui Y nu a făcut nicio referire la suma de bani cu care se constituise parte civilă Y, depunând un înscris autentic care atesta doar împăcarea celor doi.\n\nInstanța a dispus condamnarea inculpatului X pentru infracțiunile de tâlhărie și amenințare și achitarea inculpatului pentru infracțiunea de viol, ca urmare a împăcării, fără a se pronunța asupra acțiunii civile. Instanța a dedus durata măsurii preventive din pedeapsa aplicată și s-a pronunțat cu privire la cheltuielile judiciare.\n\nPronunțarea a avut loc în ședință publică, grefierul dând citire minutei hotărârii. Hotărârea a fost redactată a doua zi, fiind comunicată de îndată lui X și Y.\n\nÎmpotriva sentinței a declarat apel în termen soțul lui Y și, după expirarea termenului de apel, inculpatul X.\n\nNotă: Organele de urmărire penală și instanțele erau competente material și teritorial, judecata a fost desfășurată cu respectarea principiilor publicității și contradictorialității, fiind respectate dispozițiile legale privind citarea, procurorul a participat la toate termenele, iar inculpatul și partea civilă au fost asistați/reprezentați de avocați aleși pe toată durata procesului.",
+      "requirements": [
+        {
+          "id": "dpp-s2-1",
+          "text": "Identificați, motivat, încălcările dispozițiilor de drept procesual penal comise ulterior sesizării instanței de judecată și până la momentul rămânerii în pronunțare.",
+          "points": 1.75,
+          "time": 30,
+          "solution": "1. În mod greșit judecătorul de cameră preliminară a constatat încetată de drept măsura arestării preventive, întrucât termenul de 180 zile se calculează de la data de 01 iunie 2023, respectiv data la care a fost pus în executare mandatul de arestare preventivă emis în lipsă, iar nu de la data emiterii acestuia (0,50p).\n\n2. În mod greșit judecătorul de cameră preliminară a dispus punerea în libertate a inculpatului la momentul rămânerii definitive a încheierii, contestația formulată împotriva încheierii prin care se constată încetată de drept măsura preventivă nefiind suspensivă de executare — art. 205 alin. (3) C. pr. pen. (0,50p).\n\n3. În mod greșit instanța a dispus extinderea acțiunii penale, aceasta nefiind posibilă în faza de judecată; extinderea acțiunii penale este posibilă doar în faza de urmărire penală (obiectul judecății este limitat la fapta pentru care s-a dispus trimiterea în judecată; împrejurarea că în cadrul actului de sesizare sunt descrise fapte pentru care nu se dispune o soluție și nici trimiterea în judecată nepermițând extinderea acestuia) (0,75p).",
+          "legalRefs": ["art. 205 alin. 3 C. pr. pen.", "art. 371 C. pr. pen."],
+          "rubric": [
+            { "criterion": "Greșit încetarea de drept: termenul de 180 zile curge de la punerea în executare, nu de la emitere", "points": 0.50 },
+            { "criterion": "Greșit punerea în libertate la rămânerea definitivă: contestația nu e suspensivă de executare", "points": 0.50 },
+            { "criterion": "Greșit extinderea acțiunii penale: nu este posibilă în faza de judecată", "points": 0.75 }
+          ]
+        },
+        {
+          "id": "dpp-s2-2",
+          "text": "Arătați, motivat, dacă instanța a soluționat în mod legal latura civilă a cauzei.",
+          "points": 0.50,
+          "time": 10,
+          "solution": "În mod greșit instanța de judecată nu a soluționat latura civilă a cauzei, fiind necesar să se pronunțe prin aceeași hotărâre asupra laturii civile — art. 397 alin. (1) C. pr. pen. (0,50p).",
+          "legalRefs": ["art. 397 alin. 1 C. pr. pen."],
+          "rubric": [
+            { "criterion": "Greșit: instanța trebuia să se pronunțe și asupra laturii civile", "points": 0.50 }
+          ]
+        },
+        {
+          "id": "dpp-s2-3",
+          "text": "Arătați, motivat, dacă instanța a soluționat în mod legal latura penală a cauzei.",
+          "points": 0.50,
+          "time": 10,
+          "solution": "În mod greșit instanța a dispus achitarea inculpatului, întrucât, dacă constată că a intervenit împăcarea, trebuie să dispună încetarea procesului penal — art. 396 alin. (6) C. pr. pen. (0,50p).",
+          "legalRefs": ["art. 396 alin. 6 C. pr. pen."],
+          "rubric": [
+            { "criterion": "Greșit achitarea: la împăcare se dispune încetarea procesului penal, nu achitare", "points": 0.50 }
+          ]
+        },
+        {
+          "id": "dpp-s2-4",
+          "text": "Identificați, motivat, încălcările dispozițiilor de drept procesual penal comise de instanța de fond în legătură cu deliberarea și pronunțarea hotărârii.",
+          "points": 0.50,
+          "time": 10,
+          "solution": "1. Rezultatul deliberărilor se consemnează în hotărâre; în cazul în care instanța pronunță o soluție de condamnare sau achitare nu se întocmește minută — art. 400 alin. (1) C. pr. pen. (0,25p).\n\n2. Publicitatea pronunțării nu se asigură prin citirea minutei de către grefier, ci prin pronunțarea hotărârii în ședință publică de către președinte/alt membru al completului sau prin punerea acesteia la dispoziția părților, a persoanei vătămate și a procurorului, prin mijlocirea grefei instanței — art. 405 alin. (1) C. pr. pen. (0,25p).",
+          "legalRefs": ["art. 400 alin. 1 C. pr. pen.", "art. 405 alin. 1 C. pr. pen."],
+          "rubric": [
+            { "criterion": "La condamnare/achitare nu se întocmește minută", "points": 0.25 },
+            { "criterion": "Pronunțarea nu se face prin citirea minutei de grefier", "points": 0.25 }
+          ]
+        },
+        {
+          "id": "dpp-s2-5",
+          "text": "Arătați, motivat, ce va decide instanța de apel cu privire la căile de atac formulate luând în considerare faptul că soțul lui Y nu a depus un mandat special din partea acesteia prin care să îl împuternicească să formuleze apel în numele său, iar inculpatul a arătat că nu a făcut cererea de apel în termen întrucât nu a fost în țară, aflându-se în vacanță în Turcia într-un resort de lux în momentul când a fost pronunțată hotărârea, și că a formulat calea de atac de îndată ce a revenit în România.",
+          "points": 0.50,
+          "time": 10,
+          "solution": "Instanța de apel va respinge apelul formulat de soțul părții civile ca inadmisibil, fiind formulat de o persoană care nu are dreptul să formuleze această cale de atac (apelul poate fi formulat pentru inculpat de soțul acestuia, în cauză Y fiind însă partea civilă) (0,25p).\n\nInstanța de apel va respinge cererea de repunere în termenul de apel și va respinge ca tardiv apelul formulat de inculpat întrucât nu sunt îndeplinite condițiile prevăzute de lege, respectiv întârzierea nu a fost determinată de o cauză temeinică de împiedicare — art. 411 alin. (1) C. pr. pen. (0,25p).",
+          "legalRefs": ["art. 409 C. pr. pen.", "art. 411 alin. 1 C. pr. pen."],
+          "rubric": [
+            { "criterion": "Apelul soțului respins ca inadmisibil (dreptul e pentru soțul inculpatului, nu al părții civile)", "points": 0.25 },
+            { "criterion": "Apelul inculpatului respins ca tardiv: vacanța nu e cauză temeinică de împiedicare", "points": 0.25 }
+          ]
+        }
+      ]
+    }
+  ]
+}

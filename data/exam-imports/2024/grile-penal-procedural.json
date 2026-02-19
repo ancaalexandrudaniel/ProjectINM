@@ -1,0 +1,257 @@
+{
+  "year": 2024,
+  "examType": "grile",
+  "subject": "penal-procedural",
+  "questions": [
+    {
+      "number": 76,
+      "text": "Acțiunea penală:",
+      "options": [
+        "nu poate fi pusă în mișcare în cadrul procedurii de verificare a legalității soluției de renunțare la urmărirea penală;",
+        "poate fi retrasă în cursul judecății prin concluziile orale ale procurorului de ședință;",
+        "se stinge prin reluarea urmăririi penale."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 77,
+      "text": "Acțiunea civilă exercitată împotriva inculpatului:",
+      "options": [
+        "se stinge prin încheierea judecătorului de cameră preliminară de restituire a cauzei la parchet;",
+        "respinsă de către instanță constituie un impediment pentru dispunerea prin aceeași hotărâre a luării unei măsuri asiguratorii;",
+        "poate fi admisă, chiar dacă partea responsabilă civilmente nu a fost introdusă în procesul penal în faza de judecată."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 78,
+      "text": "În cursul procesului penal:",
+      "options": [
+        "este necesară formularea unui denunț cu privire la o anumită persoană (in personam) pentru a se putea dispune continuarea efectuării urmăririi penale față de suspect;",
+        "instanța poate dispune o soluție de achitare chiar dacă a fost sesizată prin încheierea judecătorului de cameră preliminară;",
+        "organul judiciar delegat nu poate avea aceeași competență teritorială cu cel care a dispus delegarea."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 79,
+      "text": "Judecătoria:",
+      "options": [
+        "nu are competența de a judeca o cale extraordinară de atac;",
+        "este competentă material să judece infracțiunea de evadare comisă din executarea pedepsei aplicate pentru infracțiunea de omor;",
+        "este în toate cazurile competentă material și teritorial să judece o infracțiune care a produs consecințe deosebit de grave în circumscripția mai multor instanțe."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 80,
+      "text": "Parchetul de pe lângă Curtea de apel:",
+      "options": [
+        "poate dispune începerea urmăririi penale in rem (cu privire la faptă), chiar dacă competența sa este atrasă de aplicarea normelor de competență personală;",
+        "nu poate sesiza cu rechizitoriu judecătoria;",
+        "este competent să dispună trimiterea în judecată a unui judecător din cadrul unei alte curți de apel."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 81,
+      "text": "Prorogarea de competență:",
+      "options": [
+        "este condiționată sub aspectul efectelor de formularea unei cereri, în acest sens, de partea interesată;",
+        "nu operează în ipoteza chestiunilor prealabile, dacă instanța a fost sesizată cu un acord de recunoaștere a vinovăției;",
+        "poate surveni în cazul schimbării încadrării juridice dispuse de către instanța de judecată."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 82,
+      "text": "Judecătorul:",
+      "options": [
+        "din cadrul instanței superioare în grad celei competente poate să invoce excepția de necompetență materială numai până la citirea actului de sesizare;",
+        "de cameră preliminară este competent să se pronunțe cu privire la încuviințarea procedurii audierii anticipate;",
+        "care a respins calea de atac a revizuirii nu este incompatibil să se pronunțe cu privire la admisibilitatea în principiu a contestației în anulare exercitate de aceeași parte împotriva aceleiași hotărâri."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 83,
+      "text": "Împotriva ordonanței prin care organul de cercetare penală dispune schimbarea încadrării juridice a faptei de care este acuzat suspectul:",
+      "options": [
+        "este admisibilă calea de atac a contestației;",
+        "nu este admisibilă plângerea la procurorul ierarhic superior celui care supraveghează efectiv cercetarea penală;",
+        "nu este admisibilă nicio cale de atac, legalitatea ordonanței urmând a fi analizată doar în faza de cameră preliminară."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 84,
+      "text": "Cererea de strămutare:",
+      "options": [
+        "se soluționează în camera de consiliu, asistența juridică a inculpatului și a persoanei vătămate minore fiind în toate cazurile obligatorie;",
+        "se soluționează prin decizie, dacă strămutarea vizează o cauză aflată în etapa procesuală a apelului;",
+        "înregistrată pe rolul Înaltei Curți de Casație și Justiție nu atrage suspendarea de drept a judecării cauzei."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 85,
+      "text": "În faza de judecată:",
+      "options": [
+        "formularea unei cereri de recuzare constituie un caz de suspendare de drept a judecății;",
+        "instanța poate dispune reluarea fazei de cameră preliminară, chiar dacă procedura de citare fusese legal îndeplinită în respectiva fază;",
+        "circumstanțele atenuante legale nu constituie obiect al probei."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 86,
+      "text": "Percheziția domiciliară:",
+      "options": [
+        "întocmai ca executarea unui mandat de aducere emis de judecătorul de drepturi și libertăți, poate fi începută numai într-un anumit interval orar;",
+        "este dispusă în faza de urmărire penală doar de judecătorul de drepturi și libertăți în circumscripția căruia se află spațiul care se solicită a fi percheziționat;",
+        "nu poate fi încuviințată în cazuri urgente de procuror pentru o perioadă de cel mult 24 de ore."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 87,
+      "text": "În faza de judecată instanța:",
+      "options": [
+        "nu este obligată să dispună efectuarea unei noi expertize ori de câte ori constată existența unor contradicții între conținutul și concluziile raportului de expertiză;",
+        "poate dispune efectuarea unui raport de expertiză tehnică de către un specialist care funcționează în cadrul organelor de urmărire penală;",
+        "este obligată în toate cazurile să dispună efectuarea unei expertize psihiatrice atunci când inculpatul era minor la data emiterii rechizitoriului."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 88,
+      "text": "În faza de cameră preliminară:",
+      "options": [
+        "măsura preventivă a controlului judiciar poate fi luată doar dacă este formulată o propunere de către procuror în acest sens;",
+        "măsura arestării preventive nu trebuie revocată ori de câte ori se dispune restituirea cauzei la parchet;",
+        "nu se poate dispune modificarea obligațiilor aferente controlului judiciar."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 89,
+      "text": "Atunci când inculpatul este prezent, ascultarea sa este obligatorie la soluționarea:",
+      "options": [
+        "tuturor contestațiilor formulate în faza de judecată;",
+        "propunerii procurorului de impunere a unor noi obligații în cadrul controlului judiciar în faza camerei preliminare;",
+        "cererii de restituire a cauțiunii în cursul urmăririi penale."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 90,
+      "text": "Arestul la domiciliu:",
+      "options": [
+        "poate fi luat chiar dacă urmărirea penală se efectuează pentru o infracțiune sancționată cu pedeapsa închisorii alternativ cu pedeapsa amenzii;",
+        "nu poate fi înlocuit cu arestarea preventivă în faza de cameră preliminară în primele 60 de zile după sesizarea instanței;",
+        "încetează de drept în faza de judecată odată cu pronunțarea sentinței prin care a fost impusă o măsură educativă inculpatului minor."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 91,
+      "text": "Măsurile asigurătorii:",
+      "options": [
+        "pot fi menținute de procuror prin dispoziția din rechizitoriu prin care se adoptă doar soluția de trimitere în judecată a inculpatului;",
+        "nu pot fi luate din oficiu de judecătorul de drepturi și libertăți în faza de urmărire penală;",
+        "încetează de drept ori de câte ori se dispune restituirea cauzei la parchet de judecătorul de cameră preliminară."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 92,
+      "text": "Asistența juridică este obligatorie:",
+      "options": [
+        "în cursul urmăririi penale numai pentru suspect și inculpat la exprimarea consimțământului pentru examinarea fizică;",
+        "în faza de cameră preliminară la dezbaterea admisibilității în principiu a cererii de înlocuire a arestului la domiciliu cu controlul judiciar pe cauțiune;",
+        "în faza de judecată, ori de câte ori instanța a fost sesizată cu o faptă comisă în minoritate."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 93,
+      "text": "Nulitatea absolută:",
+      "options": [
+        "poate fi invocată și de subiecții procesuali principali;",
+        "poate fi invocată numai până la încheierea procedurii în camera preliminară, dacă încălcarea a intervenit în procedura camerei preliminare;",
+        "spre deosebire de nulitatea relativă, trebuie invocată în termen de cel mult 10 zile de la data încălcării dispoziției legale."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 94,
+      "text": "În faza de urmărire penală:",
+      "options": [
+        "efectuarea în continuare a urmăririi penale față de suspect poate fi dispusă de aceleași organe judiciare care pot dispune reținerea;",
+        "infirmarea poate fi dispusă numai de către conductorul parchetului pe rolul căruia se află cauza;",
+        "suspendarea urmăririi penale nu se poate dispune după luarea măsurii arestării preventive."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 95,
+      "text": "Renunțarea la urmărire penală:",
+      "options": [
+        "revocată de procuror poate fi urmată de încheierea unui acord de recunoaștere a vinovăției;",
+        "poate fi dispusă în aceleași cazuri și condiții în care poate fi încheiat un acord de recunoaștere a vinovăției;",
+        "dispusă de procuror poate fi înlocuită cu o soluție de începere a judecății de către judecătorul de cameră preliminară."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 96,
+      "text": "Judecătorul de cameră preliminară:",
+      "options": [
+        "poate schimba încadrarea juridică a faptei pentru care s-a dispus clasarea și dispune o soluție de renunțare la urmărirea penală în considerarea noii încadrări juridice;",
+        "nu poate exclude probele administrate în cursul urmăririi penale dacă a fost pusă în mișcare acțiunea penală;",
+        "nu poate dispune începerea judecății în urma soluționării plângerii formulate de inculpat împotriva soluției de clasare dispuse față de acesta."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 97,
+      "text": "Întocmirea minutei este obligatorie în ipoteza în care:",
+      "options": [
+        "instanța amână judecata pentru lipsă de apărare, la cererea unui inculpat arestat preventiv;",
+        "sentința a fost pronunțată într-o cauză în care judecata a avut loc potrivit procedurii în cazul recunoașterii învinuirii;",
+        "este admis apelul împotriva sentinței prin care a fost respinsă cererea de redeschidere a procesului penal în cazul judecării în lipsă a persoanei condamnate."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 98,
+      "text": "În cazul judecății în primă instanță:",
+      "options": [
+        "niciuna dintre dispozițiile sentinței nedefinitive nu este executorie de la data pronunțării;",
+        "nu este obligatorie acordarea unui nou termen pe motiv că judecătorul de cameră preliminară nu a procedat la comunicarea rechizitoriului;",
+        "după începerea cercetării judecătorești nu este posibilă luarea unei măsuri asiguratorii în vederea garantării reparării prejudiciului."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 99,
+      "text": "Apelul poate fi declarat:",
+      "options": [
+        "de copilul major pentru părinte, în toate cazurile;",
+        "prin cerere scrisă care trebuie să fie depusă la aceeași instanță la care poate fi formulată și declarația de retragere a apelului;",
+        "și după expirarea termenului prevăzut de lege, caz în care instanța nu poate soluționa apelul înainte de a se pronunța cu privire la cererea de repunere în termenul de apel."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 100,
+      "text": "În cazul revizuirii:",
+      "options": [
+        "rejudecarea cauzei nu poate avea loc în lipsa revizuientului deținut care nu a solicitat judecata în lipsă;",
+        "formulate împotriva unei hotărâri prin care a fost dispusă o soluție de condamnare împlinirea termenului de reabilitare atrage inadmisibilitatea căii extraordinare de atac;",
+        "spre deosebire de contestația în anulare, odată cu admiterea în principiu și suspendarea executării hotărârii, nu pot fi impuse și una sau mai multe dintre obligațiile ce intră în conținutul controlului judiciar."
+      ],
+      "correctAnswer": "A"
+    }
+  ]
+}

@@ -1,0 +1,257 @@
+{
+  "year": 2024,
+  "examType": "grile",
+  "subject": "civil-procedural",
+  "questions": [
+    {
+      "number": 26,
+      "text": "Sunt supuse recursului:",
+      "options": [
+        "hotărârile date în apel, doar când legea o prevede expres;",
+        "hotărârile date de instanțele de apel, în cauzele referitoare la cereri de partaj;",
+        "hotărârile date, potrivit legii, fără drept de apel."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 27,
+      "text": "Revizuirea pentru hotărâri potrivnice:",
+      "options": [
+        "se îndreaptă la instanța mai mare în grad față de instanța care a dat hotărârea a cărei revizuire se cere;",
+        "poate avea ca efect trimiterea cauzei spre rejudecare;",
+        "presupune cu necesitate ca prin cele două hotărâri să se fi soluționat fondul cauzei."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 28,
+      "text": "Judecarea cauzelor se suspendă de drept atunci când:",
+      "options": [
+        "într-o cauză similară, Curtea de Justiție a Uniunii Europene a fost sesizată cu o cerere de decizie preliminară;",
+        "după o amânare a judecății, pentru lipsă de apărare, părțile nu stăruiesc în judecată;",
+        "două instanțe și-au declinat reciproc competența de a judeca același proces."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 29,
+      "text": "Renunțarea la drept:",
+      "options": [
+        "are ca efect respingerea cererii în fond, instanța dispunând, din oficiu, asupra cheltuielilor de judecată efectuate de pârât;",
+        "se pronunță prin hotărâre definitivă când are loc în fața unei secții a Înaltei Curți de Casație și Justiție;",
+        "nu poate fi făcută atunci când reclamantul nu poate dispune de acesta."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 30,
+      "text": "Nulitatea absolută a actului de procedură:",
+      "options": [
+        "nu poate fi invocată de partea vinovată de încălcarea normei legale;",
+        "este incidentă în cazul cererii insuficient timbrate;",
+        "constând în cererea de chemare în judecată intervine în cazul neparcurgerii procedurii prealabile, atunci când aceasta este reglementată prin norme de ordine publică."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 31,
+      "text": "Termenul pentru înmânarea citației:",
+      "options": [
+        "nu poate fi scurtat decât atunci când legea prevede expres;",
+        "este un termen legal și relativ;",
+        "este prevăzut în citație atunci când se dispune scurtarea sa."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 32,
+      "text": "În cazul procedurii speciale a evacuării din imobilele folosite sau ocupate fără drept:",
+      "options": [
+        "reclamantul poate cere, cu titlu accesoriu, plata chiriilor neachitate de pârât;",
+        "pârâtul nu poate formula întâmpinare și cerere reconvențională;",
+        "reclamantul este considerat legal citat doar la imobilul in litigiu."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 33,
+      "text": "Determinarea competenței materiale se face astfel:",
+      "options": [
+        "după valoarea obiectului cererii arătat în capătul principal de cerere;",
+        "pentru stabilirea valorii obiectului cererii se vor avea în vedere și accesoriile pretenției principale, scadente până la momentul introducerii cererii de chemare în judecată;",
+        "în cererile privitoare la executarea unui contract, pentru stabilirea competenței instanței se va avea în vedere valoarea obiectului contractului, chiar dacă este dedusă judecății doar o parte din obiectul acestuia."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 34,
+      "text": "Necompetența de ordine publică:",
+      "options": [
+        "poate fi invocată în orice stare a pricinii, în toate situațiile;",
+        "nu poate fi invocată în privința încălcării competenței materiale procesuale a secției sau completului specializat;",
+        "poate fi invocată în orice stare a pricinii în cazul încălcării competenței generale, când procesul nu este de competența instanțelor judecătorești, ci de cea a unui organ fără activitate jurisdicțională."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 35,
+      "text": "Excepția de litispendență:",
+      "options": [
+        "poate fi invocată numai în fața primei instanțe;",
+        "poate fi invocată de procuror atunci când participă la judecata cauzei;",
+        "când instanțele sunt de grad diferit, excepția se invocă înaintea instanței ulterior sesizată."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 36,
+      "text": "Amânarea judecății pentru lipsă de apărare:",
+      "options": [
+        "poate fi dispusă, numai o singură dată, la cererea părții interesate, pentru motive temeinice și care nu sunt imputabile părții sau reprezentantului ei;",
+        "când instanța refuză amânarea judecății pentru acest motiv, poate admite solicitarea părții de amânare a pronunțării în vederea depunerii de concluzii scrise, numai dacă apreciază că este necesară depunerea de concluzii scrise;",
+        "poate fi dispusă, numai în mod excepțional, pentru motive temeinice și care nu sunt imputabile părții sau reprezentantului ei."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 37,
+      "text": "La primul termen de judecată:",
+      "options": [
+        "instanța va estima durata necesară pentru cercetarea procesului, exclusiv în raport de împrejurările cauzei, chiar dacă părțile nu au fost legal citate, nefiind necesară ascultarea acestora;",
+        "la primul termen la care părțile sunt legal citate reclamantul poate modifica cererea de chemare în judecată, acesta fiind termenul limită până la care se poate formula o cerere adițională;",
+        "dacă părțile sunt legal citate și pot pune concluzii, instanța învestită prin hotărârea de declinare a competenței poate invoca necompetența materială procesuală dacă instanța care și-a declinat competența în favoarea sa nu a invocat excepția de necompetență în termenul legal."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 38,
+      "text": "Constituie excepții de procedură:",
+      "options": [
+        "excepția de tardivitate și excepția de perimare;",
+        "excepția nulității cererii de chemare în judecată și excepția de prematuritate a cererii de chemare în judecată;",
+        "excepția de litispendență și excepția prescripției dreptului material la acțiune."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 39,
+      "text": "Proba cu martori:",
+      "options": [
+        "este admisibilă pentru dovedirea unui act juridic, chiar dacă pentru validitatea acestuia legea cere forma scrisă;",
+        "este inadmisibilă pentru a dovedi, că după încheierea contractului, părțile au convenit verbal să modifice termenul de executare a obligației uneia dintre ele;",
+        "este inadmisibilă dacă pentru dovedirea unui act juridic legea cere forma scrisă, chiar dacă există început de dovadă scrisă."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 40,
+      "text": "În ceea ce privește judecata în complet de divergență:",
+      "options": [
+        "divergența se judecă în aceeași zi sau, dacă nu este posibil, într-un termen care nu poate depăși 20 zile de la ivirea divergenței, iar în pricinile considerate urgente acest termen nu poate fi mai mare de 5 zile;",
+        "judecătorii nu au dreptul de a reveni asupra părerii lor care a provocat divergența;",
+        "când divergența nu privește soluția ce trebuie dată întregii cauze, după judecarea chestiunilor rămase în divergență, completul care a judecat înainte de ivirea ei va putea continua judecarea cauzei."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 41,
+      "text": "Termenul de apel:",
+      "options": [
+        "în cazul ordonanței președințiale, curge de la comunicare, în toate cazurile;",
+        "curge de la comunicarea hotărârii, chiar dacă aceasta a fost comunicată odată cu încheierea de încuviințare a executării silite;",
+        "curge de la data introducerii unei cereri de revizuire împotriva unei hotărâri de primă instanță susceptibile de apel și care nu a fost comunicată părții."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 42,
+      "text": "În ceea ce privește principiul «Neînrăutățirea situației în propria cale de atac»:",
+      "options": [
+        "nu se aplică atunci când apelul este declarat de procuror în favoarea uneia dintre părți;",
+        "consimțământul apelantului privind renunțarea la acest principiu trebuie să fie expres;",
+        "ca efect al admiterii excepției autorității de lucru judecat, părții nu i se poate crea în propria cale de atac o situație mai rea decât cea din hotărârea atacată."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 43,
+      "text": "În cazul decesului unuia dintre soți în timpul procesului de divorț:",
+      "options": [
+        "în toate cazurile, la cererea celuilalt soț, instanța acordă termen pentru introducerea în cauză a moștenitorilor;",
+        "când acțiunea este continuată de moștenitorii soțului reclamant, în ipoteza cererii de divorț întemeiate pe culpa pârâtului, în cazul admiterii acesteia, căsătoria se consideră desfăcută la data introducerii cererii de divorț;",
+        "când cererea de divorț se întemeiază pe culpa pârâtului și acesta decedează în cursul procesului, reclamantul poate continua acțiunea împotriva moștenitorilor pârâtului."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 44,
+      "text": "Hotărârea de partaj:",
+      "options": [
+        "are efect declarativ;",
+        "executarea cu privire la bunurile împărțite poate fi cerută în termenul de prescripție de 3 ani;",
+        "odată rămasă definitivă, constituie titlu executoriu și poate fi pusă în executare chiar dacă nu s-a cerut predarea efectivă a bunului ori instanța nu a dispus în mod expres această predare."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 45,
+      "text": "Următoarea afirmație este falsă:",
+      "options": [
+        "judecătorul care a pronunțat o hotărâre prin care a admis excepția lipsei de interes nu poate judeca aceeași pricină după casarea cu trimitere, dacă în recurs s-a reținut că în cauză excepția a fost greșit admisă;",
+        "judecătorul care a pronunțat o hotărâre în primă instanță este incompatibil să soluționeze cauza în revizuire;",
+        "judecătorul care a pronunțat decizia din apel este incompatibil absolut să soluționeze cererea de revizuire sau contestația în anulare exercitată împotriva deciziei date în recursul declarat împotriva deciziei sale din apel."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 46,
+      "text": "Actele de procedură transmise prin fax sau e-mail, în ultima zi a termenului procedural care se socotește pe zile, după ora la care activitatea încetează la instanță:",
+      "options": [
+        "sunt tardive, dacă întârzierea nu a fost cauzată de deficiențe ale sistemului de comunicare;",
+        "sunt socotite a fi depuse în termen;",
+        "sunt nule, dacă tardivitatea se invocă la primul termen de judecată."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 47,
+      "text": "În cazul solicitării reclamantului de a i se comunica actele de procedură în format electronic prin e-mail:",
+      "options": [
+        "actul de citare a acestuia în proces, într-o altă modalitate decât cea invocată prin cererea adresată instanței este lovit de nulitate, dacă prin nerespectarea modalității de comunicare a actului de procedură s-a adus părții o vătămare care nu poate fi înlăturată decât prin desființarea acestuia, fără a fi condiționată de utilizarea procedurii înscrierii în fals împotriva dovezii de înmânare și a mențiunilor din procesul-verbal privind îndeplinirea procedurii;",
+        "efectuarea procedurii de citare în acest mod, chiar dacă partea a solicitat și a indicat datele corespunzătoare în acest scop, constituie o modalitate secundară de comunicare a actelor de procedură, fiind condiționată de efectuarea procedurii în format letric.",
+        "actul de citare a acestuia în proces este lovit de nulitate care nu este condiționată de vătămare."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 48,
+      "text": "În cazul în care revizuirea s-a cerut pentru hotărâri potrivnice, recursul formulat împotriva hotărârii prin care a fost soluționată cererea de revizuire:",
+      "options": [
+        "este inadmisibil dacă hotărârea atacată cu revizuire are caracter definitiv;",
+        "este inadmisibil dacă hotărârea atacată cu revizuire a fost pronunțată de una dintre secțiile Înaltei Curți de Casație și Justiție;",
+        "este admisibil, indiferent dacă hotărârea atacată cu revizuire are sau nu caracter definitiv."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 49,
+      "text": "Încheierea prin care a fost suspendată judecata:",
+      "options": [
+        "poate fi atacată cu recurs, în mod separat, indiferent dacă încheierea de suspendare a fost pronunțată de curtea de apel într-o cauză în care hotărârea ce urmează a se da asupra fondului este sau nu definitivă;",
+        "poate fi atacată cu recurs la completul de 5 judecători, când suspendarea a fost dispusă de Înalta Curte de Casație și Justiție;",
+        "poate fi atacată cu recurs, în mod separat, indiferent de instanța care a pronunțat-o și indiferent dacă încheierea de suspendare a fost pronunțată într-o cauză în care hotărârea ce urmează a se da asupra fondului este sau nu definitivă."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 50,
+      "text": "Situația în care hotărârea redactată de unul dintre membrii completului de recurs este semnată doar de către judecătorul redactor, în timp ce, pentru ceilalți membri, este semnată de către președintele completului sau de președintele instanței, în condițiile legii:",
+      "options": [
+        "se încadrează în motivul de contestație în anulare cu privire la încălcarea normelor referitoare la alcătuirea instanței;",
+        "nu se încadrează în motivul de contestație în anulare cu privire la încălcarea normelor referitoare la alcătuirea instanței;",
+        "determină aplicarea sancțiunii nulității necondiționate de vătămare."
+      ],
+      "correctAnswer": "B"
+    }
+  ]
+}

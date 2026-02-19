@@ -1,0 +1,257 @@
+{
+  "year": 2024,
+  "examType": "grile",
+  "subject": "civil",
+  "questions": [
+    {
+      "number": 1,
+      "text": "Sub sancțiunea nulității relative nu pot cumpăra drepturi litigioase:",
+      "options": [
+        "judecătorii, atunci când drepturile litigioase sunt de competența instanței superioare celei la care își desfășoară activitatea;",
+        "părinții pentru bunurile persoanei pe care o reprezintă;",
+        "mandatarii pentru bunurile pe care sunt însărcinați să le vândă, chiar dacă au fost împuterniciți în mod expres în acest sens;"
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 2,
+      "text": "Sublocațiunea:",
+      "options": [
+        "spre deosebire de cesiune, nu poate fi interzisă;",
+        "este permisă doar dacă este încheiată sub formă autentică;",
+        "când are ca obiect o locuință este condiționată de acordul scris al locatorului;"
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 3,
+      "text": "Proprietatea periodică:",
+      "options": [
+        "este un caz de coproprietate forțată;",
+        "poate înceta prin partaj judiciar;",
+        "poate avea ca obiect doar bunurile imobile;"
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 4,
+      "text": "Actul de opțiune succesorală:",
+      "options": [
+        "poate fi exercitat valabil și înainte de deschiderea succesiunii;",
+        "este în toate cazurile indivizibil și irevocabil;",
+        "poate consta și în acțiunea unui succesibil, prin care solicită instanței judecătorești nedemnitatea unui alt succesibil;"
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 5,
+      "text": "Clauza de inalienabilitate:",
+      "options": [
+        "poate fi instituită pentru o durată de cel mult 49 de ani, doar prin convenția părților;",
+        "este subînțeleasă în antecontracte având ca obiect transmiterea în viitor, prin încheierea de contracte, a dreptului de proprietate asupra unui bun mobil sau imobil, după caz, dacă prin lege nu se prevede altfel;",
+        "în lipsa înscrierii în cartea funciară este lovită de nulitate relativă."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 6,
+      "text": "În materia punerii în întârziere a debitorului:",
+      "options": [
+        "cazurile în care debitorul se află de drept în întârziere trebuie dovedite de creditor, în lipsa clauzei contrare;",
+        "debitorul răspunde, de la data la care se află în întârziere, pentru orice pierdere cauzată de un caz fortuit, în toate situațiile;",
+        "în cazul unei solidarități active notificarea nu trebuie făcută de toți creditorii."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 7,
+      "text": "În cazul regimului comunității legale, constituie bunuri proprii ale fiecărui soț:",
+      "options": [
+        "bunurile destinate exercitării profesiei unuia dintre soți, în toate cazurile;",
+        "bunurile dobândite prin legat, chiar dacă dispunătorul a prevăzut, în mod expres, că ele vor fi comune;",
+        "bunurile dobândite cu titlu de premiu sau recompensă, manuscrisele științifice sau literare."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 8,
+      "text": "În cazul divorțului din cauza stării sănătății unuia dintre soți:",
+      "options": [
+        "divorțul poate avea loc la cererea aceluia dintre soți a cărui stare de sănătate face imposibilă continuarea căsătoriei;",
+        "desfacerea căsătoriei se pronunță din culpă comună;",
+        "divorțul soților poate avea loc numai la cererea comună a soților."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 9,
+      "text": "În ceea ce privește proprietatea privată:",
+      "options": [
+        "bunurile obiect al proprietății private, indiferent de titular, sunt și rămân în circuitul civil, dacă prin lege nu se prevede altfel;",
+        "moștenirile vacante intră în domeniul privat al unității administrativ-teritoriale, numai prin înscriere în cartea funciară;",
+        "moștenirile vacante intră în domeniul public al unității administrativ-teritoriale, fără înscriere în cartea funciară."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 10,
+      "text": "În materie de liberalități:",
+      "options": [
+        "sub sancțiunea nulității relative, dispunătorul trebuie să îl determine pe beneficiarul liberalității ori cel puțin să prevadă criteriile pe baza cărora să poată fi determinat la data la care liberalitatea produce efecte juridice;",
+        "dispunătorul poate lăsa unui terț dreptul de a-l desemna pe beneficiarul liberalității sau de a stabili obiectul acesteia;",
+        "persoana care nu există la data întocmirii liberalității poate beneficia de o liberalitate dacă aceasta este făcută în favoarea unei persoane capabile, cu sarcina pentru aceasta din urmă de a transmite beneficiarului obiectul liberalității îndată ce va fi posibil."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 11,
+      "text": "În cazul ofertei de donație:",
+      "options": [
+        "aceasta poate fi acceptată după decesul destinatarului, de către moștenitorii acestuia;",
+        "dacă aceasta este făcută unei persoane lipsite de capacitate de exercițiu, ea nu poate fi acceptată de către reprezentantul legal;",
+        "incapacitatea sau decesul ofertantului atrage caducitatea acceptării ofertei."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 12,
+      "text": "În ceea ce privește efectele obligației indivizibile:",
+      "options": [
+        "aceasta nu se divide între debitori, între creditori, dar se divide între moștenitorii acestora proporțional cu cota deținută din moștenire;",
+        "aceasta nu se divide între debitori, între creditori și nici între moștenitorii acestora;",
+        "niciunul dintre debitori nu poate fi constrâns separat la executarea întregii obligații."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 13,
+      "text": "În cazul existenței mai multor debitori:",
+      "options": [
+        "punerea în întârziere a unuia dintre debitori, de drept sau la cererea creditorului, nu produce efecte împotriva celorlalți debitori;",
+        "creditorul nu poate să ceară ca toți debitorii obligației indivizibile să efectueze plata în același timp;",
+        "debitorul chemat în judecată pentru totalitatea obligației nu poate în nicio situație să solicite termen pentru a-i introduce în cauză pe ceilalți debitori, fiind ținut să execute singur obligația, având ulterior drept de regres împotriva celorlalți debitori."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 14,
+      "text": "În situația înstrăinării bunului supus restituirii:",
+      "options": [
+        "debitorul obligației de restituire este ținut, în toate cazurile, să plătească valoarea bunului, considerată fie la momentul primirii sale, fie la acela al înstrăinării în funcție de cea mai mare dintre aceste valori;",
+        "creditorul obligației de restituire se poate îndrepta exclusiv împotriva debitorului obligat, nu și împotriva celui care a dobândit bunul;",
+        "dacă debitorul este de rea-credință ori obligația de restituire provine din culpa sa, atunci acesta este ținut să plătească valoarea bunului, considerată fie la momentul primirii sale, fie la acela al înstrăinării, în funcție de valoarea cea mai mare."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 15,
+      "text": "Calculul termenelor de drept substanțial se efectuează astfel:",
+      "options": [
+        "mijlocul lunii se socotește a cinciprezecea zi;",
+        "mijlocul lunii se socotește a șaisprezecea zi;",
+        "când termenul se stabilește pe zile, nu se ia în calcul prima zi a termenului dar se ia în calcul ultima zi a termenului."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 16,
+      "text": "Potrivit Constituției României:",
+      "options": [
+        "bunurile proprietate publică pot fi date în administrare regiilor autonome ori instituțiilor publice sau pot fi concesionate ori închiriate, în condițiile legii organice;",
+        "bunurile proprietate publică pot fi date în folosință gratuită instituțiilor de utilitate publică sau asociațiilor fără scop patrimonial;",
+        "bunurile proprietate publică pot aparține statului, unităților administrativ-teritoriale, regiilor autonome ori instituțiilor publice."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 17,
+      "text": "Eroarea comună și invincibilă:",
+      "options": [
+        "constituie, după caz, o cauză de nulitate absolută sau relativă;",
+        "nu se prezumă;",
+        "nu se aplică în cazul în care legea reglementează forma scrisă sau un sistem de publicitate."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 18,
+      "text": "În cazul fraudei comise de incapabil:",
+      "options": [
+        "declarația că este capabil să contracteze, făcută de cel cu capacitate de exercițiu restrânsă înlătură anulabilitatea actului, cu excepția cazului în care declarația a fost obținută prin dol;",
+        "dacă incapabilul a folosit manopere dolosive, instanța, la cererea părții induse în eroare, poate menține contractul atunci când apreciază că aceasta ar constitui o sancțiune civilă adecvată;",
+        "instanța poate menține contractul dacă există o declarație a celui cu capacitate de exercițiu restrânsă că este capabil să contracteze."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 19,
+      "text": "Dreptul de superficie:",
+      "options": [
+        "se poate constitui pe o durată de cel mult 99 de ani, iar termenul nu poate fi reînnoit;",
+        "se poate înscrie pe baza renunțării proprietarului terenului la dreptul de a invoca accesiunea, în favoarea constructorului, în situația în care s-a construit pe terenul altuia;",
+        "se poate înscrie în temeiul unui act juridic prin care proprietarul întregului fond a transmis terenul și construcția, în mod separat, către două persoane, numai dacă constituirea superficiei s-a stipulat expres."
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "number": 20,
+      "text": "În ceea ce privește viciile posesiei:",
+      "options": [
+        "clandestinitatea poate fi opusă posesorului de către orice persoană interesată;",
+        "posesia este discontinuă atât timp cât posesorul o exercită în mod intermitent;",
+        "numai persoana față de care posesia este tulburată sau clandestină poate invoca aceste vicii."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 21,
+      "text": "Contractul se încheie:",
+      "options": [
+        "în momentul în care acceptarea ajunge la ofertant, chiar dacă acesta nu ia cunoștință de ea din motive care nu îi sunt imputabile;",
+        "în momentul acceptării ofertei;",
+        "în momentul în care ofertantul ia cunoștință de acceptarea ofertei."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 22,
+      "text": "În materia cauzelor exoneratoare de răspundere, următoarea afirmație este falsă:",
+      "options": [
+        "dacă, potrivit legii, debitorul este exonerat de răspundere contractuală pentru un caz fortuit, el este, de asemenea, exonerat și în caz de forță majoră;",
+        "fapta victimei înseși înlătură răspunderea, dacă are caracteristicile cazului fortuit, însă numai în cazurile în care, potrivit legii sau convenției părților, cazul fortuit este exonerator de răspundere;",
+        "fapta terțului înlătură răspunderea chiar dacă nu are caracteristicile forței majore, ci doar pe cele ale cazului fortuit."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 23,
+      "text": "În materia contractului de mandat:",
+      "options": [
+        "dacă părțile nu au prevăzut un termen, contractul de mandat se prezumă a fi pe durată nedeterminată;",
+        "mandatul general îl autorizează pe mandatar să efectueze numai acte de conservare;",
+        "dacă mandatul este cu titlu oneros, mandatarul este ținut să execute mandatul cu diligența unui bun proprietar."
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "number": 24,
+      "text": "În materia contractului de locațiune:",
+      "options": [
+        "dacă legea nu dispune altfel, locațiunile încheiate de persoanele care, potrivit legii, nu pot face decât acte de administrare nu vor depăși 5 ani;",
+        "în situația unor locațiuni succesive ale căror perioade se suprapun fie și parțial, conflictul dintre locatari se rezolvă întotdeauna în favoarea locatarului care a intrat cel dintâi în folosința bunului;",
+        "dacă în contract părțile nu au arătat durata locațiunii, fără a-și fi dorit să contracteze pe o durată nedeterminată, în lipsa uzanțelor, locațiunea se consideră încheiată pentru o lună."
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "number": 25,
+      "text": "În materia prescripției extinctive:",
+      "options": [
+        "cel lipsit de capacitatea de a înstrăina sau, după caz, de a se obliga poate renunța la prescripție;",
+        "prescripția operează de plin drept;",
+        "acțiunea în constatarea existenței sau inexistenței unui drept este imprescriptibilă."
+      ],
+      "correctAnswer": "C"
+    }
+  ]
+}
