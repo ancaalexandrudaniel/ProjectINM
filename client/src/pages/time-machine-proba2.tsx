@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useRoute, useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,23 +7,15 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { apiRequest } from "@/lib/queryClient";
 import {
-    Clock,
-    Timer,
     Home,
-    Save,
     Send,
     FileText,
     Scale,
-    Shield,
-    Gavel,
     ChevronLeft,
     ChevronRight,
-    AlertTriangle,
     Trophy,
     XCircle,
     CheckCircle2,
@@ -31,15 +23,19 @@ import {
     Sparkles,
     BookOpen,
     PenTool,
-    ListChecks
+    ListChecks,
+    AlertTriangle
 } from "lucide-react";
 import { CaseWorkflow } from "@/components/case-workflow/CaseWorkflow";
-import { WorkflowState, INITIAL_WORKFLOW_STATE } from "@/components/case-workflow/types";
+import { WorkflowState } from "@/components/case-workflow/types";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { formatTime } from "@/lib/constants";
 import type { ExamRequirement, ExamSubject, ExamData, UserAnswers, GradingResult } from "@/types/exam";
 import { EXAM_DURATION } from "@/types/exam";
+import { TimeTravelAnimation } from "@/components/exam/time-travel-animation";
+import { ExamTimerBar } from "@/components/exam/exam-timer-bar";
+import { ExamResultsShell } from "@/components/exam/exam-results-shell";
 
 // Section colors (matching Proba I palette)
 const SECTION_COLORS = {
@@ -70,8 +66,7 @@ export default function TimeMachineProba2() {
     const [showResults, setShowResults] = useState(false);
     const [gradingResult, setGradingResult] = useState<GradingResult | null>(null);
     const [isGrading, setIsGrading] = useState(false);
-    const [showTimeTravel, setShowTimeTravel] = useState(true);
-    const [travelYear, setTravelYear] = useState(2024);
+    const [showAnimation, setShowAnimation] = useState(true);
     const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved');
 
     // Phase 2: Guided Learning Mode State
@@ -88,51 +83,12 @@ export default function TimeMachineProba2() {
             const res = await apiRequest('GET', `/api/exam-essays/${year}/civil-combined`);
             return res.json();
         },
-        enabled: !showTimeTravel,
+        enabled: !showAnimation,
     });
 
-    // Time travel animation
+    // Timer effect (kept local — proba2 restores timeRemaining from localStorage)
     useEffect(() => {
-        if (showTimeTravel) {
-            const startYear = new Date().getFullYear();
-            let currentYear = startYear;
-            const targetYear = year;
-
-            // If we are already at target, just show a quick transition or staying put
-            // But usually we want to go BACK in time. 
-            // If target is same as current, let's start from current + 1 to show some movement
-            if (currentYear === targetYear) {
-                currentYear = targetYear + 5; // Start from 5 years in future for effect
-            }
-
-            const direction = targetYear < currentYear ? -1 : 1;
-
-            const interval = setInterval(() => {
-                currentYear += direction;
-                setTravelYear(currentYear);
-
-                // Stop condition
-                const finished = direction === -1
-                    ? currentYear <= targetYear
-                    : currentYear >= targetYear;
-
-                if (finished) {
-                    setTravelYear(targetYear); // Ensure exact match
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        setShowTimeTravel(false);
-                        setIsLoading(false);
-                    }, 800); // Little pause at destination
-                }
-            }, 60); // Faster animation
-
-            return () => clearInterval(interval);
-        }
-    }, [year, showTimeTravel]);
-
-    // Timer effect
-    useEffect(() => {
-        if (isLoading || isSubmitted || showTimeTravel) return;
+        if (isLoading || isSubmitted || showAnimation) return;
 
         const timer = setInterval(() => {
             setTimeRemaining(prev => {
@@ -146,7 +102,7 @@ export default function TimeMachineProba2() {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [isLoading, isSubmitted, showTimeTravel]);
+    }, [isLoading, isSubmitted, showAnimation]);
 
     // Auto-save effect
     useEffect(() => {
@@ -212,7 +168,7 @@ export default function TimeMachineProba2() {
     useEffect(() => {
         if (fetchedExamData) {
             setExamData(fetchedExamData);
-        } else if (!isLoadingExam && !showTimeTravel) {
+        } else if (!isLoadingExam && !showAnimation) {
             // Demo data if no real data
             setExamData({
                 year,
@@ -294,7 +250,7 @@ Acțiunea a fost înregistrată pe rolul Judecătoriei X. Pârâtul B a invocat 
                 ]
             });
         }
-    }, [fetchedExamData, isLoadingExam, showTimeTravel, year]);
+    }, [fetchedExamData, isLoadingExam, showAnimation, year]);
 
     // Current subject and requirement
     const currentSubject = examData?.subjects[currentSubjectIndex];
@@ -343,6 +299,7 @@ Acțiunea a fost înregistrată pe rolul Judecătoriei X. Pârâtul B a invocat 
     const handleSubmit = async () => {
         setIsSubmitted(true);
         setIsGrading(true);
+        setShowResults(true);
 
         try {
             // Call AI grading endpoint
@@ -358,7 +315,6 @@ Acțiunea a fost înregistrată pe rolul Judecătoriei X. Pârâtul B a invocat 
         } catch (error) {
             console.error('Grading error:', error);
             // Generate demo grading result
-            const totalAnswered = Object.keys(answers).length;
             setGradingResult({
                 totalScore: 7.5,
                 maxScore: 10,
@@ -381,7 +337,6 @@ Acțiunea a fost înregistrată pe rolul Judecătoriei X. Pârâtul B a invocat 
             });
         } finally {
             setIsGrading(false);
-            setShowResults(true);
 
             // Clear saved data
             localStorage.removeItem(`proba2-${year}-answers`);
@@ -396,34 +351,17 @@ Acțiunea a fost înregistrată pe rolul Judecătoriei X. Pârâtul B a invocat 
         : 0;
 
     // Time Travel Animation Screen
-    if (showTimeTravel) {
+    if (showAnimation) {
         return (
-            <div className="fixed inset-0 bg-gradient-to-b from-purple-950 via-black to-purple-950 flex items-center justify-center overflow-hidden">
-                {/* Animated stars/particles */}
-                <div className="absolute inset-0">
-                    {[...Array(50)].map((_, i) => (
-                        <div
-                            key={i}
-                            className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
-                            style={{
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
-                                animationDelay: `${Math.random() * 2}s`
-                            }}
-                        />
-                    ))}
-                </div>
-
-                <div className="text-center z-10">
-                    <Clock className="h-20 w-20 mx-auto text-purple-400 animate-spin" style={{ animationDuration: '2s' }} />
-                    <p className="text-purple-300 mt-4 text-lg">Călătorie în timp...</p>
-                    <p className="text-6xl font-bold text-white mt-2 font-mono">{travelYear}</p>
-                    <p className="text-purple-300 text-sm mt-4">Proba II - Redactare Spețe</p>
-                    <Badge className="mt-2 bg-purple-500/20 text-purple-300 border-purple-500">
-                        <PenTool className="h-3 w-3 mr-1" /> 4 ore • Drept Civil + Procesual Civil
-                    </Badge>
-                </div>
-            </div>
+            <TimeTravelAnimation
+                year={year}
+                probaLabel="Proba II - Redactare Spețe • 4 ore • Drept Civil + Procesual Civil"
+                variant="starfield"
+                onComplete={() => {
+                    setShowAnimation(false);
+                    setIsLoading(false);
+                }}
+            />
         );
     }
 
@@ -439,72 +377,52 @@ Acțiunea a fost înregistrată pe rolul Judecătoriei X. Pârâtul B a invocat 
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-purple-950/10">
             {/* Top Timer Bar */}
-            <div className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b border-purple-500/30">
-                <div className="container mx-auto px-4 py-3">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <Button variant="ghost" size="sm" onClick={() => setLocation("/time-machine")}>
-                                <Home className="h-4 w-4 mr-1" />
-                                Ieșire
-                            </Button>
-                            <Badge variant="outline" className="text-purple-400 border-purple-500/50">
-                                <Clock className="h-3 w-3 mr-1" />
-                                {year} • Proba II
-                            </Badge>
-                        </div>
-
-                        <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${timeRemaining < 1800 ? 'bg-red-500/20 text-red-400' : 'bg-purple-500/20 text-purple-300'
-                            }`}>
-                            <Timer className="h-5 w-5" />
-                            <span className="font-mono text-xl font-bold">
-                                {formatTime(timeRemaining)}
-                            </span>
-                            {timeRemaining < 1800 && (
-                                <AlertTriangle className="h-4 w-4 animate-pulse" />
-                            )}
-                        </div>
-
-                        {/* Mode Switcher */}
-                        <div className="flex items-center space-x-2 bg-background/50 p-2 rounded-lg border border-border/50 mx-2">
-                            <Switch
-                                id="mode-switch"
-                                checked={learningMode === 'guided'}
-                                onCheckedChange={(checked) => handleModeChange(checked ? 'guided' : 'simulation')}
-                            />
-                            <Label htmlFor="mode-switch" className="cursor-pointer font-medium text-sm">
-                                {learningMode === 'guided' ? '🎓 Mod Ghidat' : '⚡ Mod Simulare'}
-                            </Label>
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2 text-sm">
-                                {autoSaveStatus === 'saving' && (
-                                    <span className="text-yellow-500 flex items-center gap-1">
-                                        <Loader2 className="h-3 w-3 animate-spin" /> Salvare...
-                                    </span>
-                                )}
-                                {autoSaveStatus === 'saved' && (
-                                    <span className="text-green-500 flex items-center gap-1">
-                                        <CheckCircle2 className="h-3 w-3" /> Salvat
-                                    </span>
-                                )}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                                {answeredCount}/{allRequirements.length} rezolvate
-                            </div>
-                            <Progress value={progressPercent} className="w-32 h-2" />
-                            <Button
-                                onClick={handleSubmit}
-                                disabled={isSubmitted}
-                                className="bg-purple-600 hover:bg-purple-700"
-                            >
-                                <Send className="h-4 w-4 mr-1" />
-                                Predă Lucrarea
-                            </Button>
-                        </div>
-                    </div>
+            <ExamTimerBar
+                year={year}
+                probaLabel="Proba II"
+                timeRemaining={timeRemaining}
+                isLowTime={timeRemaining < 1800}
+                onExit={() => setLocation("/time-machine")}
+            >
+                {/* Mode Switcher */}
+                <div className="flex items-center space-x-2 bg-background/50 p-2 rounded-lg border border-border/50 mx-2">
+                    <Switch
+                        id="mode-switch"
+                        checked={learningMode === 'guided'}
+                        onCheckedChange={(checked) => handleModeChange(checked ? 'guided' : 'simulation')}
+                    />
+                    <Label htmlFor="mode-switch" className="cursor-pointer font-medium text-sm">
+                        {learningMode === 'guided' ? '🎓 Mod Ghidat' : '⚡ Mod Simulare'}
+                    </Label>
                 </div>
-            </div>
+
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 text-sm">
+                        {autoSaveStatus === 'saving' && (
+                            <span className="text-yellow-500 flex items-center gap-1">
+                                <Loader2 className="h-3 w-3 animate-spin" /> Salvare...
+                            </span>
+                        )}
+                        {autoSaveStatus === 'saved' && (
+                            <span className="text-green-500 flex items-center gap-1">
+                                <CheckCircle2 className="h-3 w-3" /> Salvat
+                            </span>
+                        )}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                        {answeredCount}/{allRequirements.length} rezolvate
+                    </div>
+                    <Progress value={progressPercent} className="w-32 h-2" />
+                    <Button
+                        onClick={handleSubmit}
+                        disabled={isSubmitted}
+                        className="bg-purple-600 hover:bg-purple-700"
+                    >
+                        <Send className="h-4 w-4 mr-1" />
+                        Predă Lucrarea
+                    </Button>
+                </div>
+            </ExamTimerBar>
 
             {/* Main Content */}
             <div className="container mx-auto p-4">
@@ -593,7 +511,6 @@ Acțiunea a fost înregistrată pe rolul Judecătoriei X. Pârâtul B a invocat 
                                                 </Badge>
                                                 {currentRequirement.recommendedTime && (
                                                     <Badge variant="outline" className="text-muted-foreground">
-                                                        <Timer className="h-3 w-3 mr-1" />
                                                         ~{currentRequirement.recommendedTime} min
                                                     </Badge>
                                                 )}
@@ -667,263 +584,228 @@ Acțiunea a fost înregistrată pe rolul Judecătoriei X. Pârâtul B a invocat 
                 </div>
             </div>
 
-            {/* Results Dialog - Enhanced */}
-            <Dialog open={showResults} onOpenChange={setShowResults}>
-                <DialogContent className="max-w-7xl h-[90vh] flex flex-col p-0 gap-0 overflow-hidden">
-                    <DialogHeader className="p-6 pb-2 border-b bg-muted/20">
-                        <DialogTitle className="text-2xl flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                {gradingResult?.passed ? (
-                                    <>
-                                        <Trophy className="h-8 w-8 text-yellow-500" />
-                                        <div>
-                                            <span className="text-green-400 font-bold block text-lg">ADMIS</span>
-                                            <span className="text-sm font-normal text-muted-foreground">Felicitări!</span>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <>
-                                        <XCircle className="h-8 w-8 text-red-500" />
-                                        <div>
-                                            <span className="text-red-400 font-bold block text-lg">RESPINS</span>
-                                            <span className="text-sm font-normal text-muted-foreground">Mai încearcă odată</span>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                            <div className="flex flex-col items-end">
-                                <span className="text-3xl font-mono font-bold">
-                                    {gradingResult?.totalScore.toFixed(2)} <span className="text-lg text-muted-foreground">/ {gradingResult?.maxScore}</span>
-                                </span>
-                                <Badge variant={gradingResult?.passed ? "default" : "destructive"} className="mt-1">
-                                    {gradingResult?.percentage}% Corectitudine
-                                </Badge>
-                            </div>
-                        </DialogTitle>
-                    </DialogHeader>
-
-                    {isGrading ? (
-                        <div className="flex-1 flex flex-col items-center justify-center space-y-4">
-                            <Loader2 className="h-16 w-16 animate-spin text-purple-500" />
-                            <p className="text-lg text-muted-foreground">
-                                AI Mentor analizează lucrarea ta...
-                            </p>
-                        </div>
-                    ) : gradingResult && (
-                        <Tabs defaultValue="analysis" className="flex-1 flex flex-col overflow-hidden">
-                            <div className="px-6 py-2 border-b bg-muted/10">
-                                <TabsList className="grid w-full grid-cols-3 max-w-md">
-                                    <TabsTrigger value="analysis">🤖 Analiză AI</TabsTrigger>
-                                    <TabsTrigger value="solution">📜 Barem Oficial</TabsTrigger>
-                                    <TabsTrigger value="compare">🆚 Comparație</TabsTrigger>
-                                </TabsList>
-                            </div>
-
-                            <div className="flex-1 overflow-y-auto bg-muted/5 p-6">
-                                {/* Tab 1: AI Analysis */}
-                                <TabsContent value="analysis" className="m-0 space-y-6 h-full">
-                                    <Card className="bg-gradient-to-br from-purple-900/10 to-blue-900/10 border-purple-500/20">
-                                        <CardHeader>
-                                            <CardTitle className="text-lg flex items-center gap-2">
-                                                <Sparkles className="h-5 w-5 text-purple-400" />
-                                                Feedback General
-                                            </CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="space-y-4">
-                                            <p className="text-base leading-relaxed text-foreground/90 font-medium">
-                                                {gradingResult.overallFeedback}
-                                            </p>
-                                            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/50">
-                                                <div>
-                                                    <span className="text-xs uppercase text-muted-foreground font-bold tracking-wider">Punctaj Exprimare</span>
-                                                    <div className="text-xl font-mono mt-1">{gradingResult.expressionScore.toFixed(2)} p</div>
-                                                </div>
-                                                <div>
-                                                    <span className="text-xs uppercase text-muted-foreground font-bold tracking-wider">Timp Utilizat</span>
-                                                    <div className="text-xl font-mono mt-1">{formatTime(EXAM_DURATION - timeRemaining)}</div>
-                                                </div>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-
-                                    <div className="space-y-4">
-                                        <h3 className="font-semibold text-lg">Detalii pe Cerințe</h3>
-                                        {gradingResult.feedback.map((fb, idx) => (
-                                            <Card key={idx} className={`overflow-hidden transition-all hover:shadow-md ${fb.score >= fb.maxScore * 0.8 ? 'border-l-4 border-l-green-500' : 'border-l-4 border-l-amber-500'}`}>
-                                                <CardContent className="p-5">
-                                                    <div className="flex justify-between items-start mb-3">
-                                                        <div className="space-y-1">
-                                                            <div className="flex items-center gap-2">
-                                                                <Badge variant="outline" className="font-mono">Cerința {fb.requirementId}</Badge>
-                                                                {fb.score === fb.maxScore && <Badge className="bg-green-500/20 text-green-400 border-green-500/50">Perfect</Badge>}
-                                                            </div>
-                                                        </div>
-                                                        <span className="text-xl font-bold font-mono">
-                                                            {fb.score.toFixed(2)} <span className="text-sm text-muted-foreground">/ {fb.maxScore}</span>
-                                                        </span>
-                                                    </div>
-
-                                                    <p className="text-sm text-muted-foreground mb-4 bg-muted p-3 rounded-md italic border-l-2 border-purple-500/30">
-                                                        "{fb.feedback}"
-                                                    </p>
-
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                        <div>
-                                                            <span className="text-xs font-bold text-green-500 mb-2 block flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Puncte Tari</span>
-                                                            <ul className="text-xs space-y-1">
-                                                                {fb.strengths.map((s, i) => <li key={i} className="flex gap-2 text-muted-foreground">• {s}</li>)}
-                                                            </ul>
-                                                        </div>
-                                                        <div>
-                                                            <span className="text-xs font-bold text-amber-500 mb-2 block flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> De Îmbunătățit</span>
-                                                            <ul className="text-xs space-y-1">
-                                                                {fb.improvements.map((s, i) => <li key={i} className="flex gap-2 text-muted-foreground">• {s}</li>)}
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </CardContent>
-                                            </Card>
-                                        ))}
-                                    </div>
-                                </TabsContent>
-
-                                {/* Tab 2: Official Solution */}
-                                <TabsContent value="solution" className="m-0 h-full">
-                                    <div className="grid grid-cols-12 gap-6 h-full">
-                                        {/* Left Side: Navigation */}
-                                        <div className="col-span-3 border-r pr-4 space-y-2 overflow-y-auto">
-                                            <h3 className="font-bold text-sm mb-4 text-purple-400 px-2 uppercase tracking-wider">Cerințe Examen</h3>
-                                            {allRequirements.map((req, idx) => (
-                                                <Button
-                                                    key={req.id}
-                                                    variant={resultsReqIndex === idx ? "secondary" : "ghost"}
-                                                    className={`w-full justify-start text-left h-auto py-3 px-4 ${resultsReqIndex === idx ? 'bg-purple-500/10 text-purple-300 border-l-2 border-purple-500 rounded-r-none rounded-l-sm' : 'text-muted-foreground'}`}
-                                                    onClick={() => setResultsReqIndex(idx)}
-                                                >
-                                                    <div>
-                                                        <div className="font-bold text-sm">Cerința {req.requirementId}</div>
-                                                        <div className="text-xs opacity-70 truncate max-w-[180px]">{req.requirementText}</div>
-                                                    </div>
-                                                </Button>
-                                            ))}
-                                        </div>
-
-                                        {/* Right Side: Content */}
-                                        <div className="col-span-9 space-y-6 overflow-y-auto pr-2 pb-6">
-                                            {(() => {
-                                                const req = allRequirements[resultsReqIndex || 0];
-                                                if (!req) return null;
-                                                return (
-                                                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                                        <div className="bg-card border rounded-lg p-6">
-                                                            <Badge className="mb-2 bg-blue-500/20 text-blue-300 hover:bg-blue-500/30">Enunț Oficial</Badge>
-                                                            <h3 className="text-lg font-medium">{req.requirementText}</h3>
-                                                        </div>
-
-                                                        <div className="bg-green-500/5 border border-green-500/20 rounded-lg p-6">
-                                                            <div className="flex items-center gap-2 mb-4">
-                                                                <Badge className="bg-green-500/20 text-green-400 hover:bg-green-500/30">Soluție Model</Badge>
-                                                            </div>
-                                                            <ScrollArea className="h-[300px] pr-4">
-                                                                <div className="text-sm leading-relaxed whitespace-pre-wrap font-serif text-foreground/90">
-                                                                    {req.solution || "Soluția model nu este disponibilă pentru această cerință."}
-                                                                </div>
-                                                            </ScrollArea>
-                                                        </div>
-
-                                                        <div className="border rounded-lg overflow-hidden">
-                                                            <div className="bg-muted p-3 border-b">
-                                                                <h4 className="font-bold text-sm flex items-center gap-2">
-                                                                    <ListChecks className="h-4 w-4" /> Grilă de Evaluare (Rubric)
-                                                                </h4>
-                                                            </div>
-                                                            <div className="divide-y">
-                                                                {req.rubric.map((r, i) => (
-                                                                    <div key={i} className="p-3 flex justify-between items-center hover:bg-muted/30 transition-colors">
-                                                                        <span className="text-sm text-foreground/80">{r.criterion}</span>
-                                                                        <Badge variant="outline" className="font-mono bg-background">{r.points}p</Badge>
-                                                                    </div>
-                                                                ))}
-                                                                <div className="p-3 bg-muted/20 flex justify-between items-center font-bold">
-                                                                    <span className="text-sm">TOTAL</span>
-                                                                    <span className="text-sm">{req.points}p</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )
-                                            })()}
-                                        </div>
-                                    </div>
-                                </TabsContent>
-
-                                {/* Tab 3: Compare */}
-                                <TabsContent value="compare" className="m-0 h-full overflow-hidden flex flex-col">
-                                    <div className="flex items-center gap-2 mb-4 border-b pb-2 flex-shrink-0">
-                                        <Scale className="h-4 w-4 text-purple-400" />
-                                        <span className="font-bold text-sm">Comparație Directă</span>
-                                        <select
-                                            className="ml-auto bg-background border rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
-                                            value={resultsReqIndex}
-                                            onChange={(e) => setResultsReqIndex(parseInt(e.target.value))}
-                                        >
-                                            {allRequirements.map((req, idx) => (
-                                                <option key={req.id} value={idx}>Cerința {req.requirementId} ({req.points}p)</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <div className="flex-1 grid grid-cols-2 gap-4 min-h-0">
-                                        {/* Your Answer */}
-                                        <div className="flex flex-col h-full border rounded-lg bg-background overflow-hidden">
-                                            <div className="p-3 bg-muted/40 border-b flex justify-between items-center">
-                                                <span className="font-bold text-sm flex items-center gap-2 text-foreground/80">
-                                                    <PenTool className="h-3 w-3" /> Răspunsul Tău
-                                                </span>
-                                            </div>
-                                            <div className="flex-1 p-4 overflow-y-auto bg-yellow-50/5">
-                                                <p className="text-sm leading-relaxed whitespace-pre-wrap font-mono text-foreground/80">
-                                                    {(() => {
-                                                        const req = allRequirements[resultsReqIndex || 0];
-                                                        return answers[req?.id] || <span className="text-muted-foreground italic opacity-50">Nu ai răspuns la această cerință.</span>
-                                                    })()}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        {/* Official Solution */}
-                                        <div className="flex flex-col h-full border rounded-lg bg-background overflow-hidden">
-                                            <div className="p-3 bg-green-500/10 border-b flex justify-between items-center">
-                                                <span className="font-bold text-sm flex items-center gap-2 text-green-400">
-                                                    <BookOpen className="h-3 w-3" /> Soluție Model
-                                                </span>
-                                            </div>
-                                            <div className="flex-1 p-4 overflow-y-auto">
-                                                <p className="text-sm leading-relaxed whitespace-pre-wrap font-serif text-foreground/90">
-                                                    {allRequirements[resultsReqIndex || 0]?.solution || "Indisponibil"}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="mt-4 p-4 bg-purple-500/10 rounded-lg flex-shrink-0 border border-purple-500/20">
-                                        <h4 className="font-bold text-sm mb-2 text-purple-300">💡 Sfat AI pentru această cerință:</h4>
-                                        <p className="text-sm italic text-foreground/80">
-                                            {(() => {
-                                                const req = allRequirements[resultsReqIndex || 0];
-                                                const feedback = gradingResult.feedback.find(f => f.requirementId === req.requirementId);
-                                                return feedback?.improvements[0]
-                                                    ? `Pentru a obține punctaj maxim: ${feedback.improvements[0]}`
-                                                    : "Răspunsul tău este foarte bun! Continuă să menții această structură clară.";
-                                            })()}
+            {/* Results Dialog */}
+            <ExamResultsShell
+                open={showResults}
+                onOpenChange={setShowResults}
+                passed={gradingResult?.passed ?? false}
+                scoreDisplay={`${gradingResult?.totalScore?.toFixed(2) ?? '0'} / ${gradingResult?.maxScore ?? 10}`}
+                percentage={gradingResult?.percentage ?? 0}
+                tabs={[
+                    {
+                        id: 'analysis',
+                        label: '🤖 Analiză AI',
+                        content: (
+                            <div className="space-y-6">
+                                <Card className="bg-gradient-to-br from-purple-900/10 to-blue-900/10 border-purple-500/20">
+                                    <CardHeader>
+                                        <CardTitle className="text-lg flex items-center gap-2">
+                                            <Sparkles className="h-5 w-5 text-purple-400" />
+                                            Feedback General
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <p className="text-base leading-relaxed text-foreground/90 font-medium">
+                                            {gradingResult?.overallFeedback}
                                         </p>
-                                    </div>
-                                </TabsContent>
-                            </div>
-                        </Tabs>
-                    )}
+                                        <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/50">
+                                            <div>
+                                                <span className="text-xs uppercase text-muted-foreground font-bold tracking-wider">Punctaj Exprimare</span>
+                                                <div className="text-xl font-mono mt-1">{gradingResult?.expressionScore?.toFixed(2)} p</div>
+                                            </div>
+                                            <div>
+                                                <span className="text-xs uppercase text-muted-foreground font-bold tracking-wider">Timp Utilizat</span>
+                                                <div className="text-xl font-mono mt-1">{formatTime(EXAM_DURATION - timeRemaining)}</div>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
 
-                    <DialogFooter className="p-4 border-t bg-muted/20 mt-auto">
+                                <div className="space-y-4">
+                                    <h3 className="font-semibold text-lg">Detalii pe Cerințe</h3>
+                                    {gradingResult?.feedback.map((fb, idx) => (
+                                        <Card key={idx} className={`overflow-hidden transition-all hover:shadow-md ${fb.score >= fb.maxScore * 0.8 ? 'border-l-4 border-l-green-500' : 'border-l-4 border-l-amber-500'}`}>
+                                            <CardContent className="p-5">
+                                                <div className="flex justify-between items-start mb-3">
+                                                    <div className="space-y-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <Badge variant="outline" className="font-mono">Cerința {fb.requirementId}</Badge>
+                                                            {fb.score === fb.maxScore && <Badge className="bg-green-500/20 text-green-400 border-green-500/50">Perfect</Badge>}
+                                                        </div>
+                                                    </div>
+                                                    <span className="text-xl font-bold font-mono">
+                                                        {fb.score.toFixed(2)} <span className="text-sm text-muted-foreground">/ {fb.maxScore}</span>
+                                                    </span>
+                                                </div>
+
+                                                <p className="text-sm text-muted-foreground mb-4 bg-muted p-3 rounded-md italic border-l-2 border-purple-500/30">
+                                                    "{fb.feedback}"
+                                                </p>
+
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div>
+                                                        <span className="text-xs font-bold text-green-500 mb-2 block flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Puncte Tari</span>
+                                                        <ul className="text-xs space-y-1">
+                                                            {fb.strengths.map((s, i) => <li key={i} className="flex gap-2 text-muted-foreground">• {s}</li>)}
+                                                        </ul>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-xs font-bold text-amber-500 mb-2 block flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> De Îmbunătățit</span>
+                                                        <ul className="text-xs space-y-1">
+                                                            {fb.improvements.map((s, i) => <li key={i} className="flex gap-2 text-muted-foreground">• {s}</li>)}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    ))}
+                                </div>
+                            </div>
+                        ),
+                    },
+                    {
+                        id: 'solution',
+                        label: '📜 Barem Oficial',
+                        content: (
+                            <div className="grid grid-cols-12 gap-6 h-full">
+                                {/* Left Side: Navigation */}
+                                <div className="col-span-3 border-r pr-4 space-y-2 overflow-y-auto">
+                                    <h3 className="font-bold text-sm mb-4 text-purple-400 px-2 uppercase tracking-wider">Cerințe Examen</h3>
+                                    {allRequirements.map((req, idx) => (
+                                        <Button
+                                            key={req.id}
+                                            variant={resultsReqIndex === idx ? "secondary" : "ghost"}
+                                            className={`w-full justify-start text-left h-auto py-3 px-4 ${resultsReqIndex === idx ? 'bg-purple-500/10 text-purple-300 border-l-2 border-purple-500 rounded-r-none rounded-l-sm' : 'text-muted-foreground'}`}
+                                            onClick={() => setResultsReqIndex(idx)}
+                                        >
+                                            <div>
+                                                <div className="font-bold text-sm">Cerința {req.requirementId}</div>
+                                                <div className="text-xs opacity-70 truncate max-w-[180px]">{req.requirementText}</div>
+                                            </div>
+                                        </Button>
+                                    ))}
+                                </div>
+
+                                {/* Right Side: Content */}
+                                <div className="col-span-9 space-y-6 overflow-y-auto pr-2 pb-6">
+                                    {(() => {
+                                        const req = allRequirements[resultsReqIndex || 0];
+                                        if (!req) return null;
+                                        return (
+                                            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                                <div className="bg-card border rounded-lg p-6">
+                                                    <Badge className="mb-2 bg-blue-500/20 text-blue-300 hover:bg-blue-500/30">Enunț Oficial</Badge>
+                                                    <h3 className="text-lg font-medium">{req.requirementText}</h3>
+                                                </div>
+
+                                                <div className="bg-green-500/5 border border-green-500/20 rounded-lg p-6">
+                                                    <div className="flex items-center gap-2 mb-4">
+                                                        <Badge className="bg-green-500/20 text-green-400 hover:bg-green-500/30">Soluție Model</Badge>
+                                                    </div>
+                                                    <ScrollArea className="h-[300px] pr-4">
+                                                        <div className="text-sm leading-relaxed whitespace-pre-wrap font-serif text-foreground/90">
+                                                            {req.solution || "Soluția model nu este disponibilă pentru această cerință."}
+                                                        </div>
+                                                    </ScrollArea>
+                                                </div>
+
+                                                <div className="border rounded-lg overflow-hidden">
+                                                    <div className="bg-muted p-3 border-b">
+                                                        <h4 className="font-bold text-sm flex items-center gap-2">
+                                                            <ListChecks className="h-4 w-4" /> Grilă de Evaluare (Rubric)
+                                                        </h4>
+                                                    </div>
+                                                    <div className="divide-y">
+                                                        {req.rubric.map((r, i) => (
+                                                            <div key={i} className="p-3 flex justify-between items-center hover:bg-muted/30 transition-colors">
+                                                                <span className="text-sm text-foreground/80">{r.criterion}</span>
+                                                                <Badge variant="outline" className="font-mono bg-background">{r.points}p</Badge>
+                                                            </div>
+                                                        ))}
+                                                        <div className="p-3 bg-muted/20 flex justify-between items-center font-bold">
+                                                            <span className="text-sm">TOTAL</span>
+                                                            <span className="text-sm">{req.points}p</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )
+                                    })()}
+                                </div>
+                            </div>
+                        ),
+                    },
+                    {
+                        id: 'compare',
+                        label: '🆚 Comparație',
+                        content: (
+                            <div className="flex flex-col h-full">
+                                <div className="flex items-center gap-2 mb-4 border-b pb-2 flex-shrink-0">
+                                    <Scale className="h-4 w-4 text-purple-400" />
+                                    <span className="font-bold text-sm">Comparație Directă</span>
+                                    <select
+                                        className="ml-auto bg-background border rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+                                        value={resultsReqIndex}
+                                        onChange={(e) => setResultsReqIndex(parseInt(e.target.value))}
+                                    >
+                                        {allRequirements.map((req, idx) => (
+                                            <option key={req.id} value={idx}>Cerința {req.requirementId} ({req.points}p)</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="flex-1 grid grid-cols-2 gap-4 min-h-0">
+                                    {/* Your Answer */}
+                                    <div className="flex flex-col h-full border rounded-lg bg-background overflow-hidden">
+                                        <div className="p-3 bg-muted/40 border-b flex justify-between items-center">
+                                            <span className="font-bold text-sm flex items-center gap-2 text-foreground/80">
+                                                <PenTool className="h-3 w-3" /> Răspunsul Tău
+                                            </span>
+                                        </div>
+                                        <div className="flex-1 p-4 overflow-y-auto bg-yellow-50/5">
+                                            <p className="text-sm leading-relaxed whitespace-pre-wrap font-mono text-foreground/80">
+                                                {(() => {
+                                                    const req = allRequirements[resultsReqIndex || 0];
+                                                    return answers[req?.id] || <span className="text-muted-foreground italic opacity-50">Nu ai răspuns la această cerință.</span>
+                                                })()}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Official Solution */}
+                                    <div className="flex flex-col h-full border rounded-lg bg-background overflow-hidden">
+                                        <div className="p-3 bg-green-500/10 border-b flex justify-between items-center">
+                                            <span className="font-bold text-sm flex items-center gap-2 text-green-400">
+                                                <BookOpen className="h-3 w-3" /> Soluție Model
+                                            </span>
+                                        </div>
+                                        <div className="flex-1 p-4 overflow-y-auto">
+                                            <p className="text-sm leading-relaxed whitespace-pre-wrap font-serif text-foreground/90">
+                                                {allRequirements[resultsReqIndex || 0]?.solution || "Indisponibil"}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-4 p-4 bg-purple-500/10 rounded-lg flex-shrink-0 border border-purple-500/20">
+                                    <h4 className="font-bold text-sm mb-2 text-purple-300">Sfat AI pentru această cerință:</h4>
+                                    <p className="text-sm italic text-foreground/80">
+                                        {(() => {
+                                            const req = allRequirements[resultsReqIndex || 0];
+                                            const feedback = gradingResult?.feedback.find(f => f.requirementId === req?.requirementId);
+                                            return feedback?.improvements[0]
+                                                ? `Pentru a obține punctaj maxim: ${feedback.improvements[0]}`
+                                                : "Răspunsul tău este foarte bun! Continuă să menții această structură clară.";
+                                        })()}
+                                    </p>
+                                </div>
+                            </div>
+                        ),
+                    },
+                ]}
+                tabListClassName="grid w-full grid-cols-3 max-w-md"
+                footer={
+                    <>
                         <Button variant="outline" onClick={() => setShowResults(false)} className="mr-auto">
                             Închide
                         </Button>
@@ -931,9 +813,18 @@ Acțiunea a fost înregistrată pe rolul Judecătoriei X. Pârâtul B a invocat 
                             <Home className="h-4 w-4 mr-2" />
                             Înapoi la Time Machine
                         </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+                    </>
+                }
+            >
+                {isGrading ? (
+                    <div className="flex-1 flex flex-col items-center justify-center space-y-4">
+                        <Loader2 className="h-16 w-16 animate-spin text-purple-500" />
+                        <p className="text-lg text-muted-foreground">
+                            AI Mentor analizează lucrarea ta...
+                        </p>
+                    </div>
+                ) : undefined}
+            </ExamResultsShell>
         </div>
     );
 }

@@ -8,34 +8,26 @@ import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Sparkles } from "lucide-react";
-import { formatTime } from "@/lib/constants";
 import {
-    Clock,
     ChevronLeft,
     ChevronRight,
     ChevronDown,
     Flag,
     CheckCircle2,
-    AlertTriangle,
-    Timer,
+    FileText,
     Scale,
     Shield,
-    FileText,
     Gavel,
-    ArrowRight,
-    Home,
     Trophy,
     XCircle
 } from "lucide-react";
-
-interface QuestionOption {
-    id?: number;
-    text: string;
-}
+import type { QuestionOption, ExamResult } from "@/types/exam";
+import { EXAM_DURATION, PASS_THRESHOLD } from "@/types/exam";
+import { useExamTimer } from "@/hooks/use-exam-timer";
+import { TimeTravelAnimation } from "@/components/exam/time-travel-animation";
+import { ExamTimerBar } from "@/components/exam/exam-timer-bar";
+import { ExamResultsShell } from "@/components/exam/exam-results-shell";
 
 interface Question {
     id: string;
@@ -56,14 +48,6 @@ interface ExamSection {
     questions: Question[];
 }
 
-interface ExamResult {
-    totalCorrect: number;
-    bySection: Record<string, { correct: number; total: number }>;
-    passed: boolean;
-    percentage: number;
-    timeUsed: number;
-}
-
 const getOptionText = (option: string | QuestionOption): string => {
     if (typeof option === 'string') return option;
     return option.text || '';
@@ -71,19 +55,13 @@ const getOptionText = (option: string | QuestionOption): string => {
 
 /**
  * Converts DB correctAnswer to letter.
- * 
- * CRITICAL: DB stores correctAnswer as 1-INDEXED!
- * - 1 = A
- * - 2 = B  
- * - 3 = C
- * - 4 = D
+ * CRITICAL: DB stores correctAnswer as 1-INDEXED (1=A, 2=B, 3=C, 4=D)
  */
 const getCorrectLetter = (correctAnswer: number | string): string => {
     let idx: number;
 
     if (typeof correctAnswer === 'string') {
         const trimmed = correctAnswer.trim();
-        // Check if it's already a letter
         const upper = trimmed.toUpperCase();
         if (upper.length === 1 && upper >= 'A' && upper <= 'Z') {
             return upper;
@@ -93,16 +71,12 @@ const getCorrectLetter = (correctAnswer: number | string): string => {
         idx = correctAnswer;
     }
 
-    // Validate it's a valid 1-indexed value (1-26)
     if (isNaN(idx) || idx < 1 || idx > 26) {
         console.warn('[getCorrectLetter] Invalid correctAnswer:', correctAnswer);
         return '?';
     }
 
-    // Convert 1-indexed to letter: 1->A, 2->B, 3->C
-    const letter = String.fromCharCode(64 + idx); // 64 + 1 = 65 = 'A'
-    console.log(`[getCorrectLetter] DB value: ${correctAnswer} -> Letter: ${letter}`);
-    return letter;
+    return String.fromCharCode(64 + idx);
 };
 
 const SECTION_CONFIG = [
@@ -112,10 +86,8 @@ const SECTION_CONFIG = [
     { id: "penal-procedural", name: "Drept Procesual Penal", shortName: "Proc.Penal", icon: Gavel, color: "text-fuchsia-300", bgColor: "bg-fuchsia-900/50 border-fuchsia-600", progressColor: "bg-fuchsia-500" },
 ];
 
-const EXAM_DURATION = 4 * 60 * 60; // 4 hours in seconds
 const QUESTIONS_PER_SECTION = 25;
 const TOTAL_QUESTIONS = 100;
-const PASS_THRESHOLD = 60;
 
 function AIExplanation({ questionId, selectedAnswer, correctAnswer }: { questionId: string, selectedAnswer: string, correctAnswer: string }) {
     const [explanation, setExplanation] = useState<string | null>(null);
@@ -173,51 +145,34 @@ export default function TimeMachineProba1() {
     const [answers, setAnswers] = useState<Record<string, string>>({});
     const [flagged, setFlagged] = useState<Set<string>>(new Set());
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [timeRemaining, setTimeRemaining] = useState(EXAM_DURATION);
-    const [startTime] = useState(Date.now());
 
-    const [showWormhole, setShowWormhole] = useState(true);
+    const [showAnimation, setShowAnimation] = useState(true);
     const [showResults, setShowResults] = useState(false);
     const [examResult, setExamResult] = useState<ExamResult | null>(null);
-    const [expandedSection, setExpandedSection] = useState<string | null>("civil"); // Accordion state
+    const [expandedSection, setExpandedSection] = useState<string | null>("civil");
 
-    // Wormhole animation on mount
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setShowWormhole(false);
-        }, 2500);
-        return () => clearTimeout(timer);
-    }, []);
-
-    // Timer countdown
-    useEffect(() => {
-        if (showWormhole || showResults) return;
-
-        const timer = setInterval(() => {
-            setTimeRemaining(prev => Math.max(0, prev - 1));
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, [showWormhole, showResults]);
+    // Timer hook
+    const timer = useExamTimer({
+        duration: EXAM_DURATION,
+        paused: showAnimation || showResults,
+    });
 
     // Fetch all exam questions
     const { data: allQuestions = [] } = useQuery<Question[]>({
         queryKey: ["/api/questions", year],
         queryFn: async () => {
-            // Fetch questions with year tag
             const res = await fetch(`/api/questions?sourceType=exam-past&limit=100`);
             if (!res.ok) throw new Error("Failed to fetch");
             const data = await res.json();
             return data as Question[];
         },
-        enabled: !showWormhole,
+        enabled: !showAnimation,
     });
 
     // Organize questions into 4 sections of 25 each
     const sections = useMemo((): ExamSection[] => {
         if (!allQuestions.length) return [];
 
-        // Group by subject
         const bySubject: Record<string, Question[]> = {};
         for (const q of allQuestions) {
             const subj = q.subject || "civil";
@@ -225,26 +180,20 @@ export default function TimeMachineProba1() {
             bySubject[subj].push(q);
         }
 
-        // Build sections - take first 25 from each, or split penal if needed
         const result: ExamSection[] = [];
 
         for (const config of SECTION_CONFIG) {
             let questions: Question[] = [];
 
             if (config.id === "penal" && bySubject["penal"]?.length >= 50 && !bySubject["penal-procedural"]?.length) {
-                // Split penal into first 25
                 questions = bySubject["penal"]?.slice(0, 25) || [];
             } else if (config.id === "penal-procedural" && bySubject["penal"]?.length >= 50 && !bySubject["penal-procedural"]?.length) {
-                // Split penal - take questions 26-50
                 questions = bySubject["penal"]?.slice(25, 50) || [];
             } else {
                 questions = bySubject[config.id]?.slice(0, 25) || [];
             }
 
-            result.push({
-                ...config,
-                questions,
-            });
+            result.push({ ...config, questions });
         }
 
         return result;
@@ -276,15 +225,6 @@ export default function TimeMachineProba1() {
             setExpandedSection(currentSection.id);
         }
     }, [currentSection?.id]);
-
-    // Get index within current section
-    const getIndexInSection = (globalIndex: number) => {
-        let offset = 0;
-        for (let i = 0; i < currentSectionIndex; i++) {
-            offset += sections[i].questions.length;
-        }
-        return globalIndex - offset;
-    };
 
     // Answer handlers
     const selectAnswer = useCallback((questionId: string, answer: string) => {
@@ -334,7 +274,7 @@ export default function TimeMachineProba1() {
             bySection[section.id] = { correct: sectionCorrect, total: section.questions.length };
         }
 
-        const timeUsed = EXAM_DURATION - timeRemaining;
+        const timeUsed = timer.elapsed;
         const percentage = flatQuestions.length > 0 ? Math.round((totalCorrect / flatQuestions.length) * 100) : 0;
 
         return {
@@ -344,12 +284,12 @@ export default function TimeMachineProba1() {
             percentage,
             timeUsed,
         };
-    }, [sections, answers, timeRemaining, flatQuestions.length]);
+    }, [sections, answers, timer.elapsed, flatQuestions.length]);
 
     // Finalize exam with API
     const finalizeExam = async () => {
         try {
-            const timeUsed = EXAM_DURATION - timeRemaining;
+            const timeUsed = timer.elapsed;
             const res = await apiRequest("POST", "/api/exam-sessions/submit", {
                 year,
                 answers,
@@ -357,14 +297,8 @@ export default function TimeMachineProba1() {
             });
             const data = await res.json();
 
-            // Map backend response to logic state
             const bySectionMap: any = {};
             if (data.breakdown) {
-                // Backend keys: civil, civil-procedural... Frontend: civil, civilProc...?
-                // Let's assume frontend section IDs match backend keys OR handle mapping
-                // Frontend sections: "civil", "civilProc", "penal", "penalProc" (In my plan).
-                // Let's check section definitions in code... (I need to verify this assumption)
-                // But generally:
                 bySectionMap["civil"] = data.breakdown.civil;
                 bySectionMap["civil-procedural"] = data.breakdown["civil-procedural"];
                 bySectionMap["penal"] = data.breakdown.penal;
@@ -383,97 +317,44 @@ export default function TimeMachineProba1() {
             setShowResults(true);
         } catch (error) {
             console.error("Exam submission failed:", error);
-            // Fallback to local calculation if API fails hard? 
-            // No, show error.
             alert("A apărut o eroare la salvarea examenului. Te rugăm să încerci din nou.");
         }
     };
 
-    // Wormhole animation screen
-    if (showWormhole) {
+    // Animation screen
+    if (showAnimation) {
         return (
-            <div className="fixed inset-0 bg-black z-50 flex items-center justify-center overflow-hidden">
-                <div className="relative">
-                    {[...Array(6)].map((_, i) => (
-                        <div
-                            key={i}
-                            className="absolute rounded-full border-2 border-purple-500/30"
-                            style={{
-                                width: `${200 + i * 80}px`,
-                                height: `${200 + i * 80}px`,
-                                left: `${-(100 + i * 40)}px`,
-                                top: `${-(100 + i * 40)}px`,
-                                animation: `spin ${3 + i * 0.5}s linear infinite ${i % 2 === 0 ? '' : 'reverse'}`,
-                                opacity: 1 - i * 0.15,
-                            }}
-                        />
-                    ))}
-
-                    <div className="relative w-48 h-48 rounded-full bg-gradient-to-br from-purple-600 via-blue-500 to-purple-700 flex items-center justify-center animate-pulse">
-                        <div className="absolute inset-4 rounded-full bg-black/80 flex items-center justify-center">
-                            <div className="text-center">
-                                <Clock className="h-12 w-12 mx-auto text-purple-400 animate-spin" style={{ animationDuration: '3s' }} />
-                                <p className="text-purple-300 mt-2 text-sm font-medium">Calibrare temporală...</p>
-                                <p className="text-3xl font-bold text-white mt-1">{year}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="absolute bottom-16 text-center">
-                    <p className="text-purple-400 text-sm">Destinație</p>
-                    <p className="text-white text-2xl font-bold">Concurs Admitere INM {year}</p>
-                    <p className="text-purple-300 text-sm mt-1">Proba I - Test Grilă • 100 întrebări • 4 ore</p>
-                </div>
-
-                <style>{`
-                    @keyframes spin {
-                        from { transform: rotate(0deg); }
-                        to { transform: rotate(360deg); }
-                    }
-                `}</style>
-            </div>
+            <TimeTravelAnimation
+                year={year}
+                probaLabel="Proba I - Test Grilă • 100 întrebări • 4 ore"
+                variant="wormhole"
+                onComplete={() => setShowAnimation(false)}
+            />
         );
     }
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-purple-950/10">
             {/* Top Timer Bar */}
-            <div className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b border-purple-500/30">
-                <div className="container mx-auto px-4 py-3">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <Button variant="ghost" size="sm" onClick={() => setLocation("/time-machine")}>
-                                <Home className="h-4 w-4 mr-1" />
-                                Ieșire
-                            </Button>
-                            <Badge variant="outline" className="text-purple-400 border-purple-500/50">
-                                <Clock className="h-3 w-3 mr-1" />
-                                {year} • Proba I
-                            </Badge>
-                        </div>
-
-                        <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${timeRemaining < 1800 ? 'bg-red-500/20 text-red-400' : 'bg-purple-500/20 text-purple-300'
-                            }`}>
-                            <Timer className="h-5 w-5" />
-                            <span className="font-mono text-xl font-bold">
-                                {formatTime(timeRemaining)}
-                            </span>
-                            {timeRemaining < 1800 && (
-                                <AlertTriangle className="h-4 w-4 animate-pulse" />
-                            )}
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                            <div className="text-sm text-muted-foreground">
-                                {answeredCount}/{flatQuestions.length} răspunse
-                            </div>
-                            <Progress value={progress} className="w-32 h-2" />
-                        </div>
+            <ExamTimerBar
+                year={year}
+                probaLabel="Proba I"
+                timeRemaining={timer.timeRemaining}
+                isLowTime={timer.isLowTime}
+                onExit={() => setLocation("/time-machine")}
+            >
+                <div className="flex items-center gap-4">
+                    <div className="text-sm text-muted-foreground">
+                        {answeredCount}/{flatQuestions.length} răspunse
                     </div>
+                    <Progress value={progress} className="w-32 h-2" />
+                </div>
+            </ExamTimerBar>
 
-                    {/* Section Progress Bar */}
-                    <div className="flex gap-2 mt-3">
+            {/* Section Progress Bar */}
+            <div className="sticky top-[73px] z-30 bg-background/95 backdrop-blur border-b border-purple-500/20">
+                <div className="container mx-auto px-4 py-2">
+                    <div className="flex gap-2">
                         {sections.map((section, idx) => {
                             const prog = getSectionProgress(idx);
                             const isActive = idx === currentSectionIndex;
@@ -484,7 +365,6 @@ export default function TimeMachineProba1() {
                                 <button
                                     key={section.id}
                                     onClick={() => {
-                                        // Jump to first question of this section
                                         let offset = 0;
                                         for (let i = 0; i < idx; i++) {
                                             offset += sections[i].questions.length;
@@ -533,7 +413,6 @@ export default function TimeMachineProba1() {
 
                             return (
                                 <div key={section.id} className="overflow-hidden rounded-lg border border-border">
-                                    {/* Accordion Header */}
                                     <button
                                         onClick={() => setExpandedSection(isExpanded ? null : section.id)}
                                         className={`w-full flex items-center justify-between p-3 transition-all duration-300 ${isActive
@@ -562,9 +441,7 @@ export default function TimeMachineProba1() {
                                         </div>
                                     </button>
 
-                                    {/* Accordion Content - Question Grid */}
-                                    <div className={`overflow-hidden transition-all duration-200 ${isExpanded ? 'max-h-96 p-3 pt-0' : 'max-h-0'
-                                        }`}>
+                                    <div className={`overflow-hidden transition-all duration-200 ${isExpanded ? 'max-h-96 p-3 pt-0' : 'max-h-0'}`}>
                                         <div className="grid grid-cols-5 gap-1.5 pt-3 border-t border-border">
                                             {section.questions.map((q, qIdx) => {
                                                 const globalIdx = sectionStart + qIdx;
@@ -575,9 +452,7 @@ export default function TimeMachineProba1() {
                                                 return (
                                                     <button
                                                         key={q.id}
-                                                        onClick={() => {
-                                                            setCurrentIndex(globalIdx);
-                                                        }}
+                                                        onClick={() => setCurrentIndex(globalIdx)}
                                                         className={`relative w-8 h-8 text-xs font-bold rounded-lg transition-all duration-200 shadow-sm ${isCurrent
                                                             ? `ring-2 ring-offset-2 ring-offset-background ${section.bgColor} text-white shadow-lg scale-110 z-10`
                                                             : ''
@@ -599,7 +474,6 @@ export default function TimeMachineProba1() {
                             );
                         })}
 
-                        {/* Finalize button */}
                         <Button
                             onClick={finalizeExam}
                             className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 mt-2"
@@ -663,10 +537,7 @@ export default function TimeMachineProba1() {
                                                     onClick={() => selectAnswer(currentQuestion.id, letter)}
                                                 >
                                                     <RadioGroupItem value={letter} id={`option-${idx}`} />
-                                                    <Label
-                                                        htmlFor={`option-${idx}`}
-                                                        className="flex-1 cursor-pointer"
-                                                    >
+                                                    <Label htmlFor={`option-${idx}`} className="flex-1 cursor-pointer">
                                                         <span className="font-medium mr-2">{letter}.</span>
                                                         {getOptionText(option)}
                                                     </Label>
@@ -677,7 +548,6 @@ export default function TimeMachineProba1() {
 
                                     {/* Navigation */}
                                     <div className="flex items-center justify-between pt-4 border-t">
-                                        {/* Logic: Show Finalize button if last question AND all answered/no skips */}
                                         {currentIndex === flatQuestions.length - 1 && answeredCount === flatQuestions.length ? (
                                             <Button
                                                 className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-6 text-lg shadow-lg animate-pulse"
@@ -696,11 +566,9 @@ export default function TimeMachineProba1() {
                                                     <ChevronLeft className="h-4 w-4 mr-1" />
                                                     Anterioară
                                                 </Button>
-
                                                 <div className="text-sm text-muted-foreground">
                                                     {currentIndex + 1} / {flatQuestions.length}
                                                 </div>
-
                                                 <Button
                                                     onClick={() => setCurrentIndex(Math.min(flatQuestions.length - 1, currentIndex + 1))}
                                                     disabled={currentIndex === flatQuestions.length - 1}
@@ -723,158 +591,111 @@ export default function TimeMachineProba1() {
                     </div>
                 </div>
             </div>
-            {/* Results Dialog - Full Screen Future Style */}
-            <Dialog open={showResults} onOpenChange={setShowResults}>
-                <DialogContent className="max-w-[95vw] w-full h-[90vh] flex flex-col p-0 gap-0 overflow-hidden bg-background/95 backdrop-blur-xl border-purple-500/20">
-                    <DialogHeader className="p-6 border-b bg-muted/20 shrink-0">
-                        <DialogTitle className="text-center text-3xl flex items-center justify-center gap-3">
-                            {examResult?.passed ? (
-                                <div className="flex items-center gap-2 text-green-400">
-                                    <Trophy className="h-8 w-8 text-yellow-500 animate-bounce" />
-                                    <span>ADMIS</span>
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-2 text-red-400">
-                                    <XCircle className="h-8 w-8 animate-pulse" />
-                                    <span>RESPINS</span>
-                                </div>
-                            )}
-                            <span className="text-muted-foreground font-thin">|</span>
-                            <span className="text-2xl font-light">Scor: {examResult?.totalCorrect} puncte ({examResult?.percentage}%)</span>
-                        </DialogTitle>
-                    </DialogHeader>
 
-                    {examResult && (
-                        <div className="flex-1 flex flex-col overflow-hidden">
-                            <Tabs defaultValue="civil" className="flex-1 flex flex-col overflow-hidden">
-                                <div className="px-6 pt-6 shrink-0">
-                                    <TabsList className="grid grid-cols-4 w-full h-16 bg-muted/50 p-1">
-                                        {sections.map(section => {
-                                            const result = examResult.bySection[section.id];
-                                            const total = result?.total || 0;
-                                            const correct = result?.correct || 0;
-                                            const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
-                                            const colorClass = section.color; // e.g. text-blue-500
+            {/* Results Dialog */}
+            <ExamResultsShell
+                open={showResults}
+                onOpenChange={setShowResults}
+                passed={examResult?.passed ?? false}
+                scoreDisplay={`${examResult?.totalCorrect} puncte`}
+                percentage={examResult?.percentage ?? 0}
+                tabs={sections.map(section => {
+                    const result = examResult?.bySection[section.id];
+                    const total = result?.total || 0;
+                    const correct = result?.correct || 0;
+                    const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
 
-                                            return (
-                                                <TabsTrigger
-                                                    key={section.id}
-                                                    value={section.id}
-                                                    className="h-full flex flex-col items-center justify-center gap-1 data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all"
-                                                >
-                                                    <div className="flex items-center gap-2">
-                                                        <span className={`font-bold text-lg ${colorClass}`}>{section.name}</span>
-                                                        <Badge variant="outline" className={`${section.bgColor}/10 ${section.color} border-0`}>
-                                                            {correct}/{total} ({pct}%)
-                                                        </Badge>
+                    return {
+                        id: section.id,
+                        label: `${section.name} (${correct}/${total})`,
+                        content: (
+                            <div className="space-y-4 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <div className="flex items-center justify-between mb-6">
+                                    <h3 className="text-xl font-light flex items-center gap-2">
+                                        <FileText className={`h-5 w-5 ${section.color}`} />
+                                        Recapitulare: <span className="font-bold">{section.name}</span>
+                                    </h3>
+                                    <div className="text-sm text-muted-foreground">
+                                        {correct} răspunsuri corecte din {total}
+                                    </div>
+                                </div>
+
+                                {section.questions.map((q, idx) => {
+                                    const userAnswerLetter = answers[q.id];
+                                    const correctLetter = getCorrectLetter(q.correctAnswer);
+                                    const isCorrect = userAnswerLetter === correctLetter;
+                                    const isUnanswered = !userAnswerLetter;
+
+                                    return (
+                                        <div key={q.id} className={`p-6 rounded-xl border bg-card shadow-sm hover:shadow-md transition-shadow ${isCorrect ? 'border-green-500/10' : 'border-red-500/10'}`}>
+                                            <div className="flex items-start gap-4">
+                                                <div className={`mt-1 p-2 rounded-full ${isCorrect ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                                                    {isCorrect ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
+                                                </div>
+                                                <div className="flex-1 space-y-3">
+                                                    <div className="flex justify-between items-start">
+                                                        <p className="font-medium text-lg leading-relaxed">{idx + 1}. {q.questionText}</p>
+                                                        <Badge variant="outline" className="ml-2 shrink-0">ID: {q.id.slice(0, 4)}</Badge>
                                                     </div>
-                                                    <div className={`h-1 w-24 rounded-full bg-muted overflow-hidden`}>
-                                                        <div className={`h-full ${section.progressColor} transition-all`} style={{ width: `${pct}%` }} />
-                                                    </div>
-                                                </TabsTrigger>
-                                            );
-                                        })}
-                                    </TabsList>
-                                </div>
 
-                                <div className="flex-1 overflow-y-auto p-6 bg-muted/5">
-                                    {sections.map(section => (
-                                        <TabsContent key={section.id} value={section.id} className="mt-0 space-y-4 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                            <div className="flex items-center justify-between mb-6">
-                                                <h3 className="text-xl font-light flex items-center gap-2">
-                                                    <FileText className={`h-5 w-5 ${section.color}`} />
-                                                    Recapitulare: <span className="font-bold">{section.name}</span>
-                                                </h3>
-                                                <div className="text-sm text-muted-foreground">
-                                                    {examResult.bySection[section.id]?.correct || 0} răspunsuri corecte din {examResult.bySection[section.id]?.total || 0}
+                                                    <div className="grid gap-2 text-sm">
+                                                        {q.options.map((opt, oIdx) => {
+                                                            const letter = String.fromCharCode(65 + oIdx);
+                                                            const isSelected = userAnswerLetter === letter;
+                                                            const isTheCorrectOne = correctLetter === letter;
+
+                                                            let style: string;
+                                                            if (isSelected && isTheCorrectOne) {
+                                                                style = "p-4 rounded-lg border-2 border-emerald-500 bg-emerald-500/20 text-emerald-100 font-bold shadow-[0_0_15px_-3px_rgba(16,185,129,0.4)]";
+                                                            } else if (isSelected && !isTheCorrectOne) {
+                                                                style = "p-4 rounded-lg border-2 border-red-500 bg-red-500/20 text-red-100 font-bold shadow-[0_0_15px_-3px_rgba(239,68,68,0.4)]";
+                                                            } else if (!isSelected && isTheCorrectOne) {
+                                                                style = "p-4 rounded-lg border-2 border-emerald-500 bg-emerald-500/10 text-emerald-200 font-bold ring-2 ring-emerald-500/30";
+                                                            } else {
+                                                                style = "p-4 rounded-lg border-transparent bg-muted/40 text-muted-foreground opacity-60";
+                                                            }
+
+                                                            return (
+                                                                <div key={oIdx} className={style}>
+                                                                    <div className="flex gap-3 items-center">
+                                                                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-background/20 flex items-center justify-center font-bold">
+                                                                            {letter}
+                                                                        </span>
+                                                                        <div className="flex-1">{getOptionText(opt)}</div>
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+
+                                                    {!isCorrect && !isUnanswered && (
+                                                        <AIExplanation
+                                                            questionId={q.id}
+                                                            selectedAnswer={userAnswerLetter}
+                                                            correctAnswer={correctLetter}
+                                                        />
+                                                    )}
                                                 </div>
                                             </div>
-
-                                            {section.questions.map((q, idx) => {
-                                                const userAnswerLetter = answers[q.id];
-                                                const correctLetter = getCorrectLetter(q.correctAnswer);
-
-                                                const isCorrect = userAnswerLetter === correctLetter;
-                                                const isUnanswered = !userAnswerLetter;
-
-                                                return (
-                                                    <div key={q.id} className={`p-6 rounded-xl border bg-card shadow-sm hover:shadow-md transition-shadow ${isCorrect ? 'border-green-500/10' : 'border-red-500/10'}`}>
-                                                        <div className="flex items-start gap-4">
-                                                            <div className={`mt-1 p-2 rounded-full ${isCorrect ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
-                                                                {isCorrect ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
-                                                            </div>
-                                                            <div className="flex-1 space-y-3">
-                                                                <div className="flex justify-between items-start">
-                                                                    <p className="font-medium text-lg leading-relaxed">{idx + 1}. {q.questionText}</p>
-                                                                    <Badge variant="outline" className="ml-2 shrink-0">ID: {q.id.slice(0, 4)}</Badge>
-                                                                </div>
-
-                                                                <div className="grid gap-2 text-sm">
-                                                                    {q.options.map((opt, oIdx) => {
-                                                                        const letter = String.fromCharCode(65 + oIdx);
-                                                                        const isSelected = userAnswerLetter === letter;
-                                                                        const isTheCorrectOne = correctLetter === letter;
-
-                                                                        let style: string;
-
-                                                                        if (isSelected && isTheCorrectOne) {
-                                                                            // User selected CORRECT
-                                                                            style = "p-4 rounded-lg border-2 border-emerald-500 bg-emerald-500/20 text-emerald-100 font-bold shadow-[0_0_15px_-3px_rgba(16,185,129,0.4)]";
-                                                                        } else if (isSelected && !isTheCorrectOne) {
-                                                                            // User selected WRONG
-                                                                            style = "p-4 rounded-lg border-2 border-red-500 bg-red-500/20 text-red-100 font-bold shadow-[0_0_15px_-3px_rgba(239,68,68,0.4)]";
-                                                                        } else if (!isSelected && isTheCorrectOne) {
-                                                                            // The CORRECT answer (user missed it) - GREEN
-                                                                            style = "p-4 rounded-lg border-2 border-emerald-500 bg-emerald-500/10 text-emerald-200 font-bold ring-2 ring-emerald-500/30";
-                                                                        } else {
-                                                                            // Neutral option
-                                                                            style = "p-4 rounded-lg border-transparent bg-muted/40 text-muted-foreground opacity-60";
-                                                                        }
-
-                                                                        return (
-                                                                            <div key={oIdx} className={style}>
-                                                                                <div className="flex gap-3 items-center">
-                                                                                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-background/20 flex items-center justify-center font-bold">
-                                                                                        {letter}
-                                                                                    </span>
-                                                                                    <div className="flex-1">
-                                                                                        {getOptionText(opt)}
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        );
-                                                                    })}
-                                                                </div>
-
-                                                                {!isCorrect && !isUnanswered && (
-                                                                    <AIExplanation
-                                                                        questionId={q.id}
-                                                                        selectedAnswer={userAnswerLetter}
-                                                                        correctAnswer={correctLetter}
-                                                                    />
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </TabsContent>
-                                    ))}
-                                </div>
-                            </Tabs>
-                        </div>
-                    )}
-
-                    <DialogFooter className="mt-4 border-t pt-4">
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ),
+                    };
+                })}
+                tabListClassName="grid grid-cols-4 w-full h-16 bg-muted/50 p-1"
+                footer={
+                    <>
                         <Button variant="outline" onClick={() => { setShowResults(false); setLocation("/time-machine"); }}>
                             ← Înapoi la Time Machine
                         </Button>
                         <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => setLocation("/time-machine")}>
                             Continuă la Proba II →
                         </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        </div >
+                    </>
+                }
+            />
+        </div>
     );
 }
